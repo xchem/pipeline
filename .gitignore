@@ -1,5 +1,6 @@
 old/*
-soakDBFiles/*
+soakDBfiles/*
 transferdatadb/*
 whitelists/*
 .idea/*
+*.pyc
