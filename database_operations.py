@@ -36,6 +36,7 @@ class WriteWhitelists(luigi.Task):
 class WriteBlacklist(luigi.Task):
     pass
 
+
 class TransferFedIDs(luigi.Task):
     def requires(self):
         return FindSoakDBFiles()
@@ -112,8 +113,8 @@ class TransferExperiment(luigi.Task):
         data_processing_dict = {}
         dimple_dict = {}
         refinement_dict = {}
-        #pandda_dict = {}
 
+        # define keys for xchem postgres DB
         lab_dictionary_keys = ['visit', 'library_plate', 'library_name', 'smiles', 'compound_code', 'protein',
                                'stock_conc', 'expr_conc',
                                'solv_frac', 'soak_vol', 'soak_status', 'cryo_Stock_frac', 'cryo_frac',
@@ -155,43 +156,29 @@ class TransferExperiment(luigi.Task):
                                       'ramachandran_outliers', 'ramachandran_outliers_TL', 'ramachandran_favoured',
                                       'ramachandran_favoured_TL', 'status']
 
-        # pandda_dictionary_keys = ['CrystalName', 'path', 'site_index', 'site_name', 'site_comment', 'site_event_index',
-        #                           'site_event_comment', 'site_confidence', 'site_InspectConfidence',
-        #                           'site_ligand_placed',
-        #                           'site_viewed', 'site_interesting', 'site_z_peak', 'site_x', 'site_y', 'site_z',
-        #                           'site_ligand_id',
-        #                           'site_ligand_resname', 'site_ligand_chain', 'site_ligand_sequence_number',
-        #                           'site_ligand_altLoc', 'site_event_map', 'site_event_map_mtz', 'site_initial_model',
-        #                           'site_initial_mtz', 'site_spider_plot', 'site_occupancy', 'site_B_average',
-        #                           'site_B_ratio_residue_surroundings', 'site_RSCC', 'site_RSR', 'site_RSZD',
-        #                           'site_rmsd',
-        #                           'RefinementOutcome', 'ApoStructures', 'LastUpdated']
 
         dictionaries = [[lab_dict, lab_dictionary_keys], [crystal_dict, crystal_dictionary_keys],
                         [data_collection_dict, data_collection_dictionary_keys],
                         [data_processing_dict, data_processing_dictionary_keys],
                         [dimple_dict, dimple_dictionary_keys], [refinement_dict, refinement_dictionary_keys]]
 
-                        #[pandda_dict, pandda_dictionary_keys]]
-
+        # add keys to dictionaries
         for dictionary in dictionaries:
             add_keys(dictionary[0], dictionary[1])
 
-        count = 0
-
+        # some filters to get rid of junk
         soakstatus = 'done'
         cryostatus = 'pending'
         mountstatus = '%Mounted%'
         collectionstatus = '%success%'
         compsmiles = '%None%'
 
+        # numbers relating to where selected in query
         lab_table_numbers = range(0, 21)
-        #project_directory = [21]
         crystal_table_numbers = range(22, 33)
         data_collection_table_numbers = range(33, 36)
         data_processing_table_numbers = range(36, 79)
         dimple_table_numbers = range(79, 89)
-        #temp_pandda_numbers = range(89, 91)
         refinement_table_numbers = range(91, 122)
 
         # connect to master postgres db
@@ -297,6 +284,7 @@ class TransferExperiment(luigi.Task):
                         create_list_from_ind(row, listname, numbers[listref])
                         listref += 1
 
+                    # populate query return into dictionary, so that it can be turned into a df and transfered to DB
                     pop_dict(lab_table_list, lab_dict, lab_dictionary_keys)
                     pop_dict(crystal_table_list, crystal_dict, crystal_dictionary_keys)
                     pop_dict(refinement_table_list, refinement_dict, refinement_dictionary_keys)
@@ -306,52 +294,6 @@ class TransferExperiment(luigi.Task):
                     pop_dict(data_processing_table_list, data_processing_dict,
                              data_processing_dictionary_keys)
 
-                # for row in c2.execute('''select CrystalName,
-                #                         PANDDApath,
-                #                         PANDDA_site_index,
-                #                         PANDDA_site_name,
-                #                         PANDDA_site_comment,
-                #                         PANDDA_site_event_index,
-                #                         PANDDA_site_event_comment,
-                #                         PANDDA_site_confidence,
-                #                         PANDDA_site_InspectConfidence,
-                #                         PANDDA_site_ligand_placed,
-                #                         PANDDA_site_viewed,
-                #                         PANDDA_site_interesting,
-                #                         PANDDA_site_z_peak,
-                #                         PANDDA_site_x,
-                #                         PANDDA_site_y,
-                #                         PANDDA_site_z,
-                #                         PANDDA_site_ligand_id,
-                #                         PANDDA_site_ligand_resname,
-                #                         PANDDA_site_ligand_chain,
-                #                         PANDDA_site_ligand_sequence_number,
-                #                         PANDDA_site_ligand_altLoc,
-                #                         PANDDA_site_event_map,
-                #                         PANDDA_site_event_map_mtz,
-                #                         PANDDA_site_initial_model,
-                #                         PANDDA_site_initial_mtz,
-                #                         PANDDA_site_spider_plot,
-                #                         PANDDA_site_occupancy,
-                #                         PANDDA_site_B_average,
-                #                         PANDDA_site_B_ratio_residue_surroundings,
-                #                         PANDDA_site_RSCC,
-                #                         PANDDA_site_RSR,
-                #                         PANDDA_site_RSZD,
-                #                         PANDDA_site_rmsd,
-                #                         RefinementOutcome,
-                #                         ApoStructures,
-                #                         LastUpdated
-                #                         from panddaTable'''):
-                #
-                #     pandda_array = []
-                #
-                #     for i in range(0, len(row)):
-                #         pandda_array.append(row[i])
-                #
-                #     pop_dict(pandda_array, pandda_dict, pandda_dictionary_keys)
-                #
-                # count += 1
 
             except:
                 print database_file
@@ -359,19 +301,19 @@ class TransferExperiment(luigi.Task):
                 print ' '
                 c2.close()
 
+        # turn dictionaries into dataframes
         labdf = pandas.DataFrame.from_dict(lab_dict)
         crystaldf = pandas.DataFrame.from_dict(crystal_dict)
         dataprocdf = pandas.DataFrame.from_dict(data_processing_dict)
         datacoldf = pandas.DataFrame.from_dict(data_collection_dict)
         refdf = pandas.DataFrame.from_dict(refinement_dict)
         dimpledf = pandas.DataFrame.from_dict(dimple_dict)
-        # panddadf = pandas.DataFrame.from_dict(pandda_dict)
 
         # create an engine to postgres database and populate tables - ids are straight from dataframe index,
         # but link all together
+        #
         # TODO:
         # find way to do update, rather than just create table each time
-        
         engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
         labdf.to_sql('lab', engine)
         crystaldf.to_sql('crystal', engine)
