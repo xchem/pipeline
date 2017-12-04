@@ -7,16 +7,18 @@ import os
 import datetime
 import pandas
 from sqlalchemy import create_engine
+import logging
 
 
 class FindSoakDBFiles(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
+    filepath = luigi.Parameter(default='"/dls/labxchem/data/*/lb*/*"')
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('soakDBfiles/soakDB_%Y%m%d.txt'))
 
     def run(self):
-        process = subprocess.Popen('''find /dls/labxchem/data/*/lb*/* -maxdepth 4 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print''',
+        process = subprocess.Popen(str('''find''' + self.filepath +  ''' -maxdepth 4 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
         out, err = process.communicate()
@@ -50,7 +52,6 @@ class TransferFedIDs(luigi.Task):
                 proposal = database_file.split('/')[5].split('-')[0]
                 proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
                 out, err = proc.communicate()
-                fedids_forsqltable = str(out.split(':')[3].replace('\n', ''))
                 modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(database_file)).strftime(
                     "%Y-%m-%d %H:%M:%S")
                 modification_date = modification_date.replace('-', '')
@@ -79,6 +80,8 @@ class TransferFedIDs(luigi.Task):
 
 
 class TransferExperiment(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+
     def requires(self):
         return FindSoakDBFiles()
 
@@ -86,6 +89,9 @@ class TransferExperiment(luigi.Task):
         pass
 
     def run(self):
+
+        logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
+        logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
 
         def create_list_from_ind(row, array, numbers_list):
             for ind in numbers_list:
@@ -116,9 +122,9 @@ class TransferExperiment(luigi.Task):
                                'data_collection_visit']
 
         crystal_dictionary_keys = ['tag', 'name', 'spacegroup', 'point_group', 'a', 'b', 'c', 'alpha',
-                                   'beta', 'gamma', 'volume']
+                                   'beta', 'gamma', 'volume', 'crystal_name']
 
-        data_collection_dictionary_keys = ['date', 'outcome', 'wavelength']
+        data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name']
 
         data_processing_dictionary_keys = ['image_path', 'program', 'spacegroup', 'unit_cell', 'auto_assigned',
                                            'res_overall',
@@ -134,11 +140,11 @@ class TransferExperiment(luigi.Task):
                                            'unit_cell_vol',
                                            'alert', 'score', 'status', 'r_cryst', 'r_free', 'dimple_pdb_path',
                                            'dimple_mtz_path',
-                                           'dimple_status']
+                                           'dimple_status', 'crystal_name']
 
-        dimple_dictionary_keys = ['res_high', 'pdb_path', 'mtz_path', 'reference_pdb', 'status', 'pandda_run',
+        dimple_dictionary_keys = ['res_high', 'r_free', 'pdb_path', 'mtz_path', 'reference_pdb', 'status', 'pandda_run',
                                   'pandda_hit',
-                                  'pandda_reject', 'pandda_path']
+                                  'pandda_reject', 'pandda_path', 'crystal_name']
 
         refinement_dictionary_keys = ['res', 'res_TL', 'rcryst', 'rcryst_TL', 'r_free', 'rfree_TL', 'spacegroup',
                                       'lig_cc', 'rmsd_bonds',
@@ -147,7 +153,7 @@ class TransferExperiment(luigi.Task):
                                       'pdb_latest', 'mtz_latest', 'matrix_weight', 'refinement_path', 'lig_confidence',
                                       'lig_bound_conf', 'bound_conf', 'molprobity_score', 'molprobity_score_TL',
                                       'ramachandran_outliers', 'ramachandran_outliers_TL', 'ramachandran_favoured',
-                                      'ramachandran_favoured_TL', 'status']
+                                      'ramachandran_favoured_TL', 'status', 'crystal_name']
 
 
         dictionaries = [[lab_dict, lab_dictionary_keys], [crystal_dict, crystal_dictionary_keys],
@@ -167,12 +173,23 @@ class TransferExperiment(luigi.Task):
         compsmiles = '%None%'
 
         # numbers relating to where selected in query
+        # 17 = number for crystal_name
         lab_table_numbers = range(0, 21)
+
         crystal_table_numbers = range(22, 33)
+        crystal_table_numbers.insert(len(crystal_table_numbers), 17)
+
         data_collection_table_numbers = range(33, 36)
+        data_collection_table_numbers.insert(len(data_collection_table_numbers), 17)
+
         data_processing_table_numbers = range(36, 79)
+        data_processing_table_numbers.insert(len(data_processing_table_numbers), 17)
+
         dimple_table_numbers = range(79, 89)
+        dimple_table_numbers.insert(len(dimple_table_numbers), 17)
+
         refinement_table_numbers = range(91, 122)
+        refinement_table_numbers.insert(len(refinement_table_numbers), 17)
 
         # connect to master postgres db
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -289,16 +306,14 @@ class TransferExperiment(luigi.Task):
 
 
             except:
-                print database_file
-                print sys.exc_info()
-                print ' '
+                logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
                 c2.close()
 
         # turn dictionaries into dataframes
         labdf = pandas.DataFrame.from_dict(lab_dict)
-        crystaldf = pandas.DataFrame.from_dict(crystal_dict)
+        # crystaldf = pandas.DataFrame.from_dict(crystal_dict)
         dataprocdf = pandas.DataFrame.from_dict(data_processing_dict)
-        datacoldf = pandas.DataFrame.from_dict(data_collection_dict)
+        # datacoldf = pandas.DataFrame.from_dict(data_collection_dict)
         refdf = pandas.DataFrame.from_dict(refinement_dict)
         dimpledf = pandas.DataFrame.from_dict(dimple_dict)
 
@@ -308,13 +323,12 @@ class TransferExperiment(luigi.Task):
         # TODO:
         # find way to do update, rather than just create table each time
         engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-        labdf.to_sql('lab', engine)
-        crystaldf.to_sql('crystal', engine)
-        dataprocdf.to_sql('data_processing', engine)
-        datacoldf.to_sql('data_collection', engine)
-        refdf.to_sql('refinement', engine)
-        dimpledf.to_sql('dimple', engine)
-        panddadf.to_sql('pandda', engine)
+        labdf.to_sql('lab', engine, if_exists='replace')
+        # crystaldf.to_sql('crystal', engine, if_exists='replace')
+        dataprocdf.to_sql('data_processing', engine, if_exists='replace')
+        # datacoldf.to_sql('data_collection', engine, if_exists='replace')
+        refdf.to_sql('refinement', engine, if_exists='replace')
+        dimpledf.to_sql('dimple', engine, if_exists='replace')
 
 
 class WriteWhitelists(luigi.Task):
