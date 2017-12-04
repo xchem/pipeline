@@ -30,13 +30,6 @@ class FindSoakDBFiles(luigi.Task):
         f.close()
 
 
-class WriteWhitelists(luigi.Task):
-    pass
-
-class WriteBlacklist(luigi.Task):
-    pass
-
-
 class TransferFedIDs(luigi.Task):
     def requires(self):
         return FindSoakDBFiles()
@@ -324,7 +317,23 @@ class TransferExperiment(luigi.Task):
         panddadf.to_sql('pandda', engine)
 
 
+class WriteWhitelists(luigi.Task):
+    def requires(self):
+        return TransferFedIDs()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
 
 
+class WriteBlacklist(luigi.Task):
+    def requires(self):
+        return WriteWhitelists()
 
+    def output(self):
+        pass
 
+    def run(self):
+        pass
