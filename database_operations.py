@@ -328,7 +328,7 @@ class WriteWhitelists(luigi.Task):
         pass
 
 
-class WriteBlacklist(luigi.Task):
+class WriteFedIDList(luigi.Task):
     def requires(self):
         return WriteWhitelists()
 
