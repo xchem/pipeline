@@ -18,12 +18,12 @@ class FindProjects(luigi.Task):
         # all data necessary for uploading leads
         project_data_dump_dict = {'crystal_name':[], 'protein':[], 'pandda_path':[], 'reference_pdb':[]}
 
-        outcome_string = '%3%'
+        outcome_string = '(%3%|%4%|%5%|%6%)'
 
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
         c = conn.cursor()
 
-        c.execute('''SELECT crystal_name, outcome, bound_conf FROM refinement WHERE outcome LIKE %s''', (str(outcome_string),))
+        c.execute('''SELECT crystal_name, outcome, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''', (str(outcome_string),))
 
         rows = c.fetchall()
 
