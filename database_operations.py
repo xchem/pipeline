@@ -12,13 +12,13 @@ import logging
 
 class FindSoakDBFiles(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
-    filepath = luigi.Parameter(default='"/dls/labxchem/data/*/lb*/*"')
+    filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('soakDBfiles/soakDB_%Y%m%d.txt'))
 
     def run(self):
-        process = subprocess.Popen(str('''find''' + self.filepath +  ''' -maxdepth 4 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
+        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 4 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
         out, err = process.communicate()
@@ -33,11 +33,12 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class TransferFedIDs(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
     def requires(self):
         return FindSoakDBFiles()
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('transfer_logs/fedids_%Y%m%d.txt'))
 
     def run(self):
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -45,6 +46,10 @@ class TransferFedIDs(luigi.Task):
         c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (filename TEXT, modification_date BIGINT, proposal TEXT)'''
                   )
         conn.commit()
+
+        logfile = self.date.strftime('transfer_logs/fedids_%Y%m%d.txt')
+        logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s',
+                            datefrmt='%m/%d/%y %H:%M:%S')
 
         with self.input().open('r') as database_list:
             for database_file in database_list.readlines():
@@ -59,6 +64,10 @@ class TransferFedIDs(luigi.Task):
                 modification_date = modification_date.replace(' ', '')
                 c.execute('''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''', (database_file, int(modification_date), proposal, database_file, int(modification_date)))
                 conn.commit()
+
+                logging.info(str('FedIDs written for ' + proposal))
+
+
 
         c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
 
@@ -77,6 +86,9 @@ class TransferFedIDs(luigi.Task):
             conn.commit()
 
         c.close()
+
+        with self.output().open('w') as f:
+            f.write('TransferFeDIDs DONE')
 
 
 class TransferExperiment(luigi.Task):
