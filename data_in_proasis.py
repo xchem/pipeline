@@ -49,17 +49,3 @@ class FindProjects(luigi.Task):
                     project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                     project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
 
-
-        print pandas.DataFrame.from_dict(project_data_dump_dict)
-
-
-class GenConfigsProasisIn(luigi.Task):
-
-    def requires(self):
-        pass
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
