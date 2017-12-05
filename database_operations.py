@@ -98,7 +98,7 @@ class TransferExperiment(luigi.Task):
         return FindSoakDBFiles()
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt'))
 
     def run(self):
 
@@ -341,6 +341,9 @@ class TransferExperiment(luigi.Task):
         # datacoldf.to_sql('data_collection', engine, if_exists='replace')
         refdf.to_sql('refinement', engine, if_exists='replace')
         dimpledf.to_sql('dimple', engine, if_exists='replace')
+
+        with self.output().open('w') as f:
+            f.write('TransferExperiment DONE')
 
 
 class WriteWhitelists(luigi.Task):
