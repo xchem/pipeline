@@ -342,6 +342,17 @@ class TransferExperiment(luigi.Task):
         refdf.to_sql('refinement', engine, if_exists='replace')
         dimpledf.to_sql('dimple', engine, if_exists='replace')
 
+        # connect to master postgres db
+        conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
+        c = conn.cursor()
+
+        # remove duplicate rows in lab table
+        c.execute('''CREATE TABLE tmp AS SELECT DISTINCT ON (crystal_name, smiles) * FROM lab;''')
+        c.execute('''DROP TABLE lab;''')
+        c.execute('''ALTER TABLE tmp RENAME TO lab;''')
+        conn.commit()
+        c.close()
+
         with self.output().open('w') as f:
             f.write('TransferExperiment DONE')
 
