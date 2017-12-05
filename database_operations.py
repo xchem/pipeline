@@ -105,9 +105,10 @@ class TransferExperiment(luigi.Task):
         logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
 
-        def create_list_from_ind(row, array, numbers_list):
+        def create_list_from_ind(row, array, numbers_list, crystal_id):
             for ind in numbers_list:
                 array.append(row[ind])
+            array.append(crystal_id)
 
         def pop_dict(array, dictionary, dictionary_keys):
             for i in range(0, len(dictionary_keys)):
@@ -131,12 +132,12 @@ class TransferExperiment(luigi.Task):
                                'solv_frac', 'soak_vol', 'soak_status', 'cryo_Stock_frac', 'cryo_frac',
                                'cryo_transfer_vol', 'cryo_status',
                                'soak_time', 'harvest_status', 'crystal_name', 'mounting_result', 'mounting_time',
-                               'data_collection_visit']
+                               'data_collection_visit', 'crystal_id']
 
         crystal_dictionary_keys = ['tag', 'name', 'spacegroup', 'point_group', 'a', 'b', 'c', 'alpha',
-                                   'beta', 'gamma', 'volume', 'crystal_name']
+                                   'beta', 'gamma', 'volume', 'crystal_name', 'crystal_id']
 
-        data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name']
+        data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name', 'crystal_id']
 
         data_processing_dictionary_keys = ['image_path', 'program', 'spacegroup', 'unit_cell', 'auto_assigned',
                                            'res_overall',
@@ -152,11 +153,11 @@ class TransferExperiment(luigi.Task):
                                            'unit_cell_vol',
                                            'alert', 'score', 'status', 'r_cryst', 'r_free', 'dimple_pdb_path',
                                            'dimple_mtz_path',
-                                           'dimple_status', 'crystal_name']
+                                           'dimple_status', 'crystal_name', 'crystal_id']
 
         dimple_dictionary_keys = ['res_high', 'r_free', 'pdb_path', 'mtz_path', 'reference_pdb', 'status', 'pandda_run',
                                   'pandda_hit',
-                                  'pandda_reject', 'pandda_path', 'crystal_name']
+                                  'pandda_reject', 'pandda_path', 'crystal_name', 'crystal_id']
 
         refinement_dictionary_keys = ['res', 'res_TL', 'rcryst', 'rcryst_TL', 'r_free', 'rfree_TL', 'spacegroup',
                                       'lig_cc', 'rmsd_bonds',
@@ -165,7 +166,7 @@ class TransferExperiment(luigi.Task):
                                       'pdb_latest', 'mtz_latest', 'matrix_weight', 'refinement_path', 'lig_confidence',
                                       'lig_bound_conf', 'bound_conf', 'molprobity_score', 'molprobity_score_TL',
                                       'ramachandran_outliers', 'ramachandran_outliers_TL', 'ramachandran_favoured',
-                                      'ramachandran_favoured_TL', 'status', 'crystal_name']
+                                      'ramachandran_favoured_TL', 'status', 'crystal_name', 'crystal_id']
 
 
         dictionaries = [[lab_dict, lab_dictionary_keys], [crystal_dict, crystal_dictionary_keys],
@@ -211,6 +212,8 @@ class TransferExperiment(luigi.Task):
         c.execute('select filename from soakdb_files')
         rows = c.fetchall()
         c.close()
+
+        crystal_list = []
 
         # set database filename from postgres query
         for row in rows:
@@ -288,6 +291,21 @@ class TransferExperiment(luigi.Task):
                                         and CompoundSMILES not like ? ''',
                                       (soakstatus, cryostatus, mountstatus, collectionstatus, compsmiles)):
 
+                    try:
+                        if str(row[17]) in crystal_list:
+                            crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'I'))
+                        if str(row[17].replace(str(row[17]), str(str(row[17]) + 'I'))) in crystal_list:
+                            crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'II'))
+                            print 'double whammy'
+                        else:
+                            crystal_name = row[17]
+
+                        crystal_list.append(row[17])
+                        crystal_list = list(set(crystal_list))
+                    except:
+                        print sys.exc_info()
+
+
                     lab_table_list = []
                     crystal_table_list = []
                     data_collection_table_list = []
@@ -303,7 +321,7 @@ class TransferExperiment(luigi.Task):
                     listref = 0
 
                     for listname in lists:
-                        create_list_from_ind(row, listname, numbers[listref])
+                        create_list_from_ind(row, listname, numbers[listref], crystal_name)
                         listref += 1
 
                     # populate query return into dictionary, so that it can be turned into a df and transfered to DB
@@ -347,11 +365,11 @@ class TransferExperiment(luigi.Task):
         c = conn.cursor()
 
         # remove duplicate rows in lab table
-        c.execute('''CREATE TABLE tmp AS SELECT DISTINCT ON (crystal_name, smiles) * FROM lab;''')
-        c.execute('''DROP TABLE lab;''')
-        c.execute('''ALTER TABLE tmp RENAME TO lab;''')
-        conn.commit()
-        c.close()
+        # c.execute('''CREATE TABLE tmp AS SELECT DISTINCT ON (crystal_name, smiles) * FROM lab;''')
+        # c.execute('''DROP TABLE lab;''')
+        # c.execute('''ALTER TABLE tmp RENAME TO lab;''')
+        # conn.commit()
+        # c.close()
 
         with self.output().open('w') as f:
             f.write('TransferExperiment DONE')

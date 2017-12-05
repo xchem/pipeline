@@ -23,17 +23,13 @@ class FindProjects(luigi.Task):
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
         c = conn.cursor()
 
-        c.execute('''SELECT crystal_name, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''', (str(outcome_string),))
+        c.execute('''SELECT crystal_id, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''', (str(outcome_string),))
 
         rows = c.fetchall()
 
-        print len(rows)
-
         for row in rows:
-            crystal_data_dump_dict['crystal_name'].append(row[0])
-            crystal_data_dump_dict['bound_conf'].append(row[1])
 
-            c.execute('''SELECT protein, smiles FROM lab WHERE crystal_name = %s''', (str(row[0]),))
+            c.execute('''SELECT protein, smiles, crystal_id FROM lab WHERE crystal_id = %s''', (str(row[0]),))
 
             lab_table = c.fetchall()
 
@@ -45,8 +41,10 @@ class FindProjects(luigi.Task):
             for entry in lab_table:
                 crystal_data_dump_dict['protein'].append(entry[0])
                 crystal_data_dump_dict['smiles'].append(entry[1])
+                crystal_data_dump_dict['crystal_name'].append(row[0])
+                crystal_data_dump_dict['bound_conf'].append(row[1])
 
-            c.execute('''SELECT pandda_path, reference_pdb FROM dimple WHERE crystal_name = %s''', (str(row[0]),))
+            c.execute('''SELECT pandda_path, reference_pdb FROM dimple WHERE crystal_id = %s''', (str(row[0]),))
 
             pandda_info = c.fetchall()
 
@@ -57,14 +55,22 @@ class FindProjects(luigi.Task):
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
 
         project_table = pandas.DataFrame.from_dict(project_data_dump_dict)
-        #crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
+        crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
 
         protein_list=set(list(project_data_dump_dict['protein']))
+        print protein_list
 
 
         for protein in protein_list:
-            temp_frame = project_table.loc[project_table['protein'] == protein]
-            #print temp_frame
 
-        #for item in crystal_data_dump_dict.items():
-            #print len(item[1])
+            filename = str('leads/' + protein)
+            temp_frame = project_table.loc[project_table['protein'] == protein]
+            temp_frame.reset_index(inplace=True)
+            temp2 = temp_frame.drop_duplicates()
+            temp2.to_csv(filename)
+
+            filename = str('hits/' + protein)
+            temp_frame = crystal_table.loc[crystal_table['protein'] == protein]
+            temp_frame.reset_index(inplace=True)
+            temp2 = temp_frame.drop_duplicates(subset=['crystal_name','smiles','bound_conf'])
+            temp2.to_csv(filename)
