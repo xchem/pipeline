@@ -298,12 +298,7 @@ class TransferExperiment(luigi.Task):
                                         RefinementRamachandranFavoredTL, RefinementStatus
 
                                         from mainTable 
-                                        where SoakStatus = ?
-                                        and CryoStatus not like ? 
-                                        and MountingResult like ? 
-                                        and DataCollectionOutcome like ?
-                                        and CompoundSMILES not like ? ''',
-                                      (soakstatus, cryostatus, mountstatus, collectionstatus, compsmiles)):
+                                        '''):
 
                     try:
                         if str(row[17]) in crystal_list:
