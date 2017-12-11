@@ -11,52 +11,71 @@ import logging
 
 
 class FindSoakDBFiles(luigi.Task):
+    # date parameter - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
+
+    # filepath parameter can be changed elsewhere
     filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('soakDBfiles/soakDB_%Y%m%d.txt'))
 
     def run(self):
-        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 4 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
+        # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
+        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
+        # run process to find sqlite files
         out, err = process.communicate()
 
+        # print output and error for debugging
         print out
         print err
 
+        # write filepaths to file as output
         with self.output().open('w') as f:
             f.write(out)
-
         f.close()
 
 
 class TransferFedIDs(luigi.Task):
+    # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
+
+    # needs a list of soakDB files from the same day
     def requires(self):
         return FindSoakDBFiles()
 
+    # output is just a log file
     def output(self):
         return luigi.LocalTarget(self.date.strftime('transfer_logs/fedids_%Y%m%d.txt'))
 
+    # transfers data to a central postgres db
     def run(self):
+        # connect to central postgres db
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
         c = conn.cursor()
+        # create a table to hold info on sqlite files
         c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (filename TEXT, modification_date BIGINT, proposal TEXT)'''
                   )
         conn.commit()
 
+        # set up logging
         logfile = self.date.strftime('transfer_logs/fedids_%Y%m%d.txt')
         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s',
                             datefrmt='%m/%d/%y %H:%M:%S')
 
+        # use list from previous step as input to write to postgres
         with self.input().open('r') as database_list:
             for database_file in database_list.readlines():
                 database_file = database_file.replace('\n', '')
+
+                # take proposal number from filepath (for whitelist)
                 proposal = database_file.split('/')[5].split('-')[0]
                 proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
                 out, err = proc.communicate()
+
+                # need to put modification date to use in the proasis upload scripts
                 modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(database_file)).strftime(
                     "%Y-%m-%d %H:%M:%S")
                 modification_date = modification_date.replace('-', '')
@@ -66,8 +85,6 @@ class TransferFedIDs(luigi.Task):
                 conn.commit()
 
                 logging.info(str('FedIDs written for ' + proposal))
-
-
 
         c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
 
@@ -92,8 +109,10 @@ class TransferFedIDs(luigi.Task):
 
 
 class TransferExperiment(luigi.Task):
+    # date parameter - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
 
+    # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
     def requires(self):
         return FindSoakDBFiles()
 
@@ -101,7 +120,7 @@ class TransferExperiment(luigi.Task):
         return luigi.LocalTarget(self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt'))
 
     def run(self):
-
+        # set up logging
         logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
 
@@ -224,12 +243,7 @@ class TransferExperiment(luigi.Task):
             c2 = conn2.cursor()
 
             try:
-                # checks: SoakStatus=Done, CryoStatus!=pending or fail, CrystalName exists, MountingResult contains Mounted
                 # columns with issues: ProjectDirectory, DatePANDDAModelCreated
-                # depo columns
-                # 104/145 currently work... Apply filters, see which ones are actually useful, count again!
-
-                # use dictionaries for tables!
 
                 for row in c2.execute('''select LabVisit, LibraryPlate, LibraryName, CompoundSMILES, CompoundCode,
                                         ProteinName, CompoundStockConcentration, CompoundConcentration, SolventFraction, 
@@ -349,7 +363,6 @@ class TransferExperiment(luigi.Task):
 
         # create an engine to postgres database and populate tables - ids are straight from dataframe index,
         # but link all together
-        #
         # TODO:
         # find way to do update, rather than just create table each time
         engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
@@ -364,34 +377,5 @@ class TransferExperiment(luigi.Task):
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
         c = conn.cursor()
 
-        # remove duplicate rows in lab table
-        # c.execute('''CREATE TABLE tmp AS SELECT DISTINCT ON (crystal_name, smiles) * FROM lab;''')
-        # c.execute('''DROP TABLE lab;''')
-        # c.execute('''ALTER TABLE tmp RENAME TO lab;''')
-        # conn.commit()
-        # c.close()
-
         with self.output().open('w') as f:
             f.write('TransferExperiment DONE')
-
-
-class WriteWhitelists(luigi.Task):
-    def requires(self):
-        return TransferFedIDs()
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
-class WriteFedIDList(luigi.Task):
-    def requires(self):
-        return WriteWhitelists()
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass

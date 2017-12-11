@@ -74,3 +74,25 @@ class FindProjects(luigi.Task):
             temp_frame.reset_index(inplace=True)
             temp2 = temp_frame.drop_duplicates(subset=['crystal_name','smiles','bound_conf'])
             temp2.to_csv(filename)
+
+
+class WriteWhitelists(luigi.Task):
+    def requires(self):
+        return database_operations.TransferFedIDs()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
+
+class WriteFedIDList(luigi.Task):
+    def requires(self):
+        return database_operations.TransferFedIDs()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
