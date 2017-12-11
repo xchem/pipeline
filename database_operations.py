@@ -22,20 +22,20 @@ class FindSoakDBFiles(luigi.Task):
 
     def run(self):
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
-        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
+        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
         # run process to find sqlite files
         out, err = process.communicate()
 
         # print output and error for debugging
-        print out
-        print err
+        #print out
+        #print err
 
         # write filepaths to file as output
         with self.output().open('w') as f:
             f.write(out)
-        f.close()
+        #f.close()
 
 
 class TransferFedIDs(luigi.Task):
