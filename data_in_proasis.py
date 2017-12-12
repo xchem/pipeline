@@ -29,18 +29,22 @@ class FindProjects(luigi.Task):
 
         for row in rows:
 
-            c.execute('''SELECT protein, smiles, crystal_id FROM lab WHERE crystal_id = %s''', (str(row[0]),))
+            c.execute('''SELECT smiles FROM lab WHERE crystal_id = %s''', (str(row[0]),))
 
             lab_table = c.fetchall()
 
+            if len(str(row[0])) < 3:
+                continue
+
             if len(lab_table)>1:
                 print('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table')
-                print lab_table
+                #print lab_table
 
 
             for entry in lab_table:
-                crystal_data_dump_dict['protein'].append(entry[0])
-                crystal_data_dump_dict['smiles'].append(entry[1])
+                protein_name = str(row[0]).split('-')[0]
+                crystal_data_dump_dict['protein'].append(protein_name)
+                crystal_data_dump_dict['smiles'].append(entry[0])
                 crystal_data_dump_dict['crystal_name'].append(row[0])
                 crystal_data_dump_dict['bound_conf'].append(row[1])
 
@@ -50,7 +54,7 @@ class FindProjects(luigi.Task):
 
             for pandda_entry in pandda_info:
                 project_data_dump_dict['crystal_name'].append(row[0])
-                project_data_dump_dict['protein'].append(entry[0])
+                project_data_dump_dict['protein'].append(protein_name)
                 project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
 
@@ -58,7 +62,7 @@ class FindProjects(luigi.Task):
         crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
 
         protein_list=set(list(project_data_dump_dict['protein']))
-        print protein_list
+        #print protein_list
 
 
         for protein in protein_list:

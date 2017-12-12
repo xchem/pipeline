@@ -28,10 +28,6 @@ class FindSoakDBFiles(luigi.Task):
         # run process to find sqlite files
         out, err = process.communicate()
 
-        # print output and error for debugging
-        #print out
-        #print err
-
         # write filepaths to file as output
         with self.output().open('w') as f:
             f.write(out)
@@ -298,7 +294,11 @@ class TransferExperiment(luigi.Task):
                                         RefinementRamachandranFavoredTL, RefinementStatus
 
                                         from mainTable 
-                                        '''):
+                                        where CrystalName NOT LIKE ?
+                                        and CrystalName IS NOT NULL 		
+                                        and CompoundSMILES not like ? 
+                                        and CompoundSMILES IS NOT NULL''',
+                                      ('None', compsmiles)):
 
                     try:
                         if str(row[17]) in crystal_list:
