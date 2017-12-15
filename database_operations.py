@@ -33,12 +33,52 @@ class FindSoakDBFiles(luigi.Task):
             f.write(out)
         #f.close()
 
+
+class CheckFiles(luigi.Task):
+    def requires(self):
+        return FindSoakDBFiles()
+
+    def output(self):
+        pass
+
+    def run(self):
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
         if exists:
-            pass
+            with self.input().open('r') as f:
+                files = f.readlines()
+
+            for file in files:
+
+                c.execute('select filename, modification_date from soakdb_files where filename like %s;', (file,))
+
+                for row in c.fetchall():
+                    if len(row) > 0:
+                        data_file = str(row[0])
+                        old_mod_date = str(row[1])
+
+                        file_exists = os.path.isfile(data_file)
+
+                        if file_exists:
+
+                            current_mod_date = misc_functions.get_mod_date(data_file)
+
+                            if current_mod_date > old_mod_date:
+                                print('INFO: ' + str(data_file) + ' has changed!')
+                                # start function to add row and kick off process for that file
+
+                        else:
+                            print('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
+                            continue
+
+                    else:
+                        print('INFO: ' + str(data_file) + ' has not changed!')
+                        # kick off function to add file to db
+
         if not exists:
             pass
+            # kick of function for
+
 
 class TransferFedIDs(luigi.Task):
     # date parameter for daily run - needs to be changed
@@ -194,13 +234,6 @@ class TransferExperiment(luigi.Task):
         for dictionary in dictionaries:
             add_keys(dictionary[0], dictionary[1])
 
-        # some filters to get rid of junk
-        soakstatus = 'done'
-        cryostatus = 'pending'
-        mountstatus = '%Mounted%'
-        collectionstatus = '%success%'
-        compsmiles = '%None%'
-
         # numbers relating to where selected in query
         # 17 = number for crystal_name
         lab_table_numbers = range(0, 21)
@@ -236,8 +269,6 @@ class TransferExperiment(luigi.Task):
         # set database filename from postgres query
         for row in rows:
 
-
-
             database_file = str(row[0])
 
             project_protein['datafile'].append(database_file)
@@ -251,65 +282,7 @@ class TransferExperiment(luigi.Task):
 
             try:
                 # columns with issues: ProjectDirectory, DatePANDDAModelCreated
-
-                for row in c2.execute('''select LabVisit, LibraryPlate, LibraryName, CompoundSMILES, CompoundCode,
-                                        ProteinName, CompoundStockConcentration, CompoundConcentration, SolventFraction, 
-                                        SoakTransferVol, SoakStatus, CryoStockFraction, CryoFraction, CryoTransferVolume, 
-                                        CryoStatus, SoakingTime, HarvestStatus, CrystalName, MountingResult, MountingTime, 
-                                        DataCollectionVisit, 
-
-                                        ProjectDirectory, 
-
-                                        CrystalTag, CrystalFormName, CrystalFormSpaceGroup,
-                                        CrystalFormPointGroup, CrystalFormA, CrystalFormB, CrystalFormC,CrystalFormAlpha, 
-                                        CrystalFormBeta, CrystalFormGamma, CrystalFormVolume, 
-
-                                        DataCollectionDate, 
-                                        DataCollectionOutcome, DataCollectionWavelength, 
-
-                                        DataProcessingPathToImageFiles,
-                                        DataProcessingProgram, DataProcessingSpaceGroup, DataProcessingUnitCell,
-                                        DataProcessingAutoAssigned, DataProcessingResolutionOverall, DataProcessingResolutionLow,
-                                        DataProcessingResolutionLowInnerShell, DataProcessingResolutionHigh, 
-                                        DataProcessingResolutionHigh15Sigma, DataProcessingResolutionHighOuterShell, 
-                                        DataProcessingRMergeOverall, DataProcessingRMergeLow, DataProcessingRMergeHigh, 
-                                        DataProcessingIsigOverall, DataProcessingIsigLow, DataProcessingIsigHigh, 
-                                        DataProcessingCompletenessOverall, DataProcessingCompletenessLow,
-                                        DataProcessingCompletenessHigh, DataProcessingMultiplicityOverall, 
-                                        DataProcessingMultiplicityLow, DataProcessingMultiplicityHigh, 
-                                        DataProcessingCChalfOverall, DataProcessingCChalfLow, DataProcessingCChalfHigh, 
-                                        DataProcessingPathToLogFile, DataProcessingPathToMTZfile, DataProcessingLOGfileName, 
-                                        DataProcessingMTZfileName, DataProcessingDirectoryOriginal,
-                                        DataProcessingUniqueReflectionsOverall, DataProcessingLattice, DataProcessingPointGroup,
-                                        DataProcessingUnitCellVolume, DataProcessingAlert, DataProcessingScore,
-                                        DataProcessingStatus, DataProcessingRcryst, DataProcessingRfree, 
-                                        DataProcessingPathToDimplePDBfile, DataProcessingPathToDimpleMTZfile,
-                                        DataProcessingDimpleSuccessful, 
-
-                                        DimpleResolutionHigh, DimpleRfree, DimplePathToPDB,
-                                        DimplePathToMTZ, DimpleReferencePDB, DimpleStatus, DimplePANDDAwasRun, 
-                                        DimplePANDDAhit, DimplePANDDAreject, DimplePANDDApath, 
-
-                                        PANDDAStatus, DatePANDDAModelCreated, 
-
-                                        RefinementResolution, RefinementResolutionTL, 
-                                        RefinementRcryst, RefinementRcrystTraficLight, RefinementRfree, 
-                                        RefinementRfreeTraficLight, RefinementSpaceGroup, RefinementLigandCC, 
-                                        RefinementRmsdBonds, RefinementRmsdBondsTL, RefinementRmsdAngles, RefinementRmsdAnglesTL,
-                                        RefinementOutcome, RefinementMTZfree, RefinementCIF, RefinementCIFStatus, 
-                                        RefinementCIFprogram, RefinementPDB_latest, RefinementMTZ_latest, RefinementMatrixWeight, 
-                                        RefinementPathToRefinementFolder, RefinementLigandConfidence, 
-                                        RefinementLigandBoundConformation, RefinementBoundConformation, RefinementMolProbityScore,
-                                        RefinementMolProbityScoreTL, RefinementRamachandranOutliers, 
-                                        RefinementRamachandranOutliersTL, RefinementRamachandranFavored, 
-                                        RefinementRamachandranFavoredTL, RefinementStatus
-
-                                        from mainTable 
-                                        where CrystalName NOT LIKE ?
-                                        and CrystalName IS NOT NULL 		
-                                        and CompoundSMILES not like ? 
-                                        and CompoundSMILES IS NOT NULL''',
-                                      ('None', compsmiles)):
+                for row in db_functions.soakdb_query(c2):
 
                     temp_protein_list.append(str(row[5]))
 
