@@ -44,40 +44,53 @@ class CheckFiles(luigi.Task):
     def run(self):
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
+
+        checked = []
+        changed = []
+        new = []
+
         if exists:
             with self.input().open('r') as f:
                 files = f.readlines()
 
-            for file in files:
+            for filename in files:
 
-                c.execute('select filename, modification_date from soakdb_files where filename like %s;', (file,))
+                filename_clean =  filename.rstrip('\n')
+
+                c.execute('select filename, modification_date from soakdb_files where filename like %s;', (filename_clean,))
 
                 for row in c.fetchall():
                     if len(row) > 0:
                         data_file = str(row[0])
+                        checked.append(data_file)
                         old_mod_date = str(row[1])
+                        current_mod_date = misc_functions.get_mod_date(data_file)
 
-                        file_exists = os.path.isfile(data_file)
-
-                        if file_exists:
-
-                            current_mod_date = misc_functions.get_mod_date(data_file)
-
-                            if current_mod_date > old_mod_date:
-                                print('INFO: ' + str(data_file) + ' has changed!')
-                                # start function to add row and kick off process for that file
-
-                        else:
-                            print('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
-                            continue
-
+                        if current_mod_date > old_mod_date:
+                            print('INFO: ' + str(data_file) + ' has changed!')
+                            changed.append(data_file)
+                            # start function to add row and kick off process for that file
                     else:
                         print('INFO: ' + str(data_file) + ' has not changed!')
-                        # kick off function to add file to db
+                        # kick off class
+
+            c.execute('select filename from soakdb_files;')
+
+            for row in c.fetchall():
+                if str(row[0]) not in checked:
+                    data_file = str(row[0])
+                    file_exists = os.path.isfile(data_file)
+
+                    if not file_exists:
+                        print('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
+
+                    else:
+                        print('INFO: ' + str(row[0]) + ' is a new file!')
+                        new.append(str(row[0]))
 
         if not exists:
             pass
-            # kick of function for
+            # kick of class for adding file to db
 
 
 class TransferFedIDs(luigi.Task):
