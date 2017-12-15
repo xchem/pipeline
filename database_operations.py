@@ -8,12 +8,7 @@ import datetime
 import pandas
 from sqlalchemy import create_engine
 import logging
-
-def connectDB():
-    conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
-    c = conn.cursor()
-
-    return conn, c
+import db_functions
 
 class FindSoakDBFiles(luigi.Task):
     # date parameter - needs to be changed
@@ -38,9 +33,8 @@ class FindSoakDBFiles(luigi.Task):
             f.write(out)
         #f.close()
 
-        conn, c = connectDB()
-        c.execute('''select exists(select * from information_schema.tables where table_name='soakdb_files');''')
-        exists = c.fetchone()[0]
+        conn, c = db_functions.connectDB()
+        exists = db_functions.table_exists(c, 'soakdb_files')
         if exists:
             pass
         if not exists:
