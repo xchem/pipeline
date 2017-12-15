@@ -9,6 +9,11 @@ import pandas
 from sqlalchemy import create_engine
 import logging
 
+def connectDB():
+    conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
+    c = conn.cursor()
+
+    return conn, c
 
 class FindSoakDBFiles(luigi.Task):
     # date parameter - needs to be changed
@@ -33,6 +38,13 @@ class FindSoakDBFiles(luigi.Task):
             f.write(out)
         #f.close()
 
+        conn, c = connectDB()
+        c.execute('''select exists(select * from information_schema.tables where table_name='soakdb_files');''')
+        exists = c.fetchone()[0]
+        if exists:
+            pass
+        if not exists:
+            pass
 
 class TransferFedIDs(luigi.Task):
     # date parameter for daily run - needs to be changed
@@ -49,8 +61,7 @@ class TransferFedIDs(luigi.Task):
     # transfers data to a central postgres db
     def run(self):
         # connect to central postgres db
-        conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
-        c = conn.cursor()
+        conn, c = connectDB()
         # create a table to hold info on sqlite files
         c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (filename TEXT, modification_date BIGINT, proposal TEXT)'''
                   )
@@ -144,7 +155,7 @@ class TransferExperiment(luigi.Task):
         # define keys for xchem postgres DB
         lab_dictionary_keys = ['visit', 'library_plate', 'library_name', 'smiles', 'compound_code', 'protein',
                                'stock_conc', 'expr_conc',
-                               'solv_frac', 'soak_vol', 'soak_status', 'cryo_Stock_frac', 'cryo_frac',
+                               'solv_frac', 'soak_vol', 'soak_status', 'cryo_stock_frac', 'cryo_frac',
                                'cryo_transfer_vol', 'cryo_status',
                                'soak_time', 'harvest_status', 'crystal_name', 'mounting_result', 'mounting_time',
                                'data_collection_visit', 'crystal_id']
@@ -230,9 +241,19 @@ class TransferExperiment(luigi.Task):
 
         crystal_list = []
 
+        project_protein = {'datafile': [], 'protein_field': [], 'protein_from_crystal': []}
+
         # set database filename from postgres query
         for row in rows:
+
+
+
             database_file = str(row[0])
+
+            project_protein['datafile'].append(database_file)
+
+            temp_protein_list = []
+            temp_protein_cryst_list = []
 
             # connect to soakDB
             conn2 = sqlite3.connect(str(database_file))
@@ -300,19 +321,23 @@ class TransferExperiment(luigi.Task):
                                         and CompoundSMILES IS NOT NULL''',
                                       ('None', compsmiles)):
 
+                    temp_protein_list.append(str(row[5]))
+
                     try:
                         if str(row[17]) in crystal_list:
                             crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'I'))
                         if str(row[17].replace(str(row[17]), str(str(row[17]) + 'I'))) in crystal_list:
                             crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'II'))
-                            print 'double whammy'
                         else:
                             crystal_name = row[17]
+
+                        temp_protein_cryst_list.append(crystal_name.split('-')[0])
 
                         crystal_list.append(row[17])
                         crystal_list = list(set(crystal_list))
                     except:
-                        print sys.exc_info()
+                        logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
+                        temp_protein_cryst_list.append(str(sys.exc_info()[1]))
 
 
                     lab_table_list = []
@@ -344,9 +369,18 @@ class TransferExperiment(luigi.Task):
                              data_processing_dictionary_keys)
 
 
+                protein_list = list(set(temp_protein_list))
+                project_protein['protein_field'].append(protein_list)
+                protein_cryst_list = list(set(temp_protein_cryst_list))
+                project_protein['protein_from_crystal'].append(protein_cryst_list)
+
             except:
                 logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
+                project_protein['protein_from_crystal'].append(str(sys.exc_info()[1]))
+                project_protein['protein_field'].append(str(sys.exc_info()[1]))
                 c2.close()
+
+        print project_protein
 
         # turn dictionaries into dataframes
         labdf = pandas.DataFrame.from_dict(lab_dict)
@@ -355,6 +389,9 @@ class TransferExperiment(luigi.Task):
         # datacoldf = pandas.DataFrame.from_dict(data_collection_dict)
         refdf = pandas.DataFrame.from_dict(refinement_dict)
         dimpledf = pandas.DataFrame.from_dict(dimple_dict)
+
+        projectdf = pandas.DataFrame.from_dict(project_protein)
+        projectdf.to_csv('project_list.csv')
 
         # create an engine to postgres database and populate tables - ids are straight from dataframe index,
         # but link all together
@@ -372,5 +409,7 @@ class TransferExperiment(luigi.Task):
         conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
         c = conn.cursor()
 
-        with self.output().open('w') as f:
-            f.write('TransferExperiment DONE')
+        #with self.output().open('a') as f:
+        #    f.write('TransferExperiment DONE')
+
+

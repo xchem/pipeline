@@ -2,6 +2,8 @@ import luigi
 import psycopg2
 import database_operations
 import pandas
+import datetime
+import os
 
 class FindProjects(luigi.Task):
 
@@ -13,7 +15,7 @@ class FindProjects(luigi.Task):
 
     def run(self):
         # all data necessary for uploading hits
-        crystal_data_dump_dict = {'crystal_name':[], 'protein':[], 'smiles':[], 'bound_conf':[]}
+        crystal_data_dump_dict = {'crystal_name':[], 'protein':[], 'smiles':[], 'bound_conf':[], 'modification_date':[]}
 
         # all data necessary for uploading leads
         project_data_dump_dict = {'crystal_name':[], 'protein':[], 'pandda_path':[], 'reference_pdb':[]}
@@ -27,9 +29,11 @@ class FindProjects(luigi.Task):
 
         rows = c.fetchall()
 
+        print(str(len(rows)) + ' crystals were found to be in refinement or above')
+
         for row in rows:
 
-            c.execute('''SELECT smiles FROM lab WHERE crystal_id = %s''', (str(row[0]),))
+            c.execute('''SELECT smiles, protein FROM lab WHERE crystal_id = %s''', (str(row[0]),))
 
             lab_table = c.fetchall()
 
@@ -42,11 +46,30 @@ class FindProjects(luigi.Task):
 
 
             for entry in lab_table:
-                protein_name = str(row[0]).split('-')[0]
+                if len(str(entry[1])) < 2 or 'None' in str(entry[1]):
+                    protein_name = str(row[0]).split('-')[0]
+                else:
+                    protein_name = str(entry[1])
+
+                if len(str(row[1])) < 5:
+                    print ('No bound conf for ' + str(row[0]))
+                    continue
+
                 crystal_data_dump_dict['protein'].append(protein_name)
                 crystal_data_dump_dict['smiles'].append(entry[0])
                 crystal_data_dump_dict['crystal_name'].append(row[0])
                 crystal_data_dump_dict['bound_conf'].append(row[1])
+
+                try:
+                    modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(str(row[1]))).strftime(
+                        "%Y-%m-%d %H:%M:%S")
+                    modification_date = modification_date.replace('-', '')
+                    modification_date = modification_date.replace(':', '')
+                    modification_date = modification_date.replace(' ', '')
+                except:
+                    modification_date = ''
+
+                crystal_data_dump_dict['modification_date'].append(modification_date)
 
             c.execute('''SELECT pandda_path, reference_pdb FROM dimple WHERE crystal_id = %s''', (str(row[0]),))
 
@@ -62,7 +85,7 @@ class FindProjects(luigi.Task):
         crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
 
         protein_list=set(list(project_data_dump_dict['protein']))
-        #print protein_list
+        print protein_list
 
 
         for protein in protein_list:
