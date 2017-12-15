@@ -8,7 +8,7 @@ import datetime
 import pandas
 from sqlalchemy import create_engine
 import logging
-import db_functions
+import db_functions, misc_functions
 
 class FindSoakDBFiles(luigi.Task):
     # date parameter - needs to be changed
@@ -55,7 +55,7 @@ class TransferFedIDs(luigi.Task):
     # transfers data to a central postgres db
     def run(self):
         # connect to central postgres db
-        conn, c = connectDB()
+        conn, c = db_functions.connectDB()
         # create a table to hold info on sqlite files
         c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (filename TEXT, modification_date BIGINT, proposal TEXT)'''
                   )
@@ -77,11 +77,7 @@ class TransferFedIDs(luigi.Task):
                 out, err = proc.communicate()
 
                 # need to put modification date to use in the proasis upload scripts
-                modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(database_file)).strftime(
-                    "%Y-%m-%d %H:%M:%S")
-                modification_date = modification_date.replace('-', '')
-                modification_date = modification_date.replace(':', '')
-                modification_date = modification_date.replace(' ', '')
+                modification_date = misc_functions.get_mod_date(database_file)
                 c.execute('''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''', (database_file, int(modification_date), proposal, database_file, int(modification_date)))
                 conn.commit()
 

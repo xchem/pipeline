@@ -4,6 +4,7 @@ import database_operations
 import pandas
 import datetime
 import os
+import misc_functions
 
 class FindProjects(luigi.Task):
 
@@ -61,11 +62,7 @@ class FindProjects(luigi.Task):
                 crystal_data_dump_dict['bound_conf'].append(row[1])
 
                 try:
-                    modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(str(row[1]))).strftime(
-                        "%Y-%m-%d %H:%M:%S")
-                    modification_date = modification_date.replace('-', '')
-                    modification_date = modification_date.replace(':', '')
-                    modification_date = modification_date.replace(' ', '')
+                    modification_date = misc_functions.get_mod_date(str(row[1]))
                 except:
                     modification_date = ''
 
