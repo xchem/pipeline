@@ -35,11 +35,12 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class CheckFiles(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
     def requires(self):
         return FindSoakDBFiles()
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt'))
 
     def run(self):
         conn, c = db_functions.connectDB()
@@ -55,7 +56,7 @@ class CheckFiles(luigi.Task):
 
             for filename in files:
 
-                filename_clean =  filename.rstrip('\n')
+                filename_clean = filename.rstrip('\n')
 
                 c.execute('select filename, modification_date from soakdb_files where filename like %s;', (filename_clean,))
 
@@ -67,11 +68,13 @@ class CheckFiles(luigi.Task):
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
                         if current_mod_date > old_mod_date:
-                            print('INFO: ' + str(data_file) + ' has changed!')
+                            with self.output().open('w') as f:
+                                f.write('INFO: ' + str(data_file) + ' has changed!')
                             changed.append(data_file)
-                            # start function to add row and kick off process for that file
+                            # start class to add row and kick off process for that file
                     else:
-                        print('INFO: ' + str(data_file) + ' has not changed!')
+                        with self.output().open('w') as f:
+                            f.write('INFO: ' + str(data_file) + ' has not changed!')
                         # kick off class
 
             c.execute('select filename from soakdb_files;')
@@ -82,10 +85,12 @@ class CheckFiles(luigi.Task):
                     file_exists = os.path.isfile(data_file)
 
                     if not file_exists:
-                        print('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
+                        with self.output().open('w') as f:
+                            f.write('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
 
                     else:
-                        print('INFO: ' + str(row[0]) + ' is a new file!')
+                        with self.output().open('w') as f:
+                            f.write('INFO: ' + str(row[0]) + ' is a new file!')
                         new.append(str(row[0]))
 
         if not exists:
