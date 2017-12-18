@@ -98,7 +98,7 @@ class CheckFiles(luigi.Task):
             # kick of class for adding file to db
 
 
-class TransferFedIDs(luigi.Task):
+class TransferAllFedIDs(luigi.Task):
     # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
 
@@ -115,7 +115,7 @@ class TransferFedIDs(luigi.Task):
         # connect to central postgres db
         conn, c = db_functions.connectDB()
         # create a table to hold info on sqlite files
-        c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (filename TEXT, modification_date BIGINT, proposal TEXT)'''
+        c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT)'''
                   )
         conn.commit()
 
@@ -161,6 +161,23 @@ class TransferFedIDs(luigi.Task):
 
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
+
+class TransferChangedFedIDs(luigi.Task):
+    def requires(self):
+        pass
+    def output(self):
+        pass
+    def run(self):
+        pass
+
+
+class TransferNewFedIDs(luigi.Task):
+    def requires(self):
+        pass
+    def output(self):
+        pass
+    def run(self):
+        pass
 
 
 class TransferExperiment(luigi.Task):
