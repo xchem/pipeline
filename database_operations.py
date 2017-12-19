@@ -53,6 +53,11 @@ class CheckFiles(luigi.Task):
         changed = []
         new = []
 
+        # Status codes:-
+        # 0 = new
+        # 1 = changed
+        # 2 = not changed
+
         if exists:
             with self.input().open('r') as f:
                 files = f.readlines()
@@ -73,9 +78,11 @@ class CheckFiles(luigi.Task):
                         if current_mod_date > old_mod_date:
                             logging.info(str(data_file) + ' has changed!')
                             changed.append(data_file)
+                            c.execute('UPDATE soakdb_files SET status_code = 1 where filename = %s', (filename_clean,))
                             # start class to add row and kick off process for that file
                     else:
                         logging.info(str(data_file) + ' has not changed!')
+                        c.execute('UPDATE soakdb_files SET status_code = 2 where filename = %s', (filename_clean,))
 
             c.execute('select filename from soakdb_files;')
 
@@ -89,11 +96,12 @@ class CheckFiles(luigi.Task):
 
                     else:
                         logging.info(str(row[0]) + ' is a new file!')
+                        c.execute('UPDATE soakdb_files SET status_code = 0 where filename = %s', (filename_clean,))
                         new.append(str(row[0]))
 
         if not exists:
-            pass
-            # kick of class for adding file to db
+            print('will attempt to transfer all datafiles')
+            return TransferAllFedIDsAndDatafiles()
 
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
@@ -113,7 +121,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
         # connect to central postgres db
         conn, c = db_functions.connectDB()
         # create a table to hold info on sqlite files
-        c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT)'''
+        c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT)'''
                   )
         conn.commit()
 
