@@ -54,9 +54,9 @@ class CheckFiles(luigi.Task):
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
 
-        checked = []
-        changed = []
-        new = []
+        #checked = []
+        #changed = []
+        #new = []
 
         # Status codes:-
         # 0 = new
@@ -76,21 +76,18 @@ class CheckFiles(luigi.Task):
                 for row in c.fetchall():
                     if len(row) > 0:
                         data_file = str(row[0])
-                        print data_file
-                        checked.append(data_file)
+                        #checked.append(data_file)
                         old_mod_date = str(row[1])
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
                         if current_mod_date > old_mod_date:
                             logging.info(str(data_file) + ' has changed!')
-                            print('changed')
-                            changed.append(data_file)
+                            #changed.append(data_file)
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
                             conn.commit()
                             # start class to add row and kick off process for that file
                         else:
                             logging.info(str(data_file) + ' has not changed!')
-                            print('not changed')
                             c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
                             conn.commit()
 
@@ -108,11 +105,7 @@ class CheckFiles(luigi.Task):
                         logging.info(str(row[0]) + ' is a new file!')
                         c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
                         conn.commit()
-                        new.append(str(row[0]))
-
-        #if not exists:
-            #print('will attempt to transfer all datafiles')
-            #return TransferAllFedIDsAndDatafiles()
+                        #new.append(str(row[0]))
 
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
