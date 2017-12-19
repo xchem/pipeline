@@ -31,7 +31,6 @@ class FindSoakDBFiles(luigi.Task):
         # write filepaths to file as output
         with self.output().open('w') as f:
             f.write(out)
-        #f.close()
 
 
 class CheckFiles(luigi.Task):
@@ -184,7 +183,7 @@ class TransferNewDataFile(luigi.Task):
 class TransferExperiment(luigi.Task):
     # date parameter - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
-    data_file = luigi.Parameter()
+    # data_file = luigi.Parameter()
 
     # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
     def requires(self):
@@ -213,7 +212,8 @@ class TransferExperiment(luigi.Task):
                 dictionary[key] = []
 
         lab_dictionary_keys, crystal_dictionary_keys, data_processing_dictionary_keys, dimple_dictionary_keys, \
-        refinement_dictionary_keys, dictionaries = db_functions.define_dicts_and_keys()
+        refinement_dictionary_keys, dictionaries, lab_dict, crystal_dict, data_collection_dict, \
+        data_processing_dict, dimple_dict, refinement_dict = db_functions.define_dicts_and_keys()
 
         # add keys to dictionaries
         for dictionary in dictionaries:
@@ -335,32 +335,26 @@ class TransferExperiment(luigi.Task):
 
         # turn dictionaries into dataframes
         labdf = pandas.DataFrame.from_dict(lab_dict)
-        # crystaldf = pandas.DataFrame.from_dict(crystal_dict)
         dataprocdf = pandas.DataFrame.from_dict(data_processing_dict)
-        # datacoldf = pandas.DataFrame.from_dict(data_collection_dict)
         refdf = pandas.DataFrame.from_dict(refinement_dict)
         dimpledf = pandas.DataFrame.from_dict(dimple_dict)
 
+        # create a project list
         projectdf = pandas.DataFrame.from_dict(project_protein)
         projectdf.to_csv('project_list.csv')
 
-        # create an engine to postgres database and populate tables - ids are straight from dataframe index,
-        # but link all together
-        # TODO:
-        # find way to do update, rather than just create table each time
-        engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-        labdf.to_sql('lab', engine, if_exists='replace')
-        # crystaldf.to_sql('crystal', engine, if_exists='replace')
-        dataprocdf.to_sql('data_processing', engine, if_exists='replace')
-        # datacoldf.to_sql('data_collection', engine, if_exists='replace')
-        refdf.to_sql('refinement', engine, if_exists='replace')
-        dimpledf.to_sql('dimple', engine, if_exists='replace')
+        # start a postgres engine for data transfer
+        xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
 
-        # connect to master postgres db
-        conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
-        c = conn.cursor()
+        # compare dataframes to database rows and remove duplicates
+        labdf_nodups = db_functions.clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
+        dataprocdf_nodups = db_functions.clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
+                                                          data_processing_dictionary_keys)
+        refdf_nodups = db_functions.clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
+        dimpledf_nodups = db_functions.clean_df_db_dups(dimpledf, 'dimple', xchem_engine, dimple_dictionary_keys)
 
-        #with self.output().open('a') as f:
-        #    f.write('TransferExperiment DONE')
-
-
+        # append new entries to relevant tables
+        labdf_nodups.to_sql('lab', xchem_engine, if_exists='append')
+        dataprocdf_nodups.to_sql('data_processing', xchem_engine, if_exists='append')
+        refdf_nodups.to_sql('refinement', xchem_engine, if_exists='append')
+        dimpledf_nodups.to_sql('dimple', xchem_engine, if_exists='append')

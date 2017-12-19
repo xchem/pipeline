@@ -1,4 +1,5 @@
 import psycopg2
+import pandas as pd
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -133,7 +134,8 @@ def define_dicts_and_keys():
                     [dimple_dict, dimple_dictionary_keys], [refinement_dict, refinement_dictionary_keys]]
 
     return lab_dictionary_keys, crystal_dictionary_keys, data_processing_dictionary_keys, dimple_dictionary_keys, \
-           refinement_dictionary_keys, dictionaries
+           refinement_dictionary_keys, dictionaries, lab_dict, crystal_dict, data_collection_dict, \
+           data_processing_dict, dimple_dict, refinement_dict
 
 # from https://www.ryanbaumann.com/blog/2016/4/30/python-pandas-tosql-only-insert-new-rows
 def clean_df_db_dups(df, tablename, engine, dup_cols=[],
@@ -161,7 +163,6 @@ def clean_df_db_dups(df, tablename, engine, dup_cols=[],
             args_contin_filter = """ "%s" BETWEEN Convert(datetime, '%s')
                                           AND Convert(datetime, '%s')""" %(filter_continuous_col,
                               df[filter_continuous_col].min(), df[filter_continuous_col].max())
-
 
     if filter_categorical_col is not None:
         args_cat_filter = ' "%s" in(%s)' %(filter_categorical_col,
