@@ -36,7 +36,12 @@ class FindSoakDBFiles(luigi.Task):
 class CheckFiles(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     def requires(self):
-        return FindSoakDBFiles()
+        conn, c = db_functions.connectDB()
+        exists = db_functions.table_exists(c, 'soakdb_files')
+        if not exists:
+            return TransferAllFedIDsAndDatafiles()
+        else:
+            return FindSoakDBFiles()
 
     def output(self):
         pass
@@ -71,18 +76,23 @@ class CheckFiles(luigi.Task):
                 for row in c.fetchall():
                     if len(row) > 0:
                         data_file = str(row[0])
+                        print data_file
                         checked.append(data_file)
                         old_mod_date = str(row[1])
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
                         if current_mod_date > old_mod_date:
                             logging.info(str(data_file) + ' has changed!')
+                            print('changed')
                             changed.append(data_file)
-                            c.execute('UPDATE soakdb_files SET status_code = 1 where filename = %s', (filename_clean,))
+                            c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
+                            conn.commit()
                             # start class to add row and kick off process for that file
-                    else:
-                        logging.info(str(data_file) + ' has not changed!')
-                        c.execute('UPDATE soakdb_files SET status_code = 2 where filename = %s', (filename_clean,))
+                        else:
+                            logging.info(str(data_file) + ' has not changed!')
+                            print('not changed')
+                            c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
+                            conn.commit()
 
             c.execute('select filename from soakdb_files;')
 
@@ -96,12 +106,13 @@ class CheckFiles(luigi.Task):
 
                     else:
                         logging.info(str(row[0]) + ' is a new file!')
-                        c.execute('UPDATE soakdb_files SET status_code = 0 where filename = %s', (filename_clean,))
+                        c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
+                        conn.commit()
                         new.append(str(row[0]))
 
-        if not exists:
-            print('will attempt to transfer all datafiles')
-            return TransferAllFedIDsAndDatafiles()
+        #if not exists:
+            #print('will attempt to transfer all datafiles')
+            #return TransferAllFedIDsAndDatafiles()
 
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
