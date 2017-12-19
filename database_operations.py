@@ -44,7 +44,7 @@ class CheckFiles(luigi.Task):
             return FindSoakDBFiles()
 
     def output(self):
-        pass
+        return luigi.LocalTarget('new_soakdb_files.txt')
 
     def run(self):
         logfile = self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt')
@@ -54,9 +54,9 @@ class CheckFiles(luigi.Task):
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
 
-        #checked = []
+        checked = []
         #changed = []
-        #new = []
+        new = []
 
         # Status codes:-
         # 0 = new
@@ -76,7 +76,7 @@ class CheckFiles(luigi.Task):
                 for row in c.fetchall():
                     if len(row) > 0:
                         data_file = str(row[0])
-                        #checked.append(data_file)
+                        checked.append(data_file)
                         old_mod_date = str(row[1])
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
@@ -84,6 +84,7 @@ class CheckFiles(luigi.Task):
                             logging.info(str(data_file) + ' has changed!')
                             #changed.append(data_file)
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
+                            c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s,;', (current_mod_date, filename_clean))
                             conn.commit()
                             # start class to add row and kick off process for that file
                         else:
@@ -103,10 +104,17 @@ class CheckFiles(luigi.Task):
 
                     else:
                         logging.info(str(row[0]) + ' is a new file!')
-                        c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
+                        # the piece of code below is dumb - the entry does not exist yet!
+                        # c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
                         conn.commit()
-                        #new.append(str(row[0]))
+                        new.append(str(row[0]))
 
+        new_string = ''
+        for i in new:
+            new_string += str(i + ',')
+
+        with self.output().open('w') as f:
+            f.write(new_string)
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
@@ -182,10 +190,10 @@ class TransferChangedDataFile(luigi.Task):
         pass
 
 
-class TransferNewDataFile(luigi.Task):
+class TransferNewDataFiles(luigi.Task):
     data_file = luigi.Parameter()
     def requires(self):
-        pass
+        return CheckFiles()
     def output(self):
         pass
     def run(self):
