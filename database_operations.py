@@ -184,6 +184,7 @@ class TransferNewDataFile(luigi.Task):
 class TransferExperiment(luigi.Task):
     # date parameter - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
+    data_file = luigi.Parameter()
 
     # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
     def requires(self):
@@ -294,6 +295,9 @@ class TransferExperiment(luigi.Task):
         c = conn.cursor()
 
         # get all soakDB file names and close postgres connection
+        # change this to take filename from input, and only handle one data file at a time - i.e. when file is selected
+        # as new or changed, kick off everything below here as appropriate. Have a function to determine the query to
+        # drop rows relating to a file that has changed, and then a function to add rows - don't use pandas to add data
         c.execute('select filename from soakdb_files')
         rows = c.fetchall()
         c.close()
