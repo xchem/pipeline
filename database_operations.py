@@ -40,9 +40,13 @@ class CheckFiles(luigi.Task):
         return FindSoakDBFiles()
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt'))
+        pass
 
     def run(self):
+        logfile = self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt')
+        logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s',
+                            datefrmt='%m/%d/%y %H:%M:%S')
+
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
 
@@ -68,14 +72,11 @@ class CheckFiles(luigi.Task):
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
                         if current_mod_date > old_mod_date:
-                            with self.output().open('w') as f:
-                                f.write('INFO: ' + str(data_file) + ' has changed!')
+                            logging.info(str(data_file) + ' has changed!')
                             changed.append(data_file)
                             # start class to add row and kick off process for that file
                     else:
-                        with self.output().open('w') as f:
-                            f.write('INFO: ' + str(data_file) + ' has not changed!')
-                        # kick off class
+                        logging.info(str(data_file) + ' has not changed!')
 
             c.execute('select filename from soakdb_files;')
 
@@ -85,12 +86,10 @@ class CheckFiles(luigi.Task):
                     file_exists = os.path.isfile(data_file)
 
                     if not file_exists:
-                        with self.output().open('w') as f:
-                            f.write('WARNING: ' + str(data_file) + ' no longer exists! - notify users!')
+                        logging.warning(str(data_file) + ' no longer exists! - notify users!')
 
                     else:
-                        with self.output().open('w') as f:
-                            f.write('INFO: ' + str(row[0]) + ' is a new file!')
+                        logging.info(str(row[0]) + ' is a new file!')
                         new.append(str(row[0]))
 
         if not exists:
@@ -98,7 +97,7 @@ class CheckFiles(luigi.Task):
             # kick of class for adding file to db
 
 
-class TransferAllFedIDs(luigi.Task):
+class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
 
@@ -162,7 +161,8 @@ class TransferAllFedIDs(luigi.Task):
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 
-class TransferChangedFedIDs(luigi.Task):
+class TransferChangedDataFile(luigi.Task):
+    data_file = luigi.Parameter()
     def requires(self):
         pass
     def output(self):
@@ -171,7 +171,8 @@ class TransferChangedFedIDs(luigi.Task):
         pass
 
 
-class TransferNewFedIDs(luigi.Task):
+class TransferNewDataFile(luigi.Task):
+    data_file = luigi.Parameter()
     def requires(self):
         pass
     def output(self):
