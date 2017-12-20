@@ -166,17 +166,30 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 
+
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
+    file_id = luigi.Parameter()
     def requires(self):
-        pass
+        return CheckFiles()
     def output(self):
         pass
     def run(self):
+        conn, c = db_functions.connectDB()
+        c.execute('delete from lab where file_id=%s', (self.file_id,))
+        conn.commit()
+        c.execute('delete from refinement where file_id=%s', (self.file_id,))
+        conn.commit()
+        c.execute('delete from dimple where file_id=%s', (self.file_id,))
+        conn.commit()
+        c.execute('delete from data_processing where file_id=%s', (self.file_id,))
+        conn.commit()
         db_functions.transfer_data(self.data_file)
+        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
+        conn.commit()
 
 
-class TransferNewDataFiles(luigi.Task):
+class TransferNewDataFile(luigi.Task):
     data_file = luigi.Parameter()
     file_id = luigi.Parameter()
     def requires(self):
@@ -190,24 +203,26 @@ class TransferNewDataFiles(luigi.Task):
         conn.commit()
 
 
-class StartNewTransfers(luigi.Task):
+class StartTransfers(luigi.Task):
 
-    def get_file_list(self):
+    def get_file_list(self, status_code):
         datafiles = []
         fileids = []
         conn, c = db_functions.connectDB()
-        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = 0')
+        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = %s', (status_code,))
         rows = c.fetchall()
         for row in rows:
             datafiles.append(str(row[0]))
             fileids.append(str(row[1]))
 
-        zip_list = zip(datafiles, fileids)
-        return zip_list
+        list = zip(datafiles, fileids)
+        return list
 
     def requires(self):
-        zip_list = self.get_file_list()
-        return [TransferNewDataFiles(data_file=datafile, file_id=fileid) for (datafile, fileid) in zip_list]
+        new_list = self.get_file_list(0)
+        changed_list = self.get_file_list(1)
+        return [TransferNewDataFile(data_file=datafile, file_id=fileid) for (datafile, fileid) in new_list], \
+               [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
 
     def output(self):
         pass
@@ -216,20 +231,20 @@ class StartNewTransfers(luigi.Task):
         pass
 
 
-class TransferExperiment(luigi.Task):
-    # date parameter - needs to be changed
-    date = luigi.DateParameter(default=datetime.date.today())
-    # data_file = luigi.Parameter()
-
-    # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
-    def requires(self):
-        return FindSoakDBFiles()
-
-    def output(self):
-        return luigi.LocalTarget(self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt'))
-
-    def run(self):
-        # set up logging
-        logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
-        logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
+# class TransferExperiment(luigi.Task):
+#     # date parameter - needs to be changed
+#     date = luigi.DateParameter(default=datetime.date.today())
+#     # data_file = luigi.Parameter()
+#
+#     # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
+#     def requires(self):
+#         return FindSoakDBFiles()
+#
+#     def output(self):
+#         return luigi.LocalTarget(self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt'))
+#
+#     def run(self):
+#         # set up logging
+#         logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
+#         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
 
