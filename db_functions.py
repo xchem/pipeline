@@ -1,5 +1,9 @@
 import psycopg2
+import sys
 import pandas as pd
+import logging
+import sqlite3
+from sqlalchemy import create_engine
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -92,12 +96,12 @@ def define_dicts_and_keys():
                            'solv_frac', 'soak_vol', 'soak_status', 'cryo_stock_frac', 'cryo_frac',
                            'cryo_transfer_vol', 'cryo_status',
                            'soak_time', 'harvest_status', 'crystal_name', 'mounting_result', 'mounting_time',
-                           'data_collection_visit', 'crystal_id']
+                           'data_collection_visit', 'crystal_id', 'file_id']
 
     crystal_dictionary_keys = ['tag', 'name', 'spacegroup', 'point_group', 'a', 'b', 'c', 'alpha',
-                               'beta', 'gamma', 'volume', 'crystal_name', 'crystal_id']
+                               'beta', 'gamma', 'volume', 'crystal_name', 'crystal_id', 'file_id']
 
-    data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name', 'crystal_id']
+    data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name', 'crystal_id', 'file_id']
 
     data_processing_dictionary_keys = ['image_path', 'program', 'spacegroup', 'unit_cell', 'auto_assigned',
                                        'res_overall',
@@ -113,11 +117,11 @@ def define_dicts_and_keys():
                                        'unit_cell_vol',
                                        'alert', 'score', 'status', 'r_cryst', 'r_free', 'dimple_pdb_path',
                                        'dimple_mtz_path',
-                                       'dimple_status', 'crystal_name', 'crystal_id']
+                                       'dimple_status', 'crystal_name', 'crystal_id', 'file_id']
 
     dimple_dictionary_keys = ['res_high', 'r_free', 'pdb_path', 'mtz_path', 'reference_pdb', 'status', 'pandda_run',
                               'pandda_hit',
-                              'pandda_reject', 'pandda_path', 'crystal_name', 'crystal_id']
+                              'pandda_reject', 'pandda_path', 'crystal_name', 'crystal_id', 'file_id']
 
     refinement_dictionary_keys = ['res', 'res_TL', 'rcryst', 'rcryst_TL', 'r_free', 'rfree_TL', 'spacegroup',
                                   'lig_cc', 'rmsd_bonds',
@@ -126,7 +130,7 @@ def define_dicts_and_keys():
                                   'pdb_latest', 'mtz_latest', 'matrix_weight', 'refinement_path', 'lig_confidence',
                                   'lig_bound_conf', 'bound_conf', 'molprobity_score', 'molprobity_score_TL',
                                   'ramachandran_outliers', 'ramachandran_outliers_TL', 'ramachandran_favoured',
-                                  'ramachandran_favoured_TL', 'status', 'crystal_name', 'crystal_id']
+                                  'ramachandran_favoured_TL', 'status', 'crystal_name', 'crystal_id', 'file_id']
 
     dictionaries = [[lab_dict, lab_dictionary_keys], [crystal_dict, crystal_dictionary_keys],
                     [data_collection_dict, data_collection_dictionary_keys],
@@ -135,7 +139,7 @@ def define_dicts_and_keys():
 
     return lab_dictionary_keys, crystal_dictionary_keys, data_processing_dictionary_keys, dimple_dictionary_keys, \
            refinement_dictionary_keys, dictionaries, lab_dict, crystal_dict, data_collection_dict, \
-           data_processing_dict, dimple_dict, refinement_dict
+           data_processing_dict, dimple_dict, refinement_dict, data_collection_dictionary_keys
 
 # from https://www.ryanbaumann.com/blog/2016/4/30/python-pandas-tosql-only-insert-new-rows
 def clean_df_db_dups(df, tablename, engine, dup_cols=[],
@@ -180,3 +184,171 @@ def clean_df_db_dups(df, tablename, engine, dup_cols=[],
     df = df[df['_merge'] == 'left_only']
     df.drop(['_merge'], axis=1, inplace=True)
     return df
+
+
+def transfer_data(database_file):
+    def create_list_from_ind(rowno, array, numbers_list, crystal_id, file_id):
+        for ind in numbers_list:
+            array.append(rowno[ind])
+        array.append(crystal_id)
+        array.append(file_id)
+
+    def pop_dict(array, dictny, dictionary_keys):
+        for i in range(0, len(dictionary_keys)):
+            dictny[dictionary_keys[i]].append(array[i])
+        return dictny
+
+    def add_keys(dictny, keys):
+        for key in keys:
+            dictny[key] = []
+
+    lab_dictionary_keys, crystal_dictionary_keys, data_processing_dictionary_keys, dimple_dictionary_keys, \
+    refinement_dictionary_keys, dictionaries, lab_dict, crystal_dict, data_collection_dict, \
+    data_processing_dict, dimple_dict, refinement_dict, data_collection_dictionary_keys = define_dicts_and_keys()
+
+    # add keys to dictionaries
+    for dictionary in dictionaries:
+        add_keys(dictionary[0], dictionary[1])
+
+    # numbers relating to where selected in query
+    # 17 = number for crystal_name
+    lab_table_numbers = range(0, 21)
+
+    crystal_table_numbers = range(22, 33)
+    crystal_table_numbers.insert(len(crystal_table_numbers), 17)
+
+    data_collection_table_numbers = range(33, 36)
+    data_collection_table_numbers.insert(len(data_collection_table_numbers), 17)
+
+    data_processing_table_numbers = range(36, 79)
+    data_processing_table_numbers.insert(len(data_processing_table_numbers), 17)
+
+    dimple_table_numbers = range(79, 89)
+    dimple_table_numbers.insert(len(dimple_table_numbers), 17)
+
+    refinement_table_numbers = range(91, 122)
+    refinement_table_numbers.insert(len(refinement_table_numbers), 17)
+
+    # connect to master postgres db
+    conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
+    c = conn.cursor()
+    c.execute('select id from soakdb_files where filename = %s', (database_file,))
+    rows = c.fetchall()
+    if len(rows) == 1:
+        file_id_no = int(rows[0])
+
+    # get all soakDB file names and close postgres connection
+    # change this to take filename from input, and only handle one data file at a time - i.e. when file is selected
+    # as new or changed, kick off everything below here as appropriate. Have a function to determine the query to
+    # drop rows relating to a file that has changed, and then a function to add rows - don't use pandas to add data
+
+    # c.execute('select filename from soakdb_files')
+    # rows = c.fetchall()
+    # c.close()
+
+    crystal_list = []
+
+    # project_protein = {'datafile': [], 'protein_field': [], 'protein_from_crystal': []}
+
+    # set database filename from postgres query
+
+    # project_protein['datafile'].append(database_file)
+
+    temp_protein_list = []
+    temp_protein_cryst_list = []
+
+    # connect to soakDB
+    conn2 = sqlite3.connect(str(database_file))
+    c2 = conn2.cursor()
+
+    try:
+        # columns with issues: ProjectDirectory, DatePANDDAModelCreated
+        for row in soakdb_query(c2):
+
+            temp_protein_list.append(str(row[5]))
+
+            try:
+                if str(row[17]) in crystal_list:
+                    crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'I'))
+                if str(row[17].replace(str(row[17]), str(str(row[17]) + 'I'))) in crystal_list:
+                    crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'II'))
+                else:
+                    crystal_name = row[17]
+
+                temp_protein_cryst_list.append(crystal_name.split('-')[0])
+
+                crystal_list.append(row[17])
+                crystal_list = list(set(crystal_list))
+            except:
+                logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
+                temp_protein_cryst_list.append(str(sys.exc_info()[1]))
+                return None
+
+
+            lab_table_list = []
+            crystal_table_list = []
+            data_collection_table_list = []
+            data_processing_table_list = []
+            dimple_table_list = []
+            refinement_table_list = []
+
+            lists = [lab_table_list, crystal_table_list, data_collection_table_list, data_processing_table_list,
+                     dimple_table_list, refinement_table_list]
+
+            numbers = [lab_table_numbers, crystal_table_numbers, data_collection_table_numbers,
+                       data_processing_table_numbers, dimple_table_numbers, refinement_table_numbers]
+            listref = 0
+
+            for listname in lists:
+                create_list_from_ind(row, listname, numbers[listref], crystal_name, file_id_no)
+                listref += 1
+
+            # populate query return into dictionary, so that it can be turned into a df and transfered to DB
+            pop_dict(lab_table_list, lab_dict, lab_dictionary_keys)
+            pop_dict(crystal_table_list, crystal_dict, crystal_dictionary_keys)
+            pop_dict(refinement_table_list, refinement_dict, refinement_dictionary_keys)
+            pop_dict(dimple_table_list, dimple_dict, dimple_dictionary_keys)
+            pop_dict(data_collection_table_list, data_collection_dict,
+                     data_collection_dictionary_keys)
+            pop_dict(data_processing_table_list, data_processing_dict,
+                     data_processing_dictionary_keys)
+
+        # protein_list = list(set(temp_protein_list))
+        # project_protein['protein_field'].append(protein_list)
+        # protein_cryst_list = list(set(temp_protein_cryst_list))
+        # project_protein['protein_from_crystal'].append(protein_cryst_list)
+
+    except:
+        logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
+        # project_protein['protein_from_crystal'].append(str(sys.exc_info()[1]))
+        # project_protein['protein_field'].append(str(sys.exc_info()[1]))
+        c2.close()
+        return None
+
+    # print project_protein
+
+    # turn dictionaries into dataframes
+    labdf = pd.DataFrame.from_dict(lab_dict)
+    dataprocdf = pd.DataFrame.from_dict(data_processing_dict)
+    refdf = pd.DataFrame.from_dict(refinement_dict)
+    dimpledf = pd.DataFrame.from_dict(dimple_dict)
+
+    # create a project list
+    # projectdf = pandas.DataFrame.from_dict(project_protein)
+    # projectdf.to_csv('project_list.csv')
+
+    # start a postgres engine for data transfer
+    xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
+
+    # compare dataframes to database rows and remove duplicates
+    labdf_nodups = clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
+    dataprocdf_nodups = clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
+                                                      data_processing_dictionary_keys)
+    refdf_nodups = clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
+    dimpledf_nodups = clean_df_db_dups(dimpledf, 'dimple', xchem_engine, dimple_dictionary_keys)
+
+    # append new entries to relevant tables
+    labdf_nodups.to_sql('lab', xchem_engine, if_exists='append')
+    dataprocdf_nodups.to_sql('data_processing', xchem_engine, if_exists='append')
+    refdf_nodups.to_sql('refinement', xchem_engine, if_exists='append')
+    dimpledf_nodups.to_sql('dimple', xchem_engine, if_exists='append')

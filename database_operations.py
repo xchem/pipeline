@@ -1,12 +1,7 @@
 import luigi
-import psycopg2
-import sqlite3
 import subprocess
-import sys
 import os
 import datetime
-import pandas
-from sqlalchemy import create_engine
 import logging
 import db_functions, misc_functions
 
@@ -187,7 +182,7 @@ class TransferChangedDataFile(luigi.Task):
     def output(self):
         pass
     def run(self):
-        pass
+        db_functions.transfer_data(self.data_file)
 
 
 class TransferNewDataFiles(luigi.Task):
@@ -197,7 +192,7 @@ class TransferNewDataFiles(luigi.Task):
     def output(self):
         pass
     def run(self):
-        pass
+        db_functions.transfer_data(self.data_file)
 
 
 class StartNewTransfers(luigi.Task):
@@ -213,6 +208,12 @@ class StartNewTransfers(luigi.Task):
 
     def requires(self):
         return [TransferNewDataFiles(data_file) for data_file in self.get_file_list()]
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
 
 
 class TransferExperiment(luigi.Task):
@@ -232,164 +233,3 @@ class TransferExperiment(luigi.Task):
         logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
 
-        def create_list_from_ind(row, array, numbers_list, crystal_id):
-            for ind in numbers_list:
-                array.append(row[ind])
-            array.append(crystal_id)
-
-        def pop_dict(array, dictionary, dictionary_keys):
-            for i in range(0, len(dictionary_keys)):
-                dictionary[dictionary_keys[i]].append(array[i])
-            return dictionary
-
-        def add_keys(dictionary, keys):
-            for key in keys:
-                dictionary[key] = []
-
-        lab_dictionary_keys, crystal_dictionary_keys, data_processing_dictionary_keys, dimple_dictionary_keys, \
-        refinement_dictionary_keys, dictionaries, lab_dict, crystal_dict, data_collection_dict, \
-        data_processing_dict, dimple_dict, refinement_dict = db_functions.define_dicts_and_keys()
-
-        # add keys to dictionaries
-        for dictionary in dictionaries:
-            add_keys(dictionary[0], dictionary[1])
-
-        # numbers relating to where selected in query
-        # 17 = number for crystal_name
-        lab_table_numbers = range(0, 21)
-
-        crystal_table_numbers = range(22, 33)
-        crystal_table_numbers.insert(len(crystal_table_numbers), 17)
-
-        data_collection_table_numbers = range(33, 36)
-        data_collection_table_numbers.insert(len(data_collection_table_numbers), 17)
-
-        data_processing_table_numbers = range(36, 79)
-        data_processing_table_numbers.insert(len(data_processing_table_numbers), 17)
-
-        dimple_table_numbers = range(79, 89)
-        dimple_table_numbers.insert(len(dimple_table_numbers), 17)
-
-        refinement_table_numbers = range(91, 122)
-        refinement_table_numbers.insert(len(refinement_table_numbers), 17)
-
-        # connect to master postgres db
-        conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
-        c = conn.cursor()
-
-        # get all soakDB file names and close postgres connection
-        # change this to take filename from input, and only handle one data file at a time - i.e. when file is selected
-        # as new or changed, kick off everything below here as appropriate. Have a function to determine the query to
-        # drop rows relating to a file that has changed, and then a function to add rows - don't use pandas to add data
-        c.execute('select filename from soakdb_files')
-        rows = c.fetchall()
-        c.close()
-
-        crystal_list = []
-
-        project_protein = {'datafile': [], 'protein_field': [], 'protein_from_crystal': []}
-
-        # set database filename from postgres query
-        for row in rows:
-
-            database_file = str(row[0])
-
-            project_protein['datafile'].append(database_file)
-
-            temp_protein_list = []
-            temp_protein_cryst_list = []
-
-            # connect to soakDB
-            conn2 = sqlite3.connect(str(database_file))
-            c2 = conn2.cursor()
-
-            try:
-                # columns with issues: ProjectDirectory, DatePANDDAModelCreated
-                for row in db_functions.soakdb_query(c2):
-
-                    temp_protein_list.append(str(row[5]))
-
-                    try:
-                        if str(row[17]) in crystal_list:
-                            crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'I'))
-                        if str(row[17].replace(str(row[17]), str(str(row[17]) + 'I'))) in crystal_list:
-                            crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'II'))
-                        else:
-                            crystal_name = row[17]
-
-                        temp_protein_cryst_list.append(crystal_name.split('-')[0])
-
-                        crystal_list.append(row[17])
-                        crystal_list = list(set(crystal_list))
-                    except:
-                        logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
-                        temp_protein_cryst_list.append(str(sys.exc_info()[1]))
-
-
-                    lab_table_list = []
-                    crystal_table_list = []
-                    data_collection_table_list = []
-                    data_processing_table_list = []
-                    dimple_table_list = []
-                    refinement_table_list = []
-
-                    lists = [lab_table_list, crystal_table_list, data_collection_table_list, data_processing_table_list,
-                             dimple_table_list, refinement_table_list]
-
-                    numbers = [lab_table_numbers, crystal_table_numbers, data_collection_table_numbers,
-                               data_processing_table_numbers, dimple_table_numbers, refinement_table_numbers]
-                    listref = 0
-
-                    for listname in lists:
-                        create_list_from_ind(row, listname, numbers[listref], crystal_name)
-                        listref += 1
-
-                    # populate query return into dictionary, so that it can be turned into a df and transfered to DB
-                    pop_dict(lab_table_list, lab_dict, lab_dictionary_keys)
-                    pop_dict(crystal_table_list, crystal_dict, crystal_dictionary_keys)
-                    pop_dict(refinement_table_list, refinement_dict, refinement_dictionary_keys)
-                    pop_dict(dimple_table_list, dimple_dict, dimple_dictionary_keys)
-                    pop_dict(data_collection_table_list, data_collection_dict,
-                             data_collection_dictionary_keys)
-                    pop_dict(data_processing_table_list, data_processing_dict,
-                             data_processing_dictionary_keys)
-
-
-                protein_list = list(set(temp_protein_list))
-                project_protein['protein_field'].append(protein_list)
-                protein_cryst_list = list(set(temp_protein_cryst_list))
-                project_protein['protein_from_crystal'].append(protein_cryst_list)
-
-            except:
-                logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
-                project_protein['protein_from_crystal'].append(str(sys.exc_info()[1]))
-                project_protein['protein_field'].append(str(sys.exc_info()[1]))
-                c2.close()
-
-        print project_protein
-
-        # turn dictionaries into dataframes
-        labdf = pandas.DataFrame.from_dict(lab_dict)
-        dataprocdf = pandas.DataFrame.from_dict(data_processing_dict)
-        refdf = pandas.DataFrame.from_dict(refinement_dict)
-        dimpledf = pandas.DataFrame.from_dict(dimple_dict)
-
-        # create a project list
-        projectdf = pandas.DataFrame.from_dict(project_protein)
-        projectdf.to_csv('project_list.csv')
-
-        # start a postgres engine for data transfer
-        xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-
-        # compare dataframes to database rows and remove duplicates
-        labdf_nodups = db_functions.clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
-        dataprocdf_nodups = db_functions.clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
-                                                          data_processing_dictionary_keys)
-        refdf_nodups = db_functions.clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
-        dimpledf_nodups = db_functions.clean_df_db_dups(dimpledf, 'dimple', xchem_engine, dimple_dictionary_keys)
-
-        # append new entries to relevant tables
-        labdf_nodups.to_sql('lab', xchem_engine, if_exists='append')
-        dataprocdf_nodups.to_sql('data_processing', xchem_engine, if_exists='append')
-        refdf_nodups.to_sql('refinement', xchem_engine, if_exists='append')
-        dimpledf_nodups.to_sql('dimple', xchem_engine, if_exists='append')
