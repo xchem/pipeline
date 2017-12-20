@@ -4,6 +4,8 @@ import pandas as pd
 import logging
 import sqlite3
 from sqlalchemy import create_engine
+import subprocess
+import misc_functions
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -15,6 +17,7 @@ def table_exists(c, tablename):
     c.execute('''select exists(select * from information_schema.tables where table_name=%s);''', (tablename,))
     exists = c.fetchone()[0]
     return exists
+
 
 def soakdb_query(cursor):
     compsmiles = '%None%'
@@ -76,6 +79,9 @@ def soakdb_query(cursor):
                                             and CompoundSMILES not like ? 
                                             and CompoundSMILES IS NOT NULL''',
                ('None', compsmiles))
+
+    results = cursor.fetchall()
+    return results
 
 
 def create_insert_query(keys, indicies):
@@ -235,7 +241,8 @@ def transfer_data(database_file):
     c.execute('select id from soakdb_files where filename = %s', (database_file,))
     rows = c.fetchall()
     if len(rows) == 1:
-        file_id_no = int(rows[0])
+        file_id_no = str(rows[0][0])
+        print file_id_no
 
     # get all soakDB file names and close postgres connection
     # change this to take filename from input, and only handle one data file at a time - i.e. when file is selected
@@ -254,8 +261,8 @@ def transfer_data(database_file):
 
     # project_protein['datafile'].append(database_file)
 
-    temp_protein_list = []
-    temp_protein_cryst_list = []
+    # temp_protein_list = []
+    # temp_protein_cryst_list = []
 
     # connect to soakDB
     conn2 = sqlite3.connect(str(database_file))
@@ -265,25 +272,14 @@ def transfer_data(database_file):
         # columns with issues: ProjectDirectory, DatePANDDAModelCreated
         for row in soakdb_query(c2):
 
-            temp_protein_list.append(str(row[5]))
+            #temp_protein_list.append(str(row[5]))
 
             try:
-                if str(row[17]) in crystal_list:
-                    crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'I'))
-                if str(row[17].replace(str(row[17]), str(str(row[17]) + 'I'))) in crystal_list:
-                    crystal_name = row[17].replace(str(row[17]), str(str(row[17]) + 'II'))
-                else:
-                    crystal_name = row[17]
-
-                temp_protein_cryst_list.append(crystal_name.split('-')[0])
-
-                crystal_list.append(row[17])
-                crystal_list = list(set(crystal_list))
+                crystal_name = row[17]
             except:
                 logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
-                temp_protein_cryst_list.append(str(sys.exc_info()[1]))
+                # temp_protein_cryst_list.append(str(sys.exc_info()[1]))
                 return None
-
 
             lab_table_list = []
             crystal_table_list = []
@@ -339,16 +335,54 @@ def transfer_data(database_file):
 
     # start a postgres engine for data transfer
     xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
+    try:
+        # compare dataframes to database rows and remove duplicates
+        labdf_nodups = clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
+        dataprocdf_nodups = clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
+                                                          data_processing_dictionary_keys)
+        refdf_nodups = clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
+        dimpledf_nodups = clean_df_db_dups(dimpledf, 'dimple', xchem_engine, dimple_dictionary_keys)
 
-    # compare dataframes to database rows and remove duplicates
-    labdf_nodups = clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
-    dataprocdf_nodups = clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
-                                                      data_processing_dictionary_keys)
-    refdf_nodups = clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
-    dimpledf_nodups = clean_df_db_dups(dimpledf, 'dimple', xchem_engine, dimple_dictionary_keys)
+        # append new entries to relevant tables
+        labdf_nodups.to_sql('lab', xchem_engine, if_exists='append')
+        dataprocdf_nodups.to_sql('data_processing', xchem_engine, if_exists='append')
+        refdf_nodups.to_sql('refinement', xchem_engine, if_exists='append')
+        dimpledf_nodups.to_sql('dimple', xchem_engine, if_exists='append')
+    except:
+        labdf.to_sql('lab', xchem_engine, if_exists='append')
+        dataprocdf.to_sql('data_processing', xchem_engine, if_exists='append')
+        refdf.to_sql('refinement', xchem_engine, if_exists='append')
+        dimpledf.to_sql('dimple', xchem_engine, if_exists='append')
 
-    # append new entries to relevant tables
-    labdf_nodups.to_sql('lab', xchem_engine, if_exists='append')
-    dataprocdf_nodups.to_sql('data_processing', xchem_engine, if_exists='append')
-    refdf_nodups.to_sql('refinement', xchem_engine, if_exists='append')
-    dimpledf_nodups.to_sql('dimple', xchem_engine, if_exists='append')
+
+def pop_soakdb(database_file):
+    conn, c = connectDB()
+    # create a table to hold info on sqlite files
+    c.execute(
+        '''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT);''')
+    conn.commit()
+    # take proposal number from filepath (for whitelist)
+    proposal = database_file.split('/')[5].split('-')[0]
+    proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
+    out, err = proc.communicate()
+
+    # need to put modification date to use in the proasis upload scripts
+    modification_date = misc_functions.get_mod_date(database_file)
+    c.execute(
+        '''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''',
+        (database_file, int(modification_date), proposal, database_file, int(modification_date)))
+    conn.commit()
+
+    return out, err, proposal
+
+def pop_proposals(proposal_number):
+    conn, c = connectDB()
+    c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
+    proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
+    out, err = proc.communicate()
+    append_list = out.split(':')[3].replace('\n', '')
+
+    c.execute(str(
+        '''INSERT INTO proposals (proposal, fedids) SELECT %s, %s WHERE NOT EXISTS (SELECT proposal, fedids FROM proposals WHERE proposal = %s AND fedids = %s);'''),
+              (proposal_number, append_list, proposal_number, append_list))
+    conn.commit()

@@ -87,6 +87,14 @@ class CheckFiles(luigi.Task):
                             c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
                             conn.commit()
 
+                if filename_clean not in checked:
+                    logging.info(filename_clean + ' is a new file!')
+                    out, err, proposal = db_functions.pop_soakdb(filename_clean)
+                    db_functions.pop_proposals(proposal)
+                    c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
+                    new.append(str(row[0]))
+
+
             c.execute('select filename from soakdb_files;')
 
             for row in c.fetchall():
@@ -98,11 +106,13 @@ class CheckFiles(luigi.Task):
                         logging.warning(str(data_file) + ' no longer exists! - notify users!')
 
                     else:
-                        logging.info(str(row[0]) + ' is a new file!')
-                        # the piece of code below is dumb - the entry does not exist yet!
-                        # c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                        # conn.commit()
-                        new.append(str(row[0]))
+                        logging.error(str(row[0]) + ' : something wrong!')
+                        # new.append(str(row[0]))
+
+        exists = db_functions.table_exists(c, 'lab')
+        if not exists:
+            c.execute('UPDATE soakdb_files SET status_code = 0;')
+            conn.commit()
 
         new_string = ''
         for i in new:
@@ -127,10 +137,6 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
     def run(self):
         # connect to central postgres db
         conn, c = db_functions.connectDB()
-        # create a table to hold info on sqlite files
-        c.execute('''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT)'''
-                  )
-        conn.commit()
 
         # set up logging
         logfile = self.date.strftime('transfer_logs/fedids_%Y%m%d.txt')
@@ -142,19 +148,9 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
             for database_file in database_list.readlines():
                 database_file = database_file.replace('\n', '')
 
-                # take proposal number from filepath (for whitelist)
-                proposal = database_file.split('/')[5].split('-')[0]
-                proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
-                out, err = proc.communicate()
-
-                # need to put modification date to use in the proasis upload scripts
-                modification_date = misc_functions.get_mod_date(database_file)
-                c.execute('''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''', (database_file, int(modification_date), proposal, database_file, int(modification_date)))
-                conn.commit()
+                out, err, proposal = db_functions.pop_soakdb(database_file)
 
                 logging.info(str('FedIDs written for ' + proposal))
-
-        c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
 
         proposal_list = []
         c.execute('SELECT proposal FROM soakdb_files')
@@ -163,12 +159,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
             proposal_list.append(str(row[0]))
 
         for proposal_number in set(proposal_list):
-            proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
-            out, err = proc.communicate()
-            append_list = out.split(':')[3].replace('\n', '')
-
-            c.execute(str('''INSERT INTO proposals (proposal, fedids) SELECT %s, %s WHERE NOT EXISTS (SELECT proposal, fedids FROM proposals WHERE proposal = %s AND fedids = %s);'''), (proposal_number, append_list, proposal_number, append_list))
-            conn.commit()
+            db_functions.pop_proposals(proposal_number)
 
         c.close()
 
@@ -187,27 +178,36 @@ class TransferChangedDataFile(luigi.Task):
 
 class TransferNewDataFiles(luigi.Task):
     data_file = luigi.Parameter()
+    file_id = luigi.Parameter()
     def requires(self):
         return CheckFiles()
     def output(self):
         pass
     def run(self):
         db_functions.transfer_data(self.data_file)
+        conn, c = db_functions.connectDB()
+        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
+        conn.commit()
 
 
 class StartNewTransfers(luigi.Task):
 
     def get_file_list(self):
         datafiles = []
+        fileids = []
         conn, c = db_functions.connectDB()
-        c.execute('SELECT filename FROM soakdb_files WHERE status_code = 0')
-        rows = c.fetchall
+        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = 0')
+        rows = c.fetchall()
         for row in rows:
             datafiles.append(str(row[0]))
-        return datafiles
+            fileids.append(str(row[1]))
+
+        zip_list = zip(datafiles, fileids)
+        return zip_list
 
     def requires(self):
-        return [TransferNewDataFiles(data_file) for data_file in self.get_file_list()]
+        zip_list = self.get_file_list()
+        return [TransferNewDataFiles(data_file=datafile, file_id=fileid) for (datafile, fileid) in zip_list]
 
     def output(self):
         pass
