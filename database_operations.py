@@ -106,7 +106,7 @@ class CheckFiles(luigi.Task):
                         logging.info(str(row[0]) + ' is a new file!')
                         # the piece of code below is dumb - the entry does not exist yet!
                         # c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                        conn.commit()
+                        # conn.commit()
                         new.append(str(row[0]))
 
         new_string = ''
@@ -198,6 +198,21 @@ class TransferNewDataFiles(luigi.Task):
         pass
     def run(self):
         pass
+
+
+class StartNewTransfers(luigi.Task):
+
+    def get_file_list(self):
+        datafiles = []
+        conn, c = db_functions.connectDB()
+        c.execute('SELECT filename FROM soakdb_files WHERE status_code = 0')
+        rows = c.fetchall
+        for row in rows:
+            datafiles.append(str(row[0]))
+        return datafiles
+
+    def requires(self):
+        return [TransferNewDataFiles(data_file) for data_file in self.get_file_list()]
 
 
 class TransferExperiment(luigi.Task):
