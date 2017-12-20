@@ -1,15 +1,14 @@
 import luigi
-import psycopg2
 import database_operations
 import pandas
-import datetime
-import os
 import misc_functions
+import db_functions
+from sqlalchemy import create_engine
 
 class FindProjects(luigi.Task):
 
     def requires(self):
-        return database_operations.TransferExperiment()
+        return database_operations.StartTransfers()
 
     def output(self):
         pass
@@ -23,8 +22,7 @@ class FindProjects(luigi.Task):
 
         outcome_string = '(%3%|%4%|%5%|%6%)'
 
-        conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
-        c = conn.cursor()
+        conn, c = db_functions.connectDB()
 
         c.execute('''SELECT crystal_id, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''', (str(outcome_string),))
 
@@ -84,20 +82,28 @@ class FindProjects(luigi.Task):
         protein_list=set(list(project_data_dump_dict['protein']))
         print protein_list
 
-
         for protein in protein_list:
+            xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
 
-            filename = str('leads/' + protein)
             temp_frame = project_table.loc[project_table['protein'] == protein]
             temp_frame.reset_index(inplace=True)
-            temp2 = temp_frame.drop_duplicates()
-            temp2.to_csv(filename)
+            temp2 = temp_frame.drop_duplicates(subset=['reference_pdb'])
 
-            filename = str('hits/' + protein)
+            try:
+                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_leads', xchem_engine, list(project_data_dump_dict.keys()))
+                nodups.to_sql('proasis_leads', xchem_engine, if_exists='append')
+            except:
+                temp2.to_sql('proasis_leads', xchem_engine, if_exists='append')
+
             temp_frame = crystal_table.loc[crystal_table['protein'] == protein]
             temp_frame.reset_index(inplace=True)
             temp2 = temp_frame.drop_duplicates(subset=['crystal_name','smiles','bound_conf'])
-            temp2.to_csv(filename)
+
+            try:
+                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_hits', xchem_engine, list(crystal_data_dump_dict.keys()))
+                nodups.to_sql('proasis_hits', xchem_engine, if_exists='append')
+            except:
+                temp2.to_sql('proasis_hits', xchem_engine, if_exists='append')
 
 
 class WriteWhitelists(luigi.Task):

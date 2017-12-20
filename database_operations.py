@@ -50,8 +50,6 @@ class CheckFiles(luigi.Task):
         exists = db_functions.table_exists(c, 'soakdb_files')
 
         checked = []
-        #changed = []
-        new = []
 
         # Status codes:-
         # 0 = new
@@ -77,7 +75,6 @@ class CheckFiles(luigi.Task):
 
                         if current_mod_date > old_mod_date:
                             logging.info(str(data_file) + ' has changed!')
-                            #changed.append(data_file)
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
                             c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s,;', (current_mod_date, filename_clean))
                             conn.commit()
@@ -92,8 +89,6 @@ class CheckFiles(luigi.Task):
                     out, err, proposal = db_functions.pop_soakdb(filename_clean)
                     db_functions.pop_proposals(proposal)
                     c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                    new.append(str(row[0]))
-
 
             c.execute('select filename from soakdb_files;')
 
@@ -107,19 +102,14 @@ class CheckFiles(luigi.Task):
 
                     else:
                         logging.error(str(row[0]) + ' : something wrong!')
-                        # new.append(str(row[0]))
 
         exists = db_functions.table_exists(c, 'lab')
         if not exists:
             c.execute('UPDATE soakdb_files SET status_code = 0;')
             conn.commit()
 
-        new_string = ''
-        for i in new:
-            new_string += str(i + ',')
-
         with self.output().open('w') as f:
-            f.write(new_string)
+            f.write('All files checked!')
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
@@ -170,10 +160,13 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
     file_id = luigi.Parameter()
+
     def requires(self):
         return CheckFiles()
+
     def output(self):
         pass
+
     def run(self):
         conn, c = db_functions.connectDB()
         c.execute('delete from lab where file_id=%s', (self.file_id,))
@@ -192,10 +185,13 @@ class TransferChangedDataFile(luigi.Task):
 class TransferNewDataFile(luigi.Task):
     data_file = luigi.Parameter()
     file_id = luigi.Parameter()
+
     def requires(self):
         return CheckFiles()
+
     def output(self):
         pass
+
     def run(self):
         db_functions.transfer_data(self.data_file)
         conn, c = db_functions.connectDB()
@@ -225,26 +221,9 @@ class StartTransfers(luigi.Task):
                [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
 
     def output(self):
-        pass
+        return luigi.LocalTarget('transfers.txt')
 
     def run(self):
-        pass
-
-
-# class TransferExperiment(luigi.Task):
-#     # date parameter - needs to be changed
-#     date = luigi.DateParameter(default=datetime.date.today())
-#     # data_file = luigi.Parameter()
-#
-#     # needs soakDB list, but not fedIDs - this task needs to be spawned by soakDB class
-#     def requires(self):
-#         return FindSoakDBFiles()
-#
-#     def output(self):
-#         return luigi.LocalTarget(self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt'))
-#
-#     def run(self):
-#         # set up logging
-#         logfile = self.date.strftime('transfer_logs/transfer_experiment_%Y%m%d.txt')
-#         logging.basicConfig(filename=logfile, level=logging.DEBUG, format='%(asctime)s %(message)s', datefrmt='%m/%d/%y %H:%M:%S')
+        with self.output().open('w') as f:
+            f.write('transfers done')
 
