@@ -18,7 +18,7 @@ class FindProjects(luigi.Task):
         crystal_data_dump_dict = {'crystal_name':[], 'protein':[], 'smiles':[], 'bound_conf':[], 'modification_date':[]}
 
         # all data necessary for uploading leads
-        project_data_dump_dict = {'crystal_name':[], 'protein':[], 'pandda_path':[], 'reference_pdb':[]}
+        project_data_dump_dict = {'protein':[], 'pandda_path':[], 'reference_pdb':[]}
 
         outcome_string = '(%3%|%4%|%5%|%6%)'
 
@@ -71,7 +71,7 @@ class FindProjects(luigi.Task):
             pandda_info = c.fetchall()
 
             for pandda_entry in pandda_info:
-                project_data_dump_dict['crystal_name'].append(row[0])
+                #project_data_dump_dict['crystal_name'].append(row[0])
                 project_data_dump_dict['protein'].append(protein_name)
                 project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
