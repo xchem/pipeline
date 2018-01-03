@@ -76,7 +76,7 @@ class CheckFiles(luigi.Task):
                         if current_mod_date > old_mod_date:
                             logging.info(str(data_file) + ' has changed!')
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
-                            c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s,;', (current_mod_date, filename_clean))
+                            c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
                             conn.commit()
                             # start class to add row and kick off process for that file
                         else:
