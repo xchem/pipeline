@@ -26,7 +26,7 @@ def get_mod_date(filename):
 
 def create_sd_file(name, smiles, save_directory):
     """
-    Create a 2D sdf file in the proasis project directory for succesfully detected ligands
+    Create a 2D sdf file in the proasis project directory for successfully detected ligands
     """
     # create sdf file for ligand and save to hit directory
     canon_smiles = Chem.CanonSmiles(smiles)

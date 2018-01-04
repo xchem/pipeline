@@ -107,7 +107,7 @@ class FindProjects(luigi.Task):
             self.add_to_postgres(project_table, protein, ['reference_pdb'], project_data_dump_dict, 'proasis_leads')
 
             self.add_to_postgres(crystal_table, protein, ['crystal_name', 'smiles', 'bound_conf'],
-                                 crystal_data_dump_dict, 'proais_hits')
+                                 crystal_data_dump_dict, 'proasis_hits')
 
 
 class WriteWhitelists(luigi.Task):
@@ -133,6 +133,36 @@ class WriteFedIDList(luigi.Task):
 
 
 class StartLeadTransfers(luigi.Task):
+    def get_list(self):
+        path_list = []
+        protein_list = []
+        reference_list = []
+        conn, c = db_functions.connectDB()
+        c.execute(
+            '''SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ''')
+        rows = c.fetchall()
+        for row in rows:
+            path_list.append(str(row[0]))
+            protein_list.append(str(row[1]))
+            reference_list.append(str(row[2]))
+
+        list = zip(path_list, protein_list, reference_list)
+
+        return list
+
+    def requires(self):
+        list = self.get_list()
+        return [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
+                for (path, protein, reference) in list]
+        
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
+
+class StartHitTransfers(luigi.Task):
     def requires(self):
         pass
 
