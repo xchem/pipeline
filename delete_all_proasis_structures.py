@@ -1,8 +1,4 @@
 import requests
-import pandas
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
 
 def get_json(url):
     # send API request and pull output as json
