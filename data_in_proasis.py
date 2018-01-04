@@ -35,10 +35,10 @@ class FindProjects(luigi.Task):
     def run(self):
         # all data necessary for uploading hits
         crystal_data_dump_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
-                                  'modification_date': []}
+                                  'modification_date': [], 'strucid':[]}
 
         # all data necessary for uploading leads
-        project_data_dump_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': []}
+        project_data_dump_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
 
         outcome_string = '(%3%|%4%|%5%|%6%)'
 
@@ -78,6 +78,7 @@ class FindProjects(luigi.Task):
                 crystal_data_dump_dict['smiles'].append(entry[0])
                 crystal_data_dump_dict['crystal_name'].append(row[0])
                 crystal_data_dump_dict['bound_conf'].append(row[1])
+                crystal_data_dump_dict['strucid'].append('')
 
                 try:
                     modification_date = misc_functions.get_mod_date(str(row[1]))
@@ -95,6 +96,7 @@ class FindProjects(luigi.Task):
                 project_data_dump_dict['protein'].append(protein_name)
                 project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
+                project_data_dump_dict['strucid'].append('')
 
         project_table = pandas.DataFrame.from_dict(project_data_dump_dict)
         crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
@@ -191,6 +193,7 @@ class LeadTransfer(luigi.Task):
         pass
 
     def run(self):
+
         pandda_analyse_centroids = str(self.pandda_directory + '/analyses/pandda_analyse_sites.csv')
         if os.path.isfile(pandda_analyse_centroids):
             site_list = pandas.read_csv(str(pandda_analyse_centroids))['native_centroid']
@@ -265,6 +268,7 @@ class LeadTransfer(luigi.Task):
 
             add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
             os.system(add_lead)
+
         else:
             print('file does not exist!')
 
@@ -298,6 +302,7 @@ class HitTransfer(luigi.Task):
         pass
 
     def run(self):
+
         print('Copying refine.bound.pdb...')
         os.system(str('cp ' + str(self.bound_pdb) + ' ' + str(self.hit_directory)))
 
