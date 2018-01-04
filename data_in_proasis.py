@@ -110,28 +110,6 @@ class FindProjects(luigi.Task):
                                  crystal_data_dump_dict, 'proasis_hits')
 
 
-class WriteWhitelists(luigi.Task):
-    def requires(self):
-        return database_operations.TransferFedIDs()
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
-class WriteFedIDList(luigi.Task):
-    def requires(self):
-        return database_operations.TransferFedIDs()
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
 class StartLeadTransfers(luigi.Task):
     def get_list(self):
         path_list = []
@@ -350,7 +328,6 @@ class HitTransfer(luigi.Task):
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
             self.submit_proasis_job_string(submit_to_proasis)
-
 
         elif len(ligands) > 1:
             lig1 = ligands[0]
