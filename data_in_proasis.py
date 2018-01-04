@@ -9,8 +9,8 @@ import numpy as np
 
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 
-class FindProjects(luigi.Task):
 
+class FindProjects(luigi.Task):
     def requires(self):
         return database_operations.StartTransfers()
 
@@ -19,16 +19,18 @@ class FindProjects(luigi.Task):
 
     def run(self):
         # all data necessary for uploading hits
-        crystal_data_dump_dict = {'crystal_name':[], 'protein':[], 'smiles':[], 'bound_conf':[], 'modification_date':[]}
+        crystal_data_dump_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
+                                  'modification_date': []}
 
         # all data necessary for uploading leads
-        project_data_dump_dict = {'protein':[], 'pandda_path':[], 'reference_pdb':[]}
+        project_data_dump_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': []}
 
         outcome_string = '(%3%|%4%|%5%|%6%)'
 
         conn, c = db_functions.connectDB()
 
-        c.execute('''SELECT crystal_id, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''', (str(outcome_string),))
+        c.execute('''SELECT crystal_id, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''',
+                  (str(outcome_string),))
 
         rows = c.fetchall()
 
@@ -43,10 +45,9 @@ class FindProjects(luigi.Task):
             if len(str(row[0])) < 3:
                 continue
 
-            if len(lab_table)>1:
+            if len(lab_table) > 1:
                 print('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table')
-                #print lab_table
-
+                # print lab_table
 
             for entry in lab_table:
                 if len(str(entry[1])) < 2 or 'None' in str(entry[1]):
@@ -75,7 +76,7 @@ class FindProjects(luigi.Task):
             pandda_info = c.fetchall()
 
             for pandda_entry in pandda_info:
-                #project_data_dump_dict['crystal_name'].append(row[0])
+                # project_data_dump_dict['crystal_name'].append(row[0])
                 project_data_dump_dict['protein'].append(protein_name)
                 project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
@@ -83,7 +84,7 @@ class FindProjects(luigi.Task):
         project_table = pandas.DataFrame.from_dict(project_data_dump_dict)
         crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
 
-        protein_list=set(list(project_data_dump_dict['protein']))
+        protein_list = set(list(project_data_dump_dict['protein']))
         print protein_list
 
         for protein in protein_list:
@@ -94,17 +95,19 @@ class FindProjects(luigi.Task):
             temp2 = temp_frame.drop_duplicates(subset=['reference_pdb'])
 
             try:
-                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_leads', xchem_engine, list(project_data_dump_dict.keys()))
+                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_leads', xchem_engine,
+                                                       list(project_data_dump_dict.keys()))
                 nodups.to_sql('proasis_leads', xchem_engine, if_exists='append')
             except:
                 temp2.to_sql('proasis_leads', xchem_engine, if_exists='append')
 
             temp_frame = crystal_table.loc[crystal_table['protein'] == protein]
             temp_frame.reset_index(inplace=True)
-            temp2 = temp_frame.drop_duplicates(subset=['crystal_name','smiles','bound_conf'])
+            temp2 = temp_frame.drop_duplicates(subset=['crystal_name', 'smiles', 'bound_conf'])
 
             try:
-                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_hits', xchem_engine, list(crystal_data_dump_dict.keys()))
+                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_hits', xchem_engine,
+                                                       list(crystal_data_dump_dict.keys()))
                 nodups.to_sql('proasis_hits', xchem_engine, if_exists='append')
             except:
                 temp2.to_sql('proasis_hits', xchem_engine, if_exists='append')
@@ -131,6 +134,7 @@ class WriteFedIDList(luigi.Task):
     def run(self):
         pass
 
+
 class StartLeadTransfers(luigi.Task):
     def requires(self):
         pass
@@ -140,6 +144,7 @@ class StartLeadTransfers(luigi.Task):
 
     def run(self):
         pass
+
 
 class LeadTransfer(luigi.Task):
     reference_structure = luigi.Parameter()
@@ -163,7 +168,7 @@ class LeadTransfer(luigi.Task):
 
             no = 0
             for centroid in site_list:
-                #print('next centroid')
+                # print('next centroid')
                 structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
                 no += 1
                 res_list = []
@@ -197,10 +202,12 @@ class LeadTransfer(luigi.Task):
                             # if statements for fussy proasis formatting
                         if len(str(parent.get_id()[1])) == 3:
                             # residue string = 'RES CHAIN NUMBER :...'
-                            res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + ' ' + str(parent.get_id()[1]))
+                            res = (
+                            str(parent.get_resname()) + ' ' + str(chain.get_id()) + ' ' + str(parent.get_id()[1]))
                             res_list.append(res)
                         if len(str(parent.get_id()[1])) == 2:
-                            res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + '  ' + str(parent.get_id()[1]))
+                            res = (
+                            str(parent.get_resname()) + ' ' + str(chain.get_id()) + '  ' + str(parent.get_id()[1]))
                             res_list.append(res)
                     except:
                         break
@@ -219,7 +226,7 @@ class LeadTransfer(luigi.Task):
             submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
                 self.name + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1)) + str(
                 res_string) + "' -x XRAY -n")
-            #print(submit_to_proasis)
+            # print(submit_to_proasis)
             process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
             print(out)
@@ -229,3 +236,79 @@ class LeadTransfer(luigi.Task):
             os.system(add_lead)
         else:
             print('file does not exist!')
+
+
+class HitTransfer(luigi.Task):
+    # bound state pdb file from refinement
+    bound_pdb = luigi.Parameter()
+    # the directory that files should be copied to on the proasis side
+    hit_directory = luigi.Parameter()
+    # the name of the crystal
+    crystal = luigi.Parameter()
+    # the name of the protein name (i.e. proasis project name)
+    protein_name = luigi.Parameter()
+    # smiles string for the ligand
+    smiles = luigi.Parameter()
+
+    def submit_proasis_job_string(self, substring):
+        process = subprocess.Popen(substring, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        strucidstr = misc_functions.get_id_string(out)
+
+        if strucidstr != '':
+            print('Success... ' + str(self.crystal) + ' submitted. ProasisID: ' + str(strucidstr) + '\n *** \n')
+        else:
+            print('Error: ' + str(err))
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        print('Copying refine.bound.pdb...')
+        os.system(str('cp ' + str(self.bound_pdb) + ' ' + str(self.hit_directory)))
+
+        pdb_file_name = str(self.bound_pdb).split('/')[-1]
+
+        proasis_bound_pdb = str(str(self.hit_directory) + '/' + pdb_file_name)
+
+        # create 2D sdf files for all ligands from SMILES string
+        misc_functions.create_sd_file(self.crystal, self.smiles,
+                                      str(os.path.join(self.hit_directory, self.crystal + '.sdf')))
+
+        print('detecting ligand for ' + str(self.crystal))
+        pdb_file = open(proasis_bound_pdb, 'r')
+        ligands = []
+        lig_string = ''
+        for line in pdb_file:
+            if "LIG" in line:
+                lig_string = re.search(r"LIG.......", line).group()
+                ligands.append(str(lig_string))
+
+        ligands = list(set(ligands))
+
+        if len(ligands) == 1:
+            print('submission string:\n')
+            submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
+                                    str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
+                                    str(os.path.join(str(self.hit_directory), str(self.crystal) + '.sdf')) +
+                                    " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+
+            self.submit_proasis_job_string(submit_to_proasis)
+
+
+        elif len(ligands) > 1:
+            lig1 = ligands[0]
+            lign = " -o '"
+            for i in range(1, len(ligands) - 1):
+                lign += str(ligands[i] + ',')
+            lign += str(ligands[len(ligands) - 1] + "'")
+
+            submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
+                                    str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
+                                    str(os.path.join(self.hit_directory, str(self.crystal) + '.sdf')) +
+                                    " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+
+            self.submit_proasis_job_string(submit_to_proasis)
