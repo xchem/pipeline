@@ -277,7 +277,7 @@ class HitTransfer(luigi.Task):
     # bound state pdb file from refinement
     bound_pdb = luigi.Parameter()
     # the directory that files should be copied to on the proasis side
-    hit_directory = luigi.Parameter()
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
     # the name of the crystal
     crystal = luigi.Parameter()
     # the name of the protein name (i.e. proasis project name)
@@ -304,11 +304,25 @@ class HitTransfer(luigi.Task):
     def run(self):
 
         print('Copying refine.bound.pdb...')
-        os.system(str('cp ' + str(self.bound_pdb) + ' ' + str(self.hit_directory)))
+        os.system(str('cp ' + str(self.bound_pdb) + ' ' + str(self.hit_directory) + '/' + self.protein_name + '/'))
 
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
 
         proasis_bound_pdb = str(str(self.hit_directory) + '/' + pdb_file_name)
+        print self.bound_pdb.replace(pdb_file_name, '')
+        if 'Refine' in self.bound_pdb.replace(pdb_file_name, ''):
+            remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
+            map_directory = str(self.bound_pdb).replace(remove_string, '')
+        else:
+            map_directory = str(self.bound_pdb).replace(pdb_file_name, '')
+
+        if os.path.isfile(str(map_directory + '/2fofc.map')):
+            print('2fofc map found!')
+
+        if os.path.isfile(str(map_directory + '/fofc.map')):
+            print('fofc map found!')
+
+        print(map_directory)
 
         # create 2D sdf files for all ligands from SMILES string
         misc_functions.create_sd_file(self.crystal, self.smiles,
@@ -332,7 +346,7 @@ class HitTransfer(luigi.Task):
                                     str(os.path.join(str(self.hit_directory), str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-            self.submit_proasis_job_string(submit_to_proasis)
+            #self.submit_proasis_job_string(submit_to_proasis)
 
         elif len(ligands) > 1:
             lig1 = ligands[0]
@@ -346,4 +360,4 @@ class HitTransfer(luigi.Task):
                                     str(os.path.join(self.hit_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-            self.submit_proasis_job_string(submit_to_proasis)
+            #self.submit_proasis_job_string(submit_to_proasis)
