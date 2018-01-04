@@ -6,6 +6,7 @@ import db_functions
 from sqlalchemy import create_engine
 import os, re, subprocess
 import numpy as np
+import delete_all_proasis_structures
 
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 
@@ -272,12 +273,23 @@ class LeadTransfer(luigi.Task):
         else:
             print('file does not exist!')
 
+class AddProject(luigi.Task):
+    protein_name = luigi.Parameter()
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
 
 class HitTransfer(luigi.Task):
     # bound state pdb file from refinement
     bound_pdb = luigi.Parameter()
     # the directory that files should be copied to on the proasis side
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/TEST')
     # the name of the crystal
     crystal = luigi.Parameter()
     # the name of the protein name (i.e. proasis project name)
@@ -296,19 +308,42 @@ class HitTransfer(luigi.Task):
             print('Error: ' + str(err))
 
     def requires(self):
-        pass
+        projects = []
+        all_projects_url = 'http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/projects/'
+
+        json_string_projects = delete_all_proasis_structures.get_json(all_projects_url)
+        dict_projects = delete_all_proasis_structures.dict_from_string(json_string_projects)
+
+        all_projects = dict_projects['ALLPROJECTS']
+        for project in all_projects:
+            projects.append(str(project))
+
+        if str(self.protein_name) not in projects:
+            return AddProject(protein_name=self.protein_name)
+        else:
+            pass
+
 
     def output(self):
         pass
 
     def run(self):
 
+        proasis_protein_directory = str(str(self.hit_directory) + '/')
+        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
+
         print('Copying refine.bound.pdb...')
-        os.system(str('cp ' + str(self.bound_pdb) + ' ' + str(self.hit_directory) + '/' + self.protein_name + '/'))
+        if not os.path.isdir(proasis_protein_directory):
+            print('not a directory')
+            os.system(str('mkdir ' + proasis_protein_directory))
+        if not os.path.isdir(proasis_crystal_directory):
+            print('not a directory')
+            os.system(str('mkdir ' + proasis_crystal_directory))
+        os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
 
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
 
-        proasis_bound_pdb = str(str(self.hit_directory) + '/' + pdb_file_name)
+        proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
         print self.bound_pdb.replace(pdb_file_name, '')
         if 'Refine' in self.bound_pdb.replace(pdb_file_name, ''):
             remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
@@ -317,16 +352,16 @@ class HitTransfer(luigi.Task):
             map_directory = str(self.bound_pdb).replace(pdb_file_name, '')
 
         if os.path.isfile(str(map_directory + '/2fofc.map')):
-            print('2fofc map found!')
+            os.system(str('cp ' + str(map_directory + '/2fofc.map ' + proasis_crystal_directory)))
 
         if os.path.isfile(str(map_directory + '/fofc.map')):
-            print('fofc map found!')
+            os.system(str('cp ' + str(map_directory + '/fofc.map ' + proasis_crystal_directory)))
 
         print(map_directory)
 
         # create 2D sdf files for all ligands from SMILES string
         misc_functions.create_sd_file(self.crystal, self.smiles,
-                                      str(os.path.join(self.hit_directory, self.crystal + '.sdf')))
+                                      str(os.path.join(proasis_crystal_directory, self.crystal + '.sdf')))
 
         print('detecting ligand for ' + str(self.crystal))
         pdb_file = open(proasis_bound_pdb, 'r')
@@ -343,8 +378,10 @@ class HitTransfer(luigi.Task):
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
-                                    str(os.path.join(str(self.hit_directory), str(self.crystal) + '.sdf')) +
+                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+
+            print(submit_to_proasis)
 
             #self.submit_proasis_job_string(submit_to_proasis)
 
@@ -359,5 +396,7 @@ class HitTransfer(luigi.Task):
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
                                     str(os.path.join(self.hit_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+
+            print(submit_to_proasis)
 
             #self.submit_proasis_job_string(submit_to_proasis)
