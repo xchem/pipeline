@@ -2,7 +2,7 @@
 """
 rowbasedauth.py
 """
-
+# lives at: /var/www/cgi-bin/proasisapi/v1.4
 
 import sys, os
 from p3SConstants import dssPyPath
