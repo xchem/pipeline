@@ -201,14 +201,12 @@ class LeadTransfer(luigi.Task):
                             chain = Residue.Residue.get_parent(parent)
                             # if statements for fussy proasis formatting
                         if len(str(parent.get_id()[1])) == 3:
-                            # residue string = 'RES CHAIN NUMBER :...'
-                            res = (
-                            str(parent.get_resname()) + ' ' + str(chain.get_id()) + ' ' + str(parent.get_id()[1]))
-                            res_list.append(res)
+                            space = ' '
                         if len(str(parent.get_id()[1])) == 2:
-                            res = (
-                            str(parent.get_resname()) + ' ' + str(chain.get_id()) + '  ' + str(parent.get_id()[1]))
-                            res_list.append(res)
+                            space = '  '
+                        res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                        res_list.append(res)
+
                     except:
                         break
             res_list = (list(set(res_list)))
