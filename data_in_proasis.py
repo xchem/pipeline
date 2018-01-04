@@ -154,7 +154,7 @@ class StartLeadTransfers(luigi.Task):
         list = self.get_list()
         return [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
                 for (path, protein, reference) in list]
-        
+
     def output(self):
         pass
 
@@ -163,8 +163,36 @@ class StartLeadTransfers(luigi.Task):
 
 
 class StartHitTransfers(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
+
+    def get_list(self):
+
+        bound_list = []
+        hit_directory_list = []
+        crystal_list = []
+        protein_list = []
+        smiles_list = []
+
+        conn, c = db_functions.connectDB()
+        c.execute(
+            '''SELECT bound_conf, crystal_name, protein, smiles FROM proasis_hits WHERE bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
+        rows = c.fetchall()
+        for row in rows:
+            bound_list.append(str(row[0]))
+            hit_directory_list.append(str(self.hit_directory + str(row[2])))
+            crystal_list.append(str(row[1]))
+            protein_list.append(str(row[2]))
+            smiles_list.append(str(row[3]))
+
+        list = zip(bound_list, hit_directory_list, crystal_list, protein_list, smiles_list)
+
+        return list
+
     def requires(self):
-        pass
+        list = self.get_list()
+        return[HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
+                           smiles=smiles_string)
+               for (pdb, directory, crystal_name, protein_name, smiles_string)in list]
 
     def output(self):
         pass
