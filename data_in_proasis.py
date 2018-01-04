@@ -11,6 +11,21 @@ from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 
 
 class FindProjects(luigi.Task):
+    def add_to_postgres(self, table, protein, subset_list, data_dump_dict, title):
+        xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
+
+        temp_frame = table.loc[table['protein'] == protein]
+        temp_frame.reset_index(inplace=True)
+        temp2 = temp_frame.drop_duplicates(subset=subset_list)
+
+        try:
+            nodups = db_functions.clean_df_db_dups(temp2, title, xchem_engine,
+                                                   list(data_dump_dict.keys()))
+            nodups.to_sql(title, xchem_engine, if_exists='append')
+        except:
+            temp2.to_sql(title, xchem_engine, if_exists='append')
+
+
     def requires(self):
         return database_operations.StartTransfers()
 
@@ -88,29 +103,11 @@ class FindProjects(luigi.Task):
         print protein_list
 
         for protein in protein_list:
-            xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
 
-            temp_frame = project_table.loc[project_table['protein'] == protein]
-            temp_frame.reset_index(inplace=True)
-            temp2 = temp_frame.drop_duplicates(subset=['reference_pdb'])
+            self.add_to_postgres(project_table, protein, ['reference_pdb'], project_data_dump_dict, 'proasis_leads')
 
-            try:
-                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_leads', xchem_engine,
-                                                       list(project_data_dump_dict.keys()))
-                nodups.to_sql('proasis_leads', xchem_engine, if_exists='append')
-            except:
-                temp2.to_sql('proasis_leads', xchem_engine, if_exists='append')
-
-            temp_frame = crystal_table.loc[crystal_table['protein'] == protein]
-            temp_frame.reset_index(inplace=True)
-            temp2 = temp_frame.drop_duplicates(subset=['crystal_name', 'smiles', 'bound_conf'])
-
-            try:
-                nodups = db_functions.clean_df_db_dups(temp2, 'proasis_hits', xchem_engine,
-                                                       list(crystal_data_dump_dict.keys()))
-                nodups.to_sql('proasis_hits', xchem_engine, if_exists='append')
-            except:
-                temp2.to_sql('proasis_hits', xchem_engine, if_exists='append')
+            self.add_to_postgres(crystal_table, protein, ['crystal_name', 'smiles', 'bound_conf'],
+                                 crystal_data_dump_dict, 'proais_hits')
 
 
 class WriteWhitelists(luigi.Task):
