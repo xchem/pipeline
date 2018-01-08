@@ -6,6 +6,7 @@ import sqlite3
 from sqlalchemy import create_engine
 import subprocess
 import misc_functions
+import csv
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -414,3 +415,40 @@ def get_strucid_list():
     strucids = list(set(strucid_list))
 
     return proposal_dict, strucids
+
+
+def get_fedid_list():
+    master_list = []
+    conn, c = connectDB()
+    c.execute('select fedids from proposals')
+    rows = c.fetchall()
+    for row in rows:
+        if len(row[0]) > 1:
+            fedid_list = str(row[0]).split(',')
+            for item in fedid_list:
+                master_list.append(item)
+
+    final_list = list(set(master_list))
+    return final_list
+
+def create_blacklist(fedid, proposal_dict):
+    search_string=str('%' + fedid + '%')
+    proposal_list = []
+    strucid_list = []
+    conn, c = connectDB()
+    c.execute('select proposal from proposals where fedids like %s', (search_string,))
+    rows = c.fetchall()
+    for row in rows:
+        proposal_list.append(str(row[0]))
+    for proposal in proposal_list:
+        try:
+            temp_vals = proposal_dict[proposal]
+        except:
+            continue
+        for item in temp_vals:
+            strucid_list.append(item)
+
+    blacklist_file = str(fedid + '.dat')
+    with open(blacklist_file, 'wb') as writefile:
+        wr = csv.writer(writefile)
+        wr.writerows(strucid_list)
