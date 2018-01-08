@@ -45,7 +45,6 @@ class StartHitTransfers(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
 
     def get_list(self):
-
         bound_list = []
         hit_directory_list = []
         crystal_list = []
@@ -71,9 +70,9 @@ class StartHitTransfers(luigi.Task):
 
     def requires(self):
         list = self.get_list()
-        return[HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
-                           smiles=smiles_string, mod_date=modification_string)
-               for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
+        return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
+                            smiles=smiles_string, mod_date=modification_string)
+                for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
 
     def output(self):
         pass
@@ -119,81 +118,83 @@ class LeadTransfer(luigi.Task):
 
             print site_list
 
-            no = 0
-            for centroid in site_list:
-                # print('next centroid')
-                structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
-                no += 1
-                res_list = []
-
-                # initial distance for nearest neighbor (NN) search is 20A
-                neighbor_distance = 20
-
-                centroid_coordinates = centroid.replace('(', '[')
-                centroid_coordinates = centroid_coordinates.replace(')', ']')
-                centroid_coordinates = eval(str(centroid_coordinates))
-
-                # define centroid as an atom object for NN search
-                centroid_atom = Atom.Atom('CEN', centroid_coordinates, 0, 0, 0, 0, 9999, 'C')
-                atoms = list(structure.get_atoms())
-                center = np.array(centroid_atom.get_coord())
-                ns = NeighborSearch(atoms)
-
-                # calculate NN list
-                neighbors = ns.search(center, neighbor_distance)
-                res_list = []
-
-                # for each atom in the NN list
-                for neighbor in neighbors:
-                    try:
-                        # get the residue that the neighbor belongs to
-                        parent = Atom.Atom.get_parent(neighbor)
-                        # if the residue is not a water etc. (amino acids have blank)
-                        if parent.get_id()[0] == ' ':
-                            # get the chain that the residue belongs to
-                            chain = Residue.Residue.get_parent(parent)
-                            # if statements for fussy proasis formatting
-                        if len(str(parent.get_id()[1])) == 3:
-                            space = ' '
-                        if len(str(parent.get_id()[1])) == 2:
-                            space = '  '
-                        res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
-                        res_list.append(res)
-
-                    except:
-                        break
-            res_list = (list(set(res_list)))
-            print res_list
-            lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
-                       + str(res_list[2]) + " ' ")
-            print lig1
-
-            res_string = "-o '"
-
-            for i in range(3, len(res_list) - 1):
-                res_string += str(res_list[i] + ' ,')
-                res_string += str(res_list[i + 1] + ' ')
-            # print str(res_string[i+1])
-            submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
-                self.name + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1)) + str(
-                res_string) + "' -x XRAY -n")
-            # print(submit_to_proasis)
-            process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
-            out, err = process.communicate()
-            print(out)
-            strucidstr = misc_functions.get_id_string(out)
-
-            add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
-            os.system(add_lead)
-
         else:
             print('file does not exist!')
 
+        no = 0
+        for centroid in site_list:
+            # print('next centroid')
+            structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
+            no += 1
+            res_list = []
+
+            # initial distance for nearest neighbor (NN) search is 20A
+            neighbor_distance = 20
+
+            centroid_coordinates = centroid.replace('(', '[')
+            centroid_coordinates = centroid_coordinates.replace(')', ']')
+            centroid_coordinates = eval(str(centroid_coordinates))
+
+            # define centroid as an atom object for NN search
+            centroid_atom = Atom.Atom('CEN', centroid_coordinates, 0, 0, 0, 0, 9999, 'C')
+            atoms = list(structure.get_atoms())
+            center = np.array(centroid_atom.get_coord())
+            ns = NeighborSearch(atoms)
+
+            # calculate NN list
+            neighbors = ns.search(center, neighbor_distance)
+            res_list = []
+
+            # for each atom in the NN list
+            for neighbor in neighbors:
+                try:
+                    # get the residue that the neighbor belongs to
+                    parent = Atom.Atom.get_parent(neighbor)
+                    # if the residue is not a water etc. (amino acids have blank)
+                    if parent.get_id()[0] == ' ':
+                        # get the chain that the residue belongs to
+                        chain = Residue.Residue.get_parent(parent)
+                        # if statements for fussy proasis formatting
+                    if len(str(parent.get_id()[1])) == 3:
+                        space = ' '
+                    if len(str(parent.get_id()[1])) == 2:
+                        space = '  '
+                    res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                    res_list.append(res)
+
+                except:
+                    break
+        res_list = (list(set(res_list)))
+        print res_list
+        lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
+                   + str(res_list[2]) + " ' ")
+        print lig1
+
+        res_string = "-o '"
+
+        for i in range(3, len(res_list) - 1):
+            res_string += str(res_list[i] + ' ,')
+            res_string += str(res_list[i + 1] + ' ')
+        # print str(res_string[i+1])
+        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
+            self.name + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1)) + str(
+            res_string) + "' -x XRAY -n")
+        # print(submit_to_proasis)
+        process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        print(out)
+        strucidstr = misc_functions.get_id_string(out)
+
+        add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
+        os.system(add_lead)
+
+
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
+
     def requires(self):
         pass
-        #return database_operations.FindProjects()
+        # return database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('project_added.txt')
@@ -205,7 +206,6 @@ class AddProject(luigi.Task):
         if len(out) > 1:
             with self.output().open('w') as f:
                 f.write(out)
-
 
 
 class HitTransfer(luigi.Task):
@@ -239,12 +239,15 @@ class HitTransfer(luigi.Task):
             modification_date = self.mod_date
             if proasis_file_date != modification_date:
                 conn, c = db_functions.connectDB()
-                c.execute('SELECT strucid FROM proasis_hits WHERE bound_conf = %s and modification_date = %s', (self.bound_pdb, modification_date))
+                c.execute('SELECT strucid FROM proasis_hits WHERE bound_conf = %s and modification_date = %s',
+                          (self.bound_pdb, modification_date))
                 rows = c.fetchall()
                 for row in rows:
                     if len(str(row[0])) > 1:
                         proasis_api_funcs.delete_structure(str(row[0]))
-                        c.execute('UPDATE proasis_hits SET strucid = NULL WHERE bound_conf = %s and modification_date = %s', (self.bound_pdb, modification_date))
+                        c.execute(
+                            'UPDATE proasis_hits SET strucid = NULL WHERE bound_conf = %s and modification_date = %s',
+                            (self.bound_pdb, modification_date))
 
     def requires(self):
         projects = []
@@ -264,7 +267,6 @@ class HitTransfer(luigi.Task):
             return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
         else:
             return database_operations.FindProjects()
-
 
     def output(self):
         pass
@@ -359,7 +361,7 @@ class HitTransfer(luigi.Task):
         submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
                            + proasis_crystal_directory + '/2fofc.map -s ' + strucid)
         submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                           + proasis_crystal_directory + '/fofc.map -s ' + strucid)
+                          + proasis_crystal_directory + '/fofc.map -s ' + strucid)
 
         os.system(submit_2fofc)
         os.system(submit_fofc)
