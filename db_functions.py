@@ -386,3 +386,31 @@ def pop_proposals(proposal_number):
         '''INSERT INTO proposals (proposal, fedids) SELECT %s, %s WHERE NOT EXISTS (SELECT proposal, fedids FROM proposals WHERE proposal = %s AND fedids = %s);'''),
               (proposal_number, append_list, proposal_number, append_list))
     conn.commit()
+
+
+def get_strucid_list():
+
+    proposals_list = []
+    strucid_list = []
+
+    proposal_dict = {}
+
+    conn, c = connectDB()
+    c.execute('SELECT bound_conf, strucid FROM proasis_hits')
+    rows = c.fetchall()
+    for row in rows:
+        try:
+            proposal = str(row[0]).split('/')[5].split('-')[0]
+        except:
+            continue
+        if proposal not in proposals_list:
+            proposals_list.append(proposal)
+            proposal_dict.update({proposal:[]})
+        else:
+            proposal_dict[proposal].append(str(row[1]))
+
+        strucid_list.append(str(row[1]))
+
+    strucids = list(set(strucid_list))
+
+    return proposal_dict, strucids
