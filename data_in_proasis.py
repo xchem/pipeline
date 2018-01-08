@@ -229,6 +229,7 @@ class HitTransfer(luigi.Task):
 
         if strucidstr != '':
             print('Success... ' + str(self.crystal) + ' submitted. ProasisID: ' + str(strucidstr) + '\n *** \n')
+            return strucidstr
         else:
             print('Error: ' + str(err))
 
@@ -244,7 +245,7 @@ class HitTransfer(luigi.Task):
                     if len(str(row[0])) > 1:
                         proasis_api_funcs.delete_structure(str(row[0]))
                         c.execute('UPDATE proasis_hits SET strucid = NULL WHERE bound_conf = %s and modification_date = %s', (self.bound_pdb, modification_date))
-            
+
     def requires(self):
         projects = []
         all_projects_url = 'http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/projects/'
@@ -296,8 +297,6 @@ class HitTransfer(luigi.Task):
         # copy the file to the proasis directories
         os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
 
-
-
         # if the bound pdb is in a refinement folder, change the path to find the map files
         if 'Refine' in self.bound_pdb.replace(pdb_file_name, ''):
             remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
@@ -340,7 +339,7 @@ class HitTransfer(luigi.Task):
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
             # submit the structure to proasis
-            self.submit_proasis_job_string(submit_to_proasis)
+            strucid = self.submit_proasis_job_string(submit_to_proasis)
 
         # same as above, but for structures containing more than one ligand
         elif len(ligands) > 1:
@@ -355,4 +354,12 @@ class HitTransfer(luigi.Task):
                                     str(os.path.join(self.hit_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-            self.submit_proasis_job_string(submit_to_proasis)
+            strucid = self.submit_proasis_job_string(submit_to_proasis)
+
+        submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
+                           + proasis_crystal_directory + '/2fofc.map -s ' + strucid)
+        submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
+                           + proasis_crystal_directory + '/fofc.map -s ' + strucid)
+
+        os.system(submit_2fofc)
+        os.system(submit_fofc)
