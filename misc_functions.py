@@ -1,6 +1,7 @@
 import os, datetime
 from rdkit import Chem
 from rdkit.Chem import AllChem
+import re, sys
 
 def get_id_string(out):
     """
@@ -12,6 +13,7 @@ def get_id_string(out):
         strucidstr = strucidstr.replace('strucid=', '')
         strucidstr = strucidstr.replace("'", '')
     except:
+        print sys.exc_info()
         strucidstr = ''
     return strucidstr
 

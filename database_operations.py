@@ -217,10 +217,13 @@ class StartTransfers(luigi.Task):
         return list
 
     def requires(self):
-        new_list = self.get_file_list(0)
-        changed_list = self.get_file_list(1)
-        return [TransferNewDataFile(data_file=datafile, file_id=fileid) for (datafile, fileid) in new_list], \
-               [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
+        try:
+            new_list = self.get_file_list(0)
+            changed_list = self.get_file_list(1)
+            return [TransferNewDataFile(data_file=datafile, file_id=fileid) for (datafile, fileid) in new_list], \
+                   [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
+        except:
+            return TransferAllFedIDsAndDatafiles()
 
     def output(self):
         return luigi.LocalTarget('transfers.txt')
@@ -250,7 +253,7 @@ class FindProjects(luigi.Task):
         return StartTransfers()
 
     def output(self):
-        pass
+        return luigi.LocalTarget('findprojects.done')
 
     def run(self):
         # all data necessary for uploading hits
@@ -330,4 +333,7 @@ class FindProjects(luigi.Task):
 
             self.add_to_postgres(crystal_table, protein, ['crystal_name', 'smiles', 'bound_conf'],
                                  crystal_data_dump_dict, 'proasis_hits')
+
+        with self.output().open('wb') as f:
+            f.write('')
 

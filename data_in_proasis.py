@@ -30,15 +30,20 @@ class StartLeadTransfers(luigi.Task):
         return list
 
     def requires(self):
-        list = self.get_list()
-        return [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
+        try:
+            list = self.get_list()
+
+            return [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
                 for (path, protein, reference) in list]
+        except:
+            return database_operations.CheckFiles(), database_operations.FindProjects()
 
     def output(self):
-        pass
+        return luigi.LocalTarget('leads.done')
 
     def run(self):
-        pass
+        with self.output().open('wb') as f:
+            f.write('')
 
 
 class StartHitTransfers(luigi.Task):
@@ -69,16 +74,20 @@ class StartHitTransfers(luigi.Task):
         return list
 
     def requires(self):
-        list = self.get_list()
-        return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
-                            smiles=smiles_string, mod_date=modification_string)
-                for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
+        try:
+            list = self.get_list()
+            return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
+                                smiles=smiles_string, mod_date=modification_string)
+                    for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
+        except:
+            return database_operations.CheckFiles(), database_operations.FindProjects()
 
     def output(self):
-        pass
+        return luigi.LocalTarget('hits.done')
 
     def run(self):
-        pass
+        with self.output().open('wb') as f:
+            f.write('')
 
 
 class LeadTransfer(luigi.Task):
@@ -87,26 +96,15 @@ class LeadTransfer(luigi.Task):
     name = luigi.Parameter()
 
     def requires(self):
-        projects = []
-        all_projects_url = 'http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/projects/'
 
-        json_string_projects = proasis_api_funcs.get_json(all_projects_url)
-        dict_projects = proasis_api_funcs.dict_from_string(json_string_projects)
-
-        all_projects = dict_projects['ALLPROJECTS']
-        for project in all_projects:
-            projects.append(str(project['project']))
-
-        print projects
-        print self.name
-
-        if str(self.name) not in projects:
+        if not os.path.isfile('./' + str(self.name) + '.added'):
             return AddProject(protein_name=self.name), database_operations.FindProjects()
         else:
             return database_operations.FindProjects()
 
     def output(self):
-        pass
+        mod_date = misc_functions.get_mod_date(self.reference_structure)
+        return luigi.LocalTarget('./leads/' + str(self.name) + '_' + mod_date + '.added')
 
     def run(self):
 
@@ -175,29 +173,25 @@ class LeadTransfer(luigi.Task):
         for i in range(3, len(res_list) - 1):
             res_string += str(res_list[i] + ' ,')
             res_string += str(res_list[i + 1] + ' ')
-        # print str(res_string[i+1])
-        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
-            self.name + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1)) + str(
-            res_string) + "' -x XRAY -n")
-        # print(submit_to_proasis)
+        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1) + str(res_string) + "' -x XRAY -n")
         process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         print(out)
+        print(err)
         strucidstr = misc_functions.get_id_string(out)
 
         add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
         os.system(add_lead)
 
+        with self.output().open('wb') as f:
+            f.write('')
+
 
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
 
-    def requires(self):
-        pass
-        # return database_operations.FindProjects()
-
     def output(self):
-        return luigi.LocalTarget('project_added.txt')
+        return luigi.LocalTarget(str(self.protein_name) + '.added')
 
     def run(self):
         add_project = str('/usr/local/Proasis2/utils/addnewproject.py -q OtherClasses -p ' + str(self.protein_name))
@@ -250,26 +244,14 @@ class HitTransfer(luigi.Task):
                             (self.bound_pdb, modification_date))
 
     def requires(self):
-        projects = []
-        all_projects_url = 'http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/projects/'
 
-        json_string_projects = proasis_api_funcs.get_json(all_projects_url)
-        dict_projects = proasis_api_funcs.dict_from_string(json_string_projects)
-
-        all_projects = dict_projects['ALLPROJECTS']
-        for project in all_projects:
-            projects.append(str(project['project']))
-
-        print projects
-        print self.protein_name
-
-        if str(self.protein_name) not in projects:
+        if not os.path.isfile('./' + str(self.protein_name) + '.added'):
             return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
         else:
             return database_operations.FindProjects()
 
     def output(self):
-        pass
+        return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date +'.added')
 
     def run(self):
 
@@ -371,10 +353,24 @@ class HitTransfer(luigi.Task):
         c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s',
                   (strucid, self.bound_pdb, self.mod_date))
 
+        with self.output().open('wb') as f:
+            f.write('')
+
 
 class WriteBlackLists(luigi.Task):
     def requires(self):
-        pass
+        yield StartLeadTransfers()
+        yield StartHitTransfers()
     def output(self):
-        pass
+        return luigi.LocalTarget('blacklists.done')
     def run(self):
+        proposal_dict, strucids = db_functions.get_strucid_list()
+        fedid_list = db_functions.get_fedid_list()
+
+        directory_path = '/usr/local/Proasis2/Data/BLACKLIST'
+
+        for fedid in fedid_list:
+            db_functions.create_blacklist(fedid, proposal_dict, directory_path)
+
+        with self.output().open('wb') as f:
+            f.write('')

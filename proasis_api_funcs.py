@@ -23,6 +23,8 @@ def dict_from_string(json_string):
         except:
             dict[key] = json_string.values()[counter]
 
+    print dict
+
     return dict
 
 
@@ -32,10 +34,12 @@ def get_strucids_from_project(project):
 
     json_string_strucids = get_json(url)
     dict_strucids = dict_from_string(json_string_strucids)
+    try:
+        strucids = list(dict_strucids['strucids'])
 
-    strucids = list(dict_strucids['strucids'])
-
-    return strucids
+        return strucids
+    except:
+        return None
 
 def delete_structure(strucid):
     delete_string = str('/usr/local/Proasis2/utils/removestruc.py -s ' + str(strucid))
@@ -55,13 +59,12 @@ def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
     all_projects = dict_projects['ALLPROJECTS']
 
     for project in all_projects:
-        project_name = project['project']
-
-        for exception in exception_list:
-            if exception in project_name:
-                continue
-            else:
-                strucids = get_strucids_from_project(str(project_name))
-                for strucid in strucids:
-                    delete_structure(strucid)
-                delete_project(project_name)
+        project_name = str(project['project'])
+        print project_name
+        if project_name in exception_list:
+            continue
+        else:
+            strucids = get_strucids_from_project(str(project_name))
+            for strucid in strucids:
+                delete_structure(strucid)
+            delete_project(project_name)

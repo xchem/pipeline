@@ -431,7 +431,7 @@ def get_fedid_list():
     final_list = list(set(master_list))
     return final_list
 
-def create_blacklist(fedid, proposal_dict):
+def create_blacklist(fedid, proposal_dict, dir_path):
     search_string=str('%' + fedid + '%')
     proposal_list = []
     strucid_list = []
@@ -448,7 +448,7 @@ def create_blacklist(fedid, proposal_dict):
         for item in temp_vals:
             strucid_list.append(item)
 
-    blacklist_file = str(fedid + '.dat')
+    blacklist_file = str(dir_path + '/' + fedid + '.dat')
     with open(blacklist_file, 'wb') as writefile:
         wr = csv.writer(writefile)
         wr.writerows(strucid_list)
