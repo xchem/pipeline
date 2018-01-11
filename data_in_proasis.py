@@ -97,7 +97,7 @@ class LeadTransfer(luigi.Task):
 
     def requires(self):
 
-        if not os.path.isfile('./' + str(self.name) + '.added'):
+        if not os.path.isfile('./projects/' + str(self.name) + '.added'):
             return AddProject(protein_name=self.name), database_operations.FindProjects()
         else:
             return database_operations.FindProjects()
@@ -191,7 +191,7 @@ class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget(str(self.protein_name) + '.added')
+        return luigi.LocalTarget('./projects/' + str(self.protein_name) + '.added')
 
     def run(self):
         add_project = str('/usr/local/Proasis2/utils/addnewproject.py -q OtherClasses -p ' + str(self.protein_name))
@@ -245,7 +245,7 @@ class HitTransfer(luigi.Task):
 
     def requires(self):
 
-        if not os.path.isfile('./' + str(self.protein_name) + '.added'):
+        if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
             return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
         else:
             return database_operations.FindProjects()

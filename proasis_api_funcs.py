@@ -66,5 +66,6 @@ def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
         else:
             strucids = get_strucids_from_project(str(project_name))
             for strucid in strucids:
-                delete_structure(strucid)
-            delete_project(project_name)
+                print strucid
+                #delete_structure(strucid)
+            #delete_project(project_name)

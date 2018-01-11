@@ -31,7 +31,7 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class CheckFiles(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     def requires(self):
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
@@ -41,7 +41,7 @@ class CheckFiles(luigi.Task):
             return FindSoakDBFiles()
 
     def output(self):
-        return luigi.LocalTarget('new_soakdb_files.txt')
+        return luigi.LocalTarget('files_' + str(self.date) + '.checked')
 
     def run(self):
         logfile = self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt')
@@ -111,7 +111,7 @@ class CheckFiles(luigi.Task):
             conn.commit()
 
         with self.output().open('w') as f:
-            f.write('All files checked!')
+            f.write('')
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
