@@ -47,6 +47,7 @@ class StartLeadTransfers(luigi.Task):
 
 
 class StartHitTransfers(luigi.Task):
+
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
 
     def get_list(self):
@@ -63,7 +64,7 @@ class StartHitTransfers(luigi.Task):
         rows = c.fetchall()
         for row in rows:
             bound_list.append(str(row[0]))
-            hit_directory_list.append(str(self.hit_directory + str(row[2])))
+            hit_directory_list.append(str(self.hit_directory + '/' + str(row[2])))
             crystal_list.append(str(row[1]))
             protein_list.append(str(row[2]))
             smiles_list.append(str(row[3]))
@@ -76,7 +77,7 @@ class StartHitTransfers(luigi.Task):
     def requires(self):
         try:
             list = self.get_list()
-            return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein=protein_name,
+            return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein_name=protein_name,
                                 smiles=smiles_string, mod_date=modification_string)
                     for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
         except:
@@ -94,6 +95,7 @@ class LeadTransfer(luigi.Task):
     reference_structure = luigi.Parameter()
     pandda_directory = luigi.Parameter()
     name = luigi.Parameter()
+    proasis_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
 
@@ -161,27 +163,76 @@ class LeadTransfer(luigi.Task):
                     res_list.append(res)
 
                 except:
-                    break
+                    continue
         res_list = (list(set(res_list)))
         print res_list
         lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
                    + str(res_list[2]) + " ' ")
         print lig1
 
-        res_string = "-o '"
+        # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
+        alt_lig_option = " -o '"
+        res_string = ""
+        full_res_string=''
+        count = 0
 
-        for i in range(3, len(res_list) - 1):
-            res_string += str(res_list[i] + ' ,')
-            res_string += str(res_list[i + 1] + ' ')
-        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(self.reference_structure) + ' -l ' + str(lig1) + str(res_string) + "' -x XRAY -n")
+        for i in range(3, len(res_list)-1):
+            if 'HOH' not in res_list[i]:
+                count+=1
+
+        multiple = int(round(count/3)*3)
+        count = 0
+        for i in range(3, multiple):
+            if 'HOH' not in res_list[i]:
+                if count==0:
+                    res_string += alt_lig_option
+                if count <= 1:
+                    res_string += str(res_list[i] + ' ,')
+                    count+=1
+                elif count ==2 and i != multiple:
+                    res_string+=str(res_list[i] + " '")
+                    full_res_string.join(res_string)
+                    count = 0
+
+        # copy reference structure to proasis directories
+        ref_structure_file_name = str(self.reference_structure).split('/')[-1]
+        proasis_project_directory = str(self.proasis_directory + '/' + str(self.name))
+        proasis_reference_directory = str(str(self.proasis_directory) + '/reference/')
+        proasis_reference_structure = str(proasis_reference_directory + '/' + str(ref_structure_file_name))
+
+        if not os.path.isdir(str(proasis_project_directory)):
+            os.system(str('mkdir ' + str(proasis_project_directory)))
+        if not os.path.isdir(proasis_reference_directory):
+            os.system(str('mkdir ' + str(proasis_reference_directory)))
+        os.system(str('cp ' + str(self.reference_structure) + ' ' + str(proasis_reference_structure)))
+
+        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + str(res_string) + " -x XRAY -n")
+        print submit_to_proasis
         process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         print(out)
-        print(err)
+        if err:
+            raise Exception('There was a problem submitting this lead: ' + str(err))
+
         strucidstr = misc_functions.get_id_string(out)
 
+        if len(strucidstr)<5:
+            raise Exception('No strucid was detected!')
+
         add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
-        os.system(add_lead)
+        process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        print(out)
+        if err:
+            raise Exception('There was a problem submitting this lead: ' + str(err))
+
+        conn, c = db_functions.connectDB()
+
+        c.execute(
+            'UPDATE proasis_leads SET strucid = %s WHERE reference_pdb = %s and pandda_path = %s',
+            (strucidstr, self.reference_structure, self.pandda_directory))
+
+        conn.commit()
 
         with self.output().open('wb') as f:
             f.write('')
@@ -206,7 +257,7 @@ class HitTransfer(luigi.Task):
     # bound state pdb file from refinement
     bound_pdb = luigi.Parameter()
     # the directory that files should be copied to on the proasis side
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/TEST')
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     # the name of the crystal
     crystal = luigi.Parameter()
     # the name of the protein name (i.e. proasis project name)
@@ -341,9 +392,9 @@ class HitTransfer(luigi.Task):
             strucid = self.submit_proasis_job_string(submit_to_proasis)
 
         submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
-                           + proasis_crystal_directory + '/2fofc.map -s ' + strucid)
+                           + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(self.crystal) + "_2fofc'")
         submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                          + proasis_crystal_directory + '/fofc.map -s ' + strucid)
+                          + proasis_crystal_directory + '/fofc.map -s ' + strucid+ ' -t ' + "'" + str(self.crystal) + "_fofc'")
 
         os.system(submit_2fofc)
         os.system(submit_fofc)
@@ -352,6 +403,8 @@ class HitTransfer(luigi.Task):
         conn, c = db_functions.connectDB()
         c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s',
                   (strucid, self.bound_pdb, self.mod_date))
+
+        conn.commit()
 
         with self.output().open('wb') as f:
             f.write('')
