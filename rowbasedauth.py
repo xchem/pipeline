@@ -5,9 +5,9 @@ rowbasedauth.py
 # lives at: /var/www/cgi-bin/proasisapi/v1.4
 
 import sys, os
-from p3SConstants import dssPyPath
-if dssPyPath not in sys.path:
-	sys.path.insert(1, dssPyPath)
+#from p3SConstants import dssPyPath
+#if dssPyPath not in sys.path:
+#	sys.path.insert(1, dssPyPath)
 
 import string, time, re, csv
 
@@ -24,8 +24,9 @@ def readblcsv(curf):
 					retdict.update({str(entry):1})
 
 	except:
-		with open('/dls/science/groups/proasis/test.txt','w') as f:
-			f.write(str(sys.exc_info()))
+		#with open('/dls/science/groups/proasis/test.txt','w') as f:
+			#f.write(str(sys.exc_info()))
+			print sys.exc_info()
 	return retdict
 
 
@@ -35,8 +36,15 @@ def GetUsername(inpStr):
 	Get username from cookie Proasis3User (or Proasis2User)
 	"""
 
+	#with open('/dls/science/groups/proasis/test.txt', 'w') as f:
+		#f.write(str(inpStr))
+
 	inpStr = str(inpStr)
 	c = dict(re.findall(r'\[(.+?)]=\[(.+?)]', inpStr))
+
+	#with open('/dls/science/groups/proasis/test.txt', 'a') as f:
+		#f.write(str(c))
+
 	if "Proasis3User" in c.keys():
 		return c["Proasis3User"]
 	elif "Proasis2User" in c.keys():

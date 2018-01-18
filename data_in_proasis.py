@@ -52,7 +52,7 @@ class StartHitTransfers(luigi.Task):
 
     def get_list(self):
         bound_list = []
-        hit_directory_list = []
+
         crystal_list = []
         protein_list = []
         smiles_list = []
@@ -64,22 +64,21 @@ class StartHitTransfers(luigi.Task):
         rows = c.fetchall()
         for row in rows:
             bound_list.append(str(row[0]))
-            hit_directory_list.append(str(self.hit_directory + '/' + str(row[2])))
             crystal_list.append(str(row[1]))
             protein_list.append(str(row[2]))
             smiles_list.append(str(row[3]))
             modification_list.append(str(row[4]))
 
-        list = zip(bound_list, hit_directory_list, crystal_list, protein_list, smiles_list, modification_list)
+        list = zip(bound_list,  crystal_list, protein_list, smiles_list, modification_list)
 
         return list
 
     def requires(self):
         try:
             list = self.get_list()
-            return [HitTransfer(bound_pdb=pdb, hit_directory=directory, crystal=crystal_name, protein_name=protein_name,
+            return [HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
                                 smiles=smiles_string, mod_date=modification_string)
-                    for (pdb, directory, crystal_name, protein_name, smiles_string, modification_string) in list]
+                    for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
         except:
             return database_operations.CheckFiles(), database_operations.FindProjects()
 
@@ -159,8 +158,9 @@ class LeadTransfer(luigi.Task):
                         space = ' '
                     if len(str(parent.get_id()[1])) == 2:
                         space = '  '
-                    res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
-                    res_list.append(res)
+                    if 'HOH' not in str(parent.get_resname()):
+                        res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                        res_list.append(res)
 
                 except:
                     continue
@@ -176,28 +176,26 @@ class LeadTransfer(luigi.Task):
         full_res_string=''
         count = 0
 
-        for i in range(3, len(res_list)-1):
-            if 'HOH' not in res_list[i]:
-                count+=1
+        for i in range(3, len(res_list)):
+            count+=1
 
         multiple = int(round(count/3)*3)
         count = 0
         for i in range(3, multiple):
-            if 'HOH' not in res_list[i]:
-                if count==0:
-                    res_string += alt_lig_option
-                if count <= 1:
-                    res_string += str(res_list[i] + ' ,')
-                    count+=1
-                elif count ==2 and i != multiple:
-                    res_string+=str(res_list[i] + " '")
-                    full_res_string.join(res_string)
-                    count = 0
+            if count==0:
+                res_string += alt_lig_option
+            if count <= 1:
+                res_string += str(res_list[i] + ' ,')
+                count+=1
+            elif count ==2:
+                res_string+=str(res_list[i] + " '")
+                full_res_string.join(res_string)
+                count = 0
 
         # copy reference structure to proasis directories
         ref_structure_file_name = str(self.reference_structure).split('/')[-1]
-        proasis_project_directory = str(self.proasis_directory + '/' + str(self.name))
-        proasis_reference_directory = str(str(self.proasis_directory) + '/reference/')
+        proasis_project_directory = str(str(self.proasis_directory) + '/' + str(self.name))
+        proasis_reference_directory = str(str(proasis_project_directory) + '/reference/')
         proasis_reference_structure = str(proasis_reference_directory + '/' + str(ref_structure_file_name))
 
         if not os.path.isdir(str(proasis_project_directory)):
@@ -206,7 +204,9 @@ class LeadTransfer(luigi.Task):
             os.system(str('mkdir ' + str(proasis_reference_directory)))
         os.system(str('cp ' + str(self.reference_structure) + ' ' + str(proasis_reference_structure)))
 
-        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + str(res_string) + " -x XRAY -n")
+        #submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + str(res_string) + " -x XRAY -n")
+        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
+            self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + "-x XRAY -n")
         print submit_to_proasis
         process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
@@ -245,7 +245,7 @@ class AddProject(luigi.Task):
         return luigi.LocalTarget('./projects/' + str(self.protein_name) + '.added')
 
     def run(self):
-        add_project = str('/usr/local/Proasis2/utils/addnewproject.py -q OtherClasses -p ' + str(self.protein_name))
+        add_project = str('/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
         process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         if len(out) > 1:
@@ -307,8 +307,9 @@ class HitTransfer(luigi.Task):
     def run(self):
 
         # set up directory paths for where files will be stored (for proasis)
-        proasis_protein_directory = str(str(self.hit_directory) + '/')
-        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
+        proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
+        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
+                                        + str(self.crystal) + '/')
 
         # find the name of the file, and create filepath name in proasis directories
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
@@ -373,6 +374,8 @@ class HitTransfer(luigi.Task):
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
+            print submit_to_proasis
+
             # submit the structure to proasis
             strucid = self.submit_proasis_job_string(submit_to_proasis)
 
@@ -386,15 +389,17 @@ class HitTransfer(luigi.Task):
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
-                                    str(os.path.join(self.hit_directory, str(self.crystal) + '.sdf')) +
+                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+
+            print submit_to_proasis
 
             strucid = self.submit_proasis_job_string(submit_to_proasis)
 
         submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
                            + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(self.crystal) + "_2fofc'")
         submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                          + proasis_crystal_directory + '/fofc.map -s ' + strucid+ ' -t ' + "'" + str(self.crystal) + "_fofc'")
+                          + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(self.crystal) + "_fofc'")
 
         os.system(submit_2fofc)
         os.system(submit_fofc)
