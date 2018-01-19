@@ -21,7 +21,8 @@ def readblcsv(curf):
 			blreader = csv.reader(csvfile, delimiter=',')
 			for row in blreader:
 				for entry in row:
-					retdict.update({str(entry):1})
+					if len(entry)>2:
+					    retdict.update({str(entry):1})
 
 	except:
 		#with open('/dls/science/groups/proasis/test.txt','w') as f:
@@ -76,7 +77,7 @@ def GetBlacklist(inpStr):
 	curf = curf.replace('username=','')
 
 	if not os.path.isfile(curf):
-		return retDict
+		curf = "%s/%s%s" % (BLACKLISTDIR, 'other_user', '.dat')
 	
 	# get blacklist as python dictionary
 	retDict = readblcsv(curf)

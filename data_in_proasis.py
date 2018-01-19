@@ -4,7 +4,7 @@ import pandas
 import misc_functions
 import db_functions
 
-import os, re, subprocess, sys
+import os, re, subprocess, sys, csv
 import numpy as np
 import proasis_api_funcs
 
@@ -104,8 +104,11 @@ class LeadTransfer(luigi.Task):
             return database_operations.FindProjects()
 
     def output(self):
-        mod_date = misc_functions.get_mod_date(self.reference_structure)
-        return luigi.LocalTarget('./leads/' + str(self.name) + '_' + mod_date + '.added')
+        try:
+            mod_date = misc_functions.get_mod_date(self.reference_structure)
+            return luigi.LocalTarget('./leads/' + str(self.name) + '_' + mod_date + '.added')
+        except:
+            return luigi.LocalTarget('./leads/' + str(self.name) + '.failed')
 
     def run(self):
         try:
@@ -248,12 +251,20 @@ class AddProject(luigi.Task):
         return luigi.LocalTarget('./projects/' + str(self.protein_name) + '.added')
 
     def run(self):
-        add_project = str('/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
-        process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
-        out, err = process.communicate()
-        if len(out) > 1:
+        try:
+            add_project = str('/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
+            process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
+            out, err = process.communicate()
+            if len(out) > 1:
+                with self.output().open('w') as f:
+                    f.write(out)
+            else:
+                with self.output().open('w') as f:
+                    f.write(err)
+        except:
             with self.output().open('w') as f:
-                f.write(out)
+                f.write('FAIL')
+
 
 
 class HitTransfer(luigi.Task):
@@ -435,6 +446,10 @@ class WriteBlackLists(luigi.Task):
 
         for fedid in fedid_list:
             db_functions.create_blacklist(fedid, proposal_dict, directory_path)
+
+        with open('/usr/local/Proasis2/Data/BLACKLIST/other_user.dat', 'w') as f:
+            wr = csv.writer(f)
+            wr.writerow(strucids)
 
         with self.output().open('wb') as f:
             f.write('')

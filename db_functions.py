@@ -434,6 +434,7 @@ def get_fedid_list():
 def create_blacklist(fedid, proposal_dict, dir_path):
     search_string=str('%' + fedid + '%')
     proposal_list = []
+    all_proposals = list(set(proposal_dict.keys()))
     strucid_list = []
     conn, c = connectDB()
     c.execute('select proposal from proposals where fedids like %s', (search_string,))
@@ -441,6 +442,9 @@ def create_blacklist(fedid, proposal_dict, dir_path):
     for row in rows:
         proposal_list.append(str(row[0]))
     for proposal in proposal_list:
+        if proposal in all_proposals:
+            all_proposals.remove(proposal)
+    for proposal in all_proposals:
         try:
             temp_vals = proposal_dict[proposal]
         except:
@@ -451,4 +455,4 @@ def create_blacklist(fedid, proposal_dict, dir_path):
     blacklist_file = str(dir_path + '/' + fedid + '.dat')
     with open(blacklist_file, 'wb') as writefile:
         wr = csv.writer(writefile)
-        wr.writerows(strucid_list)
+        wr.writerow(strucid_list)
