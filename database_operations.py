@@ -250,7 +250,7 @@ class FindProjects(luigi.Task):
 
 
     def requires(self):
-        return StartTransfers()
+        return CheckFiles(), StartTransfers()
 
     def output(self):
         return luigi.LocalTarget('findprojects.done')
