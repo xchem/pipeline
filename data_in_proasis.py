@@ -33,7 +33,7 @@ class StartLeadTransfers(luigi.Task):
         try:
             list = self.get_list()
 
-            return [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
+            return database_operations.CheckFiles(), database_operations.FindProjects(), [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
                 for (path, protein, reference) in list]
         except:
             return database_operations.CheckFiles(), database_operations.FindProjects()
@@ -76,7 +76,7 @@ class StartHitTransfers(luigi.Task):
     def requires(self):
         try:
             list = self.get_list()
-            return [HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
+            return database_operations.CheckFiles(), database_operations.FindProjects(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
                                 smiles=smiles_string, mod_date=modification_string)
                     for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
         except:
@@ -434,8 +434,7 @@ class HitTransfer(luigi.Task):
 
 class WriteBlackLists(luigi.Task):
     def requires(self):
-        yield StartLeadTransfers()
-        yield StartHitTransfers()
+        return StartLeadTransfers(), StartHitTransfers()
     def output(self):
         return luigi.LocalTarget('blacklists.done')
     def run(self):
