@@ -316,10 +316,10 @@ class HitTransfer(luigi.Task):
                             (self.bound_pdb, modification_date))
 
     def requires(self):
-
-        if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
+	try:
+        #if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
             return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
-        else:
+        except:
             return database_operations.FindProjects()
 
     def output(self):
