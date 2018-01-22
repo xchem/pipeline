@@ -284,7 +284,10 @@ class FindProjects(luigi.Task):
                 crystal_data_dump_dict['strucid'].append('')
 
                 try:
-                    modification_date = misc_functions.get_mod_date(str(row[1]))
+                    if len(str(row[1])) >= 5:
+                        modification_date = misc_functions.get_mod_date(str(row[1]))
+                    else:
+                        modification_date = misc_functions.get_mod_date(str(row[2]))
                 except:
                     modification_date = ''
 
