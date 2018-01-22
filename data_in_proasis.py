@@ -63,11 +63,12 @@ class StartHitTransfers(luigi.Task):
             '''SELECT bound_conf, crystal_name, protein, smiles, modification_date FROM proasis_hits WHERE bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
         rows = c.fetchall()
         for row in rows:
-            bound_list.append(str(row[0]))
-            crystal_list.append(str(row[1]))
-            protein_list.append(str(row[2]))
-            smiles_list.append(str(row[3]))
-            modification_list.append(str(row[4]))
+            if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
+                bound_list.append(str(row[0]))
+                crystal_list.append(str(row[1]))
+                protein_list.append(str(row[2]))
+                smiles_list.append(str(row[3]))
+                modification_list.append(str(row[4]))
 
         list = zip(bound_list,  crystal_list, protein_list, smiles_list, modification_list)
 
