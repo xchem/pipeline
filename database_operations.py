@@ -272,7 +272,7 @@ class FindProjects(luigi.Task):
 
                 if len(str(row[1])) < 5:
                     print ('No bound conf for ' + str(row[0]) + ' will attempt to use latest refinement pdb...')
-                    print(str(row[1]))
+                    print('file: ' + str(row[2]))
                     print('')
                     crystal_data_dump_dict['bound_conf'].append(row[2])
 
