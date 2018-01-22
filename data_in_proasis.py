@@ -21,9 +21,10 @@ class StartLeadTransfers(luigi.Task):
             '''SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ''')
         rows = c.fetchall()
         for row in rows:
-            path_list.append(str(row[0]))
-            protein_list.append(str(row[1]))
-            reference_list.append(str(row[2]))
+            if not os.path.isfile(str('./leads/' + str(row[1]) + '.added')):
+                path_list.append(str(row[0]))
+                protein_list.append(str(row[1]))
+                reference_list.append(str(row[2]))
 
         list = zip(path_list, protein_list, reference_list)
 
