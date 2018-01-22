@@ -2,7 +2,6 @@ import luigi
 import subprocess
 import os
 import datetime
-import logging
 import db_functions, misc_functions
 from sqlalchemy import create_engine
 import pandas
@@ -44,9 +43,6 @@ class CheckFiles(luigi.Task):
         return luigi.LocalTarget('logs/files_' + str(self.date) + '.checked')
 
     def run(self):
-        # logfile = self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt')
-        # # logging.basicConfig(filename=logfile, level=# logging.DEBUG, format='%(asctime)s %(message)s',
-        #                     datefrmt='%m/%d/%y %H:%M:%S')
 
         conn, c = db_functions.connectDB()
         exists = db_functions.table_exists(c, 'soakdb_files')
@@ -76,18 +72,15 @@ class CheckFiles(luigi.Task):
                         current_mod_date = misc_functions.get_mod_date(data_file)
 
                         if current_mod_date > old_mod_date:
-                            # logging.info(str(data_file) + ' has changed!')
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
                             c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
                             conn.commit()
                             # start class to add row and kick off process for that file
                         else:
-                            # logging.info(str(data_file) + ' has not changed!')
                             c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
                             conn.commit()
 
                 if filename_clean not in checked:
-                    # logging.info(filename_clean + ' is a new file!')
                     out, err, proposal = db_functions.pop_soakdb(filename_clean)
                     db_functions.pop_proposals(proposal)
                     c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
@@ -98,12 +91,6 @@ class CheckFiles(luigi.Task):
                 if str(row[0]) not in checked:
                     data_file = str(row[0])
                     file_exists = os.path.isfile(data_file)
-
-                    # if not file_exists:
-                    #     # logging.warning(str(data_file) + ' no longer exists! - notify users!')
-                    #
-                    # else:
-                    #     # logging.error(str(row[0]) + ' : something wrong!')
 
         exists = db_functions.table_exists(c, 'lab')
         if not exists:
@@ -130,19 +117,12 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
         # connect to central postgres db
         conn, c = db_functions.connectDB()
 
-        # set up # logging
-        logfile = self.date.strftime('transfer_logs/fedids_%Y%m%d.txt')
-        # logging.basicConfig(filename=logfile, level=# logging.DEBUG, format='%(asctime)s %(message)s',
-                            # datefrmt='%m/%d/%y %H:%M:%S')
-
         # use list from previous step as input to write to postgres
         with self.input().open('r') as database_list:
             for database_file in database_list.readlines():
                 database_file = database_file.replace('\n', '')
 
                 out, err, proposal = db_functions.pop_soakdb(database_file)
-
-                # logging.info(str('FedIDs written for ' + proposal))
 
         proposal_list = []
         c.execute('SELECT proposal FROM soakdb_files')
@@ -190,9 +170,6 @@ class TransferNewDataFile(luigi.Task):
 
     def requires(self):
         return CheckFiles()
-
-    def output(self):
-        pass
 
     def run(self):
         db_functions.transfer_data(self.data_file)
@@ -315,7 +292,6 @@ class FindProjects(luigi.Task):
             pandda_info = c.fetchall()
 
             for pandda_entry in pandda_info:
-                # project_data_dump_dict['crystal_name'].append(row[0])
                 project_data_dump_dict['protein'].append(protein_name)
                 project_data_dump_dict['pandda_path'].append(pandda_entry[0])
                 project_data_dump_dict['reference_pdb'].append(pandda_entry[1])

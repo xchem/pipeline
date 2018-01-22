@@ -84,11 +84,6 @@ def soakdb_query(cursor):
     results = cursor.fetchall()
     return results
 
-
-def create_insert_query(keys, indicies):
-    pass
-
-
 def define_dicts_and_keys():
     lab_dict = {}
     crystal_dict = {}
@@ -245,26 +240,6 @@ def transfer_data(database_file):
         file_id_no = str(rows[0][0])
         print file_id_no
 
-    # get all soakDB file names and close postgres connection
-    # change this to take filename from input, and only handle one data file at a time - i.e. when file is selected
-    # as new or changed, kick off everything below here as appropriate. Have a function to determine the query to
-    # drop rows relating to a file that has changed, and then a function to add rows - don't use pandas to add data
-
-    # c.execute('select filename from soakdb_files')
-    # rows = c.fetchall()
-    # c.close()
-
-    crystal_list = []
-
-    # project_protein = {'datafile': [], 'protein_field': [], 'protein_from_crystal': []}
-
-    # set database filename from postgres query
-
-    # project_protein['datafile'].append(database_file)
-
-    # temp_protein_list = []
-    # temp_protein_cryst_list = []
-
     # connect to soakDB
     conn2 = sqlite3.connect(str(database_file))
     c2 = conn2.cursor()
@@ -272,8 +247,6 @@ def transfer_data(database_file):
     try:
         # columns with issues: ProjectDirectory, DatePANDDAModelCreated
         for row in soakdb_query(c2):
-
-            #temp_protein_list.append(str(row[5]))
 
             try:
                 crystal_name = row[17]
@@ -310,19 +283,12 @@ def transfer_data(database_file):
             pop_dict(data_processing_table_list, data_processing_dict,
                      data_processing_dictionary_keys)
 
-        # protein_list = list(set(temp_protein_list))
-        # project_protein['protein_field'].append(protein_list)
-        # protein_cryst_list = list(set(temp_protein_cryst_list))
-        # project_protein['protein_from_crystal'].append(protein_cryst_list)
 
     except:
         logging.warning(str('Database file: ' + database_file + ' WARNING: ' + str(sys.exc_info()[1])))
-        # project_protein['protein_from_crystal'].append(str(sys.exc_info()[1]))
-        # project_protein['protein_field'].append(str(sys.exc_info()[1]))
+
         c2.close()
         return None
-
-    # print project_protein
 
     # turn dictionaries into dataframes
     labdf = pd.DataFrame.from_dict(lab_dict)
@@ -330,9 +296,6 @@ def transfer_data(database_file):
     refdf = pd.DataFrame.from_dict(refinement_dict)
     dimpledf = pd.DataFrame.from_dict(dimple_dict)
 
-    # create a project list
-    # projectdf = pandas.DataFrame.from_dict(project_protein)
-    # projectdf.to_csv('project_list.csv')
 
     # start a postgres engine for data transfer
     xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
@@ -367,7 +330,6 @@ def pop_soakdb(database_file):
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
 
-    # need to put modification date to use in the proasis upload scripts
     modification_date = misc_functions.get_mod_date(database_file)
     c.execute(
         '''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''',

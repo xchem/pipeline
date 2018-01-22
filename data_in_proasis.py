@@ -130,7 +130,6 @@ class LeadTransfer(luigi.Task):
                 # print('next centroid')
                 structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
                 no += 1
-                res_list = []
 
                 # initial distance for nearest neighbor (NN) search is 20A
                 neighbor_distance = 20
@@ -209,7 +208,6 @@ class LeadTransfer(luigi.Task):
                 os.system(str('mkdir ' + str(proasis_reference_directory)))
             os.system(str('cp ' + str(self.reference_structure) + ' ' + str(proasis_reference_structure)))
 
-            #submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + str(res_string) + " -x XRAY -n")
             submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
                 self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + "-x XRAY -n")
             print submit_to_proasis
