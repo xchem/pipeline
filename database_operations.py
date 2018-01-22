@@ -244,7 +244,7 @@ class FindProjects(luigi.Task):
 
         conn, c = db_functions.connectDB()
 
-        c.execute('''SELECT crystal_id, bound_conf FROM refinement WHERE outcome SIMILAR TO %s''',
+        c.execute('''SELECT crystal_id, bound_conf, pdb_latest FROM refinement WHERE outcome SIMILAR TO %s''',
                   (str(outcome_string),))
 
         rows = c.fetchall()
@@ -271,13 +271,16 @@ class FindProjects(luigi.Task):
                     protein_name = str(entry[1])
 
                 if len(str(row[1])) < 5:
-                    print ('No bound conf for ' + str(row[0]))
-                    continue
+                    print ('No bound conf for ' + str(row[0]) + ' will attempt to use latest refinement pdb...')
+                    print(str(row[1]))
+                    print('')
+                    crystal_data_dump_dict['bound_conf'].append(row[2])
 
                 crystal_data_dump_dict['protein'].append(protein_name)
                 crystal_data_dump_dict['smiles'].append(entry[0])
                 crystal_data_dump_dict['crystal_name'].append(row[0])
-                crystal_data_dump_dict['bound_conf'].append(row[1])
+                if len(str(row[1])) >= 5:
+                    crystal_data_dump_dict['bound_conf'].append(row[1])
                 crystal_data_dump_dict['strucid'].append('')
 
                 try:
