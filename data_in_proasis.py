@@ -3,11 +3,13 @@ import database_operations
 import pandas
 import misc_functions
 import db_functions
-
-import os, re, subprocess, sys, csv
+import os
+import re
+import subprocess
+import sys
+import csv
 import numpy as np
 import proasis_api_funcs
-
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 
 
@@ -18,7 +20,8 @@ class StartLeadTransfers(luigi.Task):
         reference_list = []
         conn, c = db_functions.connectDB()
         c.execute(
-            '''SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ''')
+            '''SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and '''
+            '''pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ''')
         rows = c.fetchall()
         for row in rows:
             if not os.path.isfile(str('./leads/' + str(row[1]) + '.added')):
@@ -34,7 +37,8 @@ class StartLeadTransfers(luigi.Task):
         try:
             list = self.get_list()
 
-            return database_operations.CheckFiles(), database_operations.FindProjects(), [LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
+            return database_operations.CheckFiles(), database_operations.FindProjects(), [
+                LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
                 for (path, protein, reference) in list]
         except:
             return database_operations.CheckFiles(), database_operations.FindProjects()
@@ -48,7 +52,6 @@ class StartLeadTransfers(luigi.Task):
 
 
 class StartHitTransfers(luigi.Task):
-
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
 
     def get_list(self):
@@ -61,7 +64,8 @@ class StartHitTransfers(luigi.Task):
 
         conn, c = db_functions.connectDB()
         c.execute(
-            '''SELECT bound_conf, crystal_name, protein, smiles, modification_date FROM proasis_hits WHERE bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
+            '''SELECT bound_conf, crystal_name, protein, smiles, modification_date FROM proasis_hits WHERE '''
+            '''bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
         rows = c.fetchall()
         for row in rows:
             if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
@@ -71,16 +75,17 @@ class StartHitTransfers(luigi.Task):
                 smiles_list.append(str(row[3]))
                 modification_list.append(str(row[4]))
 
-        list = zip(bound_list,  crystal_list, protein_list, smiles_list, modification_list)
+        list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list)
 
         return list
 
     def requires(self):
         try:
             list = self.get_list()
-            return database_operations.CheckFiles(), database_operations.FindProjects(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
-                                smiles=smiles_string, mod_date=modification_string)
-                    for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
+            return database_operations.CheckFiles(), database_operations.FindProjects(), [
+                HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
+                            smiles=smiles_string, mod_date=modification_string)
+                for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
         except:
             return database_operations.CheckFiles(), database_operations.FindProjects()
 
@@ -163,7 +168,8 @@ class LeadTransfer(luigi.Task):
                         if len(str(parent.get_id()[1])) == 2:
                             space = '  '
                         if 'HOH' not in str(parent.get_resname()):
-                            res = (str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                            res = (
+                                str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
                             res_list.append(res)
 
                     except:
@@ -177,22 +183,22 @@ class LeadTransfer(luigi.Task):
             # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
             alt_lig_option = " -o '"
             res_string = ""
-            full_res_string=''
+            full_res_string = ''
             count = 0
 
             for i in range(3, len(res_list)):
-                count+=1
+                count += 1
 
-            multiple = int(round(count/3)*3)
+            multiple = int(round(count / 3) * 3)
             count = 0
             for i in range(3, multiple):
-                if count==0:
+                if count == 0:
                     res_string += alt_lig_option
                 if count <= 1:
                     res_string += str(res_list[i] + ' ,')
-                    count+=1
-                elif count ==2:
-                    res_string+=str(res_list[i] + " '")
+                    count += 1
+                elif count == 2:
+                    res_string += str(res_list[i] + " '")
                     full_res_string.join(res_string)
                     count = 0
 
@@ -209,7 +215,8 @@ class LeadTransfer(luigi.Task):
             os.system(str('cp ' + str(self.reference_structure) + ' ' + str(proasis_reference_structure)))
 
             submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
-                self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + "-x XRAY -n")
+                self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(
+                lig1) + "-x XRAY -n")
             print(submit_to_proasis)
             process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
@@ -219,7 +226,7 @@ class LeadTransfer(luigi.Task):
 
             strucidstr = misc_functions.get_id_string(out)
 
-            if len(strucidstr)<5:
+            if len(strucidstr) < 5:
                 raise Exception('No strucid was detected!')
 
             add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
@@ -252,7 +259,8 @@ class AddProject(luigi.Task):
 
     def run(self):
         try:
-            add_project = str('/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
+            add_project = str(
+                '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
             process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
             if len(out) > 1:
@@ -264,7 +272,6 @@ class AddProject(luigi.Task):
         except:
             with self.output().open('w') as f:
                 f.write('FAIL')
-
 
 
 class HitTransfer(luigi.Task):
@@ -316,7 +323,7 @@ class HitTransfer(luigi.Task):
             return database_operations.FindProjects()
 
     def output(self):
-        return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date +'.added')
+        return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date + '.added')
 
     def run(self):
         try:
@@ -411,9 +418,11 @@ class HitTransfer(luigi.Task):
                 strucid = self.submit_proasis_job_string(submit_to_proasis)
 
             submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
-                               + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(self.crystal) + "_2fofc'")
+                               + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_2fofc'")
             submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                              + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(self.crystal) + "_fofc'")
+                              + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_fofc'")
 
             os.system(submit_2fofc)
             os.system(submit_fofc)
@@ -435,8 +444,10 @@ class HitTransfer(luigi.Task):
 class WriteBlackLists(luigi.Task):
     def requires(self):
         return StartLeadTransfers(), StartHitTransfers()
+
     def output(self):
         return luigi.LocalTarget('blacklists.done')
+
     def run(self):
         proposal_dict, strucids = db_functions.get_strucid_list()
         fedid_list = db_functions.get_fedid_list()
