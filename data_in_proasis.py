@@ -120,7 +120,7 @@ class LeadTransfer(luigi.Task):
                 print(' Searching for residue atoms for ' + str(len(site_list)) + ' site centroids \n')
                 print(' NOTE: 3 residue atoms are required for each site centroid \n')
 
-                print site_list
+                print(site_list)
 
             else:
                 print('file does not exist!')
@@ -169,10 +169,10 @@ class LeadTransfer(luigi.Task):
                     except:
                         continue
             res_list = (list(set(res_list)))
-            print res_list
+            print(res_list)
             lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
                        + str(res_list[2]) + " ' ")
-            print lig1
+            print(lig1)
 
             # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
             alt_lig_option = " -o '"
@@ -210,7 +210,7 @@ class LeadTransfer(luigi.Task):
 
             submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
                 self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(lig1) + "-x XRAY -n")
-            print submit_to_proasis
+            print(submit_to_proasis)
             process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
             print(out)
@@ -388,7 +388,7 @@ class HitTransfer(luigi.Task):
                                         str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                         " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-                print submit_to_proasis
+                print(submit_to_proasis)
 
                 # submit the structure to proasis
                 strucid = self.submit_proasis_job_string(submit_to_proasis)
@@ -406,7 +406,7 @@ class HitTransfer(luigi.Task):
                                         str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                         " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-                print submit_to_proasis
+                print(submit_to_proasis)
 
                 strucid = self.submit_proasis_job_string(submit_to_proasis)
 
