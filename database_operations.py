@@ -41,7 +41,7 @@ class CheckFiles(luigi.Task):
             return FindSoakDBFiles()
 
     def output(self):
-        return luigi.LocalTarget('files_' + str(self.date) + '.checked')
+        return luigi.LocalTarget('logs/files_' + str(self.date) + '.checked')
 
     def run(self):
         # logfile = self.date.strftime('transfer_logs/CheckFiles_%Y%m%d.txt')
