@@ -368,6 +368,9 @@ class HitTransfer(luigi.Task):
             if os.path.isfile(str(map_directory + '/fofc.map')):
                 os.system(str('cp ' + str(map_directory + '/fofc.map ' + proasis_crystal_directory)))
 
+            if os.path.isfile(str(map_directory + '/refine.mtz')):
+                os.system(str('cp ' + str(map_directory + '/refine.mtz ' + proasis_crystal_directory)))
+
             print(map_directory)
 
             # create 2D sdf files for all ligands from SMILES string
@@ -424,8 +427,13 @@ class HitTransfer(luigi.Task):
                               + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
                 self.crystal) + "_fofc'")
 
+            submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
+                              + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_mtz'")
+
             os.system(submit_2fofc)
             os.system(submit_fofc)
+            os.system(submit_mtz)
 
             # add strucid to database
             conn, c = db_functions.connectDB()
