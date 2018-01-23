@@ -1,16 +1,18 @@
-import luigi
-import database_operations
-import pandas
-import misc_functions
-import db_functions
+import csv
 import os
 import re
 import subprocess
 import sys
-import csv
+
+import luigi
 import numpy as np
-import proasis_api_funcs
+import pandas
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
+
+import database_operations
+import db_functions
+import misc_functions
+import proasis_api_funcs
 
 
 class StartLeadTransfers(luigi.Task):
@@ -316,8 +318,8 @@ class HitTransfer(luigi.Task):
                             (self.bound_pdb, modification_date))
 
     def requires(self):
-	try:
-        #if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
+        try:
+            # if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
             return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
         except:
             return database_operations.FindProjects()
@@ -428,7 +430,7 @@ class HitTransfer(luigi.Task):
                 self.crystal) + "_fofc'")
 
             submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
-                              + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
+                             + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
                 self.crystal) + "_mtz'")
 
             os.system(submit_2fofc)
