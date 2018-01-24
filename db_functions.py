@@ -350,16 +350,9 @@ def pop_proposals(proposal_number):
               (proposal_number, append_list, proposal_number, append_list))
     conn.commit()
 
-
-def get_strucid_list():
-
-    proposals_list = []
-    strucid_list = []
-
-    proposal_dict = {}
-
+def query_and_list(query, proposals_list, proposal_dict, strucid_list):
     conn, c = connectDB()
-    c.execute('SELECT bound_conf, strucid FROM proasis_hits')
+    c.execute(query)
     rows = c.fetchall()
     for row in rows:
         try:
@@ -368,11 +361,25 @@ def get_strucid_list():
             continue
         if proposal not in proposals_list:
             proposals_list.append(proposal)
-            proposal_dict.update({proposal:[]})
+            proposal_dict.update({proposal: []})
         else:
             proposal_dict[proposal].append(str(row[1]))
 
         strucid_list.append(str(row[1]))
+
+    return proposals_list, proposal_dict, strucid_list
+
+def get_strucid_list():
+
+    proposals_list = []
+    strucid_list = []
+    proposal_dict = {}
+
+    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT bound_conf, strucid FROM proasis_hits',
+                                                                 proposals_list, proposal_dict, strucid_list)
+
+    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT reference_pdb, strucid FROM proasis_leads',
+                                                                 proposals_list, proposal_dict, strucid_list)
 
     strucids = list(set(strucid_list))
 
