@@ -2,6 +2,7 @@ import proasis_api_funcs as paf
 import os
 import subprocess
 
+
 def write_temp_file(json_dict, type):
     for i in range(0, len(json_dict['output'])):
         with open(str('temp.' + type), 'a') as f:
@@ -66,7 +67,11 @@ def on_the_fly_analysis():
 
         print('Analysing ' + crystal + ' (' + strucid + ')')
         #os.system('module unload ccp4; source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh; ')
-        giant_score_string = str('module unload ccp4; source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh; giant.score_model ' + str(bound_pdb) + ' ' + str(proasis_crystal_directory + '/refine.mtz'))
+        giant_score_string = str('module unload ccp4; '
+                                 'source /dls/science/groups/i04-1/software/pandda-update'
+                                 '/ccp4/ccp4-7.0/bin/ccp4.setup-sh; giant.score_model ' +
+                                 str(bound_pdb) + ' ' +
+                                 str(proasis_crystal_directory + '/refine.mtz'))
 
         process = subprocess.Popen(giant_score_string, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()

@@ -70,7 +70,7 @@ class StartHitTransfers(luigi.Task):
             '''bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
         rows = c.fetchall()
         for row in rows:
-            if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
+            #if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
                 bound_list.append(str(row[0]))
                 crystal_list.append(str(row[1]))
                 protein_list.append(str(row[2]))
@@ -84,10 +84,7 @@ class StartHitTransfers(luigi.Task):
     def requires(self):
         try:
             list = self.get_list()
-            return database_operations.CheckFiles(), database_operations.FindProjects(), [
-                HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name,
-                            smiles=smiles_string, mod_date=modification_string)
-                for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
+            return [HitTransfer(bound_pdb=pdb, crystal=crystal_name, protein_name=protein_name, smiles=smiles_string, mod_date=modification_string) for (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
         except:
             return database_operations.CheckFiles(), database_operations.FindProjects()
 
@@ -318,11 +315,7 @@ class HitTransfer(luigi.Task):
                             (self.bound_pdb, modification_date))
 
     def requires(self):
-        try:
-            # if not os.path.isfile('./projects/' + str(self.protein_name) + '.added'):
-            return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
-        except:
-            return database_operations.FindProjects()
+        return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date + '.added')
