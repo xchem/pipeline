@@ -15,13 +15,20 @@ def run_edstats(strucid):
     mtz_file = paf.get_struc_mtz(strucid, '.')
     if mtz_file:
         pdb_file = paf.get_struc_pdb(strucid, str(strucid + '.pdb'))
+        print pdb_file
         if pdb_file:
             print('writing temporary edstats output...')
+            edstats_name = str('edstats_' + str(strucid) + '.out')
             os.system('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh; '
-                      'edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=edstats.out > temp.out')
+                      'edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=' + edstats_name + ' > temp.out'
+                                                                                                          ' > /dev/null 2>&1')
             # print('reading temporary edstats output...')
-            with open('edstats.out', 'r') as f:
-                output = f.read().strip().replace('\r\n', '\n').replace('\r', '\n').splitlines()
+            if os.path.isfile(edstats_name):
+                with open(edstats_name, 'r') as f:
+                    output = f.read().strip().replace('\r\n', '\n').replace('\r', '\n').splitlines()
+            else:
+                output=None
+                raise Exception('No edstats output file found!')
 
             if output:
                 header = output.pop(0).split()
@@ -35,10 +42,11 @@ def run_edstats(strucid):
             outputdata = []
 
             # Process the rest of the data
-            for line in output:
-                line = line.strip()
-                if not line:
-                    continue
+            if output:
+                for line in output:
+                    line = line.strip()
+                    if not line:
+                        continue
 
                 fields = line.split()
                 if len(fields) != num_fields:
@@ -72,18 +80,24 @@ def run_edstats(strucid):
                 # print residue
                 if 'LIG' in residue:
                     outputdata.append([[residue, chain, resnum], fields])
+            #else:
+                #raise Exception('No output found!')
+        else:
+            os.system('rm ' + mtz_file)
+            os.system('rm ' + mtz_file + '.gz')
 
+            raise Exception('No pdb file found for ' + strucid + ' so not running edstats!')
     else:
-        pdb_file = None
-        outputdata = None
-        header = None
-        print('No mtz file found for ' + strucid + ' so not running edstats!')
+        os.system('rm ' + mtz_file)
+        os.system('rm ' + mtz_file + '.gz')
+
+        raise Exception('No mtz file found for ' + strucid + ' so not running edstats!')
 
     try:
         os.system('rm ' + pdb_file)
         os.system('rm ' + mtz_file)
         os.system('rm ' + mtz_file + '.gz')
-        os.system('rm edstats.out')
+        os.system('rm ' + edstats_name)
     except:
         print('problem removing files')
 
