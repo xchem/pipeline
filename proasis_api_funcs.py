@@ -74,6 +74,7 @@ def get_struc_mtz(strucid, out_dir):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
     json_string = get_json(url)
     file_dict = dict_from_string(json_string)
+    filename = None
     for entry in file_dict['allfiles']:
         if 'STRUCFACMTZFILE' in entry['filetype']:
             if len(entry['filename']) < 2:

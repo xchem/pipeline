@@ -43,7 +43,7 @@ class StartLeadTransfers(luigi.Task):
                 LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
                 for (path, protein, reference) in list]
         except:
-            return database_operations.CheckFiles(), database_operations.FindProjects()
+            return database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('leads.done')

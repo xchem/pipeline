@@ -48,48 +48,54 @@ def run_edstats(strucid):
                     if not line:
                         continue
 
-                fields = line.split()
-                if len(fields) != num_fields:
-                    raise ValueError("Error Parsing EDSTATS output: Header & Data rows have different numbers of fields")
+                    fields = line.split()
+                    if len(fields) != num_fields:
+                        raise ValueError("Error Parsing EDSTATS output: Header & Data rows have different numbers of fields")
 
-                # Get and process the residue information
-                residue, chain, resnum = fields[:3]
-                try:
-                    resnum = int(resnum)
-                    inscode = ' '
-                except ValueError:
-                    inscode = resnum[-1:]
-                    resnum = int(resnum[:-1])
+                    # Get and process the residue information
+                    residue, chain, resnum = fields[:3]
+                    try:
+                        resnum = int(resnum)
+                        inscode = ' '
+                    except ValueError:
+                        inscode = resnum[-1:]
+                        resnum = int(resnum[:-1])
 
-                # Remove the processed columns
-                fields = fields[3:]
+                    # Remove the processed columns
+                    fields = fields[3:]
 
-                # Process the other columns (changing n/a to None and value to int)
-                for i, x in enumerate(fields):
-                    if x == 'n/a':
-                        fields[i] = None
-                    else:
-                        try:
-                            fields[i] = int(x)
-                        except:
+                    # Process the other columns (changing n/a to None and value to int)
+                    for i, x in enumerate(fields):
+                        if x == 'n/a':
+                            fields[i] = None
+                        else:
                             try:
-                                fields[i] = float(x)
+                                fields[i] = int(x)
                             except:
-                                fields[i] = x
+                                try:
+                                    fields[i] = float(x)
+                                except:
+                                    fields[i] = x
 
-                # print residue
-                if 'LIG' in residue:
-                    outputdata.append([[residue, chain, resnum], fields])
+                    # print residue
+                    if 'LIG' in residue:
+                        outputdata.append([[residue, chain, resnum], fields])
             #else:
                 #raise Exception('No output found!')
         else:
-            os.system('rm ' + mtz_file)
-            os.system('rm ' + mtz_file + '.gz')
+            try:
+                os.system('rm ' + mtz_file)
+                os.system('rm ' + mtz_file + '.gz')
+            except:
+                print('problem removing files')
 
             raise Exception('No pdb file found for ' + strucid + ' so not running edstats!')
     else:
-        os.system('rm ' + mtz_file)
-        os.system('rm ' + mtz_file + '.gz')
+        try:
+            os.system('rm ' + mtz_file)
+            os.system('rm ' + mtz_file + '.gz')
+        except:
+            print('problem removing files')
 
         raise Exception('No mtz file found for ' + strucid + ' so not running edstats!')
 

@@ -31,8 +31,8 @@ class EdstatsScores(luigi.Task):
                 results_dict['crystal'].append(self.crystal)
                 results_dict['strucid'].append(self.strucid)
 
-        else:
-            raise Exception('No output data was found...')
+        #else:
+            #raise Exception('No output data was found...')
 
         data_frame = pandas.DataFrame.from_dict(results_dict)
 
