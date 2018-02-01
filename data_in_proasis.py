@@ -3,6 +3,7 @@ import os
 import re
 import subprocess
 import sys
+import traceback
 
 import luigi
 import numpy as np
@@ -249,8 +250,9 @@ class LeadTransfer(luigi.Task):
             with self.output().open('wb') as f:
                 f.write('')
         except:
-            with self.output().open('wb') as f:
-                f.write(str(sys.exc_info()))
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback_message = traceback.format_exc()
+            raise Exception('Failed to transfer hit: ' + repr(traceback_message))
 
 
 class AddProject(luigi.Task):
@@ -295,11 +297,7 @@ class HitTransfer(luigi.Task):
         out, err = process.communicate()
         strucidstr = misc_functions.get_id_string(out)
 
-        if strucidstr != '':
-            print('Success... ' + str(self.crystal) + ' submitted. ProasisID: ' + str(strucidstr) + '\n *** \n')
-            return strucidstr
-        else:
-            print('Error: ' + str(err))
+        return strucidstr, err, out
 
     def check_modification_date(self, filename):
         if os.path.isfile(filename):
@@ -318,14 +316,15 @@ class HitTransfer(luigi.Task):
                             (self.bound_pdb, modification_date))
 
     def requires(self):
-        return AddProject(protein_name=self.protein_name), database_operations.FindProjects()
+        return AddProject(protein_name=self.protein_name)
 
     def output(self):
         return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date + '.added')
 
     def run(self):
-        try:
+        #try:
             # set up directory paths for where files will be stored (for proasis)
+            self.protein_name = str(self.protein_name).upper()
             proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
             proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
                                             + str(self.crystal) + '/')
@@ -382,8 +381,11 @@ class HitTransfer(luigi.Task):
             lig_string = ''
             for line in pdb_file:
                 if "LIG" in line:
-                    lig_string = re.search(r"LIG.......", line).group()
-                    ligands.append(str(lig_string))
+                    try:
+                        lig_string = re.search(r"LIG.......", line).group()
+                        ligands.append(str(lig_string))
+                    except:
+                        continue
 
             # find all unique ligands
             ligands = list(set(ligands))
@@ -399,7 +401,10 @@ class HitTransfer(luigi.Task):
                 print(submit_to_proasis)
 
                 # submit the structure to proasis
-                strucid = self.submit_proasis_job_string(submit_to_proasis)
+                strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+
+                #if err:
+                    #raise Exception(str(err))
 
             # same as above, but for structures containing more than one ligand
             elif len(ligands) > 1:
@@ -414,37 +419,52 @@ class HitTransfer(luigi.Task):
                                         str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                         " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-                print(submit_to_proasis)
+            elif len(ligands)==0:
+                raise Exception('No ligands were found!')
 
-                strucid = self.submit_proasis_job_string(submit_to_proasis)
+                # print(submit_to_proasis)
 
-            submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
-                               + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_2fofc'")
-            submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                              + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_fofc'")
+                strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
 
-            submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
-                             + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_mtz'")
+                # print('out: ' + str(out))
+                # print('err: ' + str(err))
 
-            os.system(submit_2fofc)
-            os.system(submit_fofc)
-            os.system(submit_mtz)
+                #if err:
+                    #raise Exception(str(err))
+
+                if strucid !='':
+
+
+                    submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
+                                       + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                        self.crystal) + "_2fofc'")
+                    submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
+                                      + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                        self.crystal) + "_fofc'")
+
+                    submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
+                                     + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
+                        self.crystal) + "_mtz'")
+
+                    os.system(submit_2fofc)
+                    os.system(submit_fofc)
+                    os.system(submit_mtz)
+
+                else:
+                    raise Exception('proasis failed to upload structure: ' + str(out))
 
             # add strucid to database
             conn, c = db_functions.connectDB()
             c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s',
-                      (strucid, self.bound_pdb, self.mod_date))
+                      (str(strucid), str(self.bound_pdb), str(self.mod_date)))
 
             conn.commit()
 
             with self.output().open('wb') as f:
                 f.write('')
-        except:
-            with self.output().open('wb') as f:
-                f.write(str(sys.exc_info()))
+        #except:
+            #traceback_message = traceback.format_exc()
+            #raise Exception('Failed to transfer hit: ' + repr(traceback_message))
 
 
 class WriteBlackLists(luigi.Task):

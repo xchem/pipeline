@@ -186,7 +186,7 @@ class StartTransfers(luigi.Task):
         datafiles = []
         fileids = []
         conn, c = db_functions.connectDB()
-        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = %s', (status_code,))
+        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = %s', (str(status_code),))
         rows = c.fetchall()
         for row in rows:
             datafiles.append(str(row[0]))
@@ -196,13 +196,13 @@ class StartTransfers(luigi.Task):
         return list
 
     def requires(self):
-        try:
+        #try:
             new_list = self.get_file_list(0)
             changed_list = self.get_file_list(1)
             return [TransferNewDataFile(data_file=datafile, file_id=fileid) for (datafile, fileid) in new_list], \
                    [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
-        except:
-            return TransferAllFedIDsAndDatafiles()
+        #except:
+            #return TransferAllFedIDsAndDatafiles()
 
     def output(self):
         return luigi.LocalTarget('transfers.txt')
@@ -272,24 +272,24 @@ class FindProjects(luigi.Task):
                 else:
                     protein_name = str(entry[1])
 
-                if len(str(row[1])) < 5:
-                    print ('No bound conf for ' + str(row[0]) + ' will attempt to use latest refinement pdb...')
-                    print('file: ' + str(row[2]))
-                    print('')
-                    crystal_data_dump_dict['bound_conf'].append(row[2])
+                # if len(str(row[1])) < 5:
+                #     print ('No bound conf for ' + str(row[0]) + ' will attempt to use latest refinement pdb...')
+                #     print('file: ' + str(row[2]))
+                #     print('')
+                #     crystal_data_dump_dict['bound_conf'].append(row[2])
 
                 crystal_data_dump_dict['protein'].append(protein_name)
                 crystal_data_dump_dict['smiles'].append(entry[0])
                 crystal_data_dump_dict['crystal_name'].append(row[0])
-                if len(str(row[1])) >= 5:
-                    crystal_data_dump_dict['bound_conf'].append(row[1])
+                # if len(str(row[1])) >= 5:
+                crystal_data_dump_dict['bound_conf'].append(row[1])
                 crystal_data_dump_dict['strucid'].append('')
 
                 try:
-                    if len(str(row[1])) >= 5:
-                        modification_date = misc_functions.get_mod_date(str(row[1]))
-                    else:
-                        modification_date = misc_functions.get_mod_date(str(row[2]))
+                    #if len(str(row[1])) >= 5:
+                    modification_date = misc_functions.get_mod_date(str(row[1]))
+                    #else:
+                        #modification_date = misc_functions.get_mod_date(str(row[2]))
                 except:
                     modification_date = ''
 
