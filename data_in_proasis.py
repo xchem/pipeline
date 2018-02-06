@@ -315,6 +315,23 @@ class CopyFilesForProasis(luigi.Task):
     hit_directory = luigi.Parameter()
     crystal = luigi.Parameter()
     bound_pdb = luigi.Parameter()
+    mod_date = luigi.Parameter()
+
+    def check_modification_date(self, filename):
+        if os.path.isfile(filename):
+            proasis_file_date = misc_functions.get_mod_date(filename)
+            modification_date = self.mod_date
+            if proasis_file_date != modification_date:
+                conn, c = db_functions.connectDB()
+                c.execute('SELECT strucid FROM proasis_hits WHERE bound_conf = %s and modification_date = %s',
+                          (self.bound_pdb, modification_date))
+                rows = c.fetchall()
+                for row in rows:
+                    if len(str(row[0])) > 1:
+                        proasis_api_funcs.delete_structure(str(row[0]))
+                        c.execute(
+                            'UPDATE proasis_hits SET strucid = NULL WHERE bound_conf = %s and modification_date = %s',
+                            (self.bound_pdb, modification_date))
 
     def requires(self):
         return FindLigands(bound_conf=self.bound_pdb)
@@ -407,6 +424,8 @@ class HitTransfer(luigi.Task):
     # modification date to check whether the structure needs updating or not
     mod_date = luigi.Parameter()
 
+    ligands = luigi.Parameter()
+
     def submit_proasis_job_string(self, substring):
         process = subprocess.Popen(substring, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
@@ -414,21 +433,13 @@ class HitTransfer(luigi.Task):
 
         return strucidstr, err, out
 
-    def check_modification_date(self, filename):
-        if os.path.isfile(filename):
-            proasis_file_date = misc_functions.get_mod_date(filename)
-            modification_date = self.mod_date
-            if proasis_file_date != modification_date:
-                conn, c = db_functions.connectDB()
-                c.execute('SELECT strucid FROM proasis_hits WHERE bound_conf = %s and modification_date = %s',
-                          (self.bound_pdb, modification_date))
-                rows = c.fetchall()
-                for row in rows:
-                    if len(str(row[0])) > 1:
-                        proasis_api_funcs.delete_structure(str(row[0]))
-                        c.execute(
-                            'UPDATE proasis_hits SET strucid = NULL WHERE bound_conf = %s and modification_date = %s',
-                            (self.bound_pdb, modification_date))
+    def get_lig_strings(self, lig_list):
+        strings_list = []
+        for ligand in lig_list:
+            if len(ligand) == 3:
+                strings_list.append(str(
+                    "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
+        return strings_list
 
     def requires(self):
         return AddProject(protein_name=self.protein_name)
@@ -448,75 +459,15 @@ class HitTransfer(luigi.Task):
         # a. with ligand from 1, files from 2 and sdf from 3
         # b. with no ligand, files from 2
 
-        # # set up directory paths for where files will be stored (for proasis)
-        # self.protein_name = str(self.protein_name).upper()
-        # proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
-        # proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
-        #                                 + str(self.crystal) + '/')
-        #
-        # # find the name of the file, and create filepath name in proasis directories
-        # pdb_file_name = str(self.bound_pdb).split('/')[-1]
-        # proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
-        #
-        # self.check_modification_date(proasis_bound_pdb)
-        #
-        # # copy refinement pdb specified in datasource to proasis directories
-        # print('Copying refinement pdb...')
-        #
-        # # if the proasis project (protein) dir does not exist, create it
-        # if not os.path.isdir(proasis_protein_directory):
-        #     print('not a directory')
-        #     os.system(str('mkdir ' + proasis_protein_directory))
-        #
-        # # if the crystal directory does not exist, create it
-        # if not os.path.isdir(proasis_crystal_directory):
-        #     print('not a directory')
-        #     os.system(str('mkdir ' + proasis_crystal_directory))
-        #
-        # # copy the file to the proasis directories
-        # os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
-        #
-        # # if the bound pdb is in a refinement folder, change the path to find the map files
-        # if 'Refine' in self.bound_pdb.replace(pdb_file_name, ''):
-        #     remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
-        #     map_directory = str(self.bound_pdb).replace(remove_string, '')
-        # else:
-        #     map_directory = str(self.bound_pdb).replace(pdb_file_name, '')
-        #
-        # # copy the 2fofc and fofc maps over to the proasis directories
-        # if os.path.isfile(str(map_directory + '/2fofc.map')):
-        #     os.system(str('cp ' + str(map_directory + '/2fofc.map ' + proasis_crystal_directory)))
-        #
-        # if os.path.isfile(str(map_directory + '/fofc.map')):
-        #     os.system(str('cp ' + str(map_directory + '/fofc.map ' + proasis_crystal_directory)))
-        #
-        # if os.path.isfile(str(map_directory + '/refine.mtz')):
-        #     os.system(str('cp ' + str(map_directory + '/refine.mtz ' + proasis_crystal_directory)))
-        #
-        # print(map_directory)
+        proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
+        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
+                                        + str(self.crystal) + '/')
 
-        # create 2D sdf files for all ligands from SMILES string
-        # misc_functions.create_sd_file(self.crystal, self.smiles,
-        #                               str(os.path.join(proasis_crystal_directory, self.crystal + '.sdf')))
 
-        # # look for ligands in the pdb file
-        # print('detecting ligand for ' + str(self.crystal))
-        # pdb_file = open(proasis_bound_pdb, 'r')
-        # ligands = []
-        # lig_string = ''
-        # for line in pdb_file:
-        #     if "LIG" in line:
-        #         try:
-        #             lig_string = re.search(r"LIG.......", line).group()
-        #             ligands.append(str(lig_string))
-        #         except:
-        #             continue
-        #
-        # # find all unique ligands
-        # ligands = list(set(ligands))
+
 
         # create the submission string for proasis
-        if len(ligands) == 1:
+        if len(self.ligands) == 1:
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
@@ -530,30 +481,23 @@ class HitTransfer(luigi.Task):
 
 
         # same as above, but for structures containing more than one ligand
-        elif len(ligands) > 1:
-            lig1 = ligands[0]
+        elif len(self.ligands) > 1:
+            lig1 = self.ligands[0]
             lign = " -o '"
-            for i in range(1, len(ligands) - 1):
-                lign += str(ligands[i] + ',')
-            lign += str(ligands[len(ligands) - 1] + "'")
+            for i in range(1, len(self.ligands) - 1):
+                lign += str(self.ligands[i] + ',')
+            lign += str(self.ligands[len(self.ligands) - 1] + "'")
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-        elif len(ligands)==0:
+        elif len(self.ligands)==0:
             raise Exception('No ligands were found!')
 
-            # print(submit_to_proasis)
 
             strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
-
-            # print('out: ' + str(out))
-            # print('err: ' + str(err))
-
-            #if err:
-                #raise Exception(str(err))
 
             if strucid !='':
 
