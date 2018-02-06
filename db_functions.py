@@ -429,12 +429,14 @@ def create_blacklist(fedid, proposal_dict, dir_path):
 def get_pandda_ligand(datafile, pandda_path, crystal):
     conn = sqlite3.connect(datafile)
     c = conn.cursor()
+    lig_list = []
     for row in c.execute('''select PANDDA_site_ligand_resname, PANDDA_site_ligand_chain, PANDDA_site_ligand_sequence_number
                   from panddaTable where PANDDAPath like ? and CrystalName like ?''', (pandda_path, crystal)):
         resname = str(row[0])
         chain = str(row[1])
         sequence = str(row[2])
-    return resname, chain, sequence
+        lig_list.append([resname, chain, sequence])
+    return lig_list
 
 def get_pandda_lig_list(bound_conf):
     conn, c = connectDB()
@@ -447,6 +449,6 @@ def get_pandda_lig_list(bound_conf):
     c.execute('select pandda_path from dimple where file_id = %s and crystal_name like %s', (file_id, crystal))
     pandda_directory = str(c.fetchall()[0][0])
 
-    res, chain, seq = get_pandda_ligand(datafile,pandda_directory,crystal)
+    lig_list = get_pandda_ligand(datafile,pandda_directory,crystal)
 
-    return [res, chain, seq]
+    return lig_list
