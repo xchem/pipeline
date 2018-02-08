@@ -14,6 +14,16 @@ def connectDB():
 
     return conn, c
 
+def column_exists(table, column):
+    conn, c = connectDB()
+    c.execute('''select * from information_schema.columns where table_name=%s and column_name=%s;''', (table, column))
+    rows = c.fetchall()
+    if len(rows)==0:
+        exists = None
+    else:
+        exists = True
+    return exists
+
 def table_exists(c, tablename):
     c.execute('''select exists(select * from information_schema.tables where table_name=%s);''', (tablename,))
     exists = c.fetchone()[0]

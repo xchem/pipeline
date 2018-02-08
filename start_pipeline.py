@@ -9,6 +9,7 @@ class KickOff(luigi.Task):
     def requires(self):
         try:
             # os.system('./pg_backup.sh')
+            os.system('rm ligand_search.done')
             os.system('rm pipeline.done')
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/hits.done')
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/leads.done')

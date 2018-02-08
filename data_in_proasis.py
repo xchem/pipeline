@@ -53,6 +53,22 @@ class StartLeadTransfers(luigi.Task):
         with self.output().open('wb') as f:
             f.write('')
 
+class StartLigandSearches(luigi.Task):
+    def requires(self):
+        conn, c = db_functions.connectDB()
+        c.execute("select bound_conf from proasis_hits where ligand_list is NULL and bound_conf is not NULL")
+        rows = c.fetchall()
+        conf_list = []
+        for row in rows:
+            conf_list.append(str(row[0]))
+            print str(row[0])
+        return [FindLigands(bound_conf=conf) for conf in conf_list]
+    def output(self):
+        return luigi.LocalTarget('ligand_search.done')
+    def run(self):
+        with self.output().open('wb') as f:
+            f.write('')
+
 
 class StartHitTransfers(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem')
@@ -64,33 +80,33 @@ class StartHitTransfers(luigi.Task):
         protein_list = []
         smiles_list = []
         modification_list = []
+        ligand_list = []
 
         conn, c = db_functions.connectDB()
-        c.execute(
-            '''SELECT bound_conf, crystal_name, protein, smiles, modification_date FROM proasis_hits WHERE '''
-            '''bound_conf !='' and bound_conf !='None' and modification_date !='' and modification_date !='None' ''')
+        c.execute("SELECT bound_conf, crystal_name, protein, smiles, modification_date, ligand_list FROM proasis_hits WHERE modification_date not like '' and ligand_list not like 'None' and bound_conf not like ''")
         rows = c.fetchall()
         for row in rows:
-            if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
+            #if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
                 bound_list.append(str(row[0]))
                 crystal_list.append(str(row[1]))
                 protein_list.append(str(row[2]))
                 smiles_list.append(str(row[3]))
                 modification_list.append(str(row[4]))
+                ligand_list.append(str(row[5]))
 
-        list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list)
-
+        list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
+	print list
         return list
 
     def requires(self):
-        try:
+        #try:
             list = self.get_list()
-            return [HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+            return StartLigandSearches(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name,
                                 protein_name=protein_name, smiles=smiles_string,
-                                mod_date=modification_string) for
-                    (pdb, crystal_name, protein_name, smiles_string, modification_string) in list]
-        except:
-            return database_operations.CheckFiles(), database_operations.FindProjects()
+                                mod_date=modification_string, ligands=ligand_list) for
+                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in list]
+        #except:
+            #return database_operations.CheckFiles(), database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('hits.done')
@@ -281,10 +297,17 @@ class FindLigands(luigi.Task):
     bound_conf = luigi.Parameter()
 
     def requires(self):
-        pass
+        conn, c = db_functions.connectDB()
+        c.execute('select protein from proasis_hits where bound_conf like %s', (self.bound_conf,))
+        rows = c.fetchall()
+        protein_list = []
+        for row in rows:
+            protein_list.append(str(row[0]))
+        return [AddProject(protein_name=protein) for protein in list(set(protein_list))]
 
     def output(self):
-        pass
+        out_name = '_'.join(self.bound_conf.split('/')[-4:-1])
+        return luigi.LocalTarget('./find_ligands/' + out_name + '.done')
 
     def run(self):
         try:
@@ -306,9 +329,24 @@ class FindLigands(luigi.Task):
         if ligand_list:
             unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
         else:
-            unique_ligand = None
+            unique_ligands = None
 
-        print unique_ligands
+        exists = db_functions.column_exists('proasis_hits', 'ligand_list')
+        if not exists:
+            conn, c = db_functions.connectDB()
+            c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
+            conn.commit()
+
+
+        conn, c = db_functions.connectDB()
+        c.execute('UPDATE proasis_hits SET ligand_list=%s WHERE bound_conf=%s',(str(unique_ligands), self.bound_conf))
+        conn.commit()
+        # print unique_ligands
+
+        with self.output().open('wb') as f:
+            f.write('')
+
+
 
 class CopyFilesForProasis(luigi.Task):
     protein_name = luigi.Parameter()
@@ -337,7 +375,7 @@ class CopyFilesForProasis(luigi.Task):
         return FindLigands(bound_conf=self.bound_pdb)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str('./proasis_file_transfer/' + self.crystal + '_' + self.mod_date + '.done'))
 
     def run(self):
         # set up directory paths for where files will be stored (for proasis)
@@ -385,6 +423,9 @@ class CopyFilesForProasis(luigi.Task):
         if os.path.isfile(str(map_directory + '/refine.mtz')):
             os.system(str('cp ' + str(map_directory + '/refine.mtz ' + proasis_crystal_directory)))
 
+        with self.output().open('wb') as f:
+            f.write('')
+
 
 class GenerateSdfFile(luigi.Task):
     # for sdf generation
@@ -401,7 +442,9 @@ class GenerateSdfFile(luigi.Task):
                                    crystal=self.crystal, bound_pdb=self.bound_pdb)
 
     def output(self):
-        pass
+        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
+                                        + str(self.crystal) + '/')
+        return luigi.LocalTarget(str(os.path.join(proasis_crystal_directory, str(self.crystal + '.sdf'))))
 
     def run(self):
         proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
@@ -442,39 +485,31 @@ class HitTransfer(luigi.Task):
         return strings_list
 
     def requires(self):
-        return AddProject(protein_name=self.protein_name)
+        return GenerateSdfFile(crystal=self.crystal, smiles=self.smiles, protein_name=self.protein_name,
+                               hit_directory=self.hit_directory, bound_pdb=self.bound_pdb)
 
     def output(self):
         return luigi.LocalTarget('./hits/' + str(self.crystal) + '_' + self.mod_date + '.added')
 
     def run(self):
 
-        # TODO: Step 1: establish whether there is a ligand in the structure:
-        # a. pandda ligand (db_functions.get_pandda_lig_list(bound_conf) - modify to find all/alt. conf.
-        # b. lig_string = re.search(r"LIG.......", line).group()
-        # c. no lig
-        # TODO: Step 2: copy files to proasis directories
-        # TODO: Step 3: generate sdf file for ligand
-        # TODO: Step 4: upload to proasis
-        # a. with ligand from 1, files from 2 and sdf from 3
-        # b. with no ligand, files from 2
+        self.ligands = eval(self.ligands)
 
-        proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
+        # proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')
         proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
                                         + str(self.crystal) + '/')
 
-
-
+        pdb_file_name = str(self.bound_pdb).split('/')[-1]
+        proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
 
         # create the submission string for proasis
         if len(self.ligands) == 1:
+            lig_string = str(self.get_lig_strings(self.ligands)[0])
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
-
-            print(submit_to_proasis)
 
             # submit the structure to proasis
             strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
@@ -482,9 +517,10 @@ class HitTransfer(luigi.Task):
 
         # same as above, but for structures containing more than one ligand
         elif len(self.ligands) > 1:
-            lig1 = self.ligands[0]
+            ligands_list = self.get_lig_strings(self.ligands)
+            lig1 = ligands_list[0]
             lign = " -o '"
-            for i in range(1, len(self.ligands) - 1):
+            for i in range(1, len(ligands_list) - 1):
                 lign += str(self.ligands[i] + ',')
             lign += str(self.ligands[len(self.ligands) - 1] + "'")
 
