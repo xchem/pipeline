@@ -72,21 +72,25 @@ class CheckFiles(luigi.Task):
                         checked.append(data_file)
                         old_mod_date = str(row[1])
                         current_mod_date = misc_functions.get_mod_date(data_file)
-                        status_code = int(row[2])
+                        try:
+                            status_code = int(row[2])
+                        except:
+                            status_code = str(row[2])
 
-                        if current_mod_date > old_mod_date and status_code==2:
+                        if current_mod_date > old_mod_date:
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
                             c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
                             conn.commit()
                             # start class to add row and kick off process for that file
-                        else:
-                            c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
-                            conn.commit()
+                        #else:
+                            #c.execute('UPDATE soakdb_files SET status_code = 2 where filename like %s;', (filename_clean,))
+                            #conn.commit()
 
                 if filename_clean not in checked:
                     out, err, proposal = db_functions.pop_soakdb(filename_clean)
                     db_functions.pop_proposals(proposal)
                     c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
+                    conn.commit()
 
             c.execute('select filename from soakdb_files;')
 

@@ -56,7 +56,13 @@ class StartLeadTransfers(luigi.Task):
 class StartLigandSearches(luigi.Task):
     def requires(self):
         conn, c = db_functions.connectDB()
+        exists = db_functions.column_exists('proasis_hits', 'ligand_list')
+        if not exists:
+            conn, c = db_functions.connectDB()
+            c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
+            conn.commit()
         c.execute("select bound_conf from proasis_hits where ligand_list is NULL and bound_conf is not NULL")
+
         rows = c.fetchall()
         conf_list = []
         for row in rows:
@@ -95,18 +101,25 @@ class StartHitTransfers(luigi.Task):
                 ligand_list.append(str(row[5]))
 
         run_list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
-	    print run_list
+        print run_list
         return run_list
 
     def requires(self):
         #try:
-            run_list = self.get_list()
-            return StartLigandSearches(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name,
-                                protein_name=protein_name, smiles=smiles_string,
-                                mod_date=modification_string, ligands=ligand_list) for
-                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list]
-        #except:
-            #return database_operations.CheckFiles(), database_operations.FindProjects()
+        conn, c = db_functions.connectDB()
+        exists = db_functions.column_exists('proasis_hits', 'ligand_list')
+        if not exists:
+            conn, c = db_functions.connectDB()
+            c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
+            conn.commit()
+            return StartLigandSearches()
+
+        run_list = self.get_list()
+        return StartLigandSearches(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+                            protein_name=protein_name, smiles=smiles_string,
+                            mod_date=modification_string, ligands=ligand_list) for
+                (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list]
+
 
     def output(self):
         return luigi.LocalTarget('hits.done')
@@ -331,13 +344,6 @@ class FindLigands(luigi.Task):
         else:
             unique_ligands = None
 
-        exists = db_functions.column_exists('proasis_hits', 'ligand_list')
-        if not exists:
-            conn, c = db_functions.connectDB()
-            c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
-            conn.commit()
-
-
         conn, c = db_functions.connectDB()
         c.execute('UPDATE proasis_hits SET ligand_list=%s WHERE bound_conf=%s',(str(unique_ligands), self.bound_conf))
         conn.commit()
@@ -521,19 +527,21 @@ class HitTransfer(luigi.Task):
             lig1 = ligands_list[0]
             lign = " -o '"
             for i in range(1, len(ligands_list) - 1):
-                lign += str(self.ligands[i] + ',')
-            lign += str(self.ligands[len(self.ligands) - 1] + "'")
+                lign += str(ligands_list[i] + ',')
+            lign += str(ligands_list[len(ligands_list) - 1] + "'")
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
+            strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+
         elif len(self.ligands)==0:
             raise Exception('No ligands were found!')
 
 
-        strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+
 
         if strucid !='':
 

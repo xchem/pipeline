@@ -337,6 +337,7 @@ def transfer_data(database_file):
         dataprocdf.to_sql('data_processing', xchem_engine, if_exists='append')
         refdf.to_sql('refinement', xchem_engine, if_exists='append')
         dimpledf.to_sql('dimple', xchem_engine, if_exists='append')
+        c.execute('UPDATE soakdb_files SET status_code = 2 WHERE filename = %s', (database_file,))
 
     c.execute('UPDATE soakdb_files SET status_code = 2 WHERE filename = %s', (database_file,))
 
