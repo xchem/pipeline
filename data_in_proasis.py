@@ -32,17 +32,17 @@ class StartLeadTransfers(luigi.Task):
                 protein_list.append(str(row[1]))
                 reference_list.append(str(row[2]))
 
-        list = zip(path_list, protein_list, reference_list)
+        out_list = zip(path_list, protein_list, reference_list)
 
-        return list
+        return out_list
 
     def requires(self):
         try:
-            list = self.get_list()
+            run_list = self.get_list()
 
             return database_operations.CheckFiles(), database_operations.FindProjects(), [
                 LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
-                for (path, protein, reference) in list]
+                for (path, protein, reference) in run_list]
         except:
             return database_operations.FindProjects()
 
@@ -94,17 +94,17 @@ class StartHitTransfers(luigi.Task):
                 modification_list.append(str(row[4]))
                 ligand_list.append(str(row[5]))
 
-        list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
-	print list
-        return list
+        run_list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
+	    print run_list
+        return run_list
 
     def requires(self):
         #try:
-            list = self.get_list()
+            run_list = self.get_list()
             return StartLigandSearches(), [HitTransfer(bound_pdb=pdb, crystal=crystal_name,
                                 protein_name=protein_name, smiles=smiles_string,
                                 mod_date=modification_string, ligands=ligand_list) for
-                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in list]
+                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list]
         #except:
             #return database_operations.CheckFiles(), database_operations.FindProjects()
 
@@ -533,28 +533,28 @@ class HitTransfer(luigi.Task):
             raise Exception('No ligands were found!')
 
 
-            strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+        strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
 
-            if strucid !='':
+        if strucid !='':
 
 
-                submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
-                                   + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                    self.crystal) + "_2fofc'")
-                submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                                  + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                    self.crystal) + "_fofc'")
+            submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
+                               + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_2fofc'")
+            submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
+                              + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_fofc'")
 
-                submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
-                                 + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
-                    self.crystal) + "_mtz'")
+            submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
+                             + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
+                self.crystal) + "_mtz'")
 
-                os.system(submit_2fofc)
-                os.system(submit_fofc)
-                os.system(submit_mtz)
+            os.system(submit_2fofc)
+            os.system(submit_fofc)
+            os.system(submit_mtz)
 
-            else:
-                raise Exception('proasis failed to upload structure: ' + str(out))
+        else:
+            raise Exception('proasis failed to upload structure: ' + str(out))
 
         # add strucid to database
         conn, c = db_functions.connectDB()

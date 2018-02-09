@@ -64,7 +64,7 @@ class CheckFiles(luigi.Task):
 
                 filename_clean = filename.rstrip('\n')
 
-                c.execute('select filename, modification_date from soakdb_files where filename like %s;', (filename_clean,))
+                c.execute('select filename, modification_date, status_code from soakdb_files where filename like %s;', (filename_clean,))
 
                 for row in c.fetchall():
                     if len(row) > 0:
@@ -72,8 +72,9 @@ class CheckFiles(luigi.Task):
                         checked.append(data_file)
                         old_mod_date = str(row[1])
                         current_mod_date = misc_functions.get_mod_date(data_file)
+                        status_code = int(row[2])
 
-                        if current_mod_date > old_mod_date:
+                        if current_mod_date > old_mod_date and status_code==2:
                             c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
                             c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
                             conn.commit()
@@ -192,8 +193,8 @@ class StartTransfers(luigi.Task):
             datafiles.append(str(row[0]))
             fileids.append(str(row[1]))
 
-        list = zip(datafiles, fileids)
-        return list
+        out_list = zip(datafiles, fileids)
+        return out_list
 
     def requires(self):
         #try:

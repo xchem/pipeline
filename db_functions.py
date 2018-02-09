@@ -312,6 +312,16 @@ def transfer_data(database_file):
     try:
         # compare dataframes to database rows and remove duplicates
         labdf_nodups = clean_df_db_dups(labdf, 'lab', xchem_engine, lab_dictionary_keys)
+        for i in range(0, len(labdf_nodups['expr_conc'])):
+            if not type(labdf_nodups['expr_conc'][i]) is int:
+                labdf_nodups['expr_conc'][i] = 0
+            if not type(labdf_nodups['soak_vol'][i]) is int:
+                labdf_nodups['soak_vol'][i] = 0
+            if not type(labdf_nodups['solv_frac'][i]) is int:
+                labdf_nodups['solv_frac'][i] = 0
+            if not type(labdf_nodups['stock_conc'][i]) is int:
+                labdf_nodups['stock_conc'][i] = 0
+
         dataprocdf_nodups = clean_df_db_dups(dataprocdf, 'data_processing', xchem_engine,
                                                           data_processing_dictionary_keys)
         refdf_nodups = clean_df_db_dups(refdf, 'refinement', xchem_engine, refinement_dictionary_keys)
@@ -327,6 +337,8 @@ def transfer_data(database_file):
         dataprocdf.to_sql('data_processing', xchem_engine, if_exists='append')
         refdf.to_sql('refinement', xchem_engine, if_exists='append')
         dimpledf.to_sql('dimple', xchem_engine, if_exists='append')
+
+    c.execute('UPDATE soakdb_files SET status_code = 2 WHERE filename = %s', (database_file,))
 
 
 def pop_soakdb(database_file):
