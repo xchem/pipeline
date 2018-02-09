@@ -8,3 +8,4 @@ postgres_backups/*
 leads/*
 hits/*
 transfer_logs/*
+logs/*
