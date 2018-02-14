@@ -1,4 +1,5 @@
 from luigi_classes import data_in_proasis
+from luigi_classes import html_generators
 import luigi
 import os
 
@@ -26,6 +27,8 @@ class KickOff(luigi.Task):
 
         yield data_in_proasis.WriteBlackLists()
         yield ligand_analysis.StartEdstatsScores()
+        yield html_generators.ProjectSummaryHTML()
+        yield html_generators.LigandEdstatsViolinHTML()
 
     def run(self):
         with self.output().open('wb') as f:

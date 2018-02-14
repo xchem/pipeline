@@ -2,7 +2,6 @@ import proasis_api_funcs as paf
 import db_functions as dbf
 import os
 import pandas as pd
-import plotly.plotly as py
 import plotly.graph_objs as go
 import plotly
 
