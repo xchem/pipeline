@@ -23,8 +23,6 @@ def dict_from_string(json_string):
         except:
             dict[key] = json_string.values()[counter]
 
-    #print dict
-
     return dict
 
 

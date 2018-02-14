@@ -10,7 +10,6 @@ import numpy as np
 import pandas
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 
-import database_operations
 import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
 import functions.proasis_api_funcs as proasis_api_funcs
@@ -23,21 +22,17 @@ class LeadTransfer(luigi.Task):
     proasis_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
+        self.name = str(self.name).upper()
+        return AddProject(protein_name=self.name)
 
-        if not os.path.isfile('logs/projects/' + str(self.name) + '.added'):
-            return AddProject(protein_name=self.name), database_operations.FindProjects()
-        else:
-            return database_operations.FindProjects()
 
     def output(self):
-        try:
-            mod_date = misc_functions.get_mod_date(self.reference_structure)
-            return luigi.LocalTarget('logs/leads/' + str(self.name) + '_' + mod_date + '.added')
-        except:
-            return luigi.LocalTarget('logs/leads/' + str(self.name) + '.failed')
+        mod_date = misc_functions.get_mod_date(self.reference_structure)
+        return luigi.LocalTarget('logs/leads/' + str(self.name) + '_' + mod_date + '.added')
 
     def run(self):
         try:
+            self.name = str(self.name).upper()
             pandda_analyse_centroids = str(self.pandda_directory + '/analyses/pandda_analyse_sites.csv')
             if os.path.isfile(pandda_analyse_centroids):
                 site_list = pandas.read_csv(str(pandda_analyse_centroids))['native_centroid']
@@ -175,10 +170,13 @@ class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
 
     def output(self):
+        self.protein_name = str(self.protein_name).upper()
         return luigi.LocalTarget('logs/projects/' + str(self.protein_name) + '.added')
+
 
     def run(self):
         try:
+            self.protein_name = str(self.protein_name).upper
             add_project = str(
                 '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
             process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
@@ -202,7 +200,7 @@ class FindLigands(luigi.Task):
         rows = c.fetchall()
         protein_list = []
         for row in rows:
-            protein_list.append(str(row[0]))
+            protein_list.append(str(row[0]).upper())
         return [AddProject(protein_name=protein) for protein in list(set(protein_list))]
 
     def output(self):
@@ -277,15 +275,6 @@ class CopyFilesForProasis(luigi.Task):
         proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
                                         + str(self.crystal) + '/')
 
-        # find the name of the file, and create filepath name in proasis directories
-        pdb_file_name = str(self.bound_pdb).split('/')[-1]
-        proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
-
-        self.check_modification_date(proasis_bound_pdb)
-
-        # copy refinement pdb specified in datasource to proasis directories
-        print('Copying refinement pdb...')
-
         # if the proasis project (protein) dir does not exist, create it
         if not os.path.isdir(proasis_protein_directory):
             print('not a directory')
@@ -296,11 +285,14 @@ class CopyFilesForProasis(luigi.Task):
             print('not a directory')
             os.system(str('mkdir ' + proasis_crystal_directory))
 
-        # copy the file to the proasis directories
-        os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
+        # find the name of the file, and create filepath name in proasis directories
+        pdb_file_name = str(self.bound_pdb).split('/')[-1]
+        proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
+
+        self.check_modification_date(proasis_bound_pdb)
 
         # if the bound pdb is in a refinement folder, change the path to find the map files
-        if 'Refine' in self.bound_pdb.replace(pdb_file_name, ''):
+        if 'Refine' in str(self.bound_pdb).replace(pdb_file_name, ''):
             remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
             map_directory = str(self.bound_pdb).replace(remove_string, '')
         else:
@@ -309,12 +301,24 @@ class CopyFilesForProasis(luigi.Task):
         # copy the 2fofc and fofc maps over to the proasis directories
         if os.path.isfile(str(map_directory + '/2fofc.map')):
             os.system(str('cp ' + str(map_directory + '/2fofc.map ' + proasis_crystal_directory)))
+        else:
+            raise Exception('2f0fc map not found! Will not upload to proasis!')
 
         if os.path.isfile(str(map_directory + '/fofc.map')):
             os.system(str('cp ' + str(map_directory + '/fofc.map ' + proasis_crystal_directory)))
+        else:
+            raise Exception('f0fc map not found! Will not upload to proasis!')
 
         if os.path.isfile(str(map_directory + '/refine.mtz')):
             os.system(str('cp ' + str(map_directory + '/refine.mtz ' + proasis_crystal_directory)))
+        else:
+            raise Exception('mtz file not found! Will not upload to proasis!')
+
+        # copy refinement pdb specified in datasource to proasis directories
+        print('Copying refinement pdb...')
+
+        # copy the file to the proasis directories
+        os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
 
         with self.output().open('wb') as f:
             f.write('')
@@ -331,15 +335,18 @@ class GenerateSdfFile(luigi.Task):
     bound_pdb = luigi.Parameter()
 
     def requires(self):
-        return CopyFilesForProasis(protein_name=self.protein_name, hit_directory=self.hit_directory,
-                                   crystal=self.crystal, bound_pdb=self.bound_pdb)
+        pass
+        #return CopyFilesForProasis(protein_name=self.protein_name, hit_directory=self.hit_directory,
+        #                           crystal=self.crystal, bound_pdb=self.bound_pdb)
 
     def output(self):
+        self.protein_name = str(self.protein_name).upper()
         proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
                                         + str(self.crystal) + '/')
         return luigi.LocalTarget(str(os.path.join(proasis_crystal_directory, str(self.crystal + '.sdf'))))
 
     def run(self):
+        self.protein_name = str(self.protein_name).upper()
         proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
                                         + str(self.crystal) + '/')
         misc_functions.create_sd_file(self.crystal, self.smiles,
@@ -378,6 +385,7 @@ class HitTransfer(luigi.Task):
         return strings_list
 
     def requires(self):
+        self.protein_name = str(self.protein_name).upper()
         return CopyFilesForProasis(protein_name=self.protein_name, hit_directory=self.hit_directory,
                                    crystal=self.crystal,
                                    bound_pdb=self.bound_pdb, mod_date=self.mod_date), FindLigands(
@@ -389,7 +397,7 @@ class HitTransfer(luigi.Task):
         return luigi.LocalTarget('logs/hits/' + str(self.crystal) + '_' + self.mod_date + '.added')
 
     def run(self):
-
+        self.protein_name = str(self.protein_name).upper()
         self.ligands = eval(self.ligands)
 
         # proasis_protein_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/')

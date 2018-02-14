@@ -24,7 +24,8 @@ class KickOff(luigi.Task):
         except:
             print('Whoops...')
 
-        return data_in_proasis.WriteBlackLists(), ligand_analysis.StartEdstatsScores()
+        yield data_in_proasis.WriteBlackLists()
+        yield ligand_analysis.StartEdstatsScores()
 
     def run(self):
         with self.output().open('wb') as f:

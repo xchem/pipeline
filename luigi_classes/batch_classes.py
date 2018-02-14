@@ -8,34 +8,32 @@ import data_in_proasis
 
 
 class StartLeadTransfers(luigi.Task):
+
     def get_list(self):
         path_list = []
         protein_list = []
         reference_list = []
         conn, c = db_functions.connectDB()
         c.execute(
-            '''SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and '''
-            '''pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ''')
+            "SELECT pandda_path, protein, reference_pdb FROM proasis_leads WHERE pandda_path !='' and pandda_path !='None' and reference_pdb !='' and reference_pdb !='None' ")
         rows = c.fetchall()
         for row in rows:
-            if not os.path.isfile(str('./leads/' + str(row[1]) + '_' + misc_functions.get_mod_date(str(row[1])) + '.added')):
-                path_list.append(str(row[0]))
-                protein_list.append(str(row[1]))
-                reference_list.append(str(row[2]))
+            # if not os.path.isfile(str('logs/leads/' + str(row[1]) + '_' + misc_functions.get_mod_date(str(row[1])) + '.added')):
+            path_list.append(str(row[0]))
+            protein_list.append(str(row[1]))
+            reference_list.append(str(row[2]))
 
         out_list = zip(path_list, protein_list, reference_list)
 
         return out_list
 
     def requires(self):
-        try:
-            run_list = self.get_list()
+        #try:
+        run_list = self.get_list()
 
-            return database_operations.CheckFiles(), database_operations.FindProjects(), [
-                data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
-                for (path, protein, reference) in run_list]
-        except:
-            return database_operations.FindProjects()
+        return [data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference) for (path, protein, reference) in run_list], database_operations.FindProjects()
+        #except:
+            #return database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('logs/leads.done')
@@ -95,7 +93,6 @@ class StartHitTransfers(luigi.Task):
                 ligand_list.append(str(row[5]))
 
         run_list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
-        print run_list
         return run_list
 
     def requires(self):
@@ -110,7 +107,7 @@ class StartHitTransfers(luigi.Task):
         return StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
                             protein_name=protein_name, smiles=smiles_string,
                             mod_date=modification_string, ligands=ligand_list) for
-                (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list]
+                (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('logs/hits.done')
@@ -118,3 +115,4 @@ class StartHitTransfers(luigi.Task):
     def run(self):
         with self.output().open('wb') as f:
             f.write('')
+
