@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import traceback
+import shutil
 
 import luigi
 import numpy as np
@@ -126,7 +127,7 @@ class LeadTransfer(luigi.Task):
                 os.system(str('mkdir ' + str(proasis_project_directory)))
             if not os.path.isdir(proasis_reference_directory):
                 os.system(str('mkdir ' + str(proasis_reference_directory)))
-            os.system(str('cp ' + str(self.reference_structure) + ' ' + str(proasis_reference_structure)))
+            shutil.copy2(self.reference_structure, proasis_reference_structure)
 
             submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.name) + ' -t ' + str(
                 self.name) + '_lead -d admin -f ' + str(proasis_reference_structure) + ' -l ' + str(
@@ -278,12 +279,12 @@ class CopyFilesForProasis(luigi.Task):
         # if the proasis project (protein) dir does not exist, create it
         if not os.path.isdir(proasis_protein_directory):
             print('not a directory')
-            os.system(str('mkdir ' + proasis_protein_directory))
+            os.mkdir(proasis_protein_directory)
 
         # if the crystal directory does not exist, create it
         if not os.path.isdir(proasis_crystal_directory):
             print('not a directory')
-            os.system(str('mkdir ' + proasis_crystal_directory))
+            os.mkdir(proasis_crystal_directory)
 
         # find the name of the file, and create filepath name in proasis directories
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
@@ -292,33 +293,33 @@ class CopyFilesForProasis(luigi.Task):
         self.check_modification_date(proasis_bound_pdb)
 
         # if the bound pdb is in a refinement folder, change the path to find the map files
-        if 'Refine' in str(self.bound_pdb).replace(pdb_file_name, ''):
-            remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
-            map_directory = str(self.bound_pdb).replace(remove_string, '')
-        else:
-            map_directory = str(self.bound_pdb).replace(pdb_file_name, '')
-
-        # copy the 2fofc and fofc maps over to the proasis directories
-        if os.path.isfile(str(map_directory + '/2fofc.map')):
-            os.system(str('cp ' + str(map_directory + '/2fofc.map ' + proasis_crystal_directory)))
-        else:
-            raise Exception('2f0fc map not found! Will not upload to proasis!')
-
-        if os.path.isfile(str(map_directory + '/fofc.map')):
-            os.system(str('cp ' + str(map_directory + '/fofc.map ' + proasis_crystal_directory)))
-        else:
-            raise Exception('f0fc map not found! Will not upload to proasis!')
-
-        if os.path.isfile(str(map_directory + '/refine.mtz')):
-            os.system(str('cp ' + str(map_directory + '/refine.mtz ' + proasis_crystal_directory)))
-        else:
-            raise Exception('mtz file not found! Will not upload to proasis!')
+        # if 'Refine' in str(self.bound_pdb).replace(pdb_file_name, ''):
+        #     remove_string = str(str(self.bound_pdb).split('/')[-2] + '/' + pdb_file_name)
+        #     map_directory = str(self.bound_pdb).replace(remove_string, '')
+        # else:
+        #     map_directory = str(self.bound_pdb).replace(pdb_file_name, '')
+        #
+        # # copy the 2fofc and fofc maps over to the proasis directories
+        # if os.path.isfile(str(map_directory + '/2fofc.map')):
+        #     shutil.copy2(os.path.join(map_directory,'2fofc.map'), proasis_crystal_directory)
+        # else:
+        #     raise Exception('2f0fc map not found! Will not upload to proasis!')
+        #
+        # if os.path.isfile(str(map_directory + '/fofc.map')):
+        #     shutil.copy2(os.path.join(map_directory, 'fofc.map'), proasis_crystal_directory)
+        # else:
+        #     raise Exception('f0fc map not found! Will not upload to proasis!')
+        #
+        # if os.path.isfile(str(map_directory + '/refine.mtz')):
+        #     shutil.copy2(os.path.join(map_directory, 'refine.mtz', proasis_crystal_directory))
+        # else:
+        #     raise Exception('mtz file not found! Will not upload to proasis!')
 
         # copy refinement pdb specified in datasource to proasis directories
         print('Copying refinement pdb...')
 
         # copy the file to the proasis directories
-        os.system(str('cp ' + str(self.bound_pdb) + ' ' + proasis_crystal_directory))
+        shutil.copy2(self.bound_pdb, proasis_crystal_directory)
 
         with self.output().open('wb') as f:
             f.write('')
@@ -336,21 +337,30 @@ class GenerateSdfFile(luigi.Task):
 
     def requires(self):
         pass
-        #return CopyFilesForProasis(protein_name=self.protein_name, hit_directory=self.hit_directory,
-        #                           crystal=self.crystal, bound_pdb=self.bound_pdb)
+
 
     def output(self):
         self.protein_name = str(self.protein_name).upper()
-        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
-                                        + str(self.crystal) + '/')
+        proasis_crystal_directory = os.path.join(self.hit_directory, self.protein_name, self.crystal)
+
         return luigi.LocalTarget(str(os.path.join(proasis_crystal_directory, str(self.crystal + '.sdf'))))
 
     def run(self):
         self.protein_name = str(self.protein_name).upper()
-        proasis_crystal_directory = str(str(self.hit_directory) + '/' + str(self.protein_name) + '/'
-                                        + str(self.crystal) + '/')
+        proasis_crystal_directory = os.path.join(self.hit_directory, self.protein_name, self.crystal)
         misc_functions.create_sd_file(self.crystal, self.smiles,
                                       str(os.path.join(proasis_crystal_directory, str(self.crystal + '.sdf'))))
+
+
+class CheckFilesForUpload(luigi.Task):
+    # bound state pdb file from refinement
+    bound_pdb = luigi.Parameter()
+
+    def run(self):
+        db_functions.check_file_status('mtz', 'refine.mtz', self.bound_pdb)
+        db_functions.check_file_status('2fofc', '2fofc.map', self.bound_pdb)
+        db_functions.check_file_status('fofc', 'fofc.map', self.bound_pdb)
+
 
 
 class HitTransfer(luigi.Task):
@@ -369,20 +379,6 @@ class HitTransfer(luigi.Task):
 
     ligands = luigi.Parameter()
 
-    def submit_proasis_job_string(self, substring):
-        process = subprocess.Popen(substring, stdout=subprocess.PIPE, shell=True)
-        out, err = process.communicate()
-        strucidstr = misc_functions.get_id_string(out)
-
-        return strucidstr, err, out
-
-    def get_lig_strings(self, lig_list):
-        strings_list = []
-        for ligand in lig_list:
-            if len(ligand) == 3:
-                strings_list.append(str(
-                    "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
-        return strings_list
 
     def requires(self):
         self.protein_name = str(self.protein_name).upper()
@@ -417,7 +413,7 @@ class HitTransfer(luigi.Task):
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
             # submit the structure to proasis
-            strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+            strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
 
         # same as above, but for structures containing more than one ligand
@@ -434,31 +430,22 @@ class HitTransfer(luigi.Task):
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
 
-            strucid, err, out = self.submit_proasis_job_string(submit_to_proasis)
+            strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
         elif len(self.ligands)==0:
             raise Exception('No ligands were found!')
 
-        if strucid !='':
+        if strucid != '':
 
-
-            submit_2fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i 2fofc_c -f '
-                               + proasis_crystal_directory + '/2fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_2fofc'")
-            submit_fofc = str('/usr/local/Proasis2/utils/addnewfile.py -i fofc_c -f '
-                              + proasis_crystal_directory + '/fofc.map -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_fofc'")
-
-            submit_mtz = str('/usr/local/Proasis2/utils/addnewfile.py -i mtz -f '
-                             + proasis_crystal_directory + '/refine.mtz -s ' + strucid + ' -t ' + "'" + str(
-                self.crystal) + "_mtz'")
-
-            os.system(submit_2fofc)
-            os.system(submit_fofc)
-            os.system(submit_mtz)
+            out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c', filename=os.path.join(proasis_crystal_directory, '2fofc.map'),
+                                  strucid=strucid, title=str(self.crystal + '_2fofc'))
+            out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c', filename=os.path.join(proasis_crystal_directory, 'fofc.map'),
+                                  strucid=strucid, title=str(self.crystal + '_fofc'))
+            out, err = proasis_api_funcs.add_proasis_file(file_type='mtz', filename=os.path.join(proasis_crystal_directory, 'refine.mtz'),
+                                  strucid=strucid, title=str(self.crystal + '_mtz'))
 
         else:
-            raise Exception('proasis failed to upload structure: ' + str(out))
+            raise Exception('proasis failed to upload structure: ' + str(err))
 
         # add strucid to database
         conn, c = db_functions.connectDB()

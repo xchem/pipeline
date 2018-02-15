@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 import subprocess
 import misc_functions
 import csv
+import os
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -475,3 +476,27 @@ def get_pandda_lig_list(bound_conf):
     lig_list = get_pandda_ligand(datafile,pandda_directory,crystal)
 
     return lig_list
+
+def check_file_status(filetype, filename, bound_pdb):
+    conn, c = connectDB()
+
+    pdb_file_name = str(bound_pdb).split('/')[-1]
+
+    if 'Refine' in str(bound_pdb).replace(pdb_file_name, ''):
+        remove_string = str(str(bound_pdb).split('/')[-2] + '/' + pdb_file_name)
+        map_directory = str(bound_pdb).replace(remove_string, '')
+    else:
+        map_directory = str(bound_pdb).replace(pdb_file_name, '')
+
+    exists = column_exists('proasis_hits', str('exists_' + filetype))
+
+    if not exists:
+        execute_string = str("ALTER TABLE proasis_hits ADD COLUMN exists_" + filetype + " text;")
+        c.execute(execute_string)
+        conn.commit()
+
+    execute_string = str("UPDATE proasis_hits SET exists_" + filetype + "=1 where bound_conf like %s")
+    if os.path.isfile(str(map_directory + filename)):
+        c.execute(execute_string, (bound_pdb,))
+    else:
+        c.execute(execute_string.replace('1','0'), (bound_pdb,))

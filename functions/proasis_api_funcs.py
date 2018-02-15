@@ -109,3 +109,29 @@ def get_struc_pdb(strucid, outfile):
             outfile = None
     return outfile
 
+def submit_proasis_job_string(substring):
+    process = subprocess.Popen(substring, stdout=subprocess.PIPE, shell=True)
+    out, err = process.communicate()
+    strucidstr = misc_functions.get_id_string(out)
+
+    return strucidstr, err, out
+
+def add_proasis_file(file_type, filename, strucid, title):
+    add_file = ['/usr/local/Proasis2/utils/addnewfile.py',
+                '-i', file_type,
+                '-f', filename,
+                '-s', strucid,
+                '-t', title]
+    process = subprocess.Popen(add_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+
+    return out, err
+
+def get_lig_strings(lig_list):
+    strings_list = []
+    for ligand in lig_list:
+        if len(ligand) == 3:
+            strings_list.append(str(
+                "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
+    return strings_list
+
