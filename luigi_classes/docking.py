@@ -90,9 +90,6 @@ class PullMol(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + 'mol.sdf')))
 
     def run(self):
-        if not os.path.isdir(os.path.join(self.root_dir, self.docking_dir)):
-            os.mkdir(os.path.join(self.root_dir, self.docking_dir))
-
         out_file = self.output().path
         print out_file
         mol_sdf = paf.get_struc_file(self.strucid, out_file, 'sdf')
