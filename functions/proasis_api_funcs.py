@@ -1,5 +1,7 @@
 import requests
-import os, sys
+import os, sys, shutil
+import subprocess
+from functions import misc_functions
 
 def get_json(url):
     # send API request and pull output as json
@@ -41,11 +43,13 @@ def get_strucids_from_project(project):
 
 def delete_structure(strucid):
     delete_string = str('/usr/local/Proasis2/utils/removestruc.py -s ' + str(strucid))
-    os.system(delete_string)
+    process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
 
 def delete_project(name):
     delete_string = str('/usr/local/Proasis2/utils/removeoldproject.py -p ' + str(name))
-    os.system(delete_string)
+    process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
 
 
 def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
@@ -82,9 +86,11 @@ def get_struc_mtz(strucid, out_dir):
             #raise Exception("No mtz file was found by proasis: " + str(file_dict['allfiles']))
     if filename:
         print 'moving stuff...'
-        os.system('cp ' + filename + ' ' + out_dir)
+        shutil.copy2(filename, out_dir)
         mtz_zipped = filename.split('/')[-1]
-        os.system('gzip -d ' + out_dir + '/' + mtz_zipped)
+        command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
+        process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = process.communicate()
         saved_to = str(mtz_zipped.replace('.gz',''))
     else:
         saved_to = None
@@ -97,9 +103,11 @@ def get_struc_pdb(strucid, outfile):
     file_dict = dict_from_string(json_string)
     print file_dict
     if os.path.isfile(outfile):
-        os.system('rm ' + outfile)
+        os.remove(outfile)
 
-    os.system('touch ' + outfile)
+    command_string = ('touch ' + outfile)
+    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
 
     with open(outfile, 'a') as f:
         try:
@@ -117,11 +125,8 @@ def submit_proasis_job_string(substring):
     return strucidstr, err, out
 
 def add_proasis_file(file_type, filename, strucid, title):
-    add_file = ['/usr/local/Proasis2/utils/addnewfile.py',
-                '-i', file_type,
-                '-f', filename,
-                '-s', strucid,
-                '-t', title]
+    add_file = str('/usr/local/Proasis2/utils/addnewfile.py' + ' ' + '-i' + ' ' + file_type + ' ' + '-f' + ' ' + filename + ' ' + '-s' + ' ' + strucid + ' ' + '-t' + ' ' + title)
+
     process = subprocess.Popen(add_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
 
@@ -134,4 +139,48 @@ def get_lig_strings(lig_list):
             strings_list.append(str(
                 "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
     return strings_list
+
+def get_struc_curated_pdb(strucid, outfile):
+    url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/curatedpdb/' + strucid)
+    json_string = get_json(url)
+    file_dict = dict_from_string(json_string)
+    # print file_dict
+    if os.path.isfile(outfile):
+        os.remove(outfile)
+
+    command_string = ('touch ' + outfile)
+    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+
+    print out
+
+    with open(outfile, 'a') as f:
+        try:
+            for line in file_dict['output']:
+                f.write(line)
+        except:
+            outfile = None
+    return outfile
+
+def get_struc_file(strucid, outfile, type):
+    url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/' + type + '/' + strucid)
+    json_string = get_json(url)
+    file_dict = dict_from_string(json_string)
+    # print file_dict
+    if os.path.isfile(outfile):
+        os.remove(outfile)
+
+    command_string = ('touch ' + outfile)
+    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+
+    print out
+
+    with open(outfile, 'a') as f:
+        try:
+            for line in file_dict['output']:
+                f.write(line)
+        except:
+            outfile = None
+    return outfile
 

@@ -1,13 +1,15 @@
 import luigi
 import functions.data_analysis_functions as daf
 import datetime
+import database_operations
+import ligand_analysis
 
 
 class ProjectSummaryCSV(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
 
     def requires(self):
-        pass
+        return ligand_analysis.StartEdstatsScores()
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('html/project_summary_csv/%Y%m%d.csv'))
@@ -34,7 +36,7 @@ class LigandEdstatsCSV(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
 
     def requires(self):
-        pass
+        return ligand_analysis.StartEdstatsScores()
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('html/ligand_edstats_csv/%Y%m%d.csv'))
@@ -47,7 +49,7 @@ class LigandEdstatsViolinHTML(luigi.Task):
     html_root = luigi.Parameter(default='html/')
 
     def requires(self):
-        return LigandEdstatsCSV()
+        return ligand_analysis.StartEdstatsScores(), LigandEdstatsCSV()
 
     def output(self):
         return luigi.LocalTarget('logs/violin_html.done')

@@ -498,5 +498,7 @@ def check_file_status(filetype, filename, bound_pdb):
     execute_string = str("UPDATE proasis_hits SET exists_" + filetype + "=1 where bound_conf like %s")
     if os.path.isfile(str(map_directory + filename)):
         c.execute(execute_string, (bound_pdb,))
+        conn.commit()
     else:
         c.execute(execute_string.replace('1','0'), (bound_pdb,))
+        conn.commit()

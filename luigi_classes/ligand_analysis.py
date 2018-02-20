@@ -52,9 +52,8 @@ class StartEdstatsScores(luigi.Task):
         for row in rows:
             crystal = str(row[0])
             strucid = str(row[1])
-            if not os.path.isfile(str('./edstats/' + str(crystal) + '_' + str(strucid) + '.done')):
-                crystal_list.append(crystal)
-                strucid_list.append(strucid)
+            crystal_list.append(crystal)
+            strucid_list.append(strucid)
 
         list = zip(crystal_list, strucid_list)
 

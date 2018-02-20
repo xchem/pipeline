@@ -28,12 +28,12 @@ class StartLeadTransfers(luigi.Task):
         return out_list
 
     def requires(self):
-        #try:
-        run_list = self.get_list()
+        try:
+            run_list = self.get_list()
 
-        return [data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference) for (path, protein, reference) in run_list], database_operations.FindProjects()
-        #except:
-            #return database_operations.FindProjects()
+            return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference) for (path, protein, reference) in run_list], database_operations.FindProjects()
+        except:
+            return database_operations.FindProjects()
 
     def output(self):
         return luigi.LocalTarget('logs/leads.done')
@@ -58,7 +58,7 @@ class StartLigandSearches(luigi.Task):
         for row in rows:
             conf_list.append(str(row[0]))
             print str(row[0])
-        return [data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
+        return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
 
     def output(self):
         return luigi.LocalTarget('logs/ligand_search.done')
@@ -81,16 +81,18 @@ class StartHitTransfers(luigi.Task):
         ligand_list = []
 
         conn, c = db_functions.connectDB()
-        c.execute("SELECT bound_conf, crystal_name, protein, smiles, modification_date, ligand_list FROM proasis_hits WHERE modification_date not like '' and ligand_list not like 'None' and bound_conf not like ''")
+        c.execute("SELECT bound_conf, crystal_name, protein, smiles, modification_date, ligand_list, exists_2fofc, exists_fofc, exists_pdb, exists_mtz FROM proasis_hits WHERE modification_date not like '' and ligand_list not like 'None' and bound_conf not like ''")
         rows = c.fetchall()
         for row in rows:
+            if '0' in [str(row[6]), str(row[7]), str(row[8]), str(row[9])]:
+                continue
             #if not os.path.isfile(str('./hits/' + str(row[1]) + '_' + str(row[4]) + '.added')):
-                bound_list.append(str(row[0]))
-                crystal_list.append(str(row[1]))
-                protein_list.append(str(row[2]))
-                smiles_list.append(str(row[3]))
-                modification_list.append(str(row[4]))
-                ligand_list.append(str(row[5]))
+            bound_list.append(str(row[0]))
+            crystal_list.append(str(row[1]))
+            protein_list.append(str(row[2]))
+            smiles_list.append(str(row[3]))
+            modification_list.append(str(row[4]))
+            ligand_list.append(str(row[5]))
 
         run_list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
         return run_list
@@ -98,13 +100,16 @@ class StartHitTransfers(luigi.Task):
     def requires(self):
         exists = db_functions.column_exists('proasis_hits', 'ligand_list')
         if not exists:
-            conn, c = db_functions.connectDB()
-            c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
-            conn.commit()
-            return StartLigandSearches()
+            try:
+                conn, c = db_functions.connectDB()
+                c.execute('ALTER TABLE proasis_hits ADD COLUMN ligand_list text;')
+                conn.commit()
+                return StartLigandSearches()
+            except:
+                pass
 
         run_list = self.get_list()
-        return StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+        return data_in_proasis.CleanUpHits(), database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
                             protein_name=protein_name, smiles=smiles_string,
                             mod_date=modification_string, ligands=ligand_list) for
                 (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
