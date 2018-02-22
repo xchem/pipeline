@@ -1,5 +1,6 @@
 from luigi_classes import data_in_proasis
 from luigi_classes import html_generators
+from luigi_classes import docking
 import luigi
 import os
 
@@ -22,13 +23,15 @@ class KickOff(luigi.Task):
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/findprojects.done')
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/blacklists.done')
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/edstats.done')
+            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/cleanup.done')
         except:
             print('Whoops...')
 
         yield data_in_proasis.WriteBlackLists()
-        yield ligand_analysis.StartEdstatsScores()
+        # yield ligand_analysis.StartEdstatsScores()
         yield html_generators.ProjectSummaryHTML()
         yield html_generators.LigandEdstatsViolinHTML()
+        yield docking.FindCompChemReady()
 
     def run(self):
         with self.output().open('wb') as f:

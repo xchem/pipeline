@@ -49,7 +49,7 @@ class LigandEdstatsViolinHTML(luigi.Task):
     html_root = luigi.Parameter(default='html/')
 
     def requires(self):
-        return ligand_analysis.StartEdstatsScores(), LigandEdstatsCSV()
+        return LigandEdstatsCSV()
 
     def output(self):
         return luigi.LocalTarget('logs/violin_html.done')

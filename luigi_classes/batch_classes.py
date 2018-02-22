@@ -109,7 +109,7 @@ class StartHitTransfers(luigi.Task):
                 pass
 
         run_list = self.get_list()
-        return data_in_proasis.CleanUpHits(), database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+        return database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
                             protein_name=protein_name, smiles=smiles_string,
                             mod_date=modification_string, ligands=ligand_list) for
                 (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()

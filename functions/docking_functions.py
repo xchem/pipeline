@@ -8,12 +8,11 @@ def get_comp_chem_ready():
     rows = c.fetchall()
     for row in rows:
         bound_list.append(str(row[0]))
-    for conf in bound_list:
-        c.execute('SELECT bound_conf FROM refinement WHERE bound_conf=%s AND outcome SIMILAR TO %s', (conf, '(%4%|%5%)'))
-        results = c.fetchall()
-        for result in results:
-            if len(result) > 0:
-                run_list.append(str(result[0]))
+    c.execute('SELECT bound_conf FROM refinement WHERE bound_conf IN %s AND outcome SIMILAR TO %s', (tuple(bound_list), '(%4%|%5%)'))
+    results = c.fetchall()
+    for result in results:
+        if len(result) > 0:
+            run_list.append(str(result[0]))
 
     return run_list
 

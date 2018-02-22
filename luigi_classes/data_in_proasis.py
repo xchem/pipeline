@@ -391,6 +391,9 @@ class CheckFilesForUpload(luigi.Task):
 
 class CleanUpHits(luigi.Task):
 
+    def output(self):
+        return luigi.LocalTarget(os.path.join('logs', 'cleanup.done'))
+
     def requires(self):
         pdb = []
         date = []

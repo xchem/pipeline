@@ -97,6 +97,35 @@ def get_struc_mtz(strucid, out_dir):
 
     return saved_to
 
+def get_struc_map(strucid, out_dir, type):
+    url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
+    json_string = get_json(url)
+    file_dict = dict_from_string(json_string)
+    filename = None
+    for entry in file_dict['allfiles']:
+        if type == 'fofc' and 'CCP4:Fo-Fc' in entry['filetype']:
+            if len(entry['filename']) < 2:
+                raise Exception(str("The filename for fofc was not right... " + str(file_dict)))
+            filename = str(entry['filename'])
+        if type == '2fofc' and 'CCP4:2Fo-Fc' in entry['filetype']:
+            if len(entry['filename']) < 2:
+                raise Exception(str("The filename for 2fofc was not right... " + str(file_dict)))
+            filename = str(entry['filename'])
+        #else:
+            #raise Exception("No mtz file was found by proasis: " + str(file_dict['allfiles']))
+    if filename:
+        print 'moving stuff...'
+        shutil.copy2(filename, out_dir)
+        mtz_zipped = filename.split('/')[-1]
+        command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
+        process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        saved_to = str(mtz_zipped.replace('.gz',''))
+    else:
+        saved_to = None
+
+    return saved_to
+
 def get_struc_pdb(strucid, outfile):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/originalpdb/' + strucid)
     json_string = get_json(url)
@@ -140,27 +169,6 @@ def get_lig_strings(lig_list):
                 "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
     return strings_list
 
-def get_struc_curated_pdb(strucid, outfile):
-    url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/curatedpdb/' + strucid)
-    json_string = get_json(url)
-    file_dict = dict_from_string(json_string)
-    # print file_dict
-    if os.path.isfile(outfile):
-        os.remove(outfile)
-
-    command_string = ('touch ' + outfile)
-    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-
-    print out
-
-    with open(outfile, 'a') as f:
-        try:
-            for line in file_dict['output']:
-                f.write(line)
-        except:
-            outfile = None
-    return outfile
 
 def get_struc_file(strucid, outfile, type):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/' + type + '/' + strucid)
