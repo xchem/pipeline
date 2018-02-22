@@ -337,3 +337,51 @@ class ParamPrepADT(luigi.Task):
         out, err = process.communicate()
         print out
         print err
+
+class WriteAutoGridScript(luigi.Task):
+    autogrid4_executable= luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autogrid4')
+    parameter_file = luigi.Parameter()
+    root_dir = luigi.Parameter()
+    docking_dir = luigi.Parameter(default='comp_chem')
+    bash_script = luigi.Parameter(defalt='autogrid.sh')
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
+
+    def run(self):
+        string = '''#!/bin/bash
+        cd %s
+        touch autogrid.running
+        %s -p %s
+        rm autogrid.running
+        touch autogrid.done
+        ''' % (os.path.join(self.root_dir, self.docking_dir), self.autogrid4_executable, self.parameter_file)
+        with self.output().open('wb') as f:
+            f.write(string)
+
+class WriteAutoDockScript(luigi.Task):
+    autodock4_executable= luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autodock4')
+    parameter_file = luigi.Parameter()
+    root_dir = luigi.Parameter()
+    docking_dir = luigi.Parameter(default='comp_chem')
+    bash_script = luigi.Parameter(defalt='autodock.sh')
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
+
+    def run(self):
+        string = '''#!/bin/bash
+        cd %s
+        touch autodock.running
+        %s -p %s -k
+        rm autodock.running
+        touch autodock.done
+        ''' % (os.path.join(self.root_dir, self.docking_dir), self.autodock4_executable, self.parameter_file)
+        with self.output().open('wb') as f:
+            f.write(string)
