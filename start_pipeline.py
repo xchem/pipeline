@@ -1,6 +1,6 @@
 from luigi_classes import data_in_proasis
 from luigi_classes import html_generators
-from luigi_classes import docking
+from luigi_classes import data_out_proasis
 import luigi
 import os
 
@@ -31,7 +31,7 @@ class KickOff(luigi.Task):
         # yield ligand_analysis.StartEdstatsScores()
         yield html_generators.ProjectSummaryHTML()
         yield html_generators.LigandEdstatsViolinHTML()
-        yield docking.FindCompChemReady()
+        yield data_out_proasis.FindCompChemReady()
 
     def run(self):
         with self.output().open('wb') as f:
