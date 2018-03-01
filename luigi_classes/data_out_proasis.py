@@ -1,15 +1,16 @@
+import os
+import shutil
+
 import luigi
+import pandas as pd
+from sqlalchemy import create_engine
+
 import functions.db_functions as dbf
 import functions.docking_functions as dock
 import functions.proasis_api_funcs as paf
-import os
-from sqlalchemy import create_engine
-import pandas as pd
-import shutil
-import subprocess
+
 
 class FindCompChemReady(luigi.Task):
-
     def requires(self):
         run_list = dock.get_comp_chem_ready()
         out_dict = dock.get_strucids(run_list)
@@ -52,8 +53,8 @@ class PullCurated(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + 'curated.pdb')))
 
     def run(self):
-        results_dict = {'strucid':[], 'root_dir':[], 'curated_name':[], 'apo_name':[], 'mtz_name':[],
-                        'twofofc_name':[], 'fofc_name':[], 'mol_name':[], 'ligands':[]}
+        results_dict = {'strucid': [], 'root_dir': [], 'curated_name': [], 'apo_name': [], 'mtz_name': [],
+                        'twofofc_name': [], 'fofc_name': [], 'mol_name': [], 'ligands': []}
 
         if not os.path.isdir(os.path.join(self.root_dir, self.docking_dir)):
             try:
@@ -72,14 +73,13 @@ class PullCurated(luigi.Task):
         results_dict['ligands'].append(self.ligands_list)
 
         for key in results_dict.keys():
-            if len(results_dict[key])==0:
+            if len(results_dict[key]) == 0:
                 results_dict[key].append('')
 
         frame = pd.DataFrame.from_dict(results_dict)
         print frame
         xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
         frame.to_sql('proasis_out', xchem_engine, if_exists='append')
-
 
 
 class CreateApo(luigi.Task):
@@ -99,22 +99,39 @@ class CreateApo(luigi.Task):
     def run(self):
         self.ligands = eval(self.ligands)
         print len(self.ligands)
-        if len(list(self.ligands))>1:
-            raise Exception('Structures containing more than 1 ligand are currently unsupported')
+        # if len(list(self.ligands))>1:
+        # raise Exception('Structures containing more than 1 ligand are currently unsupported')
         conn, c = dbf.connectDB()
         c.execute('SELECT curated_name from proasis_out WHERE strucid=%s', (self.strucid,))
         rows = c.fetchall()
-        if len(rows)>1:
+        print(len(rows))
+        if len(rows) > 1:
             raise Exception('Multiple files where found for this structure: ' + str(rows))
+        if len(rows[0]) == 0:
+            # raise Exception('No entries found for this strucid... check the datasource!')
+            c.execute('DELETE from proasis_out WHERE curated_name=%s', (str(self.crystal + '_' + 'curated.pdb'),))
+            conn.commit()
+            working_dir = os.getcwd()
+            os.chdir(os.path.join(self.root_dir, self.docking_dir))
+            try:
+                os.remove('*.pdb')
+                os.remove('*.mtz')
+                os.remove('*2fofc*')
+                os.remove('*fofc*')
+            except:
+                raise Exception(str(os.getcwd()))
+            os.chdir(working_dir)
+            raise Exception('No entries found for this strucid... resetting the datasource and files for this crystal')
         for row in rows:
             curated_pdb = str(row[0])
 
-        ligand_string = paf.get_lig_strings(self.ligands)[0]
+        ligand_string = paf.get_lig_strings(self.ligands)
+
         working_dir = os.getcwd()
         os.chdir(os.path.join(self.root_dir, self.docking_dir))
-        pdb_file = open(curated_pdb , 'r')
+        pdb_file = open(curated_pdb, 'r')
         for line in pdb_file:
-            if ligand_string in line:
+            if any(lig in line for lig in ligand_string):
                 continue
             else:
                 with open(self.output().path, 'a') as f:
@@ -130,7 +147,8 @@ class PullMol(luigi.Task):
     ligands = luigi.Parameter()
 
     def requires(self):
-        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal, ligands_list=self.ligands)
+        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal,
+                           ligands_list=self.ligands)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + 'mol.sdf')))
@@ -154,7 +172,8 @@ class PullMtz(luigi.Task):
     ligands = luigi.Parameter()
 
     def requires(self):
-        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal, ligands_list=self.ligands)
+        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal,
+                           ligands_list=self.ligands)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + 'mtz.mtz')))
@@ -166,8 +185,10 @@ class PullMtz(luigi.Task):
 
         conn, c = dbf.connectDB()
 
-        c.execute('UPDATE proasis_out SET mtz_name = %s WHERE strucid = %s', (self.output().path.split('/')[-1], self.strucid))
+        c.execute('UPDATE proasis_out SET mtz_name = %s WHERE strucid = %s',
+                  (self.output().path.split('/')[-1], self.strucid))
         conn.commit()
+
 
 class PullFofc(luigi.Task):
     strucid = luigi.Parameter()
@@ -177,7 +198,8 @@ class PullFofc(luigi.Task):
     ligands = luigi.Parameter()
 
     def requires(self):
-        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal, ligands_list=self.ligands)
+        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal,
+                           ligands_list=self.ligands)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + 'fofc.map')))
@@ -202,7 +224,8 @@ class Pull2Fofc(luigi.Task):
     ligands = luigi.Parameter()
 
     def requires(self):
-        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal, ligands_list=self.ligands)
+        return PullCurated(strucid=self.strucid, root_dir=self.root_dir, crystal=self.crystal,
+                           ligands_list=self.ligands)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.crystal + '_' + '2fofc.map')))

@@ -502,3 +502,4 @@ def check_file_status(filetype, filename, bound_pdb):
     else:
         c.execute(execute_string.replace('1','0'), (bound_pdb,))
         conn.commit()
+

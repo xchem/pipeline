@@ -1,11 +1,5 @@
 import luigi
-import functions.db_functions as dbf
-import functions.docking_functions as dock
-import functions.proasis_api_funcs as paf
 import os
-from sqlalchemy import create_engine
-import pandas as pd
-import shutil
 import subprocess
 
 class ReceptorPrepADT(luigi.Task):
@@ -79,7 +73,7 @@ class GridPrepADT(luigi.Task):
     ssh_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
 
     def requires(self):
-        pass
+        return LigPrepADT(), ReceptorPrepADT()
 
     def output(self):
         return luigi.LocalTarget(
@@ -109,7 +103,7 @@ class ParamPrepADT(luigi.Task):
     ssh_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
 
     def requires(self):
-        pass
+        return LigPrepADT(), ReceptorPrepADT()
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir,
@@ -133,10 +127,10 @@ class WriteAutoGridScript(luigi.Task):
     parameter_file = luigi.Parameter()
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    bash_script = luigi.Parameter(defalt='autogrid.sh')
+    bash_script = luigi.Parameter(default='autogrid.sh')
 
     def requires(self):
-        pass
+        return GridPrepADT()
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
@@ -145,7 +139,7 @@ class WriteAutoGridScript(luigi.Task):
         string = '''#!/bin/bash
         cd %s
         touch autogrid.running
-        %s -p %s
+        %s -p %s > autogrid.log
         rm autogrid.running
         touch autogrid.done
         ''' % (os.path.join(self.root_dir, self.docking_dir), self.autogrid4_executable, self.parameter_file)
@@ -157,10 +151,10 @@ class WriteAutoDockScript(luigi.Task):
     parameter_file = luigi.Parameter()
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    bash_script = luigi.Parameter(defalt='autodock.sh')
+    bash_script = luigi.Parameter(default='autodock.sh')
 
     def requires(self):
-        pass
+        return ParamPrepADT()
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
@@ -169,9 +163,31 @@ class WriteAutoDockScript(luigi.Task):
         string = '''#!/bin/bash
         cd %s
         touch autodock.running
-        %s -p %s -k
+        %s -p %s > autodock.log
         rm autodock.running
         touch autodock.done
         ''' % (os.path.join(self.root_dir, self.docking_dir), self.autodock4_executable, self.parameter_file)
         with self.output().open('wb') as f:
             f.write(string)
+
+class SubmitAutoGrid(luigi.Task):
+
+    def requires(self):
+        return WriteAutoGridScript()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
+class SubmitAutoDock(luigi.Task):
+
+    def requires(self):
+        return WriteAutoDockScript()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass

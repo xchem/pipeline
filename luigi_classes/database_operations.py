@@ -5,6 +5,7 @@ import datetime
 from functions import db_functions, misc_functions
 from sqlalchemy import create_engine
 import pandas
+import sqlite3
 
 
 class FindSoakDBFiles(luigi.Task):
