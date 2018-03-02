@@ -84,6 +84,7 @@ class CollatePanddaData(luigi.Task):
             frame = pandas.DataFrame.from_dict(results)
             frame.to_csv(self.output().path)
 
+
 class GenerateEventMtz(luigi.Task):
     pandda_input_mtz = luigi.Parameter()
     native_event_map = luigi.Parameter()
@@ -122,3 +123,16 @@ eof''' % (self.native_event_map, self.native_event_map.replace('native', 'p1'))
         convert_string = '''module load phenix; phenix.map_to_structure_factors %s d_min=%s output_file_name=%s''' \
                          % (self.native_event_map.replace('native', 'p1'), resolution_high,
                             self.native_event_map.replace('.ccp4', '.mtz'))
+
+class StartMapConversions(luigi.Task):
+    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+    def requires(self):
+        try:
+            in_frame = pandas.DataFrame.from_csv(str('pandda_data/pandda_scrape_' + str(self.date) + '.csv'))
+        except:
+            return CollatePanddaData()
+        input_mtz_list = in_frame['initial_pandda_map']
+        native_event_list = in_frame['event_ccp4_map']
+        return [GenerateEventMtz(pandda_input_mtz=input_mtz, native_event_map=input_ccp4) for (input_mtz, input_ccp4) in
+                list(zip(input_mtz_list, native_event_list))]
