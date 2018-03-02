@@ -4,6 +4,7 @@ import os
 from functions import db_functions
 import pandas
 import datetime
+import subprocess
 
 class CollatePanddaData(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
@@ -82,3 +83,42 @@ class CollatePanddaData(luigi.Task):
 
             frame = pandas.DataFrame.from_dict(results)
             frame.to_csv(self.output().path)
+
+class GenerateEventMtz(luigi.Task):
+    pandda_input_mtz = luigi.Parameter()
+    native_event_map = luigi.Parameter()
+
+    def requires(self):
+        return CollatePanddaData()
+
+    def output(self):
+        return luigi.LocalTarget(self.native_event_map.replace('.ccp4', '.mtz'))
+
+    def run(self):
+        resolution_high = 'n/a'
+        resolution_line = 1000000
+        mtzdmp = subprocess.Popen(['mtzdmp', self.pandda_input_mtz], stdout=subprocess.PIPE)
+        for n, line in enumerate(iter(mtzdmp.stdout.readline, '')):
+            if line.startswith(' *  Resolution Range :'):
+                resolution_line = n + 2
+            if n == resolution_line and len(line.split()) == 8:
+                resolution_high = line.split()[5]
+
+        mapmask_string = '''module load ccp4; mapmask         \\
+mapin %s           \\
+mapout %s << eof               
+xyzlim cell
+symmetry p1
+MODE mapin
+eof''' % (self.native_event_map, self.native_event_map.replace('native', 'p1'))
+
+        #print command_string
+
+        mapin = subprocess.Popen(mapmask_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = mapin.communicate()
+
+        print out
+
+        convert_string = '''module load phenix; phenix.map_to_structure_factors %s d_min=%s output_file_name=%s''' \
+                         % (self.native_event_map.replace('native', 'p1'), resolution_high,
+                            self.native_event_map.replace('.ccp4', '.mtz'))
