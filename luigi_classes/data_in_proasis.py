@@ -30,7 +30,7 @@ class LeadTransfer(luigi.Task):
         return luigi.LocalTarget('logs/leads/' + str(self.name).upper() + '_' + mod_date + '.added')
 
     def run(self):
-        try:
+        #try:
             self.name = str(self.name).upper()
             pandda_analyse_centroids = str(self.pandda_directory + '/analyses/pandda_analyse_sites.csv')
             if os.path.isfile(pandda_analyse_centroids):
@@ -41,7 +41,7 @@ class LeadTransfer(luigi.Task):
                 print(site_list)
 
             else:
-                print('file does not exist!')
+                raise Exception('file does not exist!')
 
             no = 0
             for centroid in site_list:
@@ -159,10 +159,10 @@ class LeadTransfer(luigi.Task):
 
             with self.output().open('wb') as f:
                 f.write('')
-        except:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback_message = traceback.format_exc()
-            raise Exception('Failed to transfer hit: ' + repr(traceback_message))
+        # except:
+        #     exc_type, exc_value, exc_traceback = sys.exc_info()
+        #     traceback_message = traceback.format_exc()
+        #     raise Exception('Failed to transfer hit: ' + repr(traceback_message))
 
 
 class AddProject(luigi.Task):

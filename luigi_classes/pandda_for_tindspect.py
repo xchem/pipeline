@@ -66,8 +66,8 @@ class CollatePanddaData(luigi.Task):
                                     PANDDA_site_ligand_sequence_number,
                                     PANDDA_site_ligand_altloc
                                     from panddaTable WHERE Crystalname = ? and PANDDApath = ? and 
-                                    PANDDA_site_event_map not like ?''',
-                                              (name, path, 'None')):
+                                    PANDDA_site_event_map not like ? and PANDDA_site_ligand_resname not like ?''',
+                                              (name, path, 'None', 'None')):
 
                             results['crystal_name'].append(name)
                             results['pandda_path'].append(path)
@@ -136,3 +136,17 @@ class StartMapConversions(luigi.Task):
         native_event_list = in_frame['event_ccp4_map']
         return [GenerateEventMtz(pandda_input_mtz=input_mtz, native_event_map=input_ccp4) for (input_mtz, input_ccp4) in
                 list(zip(input_mtz_list, native_event_list))]
+
+
+class FindAllFiles(luigi.Task):
+
+
+    def requires(self):
+        return CollatePanddaData()
+
+    def output(self):
+        pass
+
+    def run(self):
+        in_frame = pandas.DataFrame.from_csv(str('pandda_data/pandda_scrape_' + str(self.date) + '.csv'))
+

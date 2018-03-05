@@ -107,7 +107,7 @@ class CreateApo(luigi.Task):
         print(len(rows))
         if len(rows) > 1:
             raise Exception('Multiple files where found for this structure: ' + str(rows))
-        if len(rows[0]) == 0:
+        if len(rows)>0 and len(rows[0]) == 0:
             # raise Exception('No entries found for this strucid... check the datasource!')
             c.execute('DELETE from proasis_out WHERE curated_name=%s', (str(self.crystal + '_' + 'curated.pdb'),))
             conn.commit()
