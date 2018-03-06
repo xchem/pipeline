@@ -118,7 +118,7 @@ eof''' % (self.native_event_map, self.native_event_map.replace('native', 'p1'))
         mapin = subprocess.Popen(mapmask_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = mapin.communicate()
 
-        print out
+        print(out)
 
         convert_string = '''module load phenix; phenix.map_to_structure_factors %s d_min=%s output_file_name=%s''' \
                          % (self.native_event_map.replace('native', 'p1'), resolution_high,

@@ -1,10 +1,9 @@
 import os
-
 import luigi
 import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
-import database_operations
-import data_in_proasis
+from luigi_classes import database_operations
+from luigi_classes import data_in_proasis
 
 
 class StartLeadTransfers(luigi.Task):
@@ -57,7 +56,7 @@ class StartLigandSearches(luigi.Task):
         conf_list = []
         for row in rows:
             conf_list.append(str(row[0]))
-            print str(row[0])
+            print(str(row[0]))
         return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
 
     def output(self):

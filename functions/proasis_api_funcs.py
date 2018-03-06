@@ -62,13 +62,13 @@ def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
 
     for project in all_projects:
         project_name = str(project['project'])
-        print project_name
+        print(project_name)
         if project_name in exception_list:
             continue
         else:
             strucids = get_strucids_from_project(str(project_name))
             for strucid in strucids:
-                print strucid
+                print(strucid)
                 delete_structure(strucid)
             delete_project(project_name)
 
@@ -85,7 +85,7 @@ def get_struc_mtz(strucid, out_dir):
         #else:
             #raise Exception("No mtz file was found by proasis: " + str(file_dict['allfiles']))
     if filename:
-        print 'moving stuff...'
+        print('moving stuff...')
         shutil.copy2(filename, out_dir)
         mtz_zipped = filename.split('/')[-1]
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
@@ -114,7 +114,7 @@ def get_struc_map(strucid, out_dir, type):
         #else:
             #raise Exception("No mtz file was found by proasis: " + str(file_dict['allfiles']))
     if filename:
-        print 'moving stuff...'
+        print('moving stuff...')
         shutil.copy2(filename, out_dir)
         mtz_zipped = filename.split('/')[-1]
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
@@ -130,7 +130,7 @@ def get_struc_pdb(strucid, outfile):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/originalpdb/' + strucid)
     json_string = get_json(url)
     file_dict = dict_from_string(json_string)
-    print file_dict
+    print(file_dict)
     if os.path.isfile(outfile):
         os.remove(outfile)
 
@@ -182,7 +182,7 @@ def get_struc_file(strucid, outfile, type):
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
 
-    print out
+    print(out)
 
     with open(outfile, 'a') as f:
         try:

@@ -1,5 +1,5 @@
-import proasis_api_funcs as paf
-import db_functions as dbf
+from functions import proasis_api_funcs as paf
+from functions import db_functions as dbf
 import os
 import pandas as pd
 import plotly.graph_objs as go
@@ -15,18 +15,18 @@ def run_edstats(strucid):
     command_string = str('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh')
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
-    print out
-    print err
+    print(out)
+    print(err)
 
     if not os.path.isdir('temp'):
         os.mkdir('temp')
     os.chdir('temp')
 
     mtz_file = paf.get_struc_mtz(strucid, '.')
-    print mtz_file
+    print(mtz_file)
     if mtz_file:
         pdb_file = paf.get_struc_pdb(strucid, str(strucid + '.pdb'))
-        print pdb_file
+        print(pdb_file)
         if pdb_file:
             print('writing temporary edstats output...')
             edstats_name = str('edstats_' + str(strucid) + '.out')
@@ -35,8 +35,8 @@ def run_edstats(strucid):
                                                                                                           ' > /dev/null 2>&1')
             process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
-            print out
-            print err
+            print(out)
+            print(err)
 
             # print('reading temporary edstats output...')
             if os.path.isfile(edstats_name):

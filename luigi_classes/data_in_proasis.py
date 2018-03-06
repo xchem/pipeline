@@ -2,8 +2,6 @@ import csv
 import os
 import re
 import subprocess
-import sys
-import traceback
 import shutil
 
 import luigi
@@ -14,7 +12,7 @@ from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
 import functions.proasis_api_funcs as proasis_api_funcs
-from batch_classes import StartHitTransfers, StartLeadTransfers
+from luigi_classes.batch_classes import StartHitTransfers, StartLeadTransfers
 
 class LeadTransfer(luigi.Task):
     reference_structure = luigi.Parameter()
@@ -462,7 +460,7 @@ class HitTransfer(luigi.Task):
         # same as above, but for structures containing more than one ligand
         elif len(self.ligands) > 1:
             ligands_list = proasis_api_funcs.get_lig_strings(self.ligands)
-            print ligands_list
+            print(ligands_list)
             lig1 = ligands_list[0]
             lign = " -o '"
             for i in range(1, len(ligands_list) - 1):
@@ -473,7 +471,7 @@ class HitTransfer(luigi.Task):
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
                                     " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
-            print submit_to_proasis
+            print(submit_to_proasis)
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
@@ -485,19 +483,19 @@ class HitTransfer(luigi.Task):
             out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c', filename=os.path.join(proasis_crystal_directory, '2fofc.map'),
                                   strucid=strucid, title=str(self.crystal + '_2fofc'))
 
-            print out
+            print(out)
             if err:
                 raise Exception(out)
 
             out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c', filename=os.path.join(proasis_crystal_directory, 'fofc.map'),
                                   strucid=strucid, title=str(self.crystal + '_fofc'))
-            print out
+            print(out)
             if err:
                 raise Exception(out)
 
             out, err = proasis_api_funcs.add_proasis_file(file_type='mtz', filename=os.path.join(proasis_crystal_directory, 'refine.mtz'),
                                   strucid=strucid, title=str(self.crystal + '_mtz'))
-            print out
+            print(out)
 
             if err:
                 raise Exception(out)

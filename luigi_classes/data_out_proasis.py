@@ -64,7 +64,7 @@ class PullCurated(luigi.Task):
                 os.mkdir(os.path.join(self.root_dir, self.docking_dir))
 
         out_file = self.output().path
-        print out_file
+        print(out_file)
         curated_pdb = paf.get_struc_file(self.strucid, out_file, 'curatedpdb')
 
         results_dict['strucid'].append(self.strucid)
@@ -77,7 +77,7 @@ class PullCurated(luigi.Task):
                 results_dict[key].append('')
 
         frame = pd.DataFrame.from_dict(results_dict)
-        print frame
+        print(frame)
         xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
         frame.to_sql('proasis_out', xchem_engine, if_exists='append')
 
@@ -98,7 +98,7 @@ class CreateApo(luigi.Task):
 
     def run(self):
         self.ligands = eval(self.ligands)
-        print len(self.ligands)
+        print(len(self.ligands))
         # if len(list(self.ligands))>1:
         # raise Exception('Structures containing more than 1 ligand are currently unsupported')
         conn, c = dbf.connectDB()
@@ -155,7 +155,7 @@ class PullMol(luigi.Task):
 
     def run(self):
         out_file = self.output().path
-        print out_file
+        print(out_file)
         mol_sdf = paf.get_struc_file(self.strucid, out_file, 'sdf')
 
         conn, c = dbf.connectDB()

@@ -20,7 +20,7 @@ class CheckCluster(luigi.Task):
             ])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
-        print out
+        print(out)
         if int(out) > 0:
             number = int(out) - 2
         if int(out)==0:

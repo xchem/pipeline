@@ -13,7 +13,7 @@ def get_id_string(out):
         strucidstr = strucidstr.replace('strucid=', '')
         strucidstr = strucidstr.replace("'", '')
     except:
-        print sys.exc_info()
+        print(sys.exc_info())
         strucidstr = ''
     return strucidstr
 

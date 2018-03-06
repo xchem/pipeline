@@ -1,5 +1,5 @@
 import luigi
-import data_in_proasis
+from luigi_classes import data_in_proasis
 from functions import data_analysis_functions as daf
 from functions import db_functions as dbf
 import pandas
@@ -22,7 +22,7 @@ class EdstatsScores(luigi.Task):
             for ligand in output_data:
 
                 lig_string = '-'.join([str(x) for x in ligand[0]])
-                print lig_string
+                print(lig_string)
                 results_dict['ligand'].append(lig_string)
                 for j in range(0, len(header[24:36])):
                     if header[24 + j] not in results_dict.keys():

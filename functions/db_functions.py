@@ -5,7 +5,7 @@ import logging
 import sqlite3
 from sqlalchemy import create_engine
 import subprocess
-import misc_functions
+from functions import misc_functions
 import csv
 import os
 
@@ -249,7 +249,7 @@ def transfer_data(database_file):
     rows = c.fetchall()
     if len(rows) == 1:
         file_id_no = str(rows[0][0])
-        print file_id_no
+        print(file_id_no)
 
     # connect to soakDB
     conn2 = sqlite3.connect(str(database_file))

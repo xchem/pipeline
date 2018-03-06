@@ -1,4 +1,4 @@
-import db_functions as dbf
+from functions import db_functions as dbf
 
 def get_comp_chem_ready():
     bound_list = []

@@ -1,8 +1,8 @@
 import luigi
 import functions.data_analysis_functions as daf
 import datetime
-import database_operations
-import ligand_analysis
+from luigi_classes import database_operations
+from luigi_classes import ligand_analysis
 
 
 class ProjectSummaryCSV(luigi.Task):

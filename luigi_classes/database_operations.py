@@ -297,7 +297,7 @@ class FindProjects(luigi.Task):
         crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
 
         protein_list = set(list(project_data_dump_dict['protein']))
-        print protein_list
+        print(protein_list)
 
         for protein in protein_list:
 
