@@ -30,7 +30,9 @@ class StartLeadTransfers(luigi.Task):
         try:
             run_list = self.get_list()
 
-            return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference) for (path, protein, reference) in run_list], database_operations.FindProjects()
+            return database_operations.FindProjects(), database_operations.CheckFiles(), \
+                   [data_in_proasis.LeadTransfer(pandda_directory=path, name=protein, reference_structure=reference)
+                    for (path, protein, reference) in run_list], database_operations.FindProjects()
         except:
             return database_operations.FindProjects()
 

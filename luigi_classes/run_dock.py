@@ -7,6 +7,7 @@ from rdkit.Chem import rdMolTransforms
 
 from cluster_submission import WriteJob
 from cluster_submission import SubmitJob
+from prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
 
 
 class RunAutoGrid(luigi.Task):
@@ -23,17 +24,23 @@ class RunAutoGrid(luigi.Task):
     job_filename = luigi.Parameter(default='autogrid.sh')
     job_name = luigi.Parameter(default='autogrid')
 
+    receptor_pdbqt = luigi.Parameter()
+    ligand_pdbqt = luigi.Parameter()
+
     def requires(self):
         job_options = str(self.parameter_flag + ' ' + self.parameter_flag)
-        return WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
+        return GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
+                           root_dir=self.root_dir), \
+               WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, 'runautogrid.done'))
 
     def run(self):
-        pass
+        with self.output().open('wb') as f:
+            f.write('')
 
 
 class RunAutoDock(luigi.Task):
@@ -50,17 +57,23 @@ class RunAutoDock(luigi.Task):
     job_filename = luigi.Parameter(default='autodock.sh')
     job_name = luigi.Parameter(default='autodock')
 
+    receptor_pdbqt = luigi.Parameter()
+    ligand_pdbqt = luigi.Parameter()
+
     def requires(self):
         job_options = str(self.parameter_flag + ' ' + self.parameter_flag)
-        return WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
+        return ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
+                            root_dir=self.root_dir),\
+               WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, 'runautodock.done'))
 
     def run(self):
-        pass
+        with self.output().open('wb') as f:
+            f.write('')
 
 
 class VinaDock(luigi.Task):
@@ -71,7 +84,8 @@ class VinaDock(luigi.Task):
     vina_exe = luigi.Parameter(default='/dls_sw/apps/xchem/autodock_vina_1_1_2_linux_x86/bin/vina')
     box_size = luigi.Parameter(default='[40, 40, 40]')
 
-    def requires(self):
+    def requires(self)
+
         return PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_sdf), \
                PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb)
 
