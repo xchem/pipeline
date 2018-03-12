@@ -5,115 +5,56 @@ import subprocess
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
 
+from cluster_submission import WriteJob
+from cluster_submission import SubmitJob
 
-class WriteAutoGridScript(luigi.Task):
-    autogrid4_executable= luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autogrid4')
-    parameter_file = luigi.Parameter()
-    root_dir = luigi.Parameter()
-    docking_dir = luigi.Parameter(default='comp_chem')
-    bash_script = luigi.Parameter(default='autogrid.sh')
-
-    def requires(self):
-        pass
-        # return GridPrepADT()
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
-
-    def run(self):
-        string = '''#!/bin/bash
-cd %s
-touch autogrid.running
-%s -p %s > autogrid.log
-rm autogrid.running
-touch autogrid.done
-        ''' % (os.path.join(self.root_dir, self.docking_dir), self.autogrid4_executable, self.parameter_file)
-        with self.output().open('wb') as f:
-            f.write(string)
-
-class WriteAutoDockScript(luigi.Task):
-    autodock4_executable= luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autodock4')
-    parameter_file = luigi.Parameter()
-    root_dir = luigi.Parameter()
-    docking_dir = luigi.Parameter(default='comp_chem')
-    bash_script = luigi.Parameter(default='autodock.sh')
-
-    def requires(self):
-        return ParamPrepADT()
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.bash_script))
-
-    def run(self):
-        string = '''#!/bin/bash
-cd %s
-touch autodock.running
-%s -p %s > autodock.log
-rm autodock.running
-touch autodock.done
-        ''' % (os.path.join(self.root_dir, self.docking_dir), self.autodock4_executable, self.parameter_file)
-        with self.output().open('wb') as f:
-            f.write(string)
 
 class RunAutoGrid(luigi.Task):
+    # for job_options
+    parameter_flag = luigi.Parameter(default='-p')
     parameter_file = luigi.Parameter()
+
+    job_executable = luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autogrid4')
+
+    # job directory = os.path.join \/
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    done_file = luigi.Parameter(default='autogrid.done')
+
+    job_filename = luigi.Parameter(default='autogrid.sh')
+    job_name = luigi.Parameter(default='autogrid')
 
     def requires(self):
-        return WriteAutoGridScript(parameter_file=self.parameter_file, root_dir=self.root_dir)
+        job_options = str(self.parameter_flag + ' ' + self.parameter_flag)
+        return WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
+                        job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
+               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
 
     def output(self):
         pass
 
     def run(self):
         pass
+
 
 class RunAutoDock(luigi.Task):
+    # for job_options
+    parameter_flag = luigi.Parameter(default='-p')
     parameter_file = luigi.Parameter()
+
+    job_executable = luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autodock4')
+
+    # job directory = os.path.join \/
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    done_file = luigi.Parameter(default='autodock.done')
+
+    job_filename = luigi.Parameter(default='autodock.sh')
+    job_name = luigi.Parameter(default='autodock')
 
     def requires(self):
-        return WriteAutoDockScript(parameter_file=self.parameter_file, root_dir=self.root_dir)
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, self.done_file))
-
-    def run(self):
-        pass
-
-
-class DLGtoPDBQT(luigi.Task):
-    parameter_file = luigi.Parameter()
-    root_dir = luigi.Parameter()
-    docking_dir = luigi.Parameter(default='comp_chem')
-    dlg_file = luigi.Parameter()
-
-    def requires(self):
-        return RunAutoDock(parameter_file = self.parameter_file)
-
-    def output(self):
-        return luigi.LocalTarget(self.dlg_file.replace('.dlg', '.pdbqt'))
-
-    def run(self):
-        with open(self.dlg_file, 'r') as infile:
-            for line in infile:
-                if 'DOCKED:' in line:
-                    outline = line.replace('DOCKED: ', '')
-                    with open(self.output().path, 'a') as f:
-                        f.write(outline)
-
-class PDBQTtoPDB(luigi.Task):
-    lig_dir = luigi.Parameter(default='autodock_ligands')
-    root_dir = luigi.Parameter()
-    docking_dir = luigi.Parameter(default='comp_chem')
-    pdqbqt_file = luigi.Parameter()
-
-    def requires(self):
-        pass
+        job_options = str(self.parameter_flag + ' ' + self.parameter_flag)
+        return WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
+                        job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
+               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
 
     def output(self):
         pass

@@ -31,9 +31,9 @@ class CheckCluster(luigi.Task):
 
 
 class SubmitJob(luigi.Task):
-    remote_sub_command=luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
+    remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
     job_directory = luigi.Parameter()
-    job_script=luigi.Parameter()
+    job_script = luigi.Parameter()
     max_jobs = luigi.Parameter(default='100')
 
     def requires(self):
