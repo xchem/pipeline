@@ -67,67 +67,6 @@ class PrepLigand(luigi.Task):
         out, err = process.communicate()
 
 
-# class ReceptorPrepADT(luigi.Task):
-#     pythonsh_executable = luigi.Parameter(default='/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/bin/pythonsh')
-#     prepare_receptor4_script = luigi.Parameter(default=
-#                                              '/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/MGLToolsPckgs/'
-#                                              'AutoDockTools/Utilities24/prepare_receptor4.py')
-#     receptor_file_name = luigi.Parameter()
-#     root_dir = luigi.Parameter()
-#     docking_dir = luigi.Parameter(default='comp_chem')
-#     ssh_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
-#
-#     def requires(self):
-#         pass
-#
-#     def output(self):
-#         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.receptor_file_name.replace('pdb', 'pdbqt'))))
-#
-#     def run(self):
-#         receptor = os.path.join(self.root_dir, self.docking_dir, self.receptor_file_name)
-#         command = ' '.join([self.ssh_command, self.pythonsh_executable, self.prepare_receptor4_script, '-r', receptor, '-o', self.output().path])
-#         print(command)
-#         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#         out, err = process.communicate()
-#         print(out)
-#         print(err)
-#
-#
-# class LigPrepADT(luigi.Task):
-#     pythonsh_executable = luigi.Parameter(default='/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/bin/pythonsh')
-#     prepare_ligand4_script = luigi.Parameter(default=
-#                                                '/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/MGLToolsPckgs/'
-#                                                'AutoDockTools/Utilities24/prepare_ligand4.py')
-#     ligand_file_name = luigi.Parameter()
-#     root_dir = luigi.Parameter()
-#     docking_dir = luigi.Parameter(default='comp_chem')
-#     ssh_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
-#
-#     def requires(self):
-#         pass
-#
-#     def output(self):
-#         return luigi.LocalTarget(
-#             os.path.join(self.root_dir, self.docking_dir, str(self.ligand_file_name.replace('sdf', 'pdbqt'))))
-#
-#     def run(self):
-#         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
-#         command = ' '.join([self.ssh_command, 'obabel', ligand, '-O', ligand.replace('sdf', 'mol2')])
-#         print(command)
-#         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#         out, err = process.communicate()
-#         print(out)
-#         print(err)
-#         command = ' '.join(
-#             [self.ssh_command, self.pythonsh_executable, self.prepare_ligand4_script, '-l', ligand.replace('sdf', 'mol2'), '-o',
-#              self.output().path])
-#         print(command)
-#         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#         out, err = process.communicate()
-#         print(out)
-#         print(err)
-
-
 class GridPrepADT(luigi.Task):
     pythonsh_executable = luigi.Parameter(default='/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/bin/pythonsh')
     prepare_gpf4_script = luigi.Parameter(default=
