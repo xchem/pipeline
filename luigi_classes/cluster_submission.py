@@ -2,6 +2,7 @@ import luigi
 import subprocess
 import os
 
+
 class CheckCluster(luigi.Task):
     remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
 
@@ -23,8 +24,8 @@ class CheckCluster(luigi.Task):
         print(out)
         if int(out) > 0:
             number = int(out) - 2
-        if int(out)==0:
-            number=int(out)
+        if int(out) == 0:
+            number = int(out)
         with self.output().open('wb') as f:
             f.write(str(number))
 
@@ -69,6 +70,35 @@ class SubmitJob(luigi.Task):
 
         with self.output().open('wb') as f:
             f.write(job_number)
+
+
+class WriteJob(luigi.Task):
+    job_directory = luigi.Parameter()
+    job_filename = luigi.Parameter()
+    job_name = luigi.Parameter()
+    job_executable = luigi.Parameter()
+    job_options = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.job_directory, self.job_filename))
+
+    def run(self):
+        os.chdir(self.job_directory)
+        job_script = '''#!/bin/bash
+cd %s
+touch %s.running
+%s %s > %s.log
+rm %s.running
+touch %s.done
+''' % (self.job_directory, self.job_name, self.job_executable, self.job_options,
+       self.job_name, self.job_name, self.job_name)
+
+        with self.output().open('wb') as f:
+            f.write(job_script)
+
 
 
 

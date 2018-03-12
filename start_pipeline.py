@@ -1,6 +1,7 @@
 from luigi_classes import data_in_proasis
 from luigi_classes import html_generators
 from luigi_classes import data_out_proasis
+from luigi_classes import pandda_for_tindspect
 import luigi
 import os
 
@@ -13,7 +14,7 @@ class KickOff(luigi.Task):
 
     def requires(self):
         try:
-            # os.system('./pg_backup.sh')
+            os.system('./pg_backup.sh')
             os.system('rm logs/ligand_search.done')
             os.system('rm logs/pipeline.done')
             os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/hits.done')
@@ -32,6 +33,7 @@ class KickOff(luigi.Task):
         yield html_generators.ProjectSummaryHTML()
         yield html_generators.LigandEdstatsViolinHTML()
         yield data_out_proasis.FindCompChemReady()
+        yield pandda_for_tindspect.StartParse()
 
     def run(self):
         with self.output().open('wb') as f:

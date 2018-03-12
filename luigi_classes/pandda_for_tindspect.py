@@ -1,152 +1,286 @@
 import luigi
-import sqlite3
-import os
-from functions import db_functions
-import pandas
 import datetime
 import subprocess
+import os
+import re
+import pandas as pd
+from rdkit.Chem import rdMolTransforms
+from rdkit import Chem
+import numpy as np
 
-class CollatePanddaData(luigi.Task):
-    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+class FindLogFiles(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+    search_path = luigi.Parameter(default='/dls/labxchem/data/*/lb*/*')
 
     def requires(self):
         pass
 
     def output(self):
-        return luigi.LocalTarget(str('pandda_data/pandda_scrape_' + str(self.date) + '.csv'))
+        return luigi.LocalTarget(self.date.strftime('logs/pandda_logs/logs_%Y%m%d.txt'))
+
+    def run(self):
+        command = ' '.join(['find',
+                   self.search_path,
+                   '-maxdepth 5 -path "*/lab36/*" -prune -o',
+                   '-path "*/initial_model/*" -prune -o',
+                   '-path "*/beamline/*" -prune -o',
+                   '-path "*ackup*" -prune -o',
+                   '-path "*old*" -prune -o',
+                   '-path "*TeXRank*" -prune -o',
+                   '-name "pandda-*.log"',
+                   '-print'])
+
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        out, err = process.communicate()
+
+        # write filepaths to file as output
+        with self.output().open('w') as f:
+            f.write(out)
+
+
+class ParseLog(luigi.Task):
+
+    log_file = luigi.Parameter()
+    out_file = luigi.Parameter(default='logs/pandda_logs/master_collated.csv')
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join('/'.join(str(self.log_file).split('/')[:-1]),
+                                              str('pandda_luigi_curated_' +
+                                                  ''.join(str(self.log_file).split('/')[-1]))))
 
     def run(self):
 
-        results = {'crystal_name':[], 'pandda_path':[], 'event_ccp4_map':[],
-                   'initial_pandda_model':[], 'initial_pandda_map':[],
-                   'lig_res':[], 'lig_chain':[], 'lig_seq':[], 'lig_alt_chain':[], 'smiles':[], 'compound_code':[]}
+        results_dict = {'pandda_version':[],
+                        'crystal':[],
+                        'event':[],
+                        'site':[],
+                        'site_native_centroid':[],
+                        'site_aligned_centroid':[],
+                        'event_centroid':[],
+                        'event_dist_from_site_centroid':[],
+                        'lig_id':[],
+                        'lig_centroid':[],
+                        'pandda_event_map_native':[],
+                        'pandda_model_pdb':[],
+                        'pandda_input_pdb':[],
+                        'pandda_input_mtz':[],
+                        'lig_dist_event_centroid': [],
+                        'pandda_dir':[],
+                        'pandda_log':[],
+                        'input_dir':[]}
 
-        conn, c = db_functions.connectDB()
-        if os.path.isfile(self.output().path):
-            existing_data = pandas.DataFrame.from_csv(self.output().path)
+        pver = ''
+        input_dir = ''
+        output_dir = ''
+        sites_file = ''
+        events_file = ''
+        Error = False
+
+        for line in open(self.log_file, 'r'):
+
+            if 'Pandda Version' in line:
+                pver = str(line.split()[-1])
+            if 'data_dirs' in line:
+                input_dir = re.sub('\s+', '', line.split('=')[-1]).replace('"', '')
+            if 'out_dir' in line:
+                output_dir = re.sub('\s+', '', line.split('=')[-1]).replace('"', '')
+            if 'pandda_analyse_sites.csv' in line:
+                to_check = re.sub('\s+', '', line)
+                if os.path.isfile(to_check):
+                    sites_file = to_check
+                else:
+                    with open(self.output().path, 'a') as f:
+                        f.write('pandda_analyse_sites.csv not found in log file. Will not run')
+            if 'pandda_analyse_events.csv' in line:
+                to_check = re.sub('\s+', '', line)
+                if os.path.isfile(to_check):
+                    events_file = to_check
+                else:
+                    with open(self.output().path, 'a') as f:
+                        f.write('pandda_analyse_events.csv not found in log file. Will not run')
+            if 'exited with an error' in line:
+                Error = True
+
+        if Error:
+            with open(self.output().path, 'a') as f:
+                f.write('Error found in log file, will not run...')
+            raise Exception('Error found in log file, will not run...')
+
+        if '0.1.' in pver:
+            with open(self.output().path, 'a') as f:
+                f.write('Pandda analyse run with old version (' + pver + '), please rerun!')
+            raise Exception('Pandda analyse run with old version (' + pver + '), please rerun!')
+
+        if sites_file == '':
+            raise Exception('No sites file found in log: log=' + str(self.log_file) + ' pandda_version=' + pver)
+
+        if events_file == '':
+            raise Exception('No events file found in log: log=' + str(self.log_file) + ' pandda_version=' + pver)
+
+        sites_frame = pd.read_csv(sites_file)
+
+        events_frame = pd.read_csv(events_file)
+
+        for i in range(0, len(events_frame)):
+            crystal = events_frame['dtag'][i]
+            event = str(events_frame['event_idx'][i])
+            site = str(events_frame['site_idx'][i])
+
+            for j in range(0, len(sites_frame)):
+                if int(sites_frame['site_idx'][j]) == int(site):
+                    native_centroid = sites_frame['native_centroid'][j]
+                    aligned_centroid = sites_frame['centroid'][j]
+
+            native_centroid = list(eval(native_centroid))
+            aligned_centroid = list(eval(aligned_centroid))
+
+            with open(self.output().path, 'a') as f:
+                f.write('----Parsing file system for ' + crystal + ' (event: ' + event + ' site:' + site + ')\n')
+
+            BDC = str(events_frame['1-BDC'][i])
+
+            map_file_name = ''.join([crystal, '-event_', event, '_1-BDC_', BDC, '_map.native.ccp4'])
+            map_file_path = os.path.join(input_dir.replace('*', ''), crystal, map_file_name)
+
+            input_pdb_name = ''.join([crystal, '-pandda-input.pdb'])
+            input_pdb_path = os.path.join(input_dir.replace('*', ''), crystal, input_pdb_name)
+
+            input_mtz_name = input_pdb_name.replace('.pdb', '.mtz')
+            input_mtz_path = input_pdb_path.replace(input_pdb_name, input_mtz_name)
+
+            aligned_pdb_name = ''.join([crystal, '-aligned.pdb'])
+            aligned_pdb_path = os.path.join(output_dir, 'aligned_structures', aligned_pdb_name)
+
+            pandda_model_name = input_pdb_name.replace('-input', '-model')
+            pandda_model_path = input_pdb_path.replace(input_pdb_name, pandda_model_name)
+
+            with open(self.output().path, 'a') as f:
+                f.write('    ----Checking for files: event map, input pdb/mtz, aligned pdb, model pdb\n')
+
+            exists_array = [os.path.isfile(filepath) for filepath in [map_file_path, input_pdb_path, input_mtz_path,
+                                                                      aligned_pdb_path, pandda_model_path]]
+
+            if False in exists_array:
+                with open(self.output().path, 'a') as f:
+                    f.write('        ----Missing expected files for ' + crystal + '(event:' + event + ' site: ' +
+                            site + ') : SKIPPING!\n\n')
+
+            else:
+
+                with open(self.output().path, 'a') as f:
+                    f.write('        ----All files found: OK!\n\n')
+                with open(self.output().path, 'a') as f:
+                    f.write('    ----Finding ligand string (for this event) from model pdb\n')
+                lig_strings = []
+                for line in open(pandda_model_path, 'r'):
+                    if 'LIG' in line:
+                        lig_string = re.search(r"LIG.......", line).group()
+                        lig_strings.append(lig_string)
+                lig_strings = list(set(lig_strings))
+                event_centroid = [events_frame['x'][i], events_frame['y'][i], events_frame['z'][i]]
+                event_displacement = np.linalg.norm([native_centroid, event_centroid])
+
+                if len(lig_strings) == 0:
+                    with open(self.output().path, 'a') as f:
+                        f.write('        ----Missing ligand in pandda model pdb: ' + pandda_model_name +
+                                ': SKIPPING!\n\n')
+
+                else:
+                    with open(self.output().path, 'a') as f:
+                        f.write('        ----Aligning ligand(s) to event centroid: ' + str(event_centroid) + '\n')
+                    lig_distances = []
+                    lig_centres = []
+                    for lig in lig_strings:
+                        lig_pdb = []
+
+                        for line in open(pandda_model_path):
+                            if lig in line:
+                                lig_pdb.append(line)
+                        lig_pdb = (''.join(lig_pdb))
+                        mol = Chem.MolFromPDBBlock(lig_pdb)
+                        conf = mol.GetConformer()
+                        centre = rdMolTransforms.ComputeCentroid(conf)
+                        lig_centre = [centre.x, centre.y, centre.z]
+                        lig_centres.append(lig_centre)
+
+                        matrix = [lig_centre, event_centroid]
+                        dist = np.linalg.norm(matrix)
+
+                        lig_event_dist = abs(event_displacement-dist)
+                        lig_distances.append(lig_event_dist)
+
+                    min_dist = min(lig_distances)
+                    for j in range(0, len(lig_distances)):
+                        if lig_distances[j]==min_dist:
+                            ind = j
+
+                    ligand = lig_strings[ind]
+                    lig_centroid = lig_centres[ind]
+
+                    with open(self.output().path, 'a') as f:
+                        f.write('            ----Event Ligand ID: ' + str(ligand) + '\n\n')
+
+                    results_dict['pandda_version'].append(pver)
+                    results_dict['crystal'].append(crystal)
+                    results_dict['event'].append(event)
+                    results_dict['site'].append(site)
+                    results_dict['site_native_centroid'].append(native_centroid)
+                    results_dict['site_aligned_centroid'].append(aligned_centroid)
+                    results_dict['event_centroid'].append(event_centroid)
+                    results_dict['event_dist_from_site_centroid'].append(event_displacement)
+                    results_dict['lig_id'].append(ligand)
+                    results_dict['lig_centroid'].append(lig_centroid)
+                    results_dict['pandda_event_map_native'].append(map_file_path)
+                    results_dict['pandda_model_pdb'].append(pandda_model_path)
+                    results_dict['pandda_input_pdb'].append(input_pdb_path)
+                    results_dict['pandda_input_mtz'].append(input_mtz_path)
+                    results_dict['lig_dist_event_centroid'].append(min_dist)
+                    results_dict['pandda_dir'].append(output_dir)
+                    results_dict['input_dir'].append(input_dir)
+                    results_dict['pandda_log'].append(str(self.log_file))
+
+        out_frame = pd.DataFrame.from_dict(results_dict)
+        with open(self.output().path, 'a') as f:
+            f.write('----Writing to output csv: ' + str(self.out_file) +'\n')
+
+        if os.path.isfile(self.out_file):
+            out_frame.to_csv(self.out_file, mode='a', header=False, index=False)
         else:
-            id_list = []
-            crystal_list = []
-            pandda_list = []
-            c.execute("SELECT file_id, crystal_name, pandda_path from dimple WHERE pandda_run='True'")
-            rows = c.fetchall()
-            for row in rows:
-                id_list.append(str(row[0]))
-                crystal_list.append(str(row[1]))
-                pandda_list.append(str(row[2]))
+            out_frame.to_csv(self.out_file, index=False)
 
-            compiled_list = zip(id_list, crystal_list, pandda_list)
-
-            file_ids = list(set([x for (x,_,_) in compiled_list]))
-
-            for file_id in file_ids:
-                c.execute('SELECT filename from soakdb_files WHERE id=%s', (file_id,))
-                rows = c.fetchall()
-                for row in rows:
-                    filename = str(row[0])
-                    c2 = sqlite3.connect(filename)
-                    search_list = list(set([(id, crystal, path) for (id, crystal, path) in compiled_list if id==file_id]))
-                    for search in search_list:
-                        id = search[0]
-                        name = search[1]
-                        path = search[2]
-                        c.execute("SELECT compound_code, smiles FROM lab WHERE file_id=%s and crystal_name=%s", (id, name))
-                        rows = c.fetchall()
-                        if len(rows)>1:
-                            break
-                        else:
-                            for row in rows:
-                                compound_code = str(row[0])
-                                smiles = str(row[1])
-                        for row in c2.execute('''SELECT PANDDA_site_event_map,
-                                    PANDDA_site_initial_model,
-                                    PANDDA_site_initial_mtz,
-                                    PANDDA_site_ligand_resname,
-                                    PANDDA_site_ligand_chain,
-                                    PANDDA_site_ligand_sequence_number,
-                                    PANDDA_site_ligand_altloc
-                                    from panddaTable WHERE Crystalname = ? and PANDDApath = ? and 
-                                    PANDDA_site_event_map not like ? and PANDDA_site_ligand_resname not like ?''',
-                                              (name, path, 'None', 'None')):
-
-                            results['crystal_name'].append(name)
-                            results['pandda_path'].append(path)
-                            results['event_ccp4_map'].append(str(row[0]))
-                            results['initial_pandda_model'].append(str(row[1]))
-                            results['initial_pandda_map'].append(str(row[2]))
-                            results['lig_res'].append(str(row[3]))
-                            results['lig_chain'].append(str(row[4]))
-                            results['lig_seq'].append(str(row[5]))
-                            results['lig_alt_chain'].append(str(row[6]))
-                            results['smiles'].append(smiles)
-                            results['compound_code'].append(compound_code)
-
-            frame = pandas.DataFrame.from_dict(results)
-            frame.to_csv(self.output().path)
+        with open(self.output().path, 'a') as f:
+            f.write('----END \n')
 
 
-class GenerateEventMtz(luigi.Task):
-    pandda_input_mtz = luigi.Parameter()
-    native_event_map = luigi.Parameter()
+class StartParse(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
 
     def requires(self):
-        return CollatePanddaData()
-
-    def output(self):
-        return luigi.LocalTarget(self.native_event_map.replace('.ccp4', '.mtz'))
-
-    def run(self):
-        resolution_high = 'n/a'
-        resolution_line = 1000000
-        mtzdmp = subprocess.Popen(['mtzdmp', self.pandda_input_mtz], stdout=subprocess.PIPE)
-        for n, line in enumerate(iter(mtzdmp.stdout.readline, '')):
-            if line.startswith(' *  Resolution Range :'):
-                resolution_line = n + 2
-            if n == resolution_line and len(line.split()) == 8:
-                resolution_high = line.split()[5]
-
-        mapmask_string = '''module load ccp4; mapmask         \\
-mapin %s           \\
-mapout %s << eof               
-xyzlim cell
-symmetry p1
-MODE mapin
-eof''' % (self.native_event_map, self.native_event_map.replace('native', 'p1'))
-
-        #print command_string
-
-        mapin = subprocess.Popen(mapmask_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = mapin.communicate()
-
-        print(out)
-
-        convert_string = '''module load phenix; phenix.map_to_structure_factors %s d_min=%s output_file_name=%s''' \
-                         % (self.native_event_map.replace('native', 'p1'), resolution_high,
-                            self.native_event_map.replace('.ccp4', '.mtz'))
-
-class StartMapConversions(luigi.Task):
-    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
-
-    def requires(self):
-        try:
-            in_frame = pandas.DataFrame.from_csv(str('pandda_data/pandda_scrape_' + str(self.date) + '.csv'))
-        except:
-            return CollatePanddaData()
-        input_mtz_list = in_frame['initial_pandda_map']
-        native_event_list = in_frame['event_ccp4_map']
-        return [GenerateEventMtz(pandda_input_mtz=input_mtz, native_event_map=input_ccp4) for (input_mtz, input_ccp4) in
-                list(zip(input_mtz_list, native_event_list))]
-
-
-class FindAllFiles(luigi.Task):
-
-
-    def requires(self):
-        return CollatePanddaData()
+        log_file_list = self.date.strftime('logs/pandda_logs/logs_%Y%m%d.txt')
+        parse_list = []
+        for logfile in open(log_file_list):
+            if 'export' in logfile:
+                continue
+            if os.path.isfile(re.sub('\s+', '', logfile)):
+                parse_list.append(re.sub('\s+', '', logfile))
+        return FindLogFiles(), [ParseLog(log_file=logfile) for logfile in parse_list]
 
     def output(self):
         pass
 
-    def run(self):
-        in_frame = pandas.DataFrame.from_csv(str('pandda_data/pandda_scrape_' + str(self.date) + '.csv'))
+
+
+
+
+
+
+
+
+
+
 

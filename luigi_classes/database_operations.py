@@ -100,6 +100,7 @@ class CheckFiles(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
+
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
