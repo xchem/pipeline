@@ -13,7 +13,7 @@ def get_id_string(out):
         strucidstr = strucidstr.replace('strucid=', '')
         strucidstr = strucidstr.replace("'", '')
     except:
-        print(sys.exc_info())
+        print((sys.exc_info()))
         strucidstr = ''
     return strucidstr
 
@@ -37,6 +37,6 @@ def create_sd_file(name, smiles, save_directory):
     canon_smiles = Chem.CanonSmiles(smiles)
     mol = Chem.MolFromSmiles(canon_smiles)
     AllChem.Compute2DCoords(mol)
-    print('Generating sdf file and saving to ' + name + ' directory...\n')
+    print(('Generating sdf file and saving to ' + name + ' directory...\n'))
     sd_file = Chem.SDWriter(save_directory)
     sd_file.write(mol)

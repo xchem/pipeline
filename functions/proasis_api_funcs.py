@@ -18,12 +18,12 @@ def dict_from_string(json_string):
     counter = -1
 
     # reformat json into python dictionary
-    for key in json_string.keys():
+    for key in list(json_string.keys()):
         try:
             counter += 1
-            dict[key] = json_string.values()[counter].split(',')
+            dict[key] = list(json_string.values())[counter].split(',')
         except:
-            dict[key] = json_string.values()[counter]
+            dict[key] = list(json_string.values())[counter]
 
     return dict
 
@@ -45,11 +45,17 @@ def delete_structure(strucid):
     delete_string = str('/usr/local/Proasis2/utils/removestruc.py -s ' + str(strucid))
     process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
 def delete_project(name):
     delete_string = str('/usr/local/Proasis2/utils/removeoldproject.py -p ' + str(name))
     process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
 
 def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
@@ -91,6 +97,9 @@ def get_struc_mtz(strucid, out_dir):
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
         process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
         saved_to = str(mtz_zipped.replace('.gz',''))
     else:
         saved_to = None
@@ -120,6 +129,9 @@ def get_struc_map(strucid, out_dir, type):
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
         process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
         saved_to = str(mtz_zipped.replace('.gz',''))
     else:
         saved_to = None
@@ -137,6 +149,9 @@ def get_struc_pdb(strucid, outfile):
     command_string = ('touch ' + outfile)
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
     with open(outfile, 'a') as f:
         try:
@@ -149,6 +164,10 @@ def get_struc_pdb(strucid, outfile):
 def submit_proasis_job_string(substring):
     process = subprocess.Popen(substring, stdout=subprocess.PIPE, shell=True)
     out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
+
     strucidstr = misc_functions.get_id_string(out)
 
     return strucidstr, err, out
@@ -158,6 +177,10 @@ def add_proasis_file(file_type, filename, strucid, title):
 
     process = subprocess.Popen(add_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
+
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
     return out, err
 
@@ -181,6 +204,9 @@ def get_struc_file(strucid, outfile, type):
     command_string = ('touch ' + outfile)
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
     print(out)
 

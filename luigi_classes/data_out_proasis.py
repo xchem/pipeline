@@ -72,7 +72,7 @@ class PullCurated(luigi.Task):
         results_dict['curated_name'].append(curated_pdb.split('/')[-1])
         results_dict['ligands'].append(self.ligands_list)
 
-        for key in results_dict.keys():
+        for key in list(results_dict.keys()):
             if len(results_dict[key]) == 0:
                 results_dict[key].append('')
 
@@ -98,13 +98,13 @@ class CreateApo(luigi.Task):
 
     def run(self):
         self.ligands = eval(self.ligands)
-        print(len(self.ligands))
+        print((len(self.ligands)))
         # if len(list(self.ligands))>1:
         # raise Exception('Structures containing more than 1 ligand are currently unsupported')
         conn, c = dbf.connectDB()
         c.execute('SELECT curated_name from proasis_out WHERE strucid=%s', (self.strucid,))
         rows = c.fetchall()
-        print(len(rows))
+        print((len(rows)))
         if len(rows) > 1:
             raise Exception('Multiple files where found for this structure: ' + str(rows))
         if len(rows)>0 and len(rows[0]) == 0:
@@ -124,6 +124,7 @@ class CreateApo(luigi.Task):
             raise Exception('No entries found for this strucid... resetting the datasource and files for this crystal')
         for row in rows:
             curated_pdb = str(row[0])
+        print((curated_pdb + ' ' + str(rows)))
 
         ligand_string = paf.get_lig_strings(self.ligands)
 

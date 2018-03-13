@@ -22,7 +22,7 @@ class StartLeadTransfers(luigi.Task):
             protein_list.append(str(row[1]))
             reference_list.append(str(row[2]))
 
-        out_list = zip(path_list, protein_list, reference_list)
+        out_list = list(zip(path_list, protein_list, reference_list))
 
         return out_list
 
@@ -58,7 +58,7 @@ class StartLigandSearches(luigi.Task):
         conf_list = []
         for row in rows:
             conf_list.append(str(row[0]))
-            print(str(row[0]))
+            print((str(row[0])))
         return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
 
     def output(self):
@@ -95,7 +95,7 @@ class StartHitTransfers(luigi.Task):
             modification_list.append(str(row[4]))
             ligand_list.append(str(row[5]))
 
-        run_list = zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list)
+        run_list = list(zip(bound_list, crystal_list, protein_list, smiles_list, modification_list, ligand_list))
         return run_list
 
     def requires(self):

@@ -1,5 +1,5 @@
 import luigi
-from run_dock import RunAutoDock
+from .run_dock import RunAutoDock
 
 
 class DLGtoPDBQT(luigi.Task):

@@ -9,11 +9,13 @@ from functions import misc_functions
 import csv
 import os
 
+
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
     c = conn.cursor()
 
     return conn, c
+
 
 def column_exists(table, column):
     conn, c = connectDB()
@@ -24,6 +26,7 @@ def column_exists(table, column):
     else:
         exists = True
     return exists
+
 
 def table_exists(c, tablename):
     c.execute('''select exists(select * from information_schema.tables where table_name=%s);''', (tablename,))
@@ -225,21 +228,21 @@ def transfer_data(database_file):
 
     # numbers relating to where selected in query
     # 17 = number for crystal_name
-    lab_table_numbers = range(0, 21)
+    lab_table_numbers = list(range(0, 21))
 
-    crystal_table_numbers = range(22, 33)
+    crystal_table_numbers = list(range(22, 33))
     crystal_table_numbers.insert(len(crystal_table_numbers), 17)
 
-    data_collection_table_numbers = range(33, 36)
+    data_collection_table_numbers = list(range(33, 36))
     data_collection_table_numbers.insert(len(data_collection_table_numbers), 17)
 
-    data_processing_table_numbers = range(36, 79)
+    data_processing_table_numbers = list(range(36, 79))
     data_processing_table_numbers.insert(len(data_processing_table_numbers), 17)
 
-    dimple_table_numbers = range(79, 89)
+    dimple_table_numbers = list(range(79, 89))
     dimple_table_numbers.insert(len(dimple_table_numbers), 17)
 
-    refinement_table_numbers = range(91, 122)
+    refinement_table_numbers = list(range(91, 122))
     refinement_table_numbers.insert(len(refinement_table_numbers), 17)
 
     # connect to master postgres db
@@ -427,7 +430,7 @@ def get_fedid_list():
 def create_blacklist(fedid, proposal_dict, dir_path):
     search_string=str('%' + fedid + '%')
     proposal_list = []
-    all_proposals = list(set(proposal_dict.keys()))
+    all_proposals = list(set(list(proposal_dict.keys())))
     strucid_list = []
     conn, c = connectDB()
     c.execute('select proposal from proposals where fedids like %s', (search_string,))

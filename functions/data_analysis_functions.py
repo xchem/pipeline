@@ -10,7 +10,7 @@ def run_edstats(strucid):
 
     working_directory = os.getcwd()
 
-    print('running edstats for ' + strucid + '...')
+    print(('running edstats for ' + strucid + '...'))
 
     command_string = str('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh')
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -235,7 +235,7 @@ def draw_violin(dataframe, column):
                   'ZD-a': 'Real-space Zdiff score for negative differences (RSZD-)',
                   'ZD+a': 'Real-space Zdiff score for positive differences (RSZD+)'}
 
-    if str(column) in title_dict.keys():
+    if str(column) in list(title_dict.keys()):
         title = str(title_dict[column])
     else:
         title = ''
@@ -265,7 +265,7 @@ def draw_violin(dataframe, column):
 
 def edstats_violin(csv_file, html_root):
     df = pd.read_csv(csv_file)
-    for key in df.keys():
+    for key in list(df.keys()):
         if key in ['index', 'crystal', 'ligand', 'strucid']:
             continue
         fig = draw_violin(df, key)

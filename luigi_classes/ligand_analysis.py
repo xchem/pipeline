@@ -25,7 +25,7 @@ class EdstatsScores(luigi.Task):
                 print(lig_string)
                 results_dict['ligand'].append(lig_string)
                 for j in range(0, len(header[24:36])):
-                    if header[24 + j] not in results_dict.keys():
+                    if header[24 + j] not in list(results_dict.keys()):
                         results_dict[header[24 + j]] = []
                     results_dict[header[24 + j]].append(str(ligand[1][24 + j]))
                 results_dict['crystal'].append(self.crystal)
@@ -55,7 +55,7 @@ class StartEdstatsScores(luigi.Task):
             crystal_list.append(crystal)
             strucid_list.append(strucid)
 
-        list = zip(crystal_list, strucid_list)
+        list = list(zip(crystal_list, strucid_list))
 
         return data_in_proasis.StartHitTransfers(), \
                [EdstatsScores(crystal=crystal_name, strucid=strucid_no)

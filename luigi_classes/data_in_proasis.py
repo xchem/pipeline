@@ -14,6 +14,7 @@ import functions.misc_functions as misc_functions
 import functions.proasis_api_funcs as proasis_api_funcs
 from luigi_classes.batch_classes import StartHitTransfers, StartLeadTransfers
 
+
 class LeadTransfer(luigi.Task):
     reference_structure = luigi.Parameter()
     pandda_directory = luigi.Parameter()
@@ -33,7 +34,7 @@ class LeadTransfer(luigi.Task):
             pandda_analyse_centroids = str(self.pandda_directory + '/analyses/pandda_analyse_sites.csv')
             if os.path.isfile(pandda_analyse_centroids):
                 site_list = pandas.read_csv(str(pandda_analyse_centroids))['native_centroid']
-                print(' Searching for residue atoms for ' + str(len(site_list)) + ' site centroids \n')
+                print((' Searching for residue atoms for ' + str(len(site_list)) + ' site centroids \n'))
                 print(' NOTE: 3 residue atoms are required for each site centroid \n')
 
                 print(site_list)
@@ -131,18 +132,24 @@ class LeadTransfer(luigi.Task):
             print(submit_to_proasis)
             process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
+            out = out.decode('ascii')
+            if err:
+                err = err.decode('ascii')
             print(out)
             if err:
                 raise Exception('There was a problem submitting this lead: ' + str(err))
 
             strucidstr = misc_functions.get_id_string(out)
 
-            if len(strucidstr) < 5:
-                raise Exception('No strucid was detected!')
+            if len(strucidstr)=='':
+                raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
 
             add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
             process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
+            out = out.decode('ascii')
+            if err:
+                err = err.decode('ascii')
             print(out)
             if err:
                 raise Exception('There was a problem submitting this lead: ' + str(err))
@@ -177,12 +184,15 @@ class AddProject(luigi.Task):
                 '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
             process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
             out, err = process.communicate()
+            out = out.decode('ascii')
+            if err:
+                err = err.decode('ascii')
             if len(out) > 1:
                 with self.output().open('w') as f:
-                    f.write(out)
+                    f.write(str(out))
             else:
                 with self.output().open('w') as f:
-                    f.write(err)
+                    f.write(str(err))
         except:
             with self.output().open('w') as f:
                 f.write('FAIL')
@@ -214,7 +224,7 @@ class FindLigands(luigi.Task):
                     if "LIG" in line:
                         try:
                             lig_string = re.search(r"LIG.......", line).group()
-                            ligand_list.append(filter(bool, list(lig_string.split(' '))))
+                            ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
                         except:
                             continue
             except:
@@ -483,25 +493,28 @@ class HitTransfer(luigi.Task):
             out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c', filename=os.path.join(proasis_crystal_directory, '2fofc.map'),
                                   strucid=strucid, title=str(self.crystal + '_2fofc'))
 
+
             print(out)
             if err:
                 raise Exception(out)
 
             out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c', filename=os.path.join(proasis_crystal_directory, 'fofc.map'),
                                   strucid=strucid, title=str(self.crystal + '_fofc'))
+
             print(out)
             if err:
                 raise Exception(out)
 
             out, err = proasis_api_funcs.add_proasis_file(file_type='mtz', filename=os.path.join(proasis_crystal_directory, 'refine.mtz'),
                                   strucid=strucid, title=str(self.crystal + '_mtz'))
+
             print(out)
 
             if err:
                 raise Exception(out)
 
         else:
-            raise Exception('proasis failed to upload structure: ' + str(out))
+            raise Exception('proasis failed to upload structure: ' + out)
 
         # add strucid to database
         conn, c = db_functions.connectDB()

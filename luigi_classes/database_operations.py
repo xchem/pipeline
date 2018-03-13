@@ -22,15 +22,18 @@ class FindSoakDBFiles(luigi.Task):
         subprocess.call('./pg_backup.sh')
 
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
-        process = subprocess.Popen(str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print'''),
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        command = str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print''')
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        print(command)
 
         # run process to find sqlite files
         out, err = process.communicate()
+        out = out.decode('ascii')
+        print(out)
 
         # write filepaths to file as output
         with self.output().open('w') as f:
-            f.write(out)
+            f.write(str(out))
 
 
 class CheckFiles(luigi.Task):
@@ -192,7 +195,7 @@ class StartTransfers(luigi.Task):
             datafiles.append(str(row[0]))
             fileids.append(str(row[1]))
 
-        out_list = zip(datafiles, fileids)
+        out_list = list(zip(datafiles, fileids))
         return out_list
 
     def requires(self):
@@ -248,7 +251,7 @@ class FindProjects(luigi.Task):
 
         rows = c.fetchall()
 
-        print(str(len(rows)) + ' crystals were found to be in refinement or above')
+        print((str(len(rows)) + ' crystals were found to be in refinement or above'))
 
         for row in rows:
 
@@ -260,7 +263,7 @@ class FindProjects(luigi.Task):
                 continue
 
             if len(lab_table) > 1:
-                print('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table')
+                print(('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table'))
                 # print lab_table
 
             for entry in lab_table:

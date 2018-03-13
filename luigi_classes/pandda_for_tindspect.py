@@ -37,7 +37,7 @@ class FindLogFiles(luigi.Task):
 
         # write filepaths to file as output
         with self.output().open('w') as f:
-            f.write(out)
+            f.write(str(out, 'utf-8'))
 
 
 class ParseLog(luigi.Task):

@@ -5,13 +5,12 @@ import subprocess
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
 
-from cluster_submission import WriteJob
-from cluster_submission import SubmitJob
-from prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
+from .cluster_submission import WriteJob
+from .cluster_submission import SubmitJob
+from .prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
 
 
 class RunAutoGrid(luigi.Task):
-
     job_executable = luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autogrid4')
 
     # job directory = os.path.join \/
@@ -46,7 +45,6 @@ class RunAutoGrid(luigi.Task):
 
 
 class RunAutoDock(luigi.Task):
-
     job_executable = luigi.Parameter(default='/dls_sw/apps/xchem/autodock/autodock4')
 
     # job directory = os.path.join \/
@@ -81,7 +79,7 @@ class RunAutoDock(luigi.Task):
             f.write('')
 
 
-class VinaDock(luigi.Task):
+class RunVinaDock(luigi.Task):
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
     ligand_sdf = luigi.Parameter()
@@ -152,4 +150,5 @@ class VinaDock(luigi.Task):
 
         print(out)
         print(err)
+
 
