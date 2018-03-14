@@ -1,12 +1,13 @@
-import luigi
-import os
 import subprocess
 
+import luigi
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
 
-from .cluster_submission import WriteJob
+from functions.docking_functions import *
+from .cluster_submission import CheckJobOutput
 from .cluster_submission import SubmitJob
+from .cluster_submission import WriteJob
 from .prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
 
 
@@ -24,24 +25,30 @@ class RunAutoGrid(luigi.Task):
     ligand_pdbqt = luigi.Parameter()
 
     # for job_options
-    parameter_flag = luigi.Parameter(default='-p')
-    parameter_file = luigi.Parameter(
-        default=os.path.join(root_dir, docking_dir, str(receptor_pdbqt.replace('.pdbqt', '.gpf'))))
+    # parameter_flag = luigi.Parameter(default='-p')
 
     def requires(self):
-        job_options = str(self.parameter_flag + ' ' + self.parameter_file)
+        parameter_file = os.path.join(self.root_dir, self.docking_dir,
+                                      str(str(self.receptor_pdbqt).replace('.pdbqt', '.gpf')))
+        log_file = str(parameter_file).replace('.gpf', '.glg')
+        job_options = str('-p ' + parameter_file + ' -l ' + log_file)
         return GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                            root_dir=self.root_dir), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
-               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
+               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, 'runautogrid.done'))
+        parameter_file = os.path.join(self.root_dir, self.docking_dir,
+                                      str(self.ligand_pdbqt.replace('.pdbqt', '_') +
+                                          str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
+        log_file = parameter_file.replace('.dpf', '.dlg')
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
 
-    def run(self):
-        with self.output().open('wb') as f:
-            f.write('')
+        # def run(self):
+        #     with self.output().open('wb') as f:
+        #         f.write('')
 
 
 class RunAutoDock(luigi.Task):
@@ -58,25 +65,53 @@ class RunAutoDock(luigi.Task):
     ligand_pdbqt = luigi.Parameter()
 
     # for job_options
-    parameter_flag = luigi.Parameter(default='-p')
-    parameter_file = luigi.Parameter(default=os.path.join(root_dir, docking_dir,
-                                                          str(ligand_pdbqt.replace('.pdbqt', '_') +
-                                                              str(receptor_pdbqt.replace('.pdbqt', '.dpf')))))
+    # parameter_flag = luigi.Parameter(default='-p')
 
     def requires(self):
-        job_options = str(self.parameter_flag + ' ' + self.parameter_file)
+        parameter_file = os.path.join(self.root_dir, self.docking_dir,
+                                      str(self.ligand_pdbqt.replace('.pdbqt', '_') +
+                                          str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
+        log_file = parameter_file.replace('.dpf', '.dlg')
+        print(parameter_file)
+        job_options = str(str('-p ' + parameter_file))
         return ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
-                            root_dir=self.root_dir),\
+                            root_dir=self.root_dir), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
-               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename)
+               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, 'runautodock.done'))
+        parameter_file = os.path.join(self.root_dir, self.docking_dir,
+                                      str(self.ligand_pdbqt.replace('.pdbqt', '_') +
+                                          str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
+        log_file = parameter_file.replace('.dpf', '.dlg')
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
 
-    def run(self):
-        with self.output().open('wb') as f:
-            f.write('')
+        # def run(self):
+        #     with self.output().open('wb') as f:
+        #         f.write('')
+
+
+class BatchAutoDock(luigi.Task):
+    def requires(self):
+        to_run = {'root_dir': [],
+                  'protein_pdbqt': [],
+                  'ligand_pdbqt': []}
+        update_apo_field()
+        conn, c = dbf.connectDB()
+        c.execute("select root_dir, apo_name, mol_name from proasis_out where apo_name!=''")
+        rows = c.fetchall()
+        for row in rows:
+            to_run['root_dir'].append('/'.join(str(row[0]).split('/')[:-1]))
+            to_run['protein_pdbqt'].append(str(row[1]).replace('.pdb', '_prepared.pdbqt'))
+            to_run['ligand_pdbqt'].append(str(row[2]).replace('.sdf', '_prepared.pdbqt'))
+
+        zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdbqt'], to_run['ligand_pdbqt']))
+
+        return [RunAutoGrid(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for (root, receptor, ligand) in
+                zipped_list], [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
+                               (root, receptor, ligand) in zipped_list]
 
 
 class RunVinaDock(luigi.Task):
@@ -110,7 +145,8 @@ class RunVinaDock(luigi.Task):
         if os.path.isfile(outfile):
             os.remove(outfile)
 
-        with open(os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared.pdbqt')), 'r') as infile:
+        with open(os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared.pdbqt')),
+                  'r') as infile:
             for line in infile:
                 if 'ROOT' in line or 'BRANCH' in line or 'TORSDOF' in line:
                     continue
@@ -150,5 +186,3 @@ class RunVinaDock(luigi.Task):
 
         print(out)
         print(err)
-
-

@@ -16,11 +16,14 @@ class CheckCluster(luigi.Task):
         command = ' '.join([
             self.remote_sub_command,
             '"',
-            'qstat -u uzw12877 | wc -l',
+            'module load global/cluster >>/dev/null 2>&1; qstat -u uzw12877 | wc -l',
             '"'
             ])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
         print(out)
         if int(out) > 0:
             number = int(out) - 2
@@ -58,13 +61,25 @@ class SubmitJob(luigi.Task):
             '"',
             'cd',
             self.job_directory,
-            '; qsub',
+            '; module load global/cluster >>/dev/null 2>&1; qsub',
             self.job_script,
             '"'
         ])
 
+        print(submission_string)
+
         submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = submission.communicate()
+
+        out = out.decode('ascii')
+        print('\n')
+        print(out)
+        print('\n')
+        if err:
+            err = err.decode('ascii')
+            print('\n')
+            print(err)
+            print('\n')
 
         job_number = out.split(' ')[2]
 
@@ -98,6 +113,19 @@ touch %s.done
 
         with self.output().open('wb') as f:
             f.write(job_script)
+
+
+class CheckJobOutput(luigi.Task):
+    job_directory = luigi.Parameter()
+    job_output_file = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.job_directory, str(self.job_output_file + '.done')))
+
+    def run(self):
+        if os.path.isfile(os.path.join(self.job_directory, self.job_output_file)):
+            with self.output().open('wb') as f:
+                f.write('')
 
 
 

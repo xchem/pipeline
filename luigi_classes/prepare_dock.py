@@ -29,7 +29,7 @@ class PrepProtein(luigi.Task):
         protein = os.path.join(self.root_dir, self.docking_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdb'))
         command = ' '.join([
             self.ssh_command,
-            'obabel', protein, '-O', protein.replace('.pdb', '.pdbqt'), '-r'])
+            'obabel', protein, '-O', protein.replace('.pdb', '.pdbqt'), '-xr'])
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
@@ -81,6 +81,10 @@ class GridPrepADT(luigi.Task):
     prepare_gpf4_script = luigi.Parameter(default=
                                           '/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/MGLToolsPckgs/'
                                           'AutoDockTools/Utilities24/prepare_gpf4.py')
+    # additional parameters for autodock
+    ad_parameter_file = luigi.Parameter(default='-p parameter_file=/dls_sw/apps/xchem/autodock/AD4_parameters.dat')
+    box_size = luigi.Parameter(default='-p npts="40,40,40" -p spacing=0.375')
+
     receptor_file_name = luigi.Parameter()
     ligand_file_name = luigi.Parameter()
     root_dir = luigi.Parameter()
@@ -89,7 +93,9 @@ class GridPrepADT(luigi.Task):
 
     def requires(self):
         # return LigPrepADT(), ReceptorPrepADT()
-        pass
+        return PrepProtein(protein_pdb=str(self.receptor_file_name).replace('_prepared.pdbqt', '.pdb'),
+                           root_dir=self.root_dir), PrepLigand(
+            ligand_sdf=str(self.receptor_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
 
     def output(self):
         return luigi.LocalTarget(
@@ -98,9 +104,11 @@ class GridPrepADT(luigi.Task):
     def run(self):
         receptor = os.path.join(self.root_dir, self.docking_dir, self.receptor_file_name)
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
+
         command = ' '.join(
             [self.ssh_command, '"', 'cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
-             self.prepare_gpf4_script, '-r', receptor, '-l', ligand, '"'])
+             self.prepare_gpf4_script, '-r', receptor, '-l', ligand,
+             self.ad_parameter_file, self.box_size, '"'])
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
@@ -121,7 +129,9 @@ class ParamPrepADT(luigi.Task):
 
     def requires(self):
         # return LigPrepADT(), ReceptorPrepADT()
-        pass
+        return PrepProtein(protein_pdb=str(self.receptor_file_name).replace('_prepared.pdbqt', '.pdb'),
+                           root_dir=self.root_dir), PrepLigand(
+            ligand_sdf=str(self.receptor_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir,
@@ -156,7 +166,7 @@ class BatchPrep(luigi.Task):
             to_run['ligand_sdf'].append(str(row[2]))
 
         zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdb'], to_run['ligand_sdf']))
-        #print(zipped_list)
+
         return [PrepProtein(protein_pdb=protein_pdb, root_dir=root_dir) for (root_dir, protein_pdb, _) in
                 zipped_list], [PrepLigand(root_dir=root_dir, ligand_sdf=ligand_sdf) for (root_dir, _, ligand_sdf) in
                                zipped_list]

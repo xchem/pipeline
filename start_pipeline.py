@@ -2,6 +2,7 @@ from luigi_classes import data_in_proasis
 from luigi_classes import html_generators
 from luigi_classes import pandda_for_tindspect
 from luigi_classes.batch_classes import FindCompChemReady
+from luigi_classes import run_dock
 import luigi
 import os
 
@@ -36,6 +37,7 @@ class KickOff(luigi.Task):
         yield html_generators.LigandEdstatsViolinHTML()
         yield FindCompChemReady()
         yield pandda_for_tindspect.StartParse()
+        yield run_dock.BatchAutoDock()
 
     def run(self):
         with self.output().open('wb') as f:
