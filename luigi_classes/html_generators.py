@@ -9,7 +9,8 @@ class ProjectSummaryCSV(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
 
     def requires(self):
-        return ligand_analysis.StartEdstatsScores()
+        pass
+        # return ligand_analysis.StartEdstatsScores()
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('html/project_summary_csv/%Y%m%d.csv'))

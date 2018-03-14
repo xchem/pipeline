@@ -4,6 +4,8 @@ import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
 from luigi_classes import database_operations
 from luigi_classes import data_in_proasis
+from luigi_classes.data_out_proasis import *
+import functions.docking_functions as dock
 
 
 class StartLeadTransfers(luigi.Task):
@@ -121,4 +123,34 @@ class StartHitTransfers(luigi.Task):
     def run(self):
         with self.output().open('wb') as f:
             f.write('')
+
+
+class FindCompChemReady(luigi.Task):
+    def requires(self):
+        run_list = dock.get_comp_chem_ready()
+        out_dict = dock.get_strucids(run_list)
+
+        return [PullMol(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
+                (strucid, root_dir, crystal, ligands) in
+                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
+               [PullMtz(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
+                (strucid, root_dir, crystal, ligands) in
+                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
+               [Pull2Fofc(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
+                (strucid, root_dir, crystal, ligands) in
+                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
+               [CreateApo(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
+                (strucid, root_dir, crystal, ligands) in
+                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
+               [PullFofc(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
+                (strucid, root_dir, crystal, ligands) in
+                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])]
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join('logs', 'findcc.done'))
+
+    def run(self):
+        with self.output().open('wb') as f:
+            f.write('')
+
 

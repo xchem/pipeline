@@ -261,13 +261,16 @@ class StartParse(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
 
     def requires(self):
-        log_file_list = self.date.strftime('logs/pandda_logs/logs_%Y%m%d.txt')
-        parse_list = []
-        for logfile in open(log_file_list):
-            if 'export' in logfile:
-                continue
-            if os.path.isfile(re.sub('\s+', '', logfile)):
-                parse_list.append(re.sub('\s+', '', logfile))
+        try:
+            log_file_list = self.date.strftime('logs/pandda_logs/logs_%Y%m%d.txt')
+            parse_list = []
+            for logfile in open(log_file_list):
+                if 'export' in logfile:
+                    continue
+                if os.path.isfile(re.sub('\s+', '', logfile)):
+                    parse_list.append(re.sub('\s+', '', logfile))
+        except:
+            return FindLogFiles()
         return FindLogFiles(), [ParseLog(log_file=logfile) for logfile in parse_list]
 
     def output(self):

@@ -13,6 +13,7 @@ import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
 import functions.proasis_api_funcs as proasis_api_funcs
 from luigi_classes.batch_classes import StartHitTransfers, StartLeadTransfers
+from luigi_classes.database_operations import FindSoakDBFiles
 
 
 class LeadTransfer(luigi.Task):
@@ -529,7 +530,7 @@ class HitTransfer(luigi.Task):
 
 class WriteBlackLists(luigi.Task):
     def requires(self):
-        return StartLeadTransfers(), StartHitTransfers()
+        return FindSoakDBFiles(), StartLeadTransfers(), StartHitTransfers()
 
     def output(self):
         return luigi.LocalTarget('logs/blacklists.done')

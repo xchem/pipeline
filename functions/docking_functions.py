@@ -1,4 +1,6 @@
 from functions import db_functions as dbf
+import os
+
 
 def get_comp_chem_ready():
     bound_list = []
@@ -15,6 +17,7 @@ def get_comp_chem_ready():
             run_list.append(str(result[0]))
 
     return run_list
+
 
 def get_strucids(run_list):
     out_dict = {'strucid':[], 'crystal':[], 'directory':[], 'ligands':[]}
@@ -36,3 +39,26 @@ def get_strucids(run_list):
             out_dict['directory'].append(directory)
 
     return out_dict
+
+
+def get_to_dock():
+    out_list = []
+    conn, c = dbf.connectDB()
+    c.execute('SELECT root_dir FROM proasis_out')
+    rows = c.fetchall()
+    for row in rows:
+
+        out_list.append(str(row[0]))
+
+    return out_list
+
+
+def update_apo_field():
+    conn, c = dbf.connectDB()
+    c.execute('SELECT root_dir FROM proasis_out')
+    rows = c.fetchall()
+    for row in rows:
+        apo_file = str(str(row[0]).split('/')[-2] + '_apo.pdb')
+        if os.path.isfile(os.path.join(str(row[0]), apo_file)):
+            c.execute('UPDATE proasis_out SET apo_name = %s WHERE root_dir = %s', (apo_file, str(row[0])))
+            conn.commit()

@@ -1,7 +1,9 @@
+import subprocess
+
 import luigi
 from htmd.ui import *
-import os
-import subprocess
+
+from functions.docking_functions import *
 
 
 class PrepProtein(luigi.Task):
@@ -14,7 +16,8 @@ class PrepProtein(luigi.Task):
         pass
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdbqt')))
+        return luigi.LocalTarget(
+            os.path.join(self.root_dir, self.docking_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdbqt')))
 
     def run(self):
         os.chdir(os.path.join(self.root_dir, self.docking_dir))
@@ -30,6 +33,8 @@ class PrepProtein(luigi.Task):
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        print(out)
+        print(err)
 
 
 class PrepLigand(luigi.Task):
@@ -56,6 +61,8 @@ class PrepLigand(luigi.Task):
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        print(out)
+        print(err)
 
         # prepare pdbqt from mol2
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '.mol2'))
@@ -65,13 +72,15 @@ class PrepLigand(luigi.Task):
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        print(out)
+        print(err)
 
 
 class GridPrepADT(luigi.Task):
     pythonsh_executable = luigi.Parameter(default='/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/bin/pythonsh')
     prepare_gpf4_script = luigi.Parameter(default=
-                                               '/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/MGLToolsPckgs/'
-                                               'AutoDockTools/Utilities24/prepare_gpf4.py')
+                                          '/dls_sw/apps/xchem/mgltools_i86Linux2_1.5.6/MGLToolsPckgs/'
+                                          'AutoDockTools/Utilities24/prepare_gpf4.py')
     receptor_file_name = luigi.Parameter()
     ligand_file_name = luigi.Parameter()
     root_dir = luigi.Parameter()
@@ -90,7 +99,7 @@ class GridPrepADT(luigi.Task):
         receptor = os.path.join(self.root_dir, self.docking_dir, self.receptor_file_name)
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
         command = ' '.join(
-            [self.ssh_command,'"','cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
+            [self.ssh_command, '"', 'cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
              self.prepare_gpf4_script, '-r', receptor, '-l', ligand, '"'])
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -131,3 +140,23 @@ class ParamPrepADT(luigi.Task):
         print(out)
         print(err)
 
+
+class BatchPrep(luigi.Task):
+    def requires(self):
+        to_run = {'root_dir': [],
+                  'protein_pdb': [],
+                  'ligand_sdf': []}
+        update_apo_field()
+        conn, c = dbf.connectDB()
+        c.execute("select root_dir, apo_name, mol_name from proasis_out where apo_name!=''")
+        rows = c.fetchall()
+        for row in rows:
+            to_run['root_dir'].append('/'.join(str(row[0]).split('/')[:-1]))
+            to_run['protein_pdb'].append(str(row[1]))
+            to_run['ligand_sdf'].append(str(row[2]))
+
+        zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdb'], to_run['ligand_sdf']))
+        #print(zipped_list)
+        return [PrepProtein(protein_pdb=protein_pdb, root_dir=root_dir) for (root_dir, protein_pdb, _) in
+                zipped_list], [PrepLigand(root_dir=root_dir, ligand_sdf=ligand_sdf) for (root_dir, _, ligand_sdf) in
+                               zipped_list]

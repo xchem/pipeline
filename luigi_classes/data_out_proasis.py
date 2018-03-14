@@ -6,37 +6,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 import functions.db_functions as dbf
-import functions.docking_functions as dock
 import functions.proasis_api_funcs as paf
-
-
-class FindCompChemReady(luigi.Task):
-    def requires(self):
-        run_list = dock.get_comp_chem_ready()
-        out_dict = dock.get_strucids(run_list)
-
-        return [PullMol(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
-                (strucid, root_dir, crystal, ligands) in
-                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
-               [PullMtz(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
-                (strucid, root_dir, crystal, ligands) in
-                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
-               [Pull2Fofc(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
-                (strucid, root_dir, crystal, ligands) in
-                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
-               [CreateApo(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
-                (strucid, root_dir, crystal, ligands) in
-                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])], \
-               [PullFofc(strucid=strucid, root_dir=root_dir, crystal=crystal, ligands=ligands) for
-                (strucid, root_dir, crystal, ligands) in
-                zip(out_dict['strucid'], out_dict['directory'], out_dict['crystal'], out_dict['ligands'])]
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join('logs', 'findcc.done'))
-
-    def run(self):
-        with self.output().open('wb') as f:
-            f.write('')
 
 
 class PullCurated(luigi.Task):
@@ -124,13 +94,19 @@ class CreateApo(luigi.Task):
             raise Exception('No entries found for this strucid... resetting the datasource and files for this crystal')
         for row in rows:
             curated_pdb = str(row[0])
-        print((curated_pdb + ' ' + str(rows)))
+        try:
+            print(curated_pdb)
+        except:
+            raise Exception(str(rows))
 
         ligand_string = paf.get_lig_strings(self.ligands)
 
         working_dir = os.getcwd()
         os.chdir(os.path.join(self.root_dir, self.docking_dir))
-        pdb_file = open(curated_pdb, 'r')
+        try:
+            pdb_file = open(curated_pdb, 'r')
+        except:
+            raise Exception(str(rows))
         for line in pdb_file:
             if any(lig in line for lig in ligand_string):
                 continue
