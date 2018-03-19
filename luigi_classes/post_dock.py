@@ -22,7 +22,7 @@ class DLGtoPDBQT(luigi.Task):
             for line in infile:
                 print(line)
                 if 'DOCKED:' in line:
-                    print(line)
+                    # print(line)
                     outline = line.replace('DOCKED: ', '')
                     with open(self.output().path, 'a') as f:
                         f.write(outline)
@@ -43,10 +43,10 @@ class PDBQTtoPDB(luigi.Task):
     def run(self):
         pass
 
-class MoveADFiles(luigi.Task):
+class RemoveADFiles(luigi.Task):
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    autodock_dir = luigi.Parameter(default='autodock')
+    #autodock_dir = luigi.Parameter(default='autodock')
 
     def requires(self):
         pass
@@ -56,12 +56,12 @@ class MoveADFiles(luigi.Task):
 
     def run(self):
         move_from_dir = os.path.join(self.root_dir, self.docking_dir)
-        move_to_dir = os.path.join(move_from_dir, self.autodock_dir)
+        #move_to_dir = os.path.join(move_from_dir, self.autodock_dir)
 
-        if not os.path.isdir(move_to_dir):
-            os.mkdir(move_to_dir)
+        #if not os.path.isdir(move_to_dir):
+         #   os.mkdir(move_to_dir)
 
         types_to_move = ['autodock*', 'autogrid*', '*.*.map', '*.fld', '*.xyz', '*.dlg', '*.dpf', '*.gpf']
 
         for extension in types_to_move:
-            shutil.move(str(move_from_dir + '/' + extension), str(move_to_dir + '/'))
+            os.system(str('rm ' + move_from_dir + '/' + extension))

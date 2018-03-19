@@ -76,6 +76,7 @@ class RunAutoDock(luigi.Task):
         job_options = str(str('-p ' + parameter_file))
         return ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                             root_dir=self.root_dir), \
+               RunAutoGrid(root_dir=self.root_dir, receptor_pdbqt=self.receptor_pdbqt, ligand_pdbqt=self.ligand_pdbqt), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
@@ -109,8 +110,7 @@ class BatchAutoDock(luigi.Task):
 
         zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdbqt'], to_run['ligand_pdbqt']))
 
-        return [RunAutoGrid(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for (root, receptor, ligand) in
-                zipped_list], [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
+        return [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
                                (root, receptor, ligand) in zipped_list]
 
 

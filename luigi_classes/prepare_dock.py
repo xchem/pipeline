@@ -33,7 +33,9 @@ class PrepProtein(luigi.Task):
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        print('\n')
         print(out)
+        print('\n')
         print(err)
 
 
@@ -95,7 +97,7 @@ class GridPrepADT(luigi.Task):
         # return LigPrepADT(), ReceptorPrepADT()
         return PrepProtein(protein_pdb=str(self.receptor_file_name).replace('_prepared.pdbqt', '.pdb'),
                            root_dir=self.root_dir), PrepLigand(
-            ligand_sdf=str(self.receptor_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
+            ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
 
     def output(self):
         return luigi.LocalTarget(
@@ -112,7 +114,9 @@ class GridPrepADT(luigi.Task):
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
+        print('\n')
         print(out)
+        print('\n')
         print(err)
 
 
@@ -143,7 +147,7 @@ class ParamPrepADT(luigi.Task):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
         command = ' '.join(
             [self.ssh_command, '"', 'cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
-             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '"'])
+             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '-L', '-s', '"'])
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()

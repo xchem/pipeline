@@ -111,11 +111,14 @@ class StartHitTransfers(luigi.Task):
             except:
                 pass
 
-        run_list = self.get_list()
-        return database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
-                            protein_name=protein_name, smiles=smiles_string,
-                            mod_date=modification_string, ligands=ligand_list) for
-                (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
+        try:
+            run_list = self.get_list()
+            return database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+                                protein_name=protein_name, smiles=smiles_string,
+                                mod_date=modification_string, ligands=ligand_list) for
+                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
+        except:
+            return data_in_proasis.CleanUpHits()
 
     def output(self):
         return luigi.LocalTarget('logs/hits.done')

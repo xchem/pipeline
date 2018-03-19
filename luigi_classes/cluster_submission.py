@@ -1,16 +1,18 @@
 import luigi
 import subprocess
 import os
+from functions.misc_functions import randnumb
 
 
 class CheckCluster(luigi.Task):
+    randnum = luigi.Parameter()
     remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
 
     def requires(self):
         pass
 
     def output(self):
-        return luigi.LocalTarget('logs/cluster.number')
+        return luigi.LocalTarget('logs/cluster.number.' + str(self.randnum))
 
     def run(self):
         command = ' '.join([
@@ -40,16 +42,35 @@ class SubmitJob(luigi.Task):
     max_jobs = luigi.Parameter(default='100')
 
     def requires(self):
-        return CheckCluster()
+        #number = randnumb(6)
+        #return CheckCluster(randnum=number)
+        pass
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.job_directory, 'job.id'))
+        return luigi.LocalTarget(os.path.join(self.job_directory, str(str(self.job_script).replace('.sh','.job.id'))))
 
     def run(self):
-        with self.input().open('r') as infile:
-            number = int(infile.read())
+        # with self.input().open('r') as infile:
+        #     number = int(infile.read())
+        #
+        # os.remove(self.input().path)
 
-        os.remove(self.input().path)
+        command = ' '.join([
+            self.remote_sub_command,
+            '"',
+            'module load global/cluster >>/dev/null 2>&1; qstat -u uzw12877 | wc -l',
+            '"'
+        ])
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
+        print(out)
+        if int(out) > 0:
+            number = int(out) - 2
+        if int(out) == 0:
+            number = int(out)
 
         if number > int(self.max_jobs):
             raise Exception('Max jobs (' + str(self.max_jobs) + ') exceeded. Please increase max_jobs or wait!')

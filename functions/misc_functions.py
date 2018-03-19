@@ -2,6 +2,7 @@ import os, datetime
 from rdkit import Chem
 from rdkit.Chem import AllChem
 import re, sys
+from random import randint
 
 def get_id_string(out):
     """
@@ -40,3 +41,9 @@ def create_sd_file(name, smiles, save_directory):
     print(('Generating sdf file and saving to ' + name + ' directory...\n'))
     sd_file = Chem.SDWriter(save_directory)
     sd_file.write(mol)
+
+
+def randnumb(n):
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)

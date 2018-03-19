@@ -519,8 +519,8 @@ class HitTransfer(luigi.Task):
 
         # add strucid to database
         conn, c = db_functions.connectDB()
-        c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s',
-                  (str(strucid), str(self.bound_pdb), str(self.mod_date)))
+        c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s and smiles = %s',
+                  (str(strucid), str(self.bound_pdb), str(self.mod_date), str(self.smiles)))
 
         conn.commit()
 
