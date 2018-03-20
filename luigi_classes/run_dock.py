@@ -24,9 +24,6 @@ class RunAutoGrid(luigi.Task):
     receptor_pdbqt = luigi.Parameter()
     ligand_pdbqt = luigi.Parameter()
 
-    # for job_options
-    # parameter_flag = luigi.Parameter(default='-p')
-
     def requires(self):
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
                                       str(str(self.receptor_pdbqt).replace('.pdbqt', '.gpf')))
@@ -64,9 +61,6 @@ class RunAutoDock(luigi.Task):
     receptor_pdbqt = luigi.Parameter()
     ligand_pdbqt = luigi.Parameter()
 
-    # for job_options
-    # parameter_flag = luigi.Parameter(default='-p')
-
     def requires(self):
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
                                       str(self.ligand_pdbqt.replace('.pdbqt', '_') +
@@ -89,9 +83,6 @@ class RunAutoDock(luigi.Task):
         log_file = parameter_file.replace('.dpf', '.dlg')
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
 
-        # def run(self):
-        #     with self.output().open('wb') as f:
-        #         f.write('')
 
 
 class BatchAutoDock(luigi.Task):
@@ -132,6 +123,7 @@ class RunVinaDock(luigi.Task):
         centre = rdMolTransforms.ComputeCentroid(conf)
 
         box_size = eval(self.box_size)
+        out_name = str(self.ligand_sdf).replace('.sdf', '_vinaout.pdbqt')
 
         params = [
             '--receptor',
@@ -150,6 +142,8 @@ class RunVinaDock(luigi.Task):
             str(box_size[1]),
             '--size_z',
             str(box_size[2]),
+            '--out',
+            out_name
         ]
 
         parameters = ' '.join(str(v) for v in params)
@@ -158,9 +152,10 @@ class RunVinaDock(luigi.Task):
                PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.vina_exe, job_options=parameters), \
-               SubmitJob(), \
-               CheckJobOutput()
+               SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=out_name)
 
     def output(self):
-        pass
+        out_name = str(self.ligand_sdf).replace('.sdf', '_vinaout.pdbqt')
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(out_name + '.done')))
 
