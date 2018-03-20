@@ -25,10 +25,20 @@ class RunAutoGrid(luigi.Task):
     ligand_pdbqt = luigi.Parameter()
 
     def requires(self):
+        # grid parameter file output by ADT
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
                                       str(str(self.receptor_pdbqt).replace('.pdbqt', '.gpf')))
+
+        # log file to be written out by AutoGrid
         log_file = str(parameter_file).replace('.gpf', '.glg')
+
+        # parameters to be passes to WriteJobScript
         job_options = str('-p ' + parameter_file + ' -l ' + log_file)
+
+        # 1. Prepare autogrid parameter file with autodock tools
+        # 2. Write a job script for autodock
+        # 3. Run autodock on the cluster
+        # 4. Check that the job has finished - doesn't check for errors. This needs a separate class
         return GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                            root_dir=self.root_dir), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
@@ -41,11 +51,9 @@ class RunAutoGrid(luigi.Task):
                                       str(self.ligand_pdbqt.replace('.pdbqt', '_') +
                                           str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
         log_file = parameter_file.replace('.dpf', '.dlg')
-        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
 
-        # def run(self):
-        #     with self.output().open('wb') as f:
-        #         f.write('')
+        # name of file written out by CheckJobOutput
+        return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
 
 
 class RunAutoDock(luigi.Task):
@@ -62,12 +70,23 @@ class RunAutoDock(luigi.Task):
     ligand_pdbqt = luigi.Parameter()
 
     def requires(self):
+        # docking parameter file written out by autodock tools
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
                                       str(self.ligand_pdbqt.replace('.pdbqt', '_') +
                                           str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
+
+        # log file from autodock
         log_file = parameter_file.replace('.dpf', '.dlg')
         print(parameter_file)
+
+        # specify the dpf file for autodock (WriteJob)
         job_options = str(str('-p ' + parameter_file))
+
+        # 1. Prepare parameters for docking with autodock tools
+        # 2. Run Autogrid
+        # 3. Write the job for autodock
+        # 4. Run the autodock job on the cluster
+        # 5. Check that the job has finished - doesn't check for errors. This needs a separate class
         return ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                             root_dir=self.root_dir), \
                RunAutoGrid(root_dir=self.root_dir, receptor_pdbqt=self.receptor_pdbqt, ligand_pdbqt=self.ligand_pdbqt), \
@@ -81,35 +100,16 @@ class RunAutoDock(luigi.Task):
                                       str(self.ligand_pdbqt.replace('.pdbqt', '_') +
                                           str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
         log_file = parameter_file.replace('.dpf', '.dlg')
+
+        # name of file written out by CheckJobOutput
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
-
-
-
-class BatchAutoDock(luigi.Task):
-    def requires(self):
-        to_run = {'root_dir': [],
-                  'protein_pdbqt': [],
-                  'ligand_pdbqt': []}
-        update_apo_field()
-        conn, c = dbf.connectDB()
-        c.execute("select root_dir, apo_name, mol_name from proasis_out where apo_name!=''")
-        rows = c.fetchall()
-        for row in rows:
-            to_run['root_dir'].append('/'.join(str(row[0]).split('/')[:-1]))
-            to_run['protein_pdbqt'].append(str(row[1]).replace('.pdb', '_prepared.pdbqt'))
-            to_run['ligand_pdbqt'].append(str(row[2]).replace('.sdf', '_prepared.pdbqt'))
-
-        zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdbqt'], to_run['ligand_pdbqt']))
-
-        return [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
-                               (root, receptor, ligand) in zipped_list]
 
 
 class RunVinaDock(luigi.Task):
     root_dir = luigi.Parameter()
     docking_dir = luigi.Parameter(default='comp_chem')
-    ligand_sdf = luigi.Parameter()
-    receptor_pdb = luigi.Parameter()
+    ligand_pdbqt = luigi.Parameter()
+    receptor_pdbqt = luigi.Parameter()
     vina_exe = luigi.Parameter(default='/dls_sw/apps/xchem/autodock_vina_1_1_2_linux_x86/bin/vina')
     box_size = luigi.Parameter(default='[40, 40, 40]')
     job_filename = luigi.Parameter(default='vina.sh')
@@ -117,19 +117,27 @@ class RunVinaDock(luigi.Task):
 
     def requires(self):
 
-        ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '.mol2'))
+        # open ligand mol2 file (generated during PrepLigand)
+        ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('_prepared.pdbqt', '.mol2'))
+
+        # create an rdkit mol from ligand
         mol = Chem.MolFromMol2File(ligand)
+
+        # get the ligand conformer and find its' centroid
         conf = mol.GetConformer()
         centre = rdMolTransforms.ComputeCentroid(conf)
 
+        # box size allowed for vina
         box_size = eval(self.box_size)
-        out_name = str(self.ligand_sdf).replace('.sdf', '_vinaout.pdbqt')
+
+        # name of output file from vina
+        out_name = str(self.ligand_sdf).replace('.pdbqt', '_vinaout.pdbqt')
 
         params = [
             '--receptor',
-            os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared.pdbqt')),
+            os.path.join(self.root_dir, self.docking_dir, self.receptor_pdbqt),
             '--ligand',
-            os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '_prepared.pdbqt')),
+            os.path.join(self.root_dir, self.docking_dir, self.ligand_pdbqt),
             '--center_x',
             centre.x,
             '--center_y',
@@ -148,6 +156,11 @@ class RunVinaDock(luigi.Task):
 
         parameters = ' '.join(str(v) for v in params)
 
+        # 1. Prep Ligand (should have already been done for autodock)
+        # 2. Prep Protein (should have already been done for sutodock)
+        # 3. Write vina job script
+        # 4. Run vina on cluster
+        # 5. Check job output
         return PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_sdf), \
                PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
@@ -157,5 +170,27 @@ class RunVinaDock(luigi.Task):
 
     def output(self):
         out_name = str(self.ligand_sdf).replace('.sdf', '_vinaout.pdbqt')
+        # name of file written by CheckJobOutput
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(out_name + '.done')))
 
+
+class BatchDock(luigi.Task):
+    def requires(self):
+        to_run = {'root_dir': [],
+                  'protein_pdbqt': [],
+                  'ligand_pdbqt': []}
+        update_apo_field()
+        conn, c = dbf.connectDB()
+        c.execute("select root_dir, apo_name, mol_name from proasis_out where apo_name!=''")
+        rows = c.fetchall()
+        for row in rows:
+            to_run['root_dir'].append('/'.join(str(row[0]).split('/')[:-1]))
+            to_run['protein_pdbqt'].append(str(row[1]).replace('.pdb', '_prepared.pdbqt'))
+            to_run['ligand_pdbqt'].append(str(row[2]).replace('.sdf', '_prepared.pdbqt'))
+
+        zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdbqt'], to_run['ligand_pdbqt']))
+
+        return [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
+                               (root, receptor, ligand) in zipped_list], \
+               [RunVinaDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
+                               (root, receptor, ligand) in zipped_list]

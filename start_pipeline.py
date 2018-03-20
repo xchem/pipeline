@@ -37,7 +37,7 @@ class KickOff(luigi.Task):
         yield html_generators.LigandEdstatsViolinHTML()
         yield FindCompChemReady()
         yield pandda_for_tindspect.StartParse()
-        yield run_dock.BatchAutoDock()
+        yield run_dock.BatchDock()
 
     def run(self):
         with self.output().open('wb') as f:
