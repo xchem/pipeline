@@ -121,46 +121,21 @@ class RunVinaDock(luigi.Task):
     receptor_pdb = luigi.Parameter()
     vina_exe = luigi.Parameter(default='/dls_sw/apps/xchem/autodock_vina_1_1_2_linux_x86/bin/vina')
     box_size = luigi.Parameter(default='[40, 40, 40]')
+    job_filename = luigi.Parameter(default='vina.sh')
+    job_name = luigi.Parameter(default='vina')
 
     def requires(self):
 
-        return PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_sdf), \
-               PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb)
-
-    def output(self):
-        pass
-
-    def run(self):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '.mol2'))
-        print(ligand)
         mol = Chem.MolFromMol2File(ligand)
         conf = mol.GetConformer()
         centre = rdMolTransforms.ComputeCentroid(conf)
 
         box_size = eval(self.box_size)
 
-        os.chdir(os.path.join(self.root_dir, self.docking_dir))
-
-        outfile = os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared2.pdbqt'))
-        if os.path.isfile(outfile):
-            os.remove(outfile)
-
-        with open(os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared.pdbqt')),
-                  'r') as infile:
-            for line in infile:
-                if 'ROOT' in line or 'BRANCH' in line or 'TORSDOF' in line:
-                    continue
-                else:
-                    with open(outfile, 'a') as f:
-                        f.write(line)
-
-        command = [
-            'cd',
-            os.path.join(self.root_dir, self.docking_dir),
-            ';',
-            self.vina_exe,
+        params = [
             '--receptor',
-            os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared2.pdbqt')),
+            os.path.join(self.root_dir, self.docking_dir, self.receptor_pdb.replace('.pdb', '_prepared.pdbqt')),
             '--ligand',
             os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '_prepared.pdbqt')),
             '--center_x',
@@ -177,12 +152,15 @@ class RunVinaDock(luigi.Task):
             str(box_size[2]),
         ]
 
-        command = ' '.join(str(v) for v in command)
+        parameters = ' '.join(str(v) for v in params)
 
-        print(command)
+        return PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_sdf), \
+               PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb), \
+               WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
+                        job_name=self.job_name, job_executable=self.vina_exe, job_options=parameters), \
+               SubmitJob(), \
+               CheckJobOutput()
 
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
+    def output(self):
+        pass
 
-        print(out)
-        print(err)
