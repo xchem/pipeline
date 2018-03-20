@@ -125,7 +125,7 @@ class RunVinaDock(luigi.Task):
 
         # get the ligand conformer and find its' centroid
         conf = mol.GetConformer()
-        centre = rdMolTransforms.ComputeCentroid(conf)
+        centre = rdMolTransforms.ComputeCentroid(conf)  # out = centre.x, centre.y and centre.z for coords
 
         # box size allowed for vina
         box_size = eval(self.box_size)
