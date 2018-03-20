@@ -398,6 +398,7 @@ class CheckFilesForUpload(luigi.Task):
         with self.output().open('wb') as f:
             f.write('')
 
+
 class CleanUpHits(luigi.Task):
 
     def output(self):

@@ -147,6 +147,8 @@ class CheckJobOutput(luigi.Task):
         if os.path.isfile(os.path.join(self.job_directory, self.job_output_file)):
             with self.output().open('wb') as f:
                 f.write('')
+        else:
+            raise Exception('Job output not found!')
 
 
 

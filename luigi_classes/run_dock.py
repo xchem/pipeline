@@ -132,7 +132,7 @@ class RunVinaDock(luigi.Task):
 
     def run(self):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('.sdf', '.mol2'))
-
+        print(ligand)
         mol = Chem.MolFromMol2File(ligand)
         conf = mol.GetConformer()
         centre = rdMolTransforms.ComputeCentroid(conf)
