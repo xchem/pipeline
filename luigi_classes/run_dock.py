@@ -1,5 +1,3 @@
-import subprocess
-
 import luigi
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
@@ -39,18 +37,18 @@ class RunAutoGrid(luigi.Task):
         # 2. Write a job script for autodock
         # 3. Run autodock on the cluster
         # 4. Check that the job has finished - doesn't check for errors. This needs a separate class
-        return GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
+        return [GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                            root_dir=self.root_dir), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
-               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)]
 
     def output(self):
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
                                       str(self.ligand_pdbqt.replace('.pdbqt', '_') +
                                           str(self.receptor_pdbqt.replace('.pdbqt', '.dpf'))))
-        log_file = parameter_file.replace('.dpf', '.dlg')
+        log_file = parameter_file.replace('.dpf', '.glg')
 
         # name of file written out by CheckJobOutput
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(log_file + '.done')))
@@ -87,13 +85,13 @@ class RunAutoDock(luigi.Task):
         # 3. Write the job for autodock
         # 4. Run the autodock job on the cluster
         # 5. Check that the job has finished - doesn't check for errors. This needs a separate class
-        return ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
+        return [ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
                             root_dir=self.root_dir), \
                RunAutoGrid(root_dir=self.root_dir, receptor_pdbqt=self.receptor_pdbqt, ligand_pdbqt=self.ligand_pdbqt), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.job_executable, job_options=job_options), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
-               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)]
 
     def output(self):
         parameter_file = os.path.join(self.root_dir, self.docking_dir,
@@ -118,7 +116,7 @@ class RunVinaDock(luigi.Task):
     def requires(self):
 
         # open ligand mol2 file (generated during PrepLigand)
-        ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf.replace('_prepared.pdbqt', '.mol2'))
+        ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_pdbqt.replace('_prepared.pdbqt', '.mol2'))
 
         # create an rdkit mol from ligand
         mol = Chem.MolFromMol2File(ligand)
@@ -131,7 +129,7 @@ class RunVinaDock(luigi.Task):
         box_size = eval(self.box_size)
 
         # name of output file from vina
-        out_name = str(self.ligand_sdf).replace('.pdbqt', '_vinaout.pdbqt')
+        out_name = str(self.ligand_pdbqt).replace('.pdbqt', '_vinaout.pdbqt')
 
         params = [
             '--receptor',
@@ -161,20 +159,21 @@ class RunVinaDock(luigi.Task):
         # 3. Write vina job script
         # 4. Run vina on cluster
         # 5. Check job output
-        return PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_sdf), \
-               PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdb), \
+        return [PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_pdbqt.replace('_prepared.pdbqt', '.sdf')), \
+               PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdbqt.replace('_prepared.pdbqt', '.pdb')), \
                WriteJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_filename=self.job_filename,
                         job_name=self.job_name, job_executable=self.vina_exe, job_options=parameters), \
                SubmitJob(job_directory=os.path.join(self.root_dir, self.docking_dir), job_script=self.job_filename), \
-               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=out_name)
+               CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=out_name)]
 
     def output(self):
-        out_name = str(self.ligand_sdf).replace('.sdf', '_vinaout.pdbqt')
+        out_name = str(self.ligand_pdbqt).replace('.pdbqt', '_vinaout.pdbqt')
         # name of file written by CheckJobOutput
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir, str(out_name + '.done')))
 
 
 class BatchDock(luigi.Task):
+
     def requires(self):
         to_run = {'root_dir': [],
                   'protein_pdbqt': [],
@@ -190,7 +189,14 @@ class BatchDock(luigi.Task):
 
         zipped_list = list(zip(to_run['root_dir'], to_run['protein_pdbqt'], to_run['ligand_pdbqt']))
 
-        return [RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
+        return [[RunAutoDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
                                (root, receptor, ligand) in zipped_list], \
                [RunVinaDock(root_dir=root, receptor_pdbqt=receptor, ligand_pdbqt=ligand) for
-                               (root, receptor, ligand) in zipped_list]
+                               (root, receptor, ligand) in zipped_list]]
+
+    def output(self):
+        return luigi.LocalTarget('logs/batchdock.done')
+
+    def run(self):
+        with self.output().open('wb') as f:
+            f.write('')

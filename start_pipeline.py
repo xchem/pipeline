@@ -17,6 +17,7 @@ class KickOff(luigi.Task):
         try:
             os.system('./pg_backup.sh')
             os.system('rm logs/ligand_search.done')
+            os.system('rm logs/batchdock.done')
             os.system('rm logs/pipeline.done')
             os.system('rm logs/summary_html.done')
             os.system('rm logs/violin_html.done')

@@ -218,3 +218,7 @@ def get_struc_file(strucid, outfile, type):
             outfile = None
     return outfile
 
+
+def update_proasis_out():
+    pass
+
