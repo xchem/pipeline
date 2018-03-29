@@ -4,6 +4,79 @@ import os
 from functions.misc_functions import randnumb
 
 
+def submit_job(job_directory, job_script, remote_sub_command='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk', max_jobs=100):
+    command = ' '.join([
+        remote_sub_command,
+        '"',
+        'module load global/cluster >>/dev/null 2>&1; qstat -u uzw12877 | wc -l',
+        '"'
+    ])
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
+    print(out)
+    if int(out) > 0:
+        number = int(out) - 2
+    if int(out) == 0:
+        number = int(out)
+
+    if number > int(max_jobs):
+        raise Exception('Max jobs (' + str(self.max_jobs) + ') exceeded. Please increase max_jobs or wait!')
+
+    os.chdir(job_directory)
+
+    submission_string = ' '.join([
+        remote_sub_command,
+        '"',
+        'cd',
+        job_directory,
+        '; module load global/cluster >>/dev/null 2>&1; qsub',
+        job_script,
+        '"'
+    ])
+
+    print(submission_string)
+
+    submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = submission.communicate()
+
+    out = out.decode('ascii')
+    print('\n')
+    print(out)
+    print('\n')
+    if err:
+        err = err.decode('ascii')
+        print('\n')
+        print(err)
+        print('\n')
+
+    job_number = out.split(' ')[2]
+
+    output = os.path.join(job_directory, str(str(job_script).replace('.sh', '.job.id')))
+
+    with output.open('w') as f:
+        f.write(job_number)
+
+
+def write_job(job_directory, job_filename, job_name, job_executable, job_options):
+    os.chdir(job_directory)
+    job_script = '''#!/bin/bash
+    cd %s
+    touch %s.running
+    %s %s > %s.log
+    rm %s.running
+    touch %s.done
+    ''' % (job_directory, job_name, job_executable, job_options,
+           job_name, job_name, job_name)
+
+    output = os.path.join(job_directory, job_filename)
+
+    with output.open('w') as f:
+        f.write(job_script)
+
+
 class CheckCluster(luigi.Task):
     randnum = luigi.Parameter()
     remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
