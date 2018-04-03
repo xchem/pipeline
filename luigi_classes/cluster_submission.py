@@ -56,8 +56,8 @@ def submit_job(job_directory, job_script, remote_sub_command='ssh -t uzw12877@cs
 
     output = os.path.join(job_directory, str(str(job_script).replace('.sh', '.job.id')))
 
-    with output.open('w') as f:
-        f.write(job_number)
+    f = open(output, 'w')
+    f.write(job_number)
 
 
 def write_job(job_directory, job_filename, job_name, job_executable, job_options):
@@ -73,8 +73,8 @@ def write_job(job_directory, job_filename, job_name, job_executable, job_options
 
     output = os.path.join(job_directory, job_filename)
 
-    with output.open('w') as f:
-        f.write(job_script)
+    f = open(output, 'w')
+    f.write(job_script)
 
 
 class CheckCluster(luigi.Task):
