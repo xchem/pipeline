@@ -5,8 +5,6 @@ from rdkit.Chem import rdMolTransforms
 from functions.docking_functions import *
 from .cluster_submission import CheckJobOutput
 from .cluster_submission import submit_job
-# from .cluster_submission import SubmitJob
-# from .cluster_submission import WriteJob
 from .cluster_submission import write_job
 from .prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
 
@@ -119,7 +117,7 @@ class RunVinaDock(luigi.Task):
 
     def requires(self):
         # 1. Prep Ligand (should have already been done for autodock)
-        # 2. Prep Protein (should have already been done for sutodock)
+        # 2. Prep Protein (should have already been done for autodock)
         # 3. Write vina job script
         # 4. Run vina on cluster
         # 5. Check job output

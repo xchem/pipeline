@@ -147,7 +147,7 @@ class ParamPrepADT(luigi.Task):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
         command = ' '.join(
             [self.ssh_command, '"', 'cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
-             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '-L', '-s', '"'])
+             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '-L', '-s', '-p', 'set_ga','"'])
         print(command)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
