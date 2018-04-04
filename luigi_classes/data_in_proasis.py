@@ -245,7 +245,6 @@ class FindLigands(luigi.Task):
             f.write('')
 
 
-
 class CopyFilesForProasis(luigi.Task):
     protein_name = luigi.Parameter()
     hit_directory = luigi.Parameter()
@@ -432,7 +431,6 @@ class HitTransfer(luigi.Task):
 
     ligands = luigi.Parameter()
 
-
     def requires(self):
         self.protein_name = str(self.protein_name).upper()
         return AddProject(protein_name=self.protein_name), CopyFilesForProasis(protein_name=self.protein_name, hit_directory=self.hit_directory,
@@ -455,6 +453,25 @@ class HitTransfer(luigi.Task):
 
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
         proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
+
+        # Check whether there is already an entry fot crystal in masterdb
+        conn, c = db_functions.connectDB()
+        c.execute("SELECT strucid, bound_conf FROM proasis_hits WHERE crystal_name LIKE %s", (self.crystal,))
+        rows = c.fetchall()
+
+        for row in rows:
+            old_strucid = str(row[0])
+            old_bound_conf = str(row[1])
+
+            # determine if the old entry is from the same visit or not
+            old_visit = old_bound_conf.split('/')[4]
+            current_visit = str(self.bound_pdb).split('/')[4]
+
+            if old_visit == current_visit:
+                proasis_api_funcs.delete_structure(old_strucid)
+                c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
+                conn.commit()
+
 
         # create the submission string for proasis
         if len(self.ligands) == 1:
