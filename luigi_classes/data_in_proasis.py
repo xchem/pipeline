@@ -456,8 +456,12 @@ class HitTransfer(luigi.Task):
 
         # Check whether there is already an entry fot crystal in masterdb
         conn, c = db_functions.connectDB()
+
         c.execute("SELECT strucid, bound_conf FROM proasis_hits WHERE crystal_name LIKE %s", (self.crystal,))
         rows = c.fetchall()
+
+        current_visit = str(self.bound_pdb).split('/')[4]
+        title = str(self.crystal + '--' + current_visit)
 
         for row in rows:
             old_strucid = str(row[0])
@@ -465,13 +469,12 @@ class HitTransfer(luigi.Task):
 
             # determine if the old entry is from the same visit or not
             old_visit = old_bound_conf.split('/')[4]
-            current_visit = str(self.bound_pdb).split('/')[4]
 
+            # case where visit is same, but filename is not
             if old_visit == current_visit:
                 proasis_api_funcs.delete_structure(old_strucid)
                 c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
                 conn.commit()
-
 
         # create the submission string for proasis
         if len(self.ligands) == 1:
@@ -480,7 +483,7 @@ class HitTransfer(luigi.Task):
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
-                                    " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
 
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
@@ -499,7 +502,7 @@ class HitTransfer(luigi.Task):
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
                                     str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
-                                    " -p " + str(self.protein_name) + " -t " + str(self.crystal) + " -x XRAY -N")
+                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
             print(submit_to_proasis)
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
