@@ -461,7 +461,7 @@ class HitTransfer(luigi.Task):
         rows = c.fetchall()
 
         current_visit = str(self.bound_pdb).split('/')[4]
-        title = str(self.crystal + '--' + current_visit)
+        title = str(self.crystal)
 
         for row in rows:
             old_strucid = str(row[0])
