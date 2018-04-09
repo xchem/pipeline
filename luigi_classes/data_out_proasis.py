@@ -89,7 +89,10 @@ class CreateApo(luigi.Task):
         try:
             print(curated_pdb)
         except:
-            raise Exception(str(rows))
+            c.execute('DELETE from proasis_out WHERE curated_name=%s', (str(self.crystal + '_' + 'curated.pdb'),))
+            conn.commit()
+            shutil.rmtree(os.path.join(self.root_dir, self.docking_dir))
+            raise Exception('DB problem... resetting the datasource and files for this crystal')
 
         ligand_string = paf.get_lig_strings(self.ligands)
 
