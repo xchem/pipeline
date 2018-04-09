@@ -239,7 +239,7 @@ class FindLigands(luigi.Task):
         conn, c = db_functions.connectDB()
         c.execute('UPDATE proasis_hits SET ligand_list=%s WHERE bound_conf=%s',(str(unique_ligands), self.bound_conf))
         conn.commit()
-        # print unique_ligands
+        print(unique_ligands)
 
         with self.output().open('wb') as f:
             f.write('')

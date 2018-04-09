@@ -81,17 +81,9 @@ class CreateApo(luigi.Task):
             # raise Exception('No entries found for this strucid... check the datasource!')
             c.execute('DELETE from proasis_out WHERE curated_name=%s', (str(self.crystal + '_' + 'curated.pdb'),))
             conn.commit()
-            working_dir = os.getcwd()
-            os.chdir(os.path.join(self.root_dir, self.docking_dir))
-            try:
-                os.remove('*.pdb')
-                os.remove('*.mtz')
-                os.remove('*2fofc*')
-                os.remove('*fofc*')
-            except:
-                raise Exception(str(os.getcwd()))
-            os.chdir(working_dir)
-            raise Exception('No entries found for this strucid... resetting the datasource and files for this crystal')
+            shutil.rmtree(os.path.join(self.root_dir, self.docking_dir))
+            raise Exception('DB problem... resetting the datasource and files for this crystal')
+
         for row in rows:
             curated_pdb = str(row[0])
         try:
