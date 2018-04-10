@@ -141,6 +141,9 @@ class ParamPrepADT(luigi.Task):
             ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
 
     def output(self):
+        print(os.path.join(self.root_dir, self.docking_dir,
+                                              str(self.ligand_file_name.replace('.pdbqt', '_') +
+                                                  str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir,
                                               str(self.ligand_file_name.replace('.pdbqt', '_') +
                                                   str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
@@ -150,8 +153,10 @@ class ParamPrepADT(luigi.Task):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_file_name)
         command = ' '.join(
             [self.ssh_command, '"', 'cd', os.path.join(self.root_dir, self.docking_dir), ';', self.pythonsh_executable,
-             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '-L', '-s', '-p', 'set_ga','"'])
+             self.prepare_dpf4_script, '-r', receptor, '-l', ligand, '-L', '-s', '-p', 'set_ga=#','"'])
+        print('\n')
         print(command)
+        print('\n')
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
         print(out)
