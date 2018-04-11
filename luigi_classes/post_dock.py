@@ -1,6 +1,7 @@
 import luigi
 import os, shutil
 from .run_dock import RunAutoDock
+import functions.db_functions as dbf
 
 
 class DLGtoPDBQT(luigi.Task):
@@ -61,7 +62,18 @@ class RemoveADFiles(luigi.Task):
         #if not os.path.isdir(move_to_dir):
          #   os.mkdir(move_to_dir)
 
-        types_to_move = ['autodock*', 'autogrid*', '*.*.map', '*.fld', '*.xyz', '*.dlg', '*.dpf', '*.gpf']
+        types_to_move = ['autodock*', 'autogrid*', '*.*.map', '*.fld', '*.xyz', '*.dlg', '*.dpf', '*.gpf', '*.glg*']
 
         for extension in types_to_move:
             os.system(str('rm ' + move_from_dir + '/' + extension))
+
+
+class RemoveAllADFiles(luigi.Task):
+
+    def requires(self):
+        conn, c = dbf.connectDB()
+        c.execute('select root_dir from proasis_out')
+        run_list=[]
+        for row in c.fetchall():
+            run_list.append(str(row[0]).replace('comp_chem', ''))
+        return [RemoveADFiles(root_dir=direc) for direc in run_list]

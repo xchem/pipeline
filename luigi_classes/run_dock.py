@@ -1,6 +1,7 @@
 import luigi
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
+import openbabel
 
 from functions.docking_functions import *
 from .cluster_submission import CheckJobOutput
@@ -132,6 +133,20 @@ class RunVinaDock(luigi.Task):
 
         # create an rdkit mol from ligand
         mol = Chem.MolFromMol2File(ligand)
+
+        if mol==None:
+            ## convert to mol with obabel
+            obConv = openbabel.OBConversion()
+            obConv.SetInAndOutFormats('mol2', 'mol')
+
+            mol = openbabel.OBMol()
+
+            # read pdb and write pdbqt
+            obConv.ReadFile(mol, ligand)
+            obConv.WriteFile(mol, ligand.replace('.mol2', '.mol'))
+
+            ligand = ligand.replace('.mol2', '.mol')
+            mol = Chem.MolFromMolFile(ligand)
 
         # get the ligand conformer and find its' centroid
         conf = mol.GetConformer()

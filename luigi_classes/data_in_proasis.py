@@ -463,18 +463,21 @@ class HitTransfer(luigi.Task):
         current_visit = str(self.bound_pdb).split('/')[4]
         title = str(self.crystal)
 
-        for row in rows:
-            old_strucid = str(row[0])
-            old_bound_conf = str(row[1])
+        try:
+            for row in rows:
+                old_strucid = str(row[0])
+                old_bound_conf = str(row[1])
 
-            # determine if the old entry is from the same visit or not
-            old_visit = old_bound_conf.split('/')[4]
+                # determine if the old entry is from the same visit or not
+                old_visit = old_bound_conf.split('/')[4]
 
-            # case where visit is same, but filename is not
-            if old_visit == current_visit:
-                proasis_api_funcs.delete_structure(old_strucid)
-                c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
-                conn.commit()
+                # case where visit is same, but filename is not
+                if old_visit == current_visit:
+                    proasis_api_funcs.delete_structure(old_strucid)
+                    c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
+                    conn.commit()
+        except:
+            pass
 
         # create the submission string for proasis
         if len(self.ligands) == 1:
@@ -539,11 +542,18 @@ class HitTransfer(luigi.Task):
             raise Exception('proasis failed to upload structure: ' + out)
 
         # add strucid to database
+        print('Updating master DB')
         conn, c = db_functions.connectDB()
-        c.execute('UPDATE proasis_hits SET strucid = %s where bound_conf = %s and modification_date = %s and smiles = %s',
-                  (str(strucid), str(self.bound_pdb), str(self.mod_date), str(self.smiles)))
+        c.execute("UPDATE proasis_hits SET strucid=%s where bound_conf=%s and modification_date=%s",
+                  (str(strucid), str(self.bound_pdb), str(self.mod_date)))
 
         conn.commit()
+        print(c.query)
+        print(c.statusmessage)
+
+        if 'UPDATE 0' in c.statusmessage:
+            proasis_api_funcs.delete_structure(strucid)
+            raise Exception('db was not updated! structure removed from proasis!')
 
         with self.output().open('wb') as f:
             f.write('')
