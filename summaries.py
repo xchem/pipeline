@@ -63,8 +63,8 @@ class CheckProasisForProtein(luigi.Task):
         crystal_list = list(set(crystal_list))
 
         db_strucids = []
-        status_list = []
-        good_list = []
+        # status_list = []
+        # good_list = []
 
         file_checks = {'crystal': [], 'bound_state': [], 'mod_date': [], 'pdb': [], 'mtz': [], '2fofc': [], 'fofc': [],
                        'ligs': []}
@@ -106,26 +106,26 @@ class CheckProasisForProtein(luigi.Task):
             for row in rows:
                 db_strucids.append(str(row[0]))
 
-            # get info about crystals in proasis_hits (ones identified as in refinement) that haven't made it to
-            # proasis
-
-            if sum([len(unique_modification_date), len(unique_bound), len(unique_strucids)]) == 0:
-
-                c.execute(
-                    "select bound_conf, modification_date, exists_pdb, exists_mtz, exists_2fofc, exists_fofc, "
-                    "ligand_list from proasis_hits where crystal_name like %s",
-                    (crystal,))
-                rows = c.fetchall()
-
-                for row in rows:
-                    file_checks['crystal'].append(crystal)
-                    file_checks['bound_state'].append(str(row[0]))
-                    file_checks['mod_date'].append(str(row[1]))
-                    file_checks['pdb'].append(str(row[2]))
-                    file_checks['mtz'].append(str(row[3]))
-                    file_checks['2fofc'].append(str(row[4]))
-                    file_checks['fofc'].append(str(row[5]))
-                    file_checks['ligs'].append(str(row[6]))
+        #     # get info about crystals in proasis_hits (ones identified as in refinement) that haven't made it to
+        #     # proasis
+        #
+        #     if sum([len(unique_modification_date), len(unique_bound), len(unique_strucids)]) == 0:
+        #
+        #         c.execute(
+        #             "select bound_conf, modification_date, exists_pdb, exists_mtz, exists_2fofc, exists_fofc, "
+        #             "ligand_list from proasis_hits where crystal_name like %s",
+        #             (crystal,))
+        #         rows = c.fetchall()
+        #
+        #         for row in rows:
+        #             file_checks['crystal'].append(crystal)
+        #             file_checks['bound_state'].append(str(row[0]))
+        #             file_checks['mod_date'].append(str(row[1]))
+        #             file_checks['pdb'].append(str(row[2]))
+        #             file_checks['mtz'].append(str(row[3]))
+        #             file_checks['2fofc'].append(str(row[4]))
+        #             file_checks['fofc'].append(str(row[5]))
+        #             file_checks['ligs'].append(str(row[6]))
 
         # clear up mismatching entries
         in_common = list(set(db_strucids) & set(project_strucids))

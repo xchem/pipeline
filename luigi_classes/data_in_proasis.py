@@ -463,21 +463,21 @@ class HitTransfer(luigi.Task):
         current_visit = str(self.bound_pdb).split('/')[4]
         title = str(self.crystal)
 
-        try:
-            for row in rows:
-                old_strucid = str(row[0])
-                old_bound_conf = str(row[1])
-
-                # determine if the old entry is from the same visit or not
-                old_visit = old_bound_conf.split('/')[4]
-
-                # case where visit is same, but filename is not
-                if old_visit == current_visit:
-                    proasis_api_funcs.delete_structure(old_strucid)
-                    c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
-                    conn.commit()
-        except:
-            pass
+        # try:
+        #     for row in rows:
+        #         old_strucid = str(row[0])
+        #         old_bound_conf = str(row[1])
+        #
+        #         # determine if the old entry is from the same visit or not
+        #         old_visit = old_bound_conf.split('/')[4]
+        #
+        #         # case where visit is same, but filename is not
+        #         if old_visit == current_visit:
+        #             proasis_api_funcs.delete_structure(old_strucid)
+        #             c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
+        #             conn.commit()
+        # except:
+        #     pass
 
         # create the submission string for proasis
         if len(self.ligands) == 1:
