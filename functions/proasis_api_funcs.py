@@ -219,6 +219,10 @@ def get_struc_file(strucid, outfile, type):
     return outfile
 
 
-def update_proasis_out():
-    pass
+def get_strucid_json(strucid):
+    url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/idlookup/' + strucid)
+    json_string = get_json(url)
+    out_dict = dict_from_string(json_string)
+
+    return out_dict
 
