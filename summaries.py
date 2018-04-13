@@ -204,3 +204,15 @@ class CheckProasisForProtein(luigi.Task):
                         paf.delete_structure(to_delete_strucs[j])
 
         pd.DataFrame.from_dict(repeats).to_csv('test.csv')
+
+
+class GenProasisSummary(luigi.Task):
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+

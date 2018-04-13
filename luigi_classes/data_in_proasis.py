@@ -454,7 +454,7 @@ class HitTransfer(luigi.Task):
         pdb_file_name = str(self.bound_pdb).split('/')[-1]
         proasis_bound_pdb = str(proasis_crystal_directory + pdb_file_name)
 
-        # Check whether there is already an entry fot crystal in masterdb
+        # Check whether there is already an entry for crystal in masterdb
         conn, c = db_functions.connectDB()
 
         c.execute("SELECT strucid, bound_conf FROM proasis_hits WHERE crystal_name LIKE %s", (self.crystal,))
