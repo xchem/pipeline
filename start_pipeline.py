@@ -8,7 +8,6 @@ import os
 
 from luigi_classes import ligand_analysis
 
-
 class KickOff(luigi.Task):
     def output(self):
         return luigi.LocalTarget('pipeline.done')

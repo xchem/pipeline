@@ -3,14 +3,17 @@ import luigi_classes.prepare_dock
 import os, shutil
 from test_functions import *
 
+
 class TestFilePrep(unittest.TestCase):
     protein_pdb = 'SHH-x17_apo.pdb'
     ligand_sdf = 'SHH-x17_mol.sdf'
-    root_dir = '/dls/science/groups/i04-1/software/luigi_pipeline/tests/docking_files/'
+    root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
     tmp_dir = 'tmp/'
 
     @classmethod
     def setUpClass(cls):
+
+        cls.top_dir = os.getcwd()
 
         cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
 
@@ -24,6 +27,7 @@ class TestFilePrep(unittest.TestCase):
     def tearDownClass(cls):
 
         shutil.rmtree(cls.working_dir)
+        os.chdir(cls.top_dir)
 
     def file_checks(self, expected_file, produced_file):
         # check the file has been created
@@ -67,6 +71,35 @@ class TestFilePrep(unittest.TestCase):
 
         # run file checks
         self.file_checks(expected_file=expected_file, produced_file=produced_file)
+
+
+class TestVina(unittest.TestCase):
+    protein_pdbqt = 'SHH-x17_apo_prepared.pdbqt'
+    ligand_pdbqt = 'SHH-x17_mol_prepared.pdbqt'
+    root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
+    tmp_dir = 'tmp/'
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.top_dir = os.getcwd()
+
+        cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
+
+        if not os.path.isdir(cls.working_dir):
+            os.mkdir(cls.working_dir)
+
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.protein_pdbqt), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_pdbqt), cls.working_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+        shutil.rmtree(cls.working_dir)
+        os.chdir(cls.top_dir)
+
+    def test_vina(self):
+        print(os.getcwd())
 
 if __name__ == '__main__':
     unittest.main()
