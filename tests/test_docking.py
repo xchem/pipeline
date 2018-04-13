@@ -1,16 +1,9 @@
 import unittest
-import luigi
 import luigi_classes.prepare_dock
 import os, shutil
+from test_functions import *
 
-
-def run_luigi_worker(task):
-    w = luigi.worker.Worker()
-    w.add(task)
-    w.run()
-
-
-class TestPFilePrep(unittest.TestCase):
+class TestFilePrep(unittest.TestCase):
     protein_pdb = 'SHH-x17_apo.pdb'
     ligand_sdf = 'SHH-x17_mol.sdf'
     root_dir = '/dls/science/groups/i04-1/software/luigi_pipeline/tests/docking_files/'
@@ -54,7 +47,6 @@ class TestPFilePrep(unittest.TestCase):
         return True
 
     def test_protein_prep(self):
-
         # run test data on luigi worker
         run_luigi_worker(luigi_classes.prepare_dock.PrepProtein(
             root_dir=self.working_dir, protein_pdb=self.protein_pdb, docking_dir=''))
@@ -62,6 +54,7 @@ class TestPFilePrep(unittest.TestCase):
         expected_file = os.path.join(self.root_dir, 'comp_chem', self.protein_pdb.replace('.pdb', '_prepared.pdbqt'))
         produced_file = os.path.join(self.working_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdbqt'))
 
+        # run file checks
         self.file_checks(expected_file=expected_file, produced_file=produced_file)
 
     def test_lig_prep(self):
@@ -72,6 +65,7 @@ class TestPFilePrep(unittest.TestCase):
         expected_file = os.path.join(self.root_dir, 'comp_chem', self.ligand_sdf.replace('.pdb', '_prepared.pdbqt'))
         produced_file = os.path.join(self.working_dir, str(self.ligand_sdf).replace('.pdb', '_prepared.pdbqt'))
 
+        # run file checks
         self.file_checks(expected_file=expected_file, produced_file=produced_file)
 
 if __name__ == '__main__':
