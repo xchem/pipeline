@@ -122,8 +122,10 @@ class RunVinaDock(luigi.Task):
         # 3. Write vina job script
         # 4. Run vina on cluster
         # 5. Check job output
-        return [PrepLigand(root_dir=self.root_dir, ligand_sdf=self.ligand_pdbqt.replace('_prepared.pdbqt', '.sdf')),
-                PrepProtein(root_dir=self.root_dir, protein_pdb=self.receptor_pdbqt.replace('_prepared.pdbqt', '.pdb'))]
+        return [PrepLigand(docking_dir=self.docking_dir, root_dir=self.root_dir,
+                           ligand_sdf=self.ligand_pdbqt.replace('_prepared.pdbqt', '.sdf')),
+                PrepProtein(docking_dir=self.docking_dir,root_dir=self.root_dir,
+                            protein_pdb=self.receptor_pdbqt.replace('_prepared.pdbqt', '.pdb'))]
 
         # CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=out_name)]
 

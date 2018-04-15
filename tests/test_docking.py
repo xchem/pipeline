@@ -1,7 +1,9 @@
 import unittest
+import subprocess
 import luigi_classes.prepare_dock
+import luigi_classes.run_dock
 import os, shutil
-from test_functions import *
+from test_functions import run_luigi_worker
 
 
 class TestFilePrep(unittest.TestCase):
@@ -52,8 +54,10 @@ class TestFilePrep(unittest.TestCase):
 
     def test_protein_prep(self):
         # run test data on luigi worker
-        run_luigi_worker(luigi_classes.prepare_dock.PrepProtein(
+        protein_prep = run_luigi_worker(luigi_classes.prepare_dock.PrepProtein(
             root_dir=self.working_dir, protein_pdb=self.protein_pdb, docking_dir=''))
+
+        self.assertTrue(protein_prep)
 
         expected_file = os.path.join(self.root_dir, 'comp_chem', self.protein_pdb.replace('.pdb', '_prepared.pdbqt'))
         produced_file = os.path.join(self.working_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdbqt'))
@@ -63,8 +67,10 @@ class TestFilePrep(unittest.TestCase):
 
     def test_lig_prep(self):
         # run test data on luigi worker
-        run_luigi_worker(luigi_classes.prepare_dock.PrepLigand(
+        lig_prep = run_luigi_worker(luigi_classes.prepare_dock.PrepLigand(
             root_dir=self.working_dir, ligand_sdf=self.ligand_sdf, docking_dir=''))
+
+        self.assertTrue(lig_prep)
 
         expected_file = os.path.join(self.root_dir, 'comp_chem', self.ligand_sdf.replace('.pdb', '_prepared.pdbqt'))
         produced_file = os.path.join(self.working_dir, str(self.ligand_sdf).replace('.pdb', '_prepared.pdbqt'))
@@ -76,6 +82,7 @@ class TestFilePrep(unittest.TestCase):
 class TestVina(unittest.TestCase):
     protein_pdbqt = 'SHH-x17_apo_prepared.pdbqt'
     ligand_pdbqt = 'SHH-x17_mol_prepared.pdbqt'
+    ligand_mol2 = 'SHH-x17_mol.mol2'
     root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
     tmp_dir = 'tmp/'
 
@@ -91,15 +98,43 @@ class TestVina(unittest.TestCase):
 
         shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.protein_pdbqt), cls.working_dir)
         shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_pdbqt), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_mol2), cls.working_dir)
 
     @classmethod
     def tearDownClass(cls):
-        pass
         shutil.rmtree(cls.working_dir)
         os.chdir(cls.top_dir)
 
     def test_vina(self):
-        print(os.getcwd())
+        vina_submit = run_luigi_worker(luigi_classes.run_dock.RunVinaDock(root_dir=self.working_dir,
+                                                            docking_dir='', ligand_pdbqt=self.ligand_pdbqt,
+                                                            receptor_pdbqt=self.protein_pdbqt))
+
+        self.assertTrue(vina_submit)
+        self.assertTrue(os.path.isfile(os.path.join(self.working_dir, 'vina.job.id')))
+
+        with open(os.path.join(self.working_dir, 'vina.job.id'), 'r') as f:
+            job_id = int(f.readline())
+
+        process = subprocess.Popen(str('ssh -t uzw12877@nx.diamond.ac.uk '
+                                       '"module load global/cluster >>/dev/null 2>&1; qdel ' + str(job_id) + '"'),
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+        out, err = process.communicate()
+        self.assertTrue(str(job_id) in out.decode('ascii'))
+
+    def test_vina_local(self):
+
+        os.chdir(self.working_dir)
+
+        process = subprocess.Popen('chmod 755 vina.sh; ./vina.sh',
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+        out, err = process.communicate()
+
+        self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
+                                                    str(self.ligand_mol2.replace('.mol2', '_prepared_vinaout.pdbqt')))))
+
 
 if __name__ == '__main__':
     unittest.main()
