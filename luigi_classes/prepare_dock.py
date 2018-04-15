@@ -100,8 +100,9 @@ class GridPrepADT(luigi.Task):
     def requires(self):
         # return LigPrepADT(), ReceptorPrepADT()
         return PrepProtein(protein_pdb=str(self.receptor_file_name).replace('_prepared.pdbqt', '.pdb'),
-                           root_dir=self.root_dir), PrepLigand(
-            ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
+                           root_dir=self.root_dir, docking_dir=self.docking_dir), \
+               PrepLigand(ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'),
+                          root_dir=self.root_dir, docking_dir=self.docking_dir)
 
     def output(self):
         return luigi.LocalTarget(
@@ -138,8 +139,9 @@ class ParamPrepADT(luigi.Task):
     def requires(self):
         # return LigPrepADT(), ReceptorPrepADT()
         return PrepProtein(protein_pdb=str(self.receptor_file_name).replace('_prepared.pdbqt', '.pdb'),
-                           root_dir=self.root_dir), PrepLigand(
-            ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'), root_dir=self.root_dir)
+                           root_dir=self.root_dir, docking_dir=self.docking_dir), \
+               PrepLigand(ligand_sdf=str(self.ligand_file_name).replace('_prepared.pdbqt', '.sdf'),
+                          root_dir=self.root_dir, docking_dir=self.docking_dir)
 
     def output(self):
         print(os.path.join(self.root_dir, self.docking_dir,

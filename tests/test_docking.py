@@ -1,9 +1,12 @@
-import unittest
+import os
+import shutil
 import subprocess
+import unittest
+
 import luigi_classes.prepare_dock
 import luigi_classes.run_dock
-import os, shutil
 from test_functions import run_luigi_worker
+from test_functions import kill_job
 
 
 class TestFilePrep(unittest.TestCase):
@@ -113,28 +116,20 @@ class TestVina(unittest.TestCase):
     def test_vina(self):
         # run vina task via luigi
         vina_submit = run_luigi_worker(luigi_classes.run_dock.RunVinaDock(root_dir=self.working_dir,
-                                                            docking_dir='', ligand_pdbqt=self.ligand_pdbqt,
-                                                            receptor_pdbqt=self.protein_pdbqt))
+                                                                          docking_dir='',
+                                                                          ligand_pdbqt=self.ligand_pdbqt,
+                                                                          receptor_pdbqt=self.protein_pdbqt))
 
         # check job ran successfully, and that a job id was generated from cluster
         self.assertTrue(vina_submit)
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir, 'vina.job.id')))
 
-        with open(os.path.join(self.working_dir, 'vina.job.id'), 'r') as f:
-            job_id = int(f.readline())
-
-        # cancel cluster job so that test of sh can be run locally
-        process = subprocess.Popen(str('ssh -t uzw12877@nx.diamond.ac.uk '
-                                       '"module load global/cluster >>/dev/null 2>&1; qdel ' + str(job_id) + '"'),
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-
-        out, err = process.communicate()
+        out, job_id = kill_job(self.working_dir, 'vina.job.id')
 
         # make sure communicated with queue successfully
         self.assertTrue(str(job_id) in out.decode('ascii'))
 
     def test_vina_local(self):
-
         os.chdir(self.working_dir)
 
         # run the vina job produced by luigi worker in test_vina
@@ -148,30 +143,105 @@ class TestVina(unittest.TestCase):
                                                     str(self.ligand_mol2.replace('.mol2', '_prepared_vinaout.pdbqt')))))
 
 
-class TestAutodock(unittest.TestCase):
+class TestAutodockPrep(unittest.TestCase):
+    protein_pdbqt = 'SHH-x17_apo_prepared.pdbqt'
+    ligand_pdbqt = 'SHH-x17_mol_prepared.pdbqt'
+    root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
+    tmp_dir = 'tmp/'
 
     @classmethod
     def setUpClass(cls):
-        pass
+        cls.top_dir = os.getcwd()
+
+        cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
+
+        if not os.path.isdir(cls.working_dir):
+            os.mkdir(cls.working_dir)
+
+        # copy all files needed for vina to run over to tmp directory
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.protein_pdbqt), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_pdbqt), cls.working_dir)
 
     @classmethod
     def tearDownClass(cls):
-        pass
-
-    def test_grid_prep(self):
-        pass
+        shutil.rmtree(cls.working_dir)
+        os.chdir(cls.top_dir)
 
     def test_param_prep(self):
-        pass
+        param_prep = run_luigi_worker(luigi_classes.prepare_dock.ParamPrepADT(ligand_file_name=self.ligand_pdbqt,
+                                                                              receptor_file_name=self.protein_pdbqt,
+                                                                              docking_dir='',
+                                                                              root_dir=self.working_dir))
+        self.assertTrue(param_prep)
+
+    def test_grid_prep(self):
+        grid_prep = run_luigi_worker(luigi_classes.prepare_dock.GridPrepADT(ligand_file_name=self.ligand_pdbqt,
+                                                                            receptor_file_name=self.protein_pdbqt,
+                                                                            docking_dir='',
+                                                                            root_dir=self.working_dir))
+        self.assertTrue(grid_prep)
+
+
+class TestAutoDock(unittest.TestCase):
+    protein_pdbqt = 'SHH-x17_apo_prepared.pdbqt'
+    ligand_pdbqt = 'SHH-x17_mol_prepared.pdbqt'
+    dpf_file = 'SHH-x17_mol_prepared_SHH-x17_apo_prepared.dpf'
+    gpf_file = 'SHH-x17_apo_prepared.gpf'
+    root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
+    tmp_dir = 'tmp/'
+
+    @classmethod
+    def setUpClass(cls):
+        cls.top_dir = os.getcwd()
+
+        cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
+
+        if not os.path.isdir(cls.working_dir):
+            os.mkdir(cls.working_dir)
+
+        # copy all files needed for vina to run over to tmp directory
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.protein_pdbqt), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_pdbqt), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.dpf_file), cls.working_dir)
+        shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.gpf_file), cls.working_dir)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.working_dir)
+        os.chdir(cls.top_dir)
 
     def test_run_grid(self):
-        pass
+        run_grid = run_luigi_worker(luigi_classes.run_dock.RunAutoGrid(ligand_pdbqt=self.ligand_pdbqt,
+                                                                       receptor_pdbqt=self.protein_pdbqt,
+                                                                       docking_dir='',
+                                                                       root_dir=self.working_dir))
+        self.assertTrue(run_grid)
+        self.assertTrue(os.path.isfile(os.path.join(self.working_dir, 'autogrid.job.id')))
+
+        out, job_id = kill_job(self.working_dir, 'autogrid.job.id')
+
+        # make sure communicated with queue successfully
+        self.assertTrue(str(job_id) in out.decode('ascii'))
 
     def test_run_autodock(self):
+        run_autodock = run_luigi_worker(luigi_classes.run_dock.RunAutoDock(ligand_pdbqt=self.ligand_pdbqt,
+                                                                           receptor_pdbqt=self.protein_pdbqt,
+                                                                           docking_dir='',
+                                                                           root_dir=self.working_dir))
+        self.assertTrue(run_autodock)
+        self.assertTrue(os.path.isfile(os.path.join(self.working_dir, 'autodock.job.id')))
+
+        out, job_id = kill_job(self.working_dir, 'autodock.job.id')
+
+        # make sure communicated with queue successfully
+        self.assertTrue(str(job_id) in out.decode('ascii'))
+
+    def test_run_grid_local(self):
+        pass
+
+    def test_run_autodock_local(self):
         pass
 
 
 if __name__ == '__main__':
     unittest.main()
-
-

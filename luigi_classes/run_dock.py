@@ -29,7 +29,7 @@ class RunAutoGrid(luigi.Task):
         # 3. Run autodock on the cluster
         # 4. Check that the job has finished - doesn't check for errors. This needs a separate class
         return GridPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
-                           root_dir=self.root_dir)
+                           root_dir=self.root_dir, docking_dir=self.docking_dir)
         # CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
 
     def run(self):
@@ -82,9 +82,11 @@ class RunAutoDock(luigi.Task):
         log_file = str(parameter_file).replace('.gpf', '.glg')
 
         return [ParamPrepADT(receptor_file_name=self.receptor_pdbqt, ligand_file_name=self.ligand_pdbqt,
-                             root_dir=self.root_dir),
-                RunAutoGrid(root_dir=self.root_dir, receptor_pdbqt=self.receptor_pdbqt, ligand_pdbqt=self.ligand_pdbqt),
-                CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)]
+                             root_dir=self.root_dir, docking_dir=self.docking_dir),
+                RunAutoGrid(root_dir=self.root_dir, receptor_pdbqt=self.receptor_pdbqt, ligand_pdbqt=self.ligand_pdbqt,
+                            docking_dir=self.docking_dir)
+                # CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=log_file)
+                ]
 
     def run(self):
         # docking parameter file written out by autodock tools
