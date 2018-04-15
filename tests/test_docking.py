@@ -2,8 +2,6 @@ import os
 import shutil
 import subprocess
 import unittest
-import glob
-
 import luigi_classes.prepare_dock
 import luigi_classes.run_dock
 from test_functions import run_luigi_worker
@@ -190,7 +188,6 @@ class TestAutoDock(unittest.TestCase):
     gpf_file = 'SHH-x17_apo_prepared.gpf'
     root_dir = os.path.join(os.getcwd(), 'tests/docking_files/')
     tmp_dir = 'tmp/'
-    extensions = ['*.map', '*.fld', '*.xyz']
 
     @classmethod
     def setUpClass(cls):
@@ -206,12 +203,6 @@ class TestAutoDock(unittest.TestCase):
         shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.ligand_pdbqt), cls.working_dir)
         shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.dpf_file), cls.working_dir)
         shutil.copy(os.path.join(cls.root_dir, 'comp_chem', cls.gpf_file), cls.working_dir)
-
-        for extension in cls.extensions:
-            files = glob.glob(os.path.join(cls.root_dir, 'compchem', extension))
-            for file in files:
-                if os.path.isfile(file):
-                    shutil.copy2(file, cls.working_dir)
 
     @classmethod
     def tearDownClass(cls):
@@ -244,40 +235,26 @@ class TestAutoDock(unittest.TestCase):
         # make sure communicated with queue successfully
         self.assertTrue(str(job_id) in out.decode('ascii'))
 
-    def test_run_grid_local(self):
+    def test_run_autodock_local(self):
+
         os.chdir(self.working_dir)
         process = subprocess.Popen('chmod 755 autogrid.sh; ./autogrid.sh',
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-
         out, err = process.communicate()
 
-        print(out)
-        print(err)
-
-        glg_file = self.protein_pdbqt.replace('.pdbqt', 'glg')
-
+        glg_file = self.protein_pdbqt.replace('.pdbqt', '.glg')
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir, glg_file)))
-
-        f = open(os.path.join(self.working_dir, glg_file), 'r').readlines()
-
+        f = open(os.path.join(self.working_dir, glg_file), 'r').read()
         self.assertIn('Successful Completion', f)
 
-    def test_run_autodock_local(self):
         os.chdir(self.working_dir)
         process = subprocess.Popen('chmod 755 autodock.sh; ./autodock.sh',
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-
         out, err = process.communicate()
 
-        print(out)
-        print(err)
-
-        dlg_file = str(self.ligand_pdbqt.replace('.pdbqt', '_') + self.protein_pdbqt.replace('_', '.dlg'))
-
+        dlg_file = str(self.ligand_pdbqt.replace('.pdbqt', '_') + self.protein_pdbqt.replace('.pdbqt', '.dlg'))
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir, dlg_file)))
-
-        f = open(os.path.join(self.working_dir, dlg_file), 'r').readlines()
-
+        f = open(os.path.join(self.working_dir, dlg_file), 'r').read()
         self.assertIn('Successful Completion', f)
 
 
