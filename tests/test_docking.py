@@ -147,6 +147,30 @@ class TestVina(unittest.TestCase):
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
                                                     str(self.ligand_mol2.replace('.mol2', '_prepared_vinaout.pdbqt')))))
 
+
+class TestAutodock(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def test_grid_prep(self):
+        pass
+
+    def test_param_prep(self):
+        pass
+
+    def test_run_grid(self):
+        pass
+
+    def test_run_autodock(self):
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()
 
