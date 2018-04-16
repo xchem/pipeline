@@ -44,7 +44,7 @@ class CheckFiles(luigi.Task):
         soakdb = list(SoakdbFiles.objects.all())
 
         if not soakdb:
-            # TODO: up to here
+            # TODO: up to here: need to redo run method
             return TransferAllFedIDsAndDatafiles()
         else:
             return FindSoakDBFiles()
@@ -121,29 +121,23 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
     # transfers data to a central postgres db
     def run(self):
-        # connect to central postgres db
-        # conn, c = db_functions.connectDB()
 
         # use list from previous step as input to write to postgres
         with self.input().open('r') as database_list:
             for database_file in database_list.readlines():
                 database_file = database_file.replace('\n', '')
 
+                # populate the soakdb table for each db file found by FindSoakDBFiles
                 out, err, proposal = db_functions.pop_soakdb(database_file)
 
-        # proposal_list = []
-
-        # c.execute('SELECT proposal FROM soakdb_files')
+        # return a list of all proposals from db
         proposal_list = list(SoakdbFiles.objects.values_list('proposal', flat=True))
-        # # rows = c.fetchall()
-        # for proposal in proposals:
-        #     proposal_list.append(str(row[0]))
 
+        # add fedid permissions via proposals table
         for proposal_number in set(proposal_list):
             db_functions.pop_proposals(proposal_number)
 
-        # c.close()
-
+        # write output to show job done
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 
