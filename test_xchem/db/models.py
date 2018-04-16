@@ -17,15 +17,13 @@ class Crystal(models.Model):
 class Target(models.Model):
     target_name = models.TextField(blank=False, null=False)
 
+
 class SoakdbFiles(models.Model):
     id = models.BigIntegerField(blank=False, null=False, primary_key=True)
     filename = models.TextField(blank=True, null=True)
     modification_date = models.BigIntegerField(blank=True, null=True)
     proposal = models.TextField(blank=True, null=True)
     status_code = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'soakdb_files'
 
 
 class DataProcessing(models.Model):
@@ -77,9 +75,6 @@ class DataProcessing(models.Model):
     unit_cell = models.TextField(blank=True, null=True)
     unit_cell_vol = models.TextField(blank=True, null=True)
 
-    class Meta:
-        db_table = 'data_processing'
-
 
 class Dimple(models.Model):
     index = models.BigIntegerField(blank=False, null=False, primary_key=True)
@@ -96,9 +91,6 @@ class Dimple(models.Model):
     reference_pdb = models.TextField(blank=True, null=True)
     res_high = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'dimple'
 
 
 class Lab(models.Model):
@@ -126,9 +118,6 @@ class Lab(models.Model):
     stock_conc = models.TextField(blank=True, null=True)
     visit = models.TextField(blank=True, null=True)
 
-    class Meta:
-        db_table = 'lab'
-
 
 class LigandEdstats(models.Model):
     index = models.BigIntegerField(blank=False, null=False, primary_key=True)
@@ -149,9 +138,6 @@ class LigandEdstats(models.Model):
     ligand = models.TextField(blank=True, null=True)
     strucid = models.TextField(blank=True, null=True)
 
-    class Meta:
-        db_table = 'ligand_edstats'
-
 
 class ProasisHits(models.Model):
     # level_0 = models.BigIntegerField(blank=True, null=True)
@@ -168,9 +154,6 @@ class ProasisHits(models.Model):
     exists_2fofc = models.TextField(blank=True, null=True)
     exists_fofc = models.TextField(blank=True, null=True)
 
-    class Meta:
-        db_table = 'proasis_hits'
-
 
 class ProasisLeads(models.Model):
     # level_0 = models.BigIntegerField(blank=True, null=True)
@@ -179,9 +162,6 @@ class ProasisLeads(models.Model):
     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
     reference_pdb = models.TextField(blank=True, null=True)
     strucid = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'proasis_leads'
 
 
 class Refinement(models.Model):
@@ -220,7 +200,4 @@ class Refinement(models.Model):
     rmsd_bonds_tl = models.TextField(db_column='rmsd_bonds_TL', blank=True, null=True)  # Field name made lowercase.
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'refinement'
 
