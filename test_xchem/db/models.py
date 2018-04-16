@@ -25,7 +25,6 @@ class SoakdbFiles(models.Model):
     status_code = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'soakdb_files'
 
 
@@ -79,7 +78,6 @@ class DataProcessing(models.Model):
     unit_cell_vol = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'data_processing'
 
 
@@ -100,7 +98,6 @@ class Dimple(models.Model):
     status = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'dimple'
 
 
@@ -130,7 +127,6 @@ class Lab(models.Model):
     visit = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'lab'
 
 
@@ -154,7 +150,6 @@ class LigandEdstats(models.Model):
     strucid = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'ligand_edstats'
 
 
@@ -174,7 +169,6 @@ class ProasisHits(models.Model):
     exists_fofc = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'proasis_hits'
 
 
@@ -187,7 +181,6 @@ class ProasisLeads(models.Model):
     strucid = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'proasis_leads'
 
 
@@ -229,6 +222,5 @@ class Refinement(models.Model):
     status = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'refinement'
 
