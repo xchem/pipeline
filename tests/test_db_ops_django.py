@@ -1,19 +1,19 @@
 from test_functions import run_luigi_worker
 from luigi_classes import db_ops_django
-import luigi
-from test_functions import kill_job
 import unittest
 import os
 import shutil
 import datetime
+import setup_django
+from db.models import *
 
 
-class TestFindSoakDB(unittest.TestCase):
+class TestDataTransfer(unittest.TestCase):
     # filepath where test data is
     filepath = 'tests/docking_files/database/'
     # tmp directory to test in
     tmp_dir = 'tmp/'
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = datetime.date.today()
 
     @classmethod
     def setUpClass(cls):
@@ -25,6 +25,12 @@ class TestFindSoakDB(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls.working_dir)
         os.chdir(cls.top_dir)
+        # delete rows created in soakdb table
+        soakdb_rows = SoakdbFiles.objects.all()
+        soakdb_rows.delete()
+        # delete rows created in proposals table
+        proposal_rows = Proposals.objects.all()
+        proposal_rows.delete()
 
     def test_findsoakdb(self):
         os.chdir(self.working_dir)
@@ -32,4 +38,7 @@ class TestFindSoakDB(unittest.TestCase):
         self.assertTrue(find_file)
         self.assertTrue(os.path.isfile(self.date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')))
 
+    def test_tranfser_fedids_files(self):
+        transfer = run_luigi_worker(db_ops_django.TransferAllFedIDsAndDatafiles(date=self.date))
+        self.assertTrue(transfer)
 

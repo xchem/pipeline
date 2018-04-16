@@ -363,16 +363,19 @@ def pop_soakdb(database_file):
     return out, err, proposal
 
 def pop_proposals(proposal_number):
-    # conn, c = connectDB()
-    # c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
+    # get proposal number from shell
     proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
-    append_list = out.split(':')[3].replace('\n', '')
-
-    c.execute(str(
-        '''INSERT INTO proposals (proposal, fedids) SELECT %s, %s WHERE NOT EXISTS (SELECT proposal, fedids FROM proposals WHERE proposal = %s AND fedids = %s);'''),
-              (proposal_number, append_list, proposal_number, append_list))
-    #conn.commit()
+    # create list of fedids (or blank if none found)
+    if len(out.decode('ascii'))==0:
+        append_list = ''
+    else:
+        append_list = out.decode('ascii').split(':')[3].replace('\n', '')
+    # get soakdbfiles instance where proposal is the same
+    soakdb_entry = models.SoakdbFiles.objects.get(proposal=proposal_number)
+    # add proposal to proposals table with allowed fedids
+    proposal_entry = models.Proposals(proposal=soakdb_entry, fedids=str(append_list))
+    proposal_entry.save()
 
 def query_and_list(query, proposals_list, proposal_dict, strucid_list):
     conn, c = connectDB()

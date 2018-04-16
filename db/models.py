@@ -20,7 +20,7 @@ class Target(models.Model):
 
 class SoakdbFiles(models.Model):
     # id = models.BigIntegerField(blank=False, null=False, primary_key=True)
-    filename = models.TextField(blank=False, null=False)
+    filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.TextField(blank=False, null=False)
     status_code = models.IntegerField(blank=True, null=True)

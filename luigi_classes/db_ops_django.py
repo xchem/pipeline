@@ -142,7 +142,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
         for proposal_number in set(proposal_list):
             db_functions.pop_proposals(proposal_number)
 
-        c.close()
+        # c.close()
 
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
