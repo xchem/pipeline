@@ -349,34 +349,22 @@ def transfer_data(database_file):
 
 
 def pop_soakdb(database_file):
-    # conn, c = connectDB()
-    # # create a table to hold info on sqlite files
-    # c.execute(
-    #     '''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT);''')
-    # conn.commit()
-    # take proposal number from filepath (for whitelist)
-
+    # get proposal number from dls path
     proposal = database_file.split('/')[5].split('-')[0]
+    # get allowed users
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
-
+    # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
-
-    # c.execute(
-    #     '''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''',
-    #     (database_file, int(modification_date), proposal, database_file, int(modification_date)))
-    # conn.commit()
-
+    # add info to soakdbfiles table
     soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=proposal)
     soakdb_entry.save()
-
-
 
     return out, err, proposal
 
 def pop_proposals(proposal_number):
-    conn, c = connectDB()
-    c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
+    # conn, c = connectDB()
+    # c.execute('CREATE TABLE IF NOT EXISTS proposals (proposal TEXT, fedids TEXT)')
     proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
     append_list = out.split(':')[3].replace('\n', '')
@@ -384,7 +372,7 @@ def pop_proposals(proposal_number):
     c.execute(str(
         '''INSERT INTO proposals (proposal, fedids) SELECT %s, %s WHERE NOT EXISTS (SELECT proposal, fedids FROM proposals WHERE proposal = %s AND fedids = %s);'''),
               (proposal_number, append_list, proposal_number, append_list))
-    conn.commit()
+    #conn.commit()
 
 def query_and_list(query, proposals_list, proposal_dict, strucid_list):
     conn, c = connectDB()

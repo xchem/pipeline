@@ -20,9 +20,9 @@ class Target(models.Model):
 
 class SoakdbFiles(models.Model):
     # id = models.BigIntegerField(blank=False, null=False, primary_key=True)
-    filename = models.TextField(blank=True, null=True)
-    modification_date = models.BigIntegerField(blank=True, null=True)
-    proposal = models.TextField(blank=True, null=True)
+    filename = models.TextField(blank=False, null=False)
+    modification_date = models.BigIntegerField(blank=False, null=False)
+    proposal = models.TextField(blank=False, null=False)
     status_code = models.IntegerField(blank=True, null=True)
 
 
@@ -200,4 +200,8 @@ class Refinement(models.Model):
     rmsd_bonds_tl = models.TextField(db_column='rmsd_bonds_TL', blank=True, null=True)  # Field name made lowercase.
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
+
+class Proposals(models.Model):
+    proposal = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    fedids = models.TextField(blank=True, null=True)
 

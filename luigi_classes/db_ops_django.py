@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 import pandas
 import sqlite3
 import setup_django
-from db import models
+from db.models import *
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -41,7 +41,7 @@ class CheckFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        soakdb = list(models.SoakdbFiles.objects.all())
+        soakdb = list(SoakdbFiles.objects.all())
 
         if not soakdb:
             # TODO: up to here
@@ -122,7 +122,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
     # transfers data to a central postgres db
     def run(self):
         # connect to central postgres db
-        conn, c = db_functions.connectDB()
+        # conn, c = db_functions.connectDB()
 
         # use list from previous step as input to write to postgres
         with self.input().open('r') as database_list:
@@ -131,11 +131,13 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
                 out, err, proposal = db_functions.pop_soakdb(database_file)
 
-        proposal_list = []
-        c.execute('SELECT proposal FROM soakdb_files')
-        rows = c.fetchall()
-        for row in rows:
-            proposal_list.append(str(row[0]))
+        # proposal_list = []
+
+        # c.execute('SELECT proposal FROM soakdb_files')
+        proposal_list = list(SoakdbFiles.objects.values_list('proposal', flat=True))
+        # # rows = c.fetchall()
+        # for proposal in proposals:
+        #     proposal_list.append(str(row[0]))
 
         for proposal_number in set(proposal_list):
             db_functions.pop_proposals(proposal_number)
