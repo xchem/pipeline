@@ -6,7 +6,8 @@ from functions import db_functions, misc_functions
 from sqlalchemy import create_engine
 import pandas
 import sqlite3
-from test_xchem.db.models import SoakdbFiles
+import setup_django
+from db import models
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -40,10 +41,10 @@ class CheckFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        soakdb = list(SoakdbFiles.objects.all())
-
+        soakdb = list(models.SoakdbFiles.objects.all())
 
         if not soakdb:
+            # TODO: up to here
             return TransferAllFedIDsAndDatafiles()
         else:
             return FindSoakDBFiles()

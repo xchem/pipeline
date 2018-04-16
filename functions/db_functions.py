@@ -9,6 +9,8 @@ from functions import misc_functions
 import csv
 import os
 
+import setup_django
+from db import models
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -347,21 +349,28 @@ def transfer_data(database_file):
 
 
 def pop_soakdb(database_file):
-    conn, c = connectDB()
-    # create a table to hold info on sqlite files
-    c.execute(
-        '''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT);''')
-    conn.commit()
+    # conn, c = connectDB()
+    # # create a table to hold info on sqlite files
+    # c.execute(
+    #     '''CREATE TABLE IF NOT EXISTS soakdb_files (id SERIAL UNIQUE PRIMARY KEY, filename TEXT, modification_date BIGINT, proposal TEXT, status_code INT);''')
+    # conn.commit()
     # take proposal number from filepath (for whitelist)
+
     proposal = database_file.split('/')[5].split('-')[0]
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
 
     modification_date = misc_functions.get_mod_date(database_file)
-    c.execute(
-        '''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''',
-        (database_file, int(modification_date), proposal, database_file, int(modification_date)))
-    conn.commit()
+
+    # c.execute(
+    #     '''INSERT INTO soakdb_files (filename, modification_date, proposal) SELECT %s,%s,%s WHERE NOT EXISTS (SELECT filename, modification_date FROM soakdb_files WHERE filename = %s AND modification_date = %s)''',
+    #     (database_file, int(modification_date), proposal, database_file, int(modification_date)))
+    # conn.commit()
+
+    soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=proposal)
+    soakdb_entry.save()
+
+
 
     return out, err, proposal
 
