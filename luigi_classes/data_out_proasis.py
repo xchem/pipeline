@@ -27,10 +27,10 @@ class PullCurated(luigi.Task):
                         'twofofc_name': [], 'fofc_name': [], 'mol_name': [], 'ligands': []}
 
         if not os.path.isdir(os.path.join(self.root_dir, self.docking_dir)):
-            try:
-                os.mkdir(os.path.join(self.root_dir, self.docking_dir))
-            except:
-                if os.path.isdir(os.path.join(self.root_dir, self.docking_dir)):
+                if not os.access(os.path.join(self.root_dir, self.docking_dir), os.W_OK):
+                    return None
+                if os.path.isdir(os.path.join(self.root_dir, self.docking_dir)) and \
+                        os.access(os.path.join(self.root_dir, self.docking_dir), os.W_OK):
                     os.remove(os.path.join(self.root_dir, self.docking_dir))
                 os.mkdir(os.path.join(self.root_dir, self.docking_dir))
 

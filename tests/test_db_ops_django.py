@@ -29,5 +29,6 @@ class TestFindSoakDB(unittest.TestCase):
         os.chdir(cls.top_dir)
 
     def test_findsoakdb(self):
+        os.chdir(self.working_dir)
         find_file = run_luigi_worker(db_ops_django.FindSoakDBFiles(filepath=self.working_dir))
         self.assertTrue(find_file)
