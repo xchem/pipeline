@@ -6,6 +6,7 @@ from functions import db_functions, misc_functions
 from sqlalchemy import create_engine
 import pandas
 import sqlite3
+from test_xchem.db.models import SoakdbFiles
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -19,7 +20,6 @@ class FindSoakDBFiles(luigi.Task):
         return luigi.LocalTarget(self.date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt'))
 
     def run(self):
-        subprocess.call('./pg_backup.sh')
 
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
         command = str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print''')
@@ -38,10 +38,12 @@ class FindSoakDBFiles(luigi.Task):
 
 class CheckFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
     def requires(self):
-        conn, c = db_functions.connectDB()
-        exists = db_functions.table_exists(c, 'soakdb_files')
-        if not exists:
+        soakdb = list(SoakdbFiles.objects.all())
+
+
+        if not soakdb:
             return TransferAllFedIDsAndDatafiles()
         else:
             return FindSoakDBFiles()
