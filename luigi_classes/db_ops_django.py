@@ -54,8 +54,9 @@ class CheckFiles(luigi.Task):
 
     def run(self):
 
-        conn, c = db_functions.connectDB()
-        exists = db_functions.table_exists(c, 'soakdb_files')
+        # shouldn't need this
+        # conn, c = db_functions.connectDB()
+        # exists = db_functions.table_exists(c, 'soakdb_files')
 
         checked = []
 
@@ -64,35 +65,45 @@ class CheckFiles(luigi.Task):
         # 1 = changed
         # 2 = not changed
 
-        if exists:
-            with self.input().open('r') as f:
-                files = f.readlines()
+        # if exists:
+        with self.input().open('r') as f:
+            files = f.readlines()
 
-            for filename in files:
+        for filename in files:
 
-                filename_clean = filename.rstrip('\n')
+            filename_clean = filename.rstrip('\n')
+            c.execute('select filename, modification_date, status_code from soakdb_files where filename like %s;', (filename_clean,))
 
-                c.execute('select filename, modification_date, status_code from soakdb_files where filename like %s;', (filename_clean,))
+            soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
 
-                for row in c.fetchall():
-                    if len(row) > 0:
-                        data_file = str(row[0])
-                        checked.append(data_file)
-                        old_mod_date = str(row[1])
-                        current_mod_date = misc_functions.get_mod_date(data_file)
+            #for entry in c.fetchall():
+            if len(soakdb_query) > 0:
+                for i in range(0, len(soakdb_query)):
+                    data_file = soakdb_query[i].filename
+                    checked.append(data_file)
+                    old_mod_date = soakdb_query[i].modification_date
+                    current_mod_date = misc_functions.get_mod_date(data_file)
+                    id_number = soakdb_query[i].id
 
-                        if current_mod_date > old_mod_date:
-                            c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
-                            c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
-                            conn.commit()
+                    if current_mod_date > old_mod_date:
+                        update_satus = SoakdbFiles.objects.get(id=id_number)
+                        update_satus.value = '1'
+                        update_satus.save()
+                        # c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
+                        # c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
+                        # conn.commit()
 
-                if filename_clean not in checked:
-                    out, err, proposal = db_functions.pop_soakdb(filename_clean)
-                    db_functions.pop_proposals(proposal)
-                    c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                    conn.commit()
+            if filename_clean not in checked:
+                out, err, proposal = db_functions.pop_soakdb(filename_clean)
+                db_functions.pop_proposals(proposal)
+                soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
+                # TODO: UPTO HERE!!!
 
-            c.execute('select filename from soakdb_files;')
+
+                c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
+                conn.commit()
+
+        c.execute('select filename from soakdb_files;')
 
             # for row in c.fetchall():
             #     if str(row[0]) not in checked:
@@ -100,9 +111,11 @@ class CheckFiles(luigi.Task):
 
         exists = db_functions.table_exists(c, 'lab')
         if not exists:
+            # this is to set all file statuses to 0 (new file)
             c.execute('UPDATE soakdb_files SET status_code = 0;')
             conn.commit()
 
+        # write output to signify job done
         with self.output().open('w') as f:
             f.write('')
 
