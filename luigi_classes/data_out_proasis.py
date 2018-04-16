@@ -30,7 +30,8 @@ class PullCurated(luigi.Task):
             try:
                 os.mkdir(os.path.join(self.root_dir, self.docking_dir))
             except:
-                os.remove(os.path.join(self.root_dir, self.docking_dir))
+                if os.path.isdir(os.path.join(self.root_dir, self.docking_dir)):
+                    os.remove(os.path.join(self.root_dir, self.docking_dir))
                 os.mkdir(os.path.join(self.root_dir, self.docking_dir))
 
         out_file = self.output().path
