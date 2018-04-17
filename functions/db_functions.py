@@ -1,16 +1,17 @@
-import psycopg2
-import sys
-import pandas as pd
-import logging
-import sqlite3
-from sqlalchemy import create_engine
-import subprocess
-from functions import misc_functions
 import csv
+import logging
 import os
+import sqlite3
+import subprocess
+import sys
 
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine
 import setup_django
 from db import models
+from functions import misc_functions
+
 
 def connectDB():
     conn = psycopg2.connect('dbname=xchem user=uzw12877 host=localhost')
@@ -36,9 +37,58 @@ def table_exists(c, tablename):
     return exists
 
 
-def soakdb_query(cursor):
-    compsmiles = '%None%'
-    cursor.execute('''select LabVisit, LibraryPlate, LibraryName, CompoundSMILES, CompoundCode,
+def define_lab_translations():
+    # TODO: crystal_name, fileid
+    lab = {
+        'compound_code': 'CompoundCode',
+        'cryo_frac': 'CryoFraction',
+        'cryo_status': 'CryoStatus',
+        'cryo_stock_frac': 'CryoStockFraction',
+        'cryo_transfer_vol': 'CryoTransferVolume',
+        'crystal_name': 'CrystalName',  # d['CrystalName'],
+        'data_collection_visit': 'DataCollectionVisit',
+        'expr_conc': 'CompoundConcentration',
+        # 'file_id': [],
+        'harvest_status': 'HarvestStatus',
+        'library_name': 'LibraryName',
+        'library_plate': 'LibraryPlate',
+        'mounting_result': 'MountingResult',
+        'mounting_time': 'MountingTime',
+        'protein': 'ProteinName',
+        'smiles': 'CompoundSMILES',
+        'soak_status': 'SoakStatus',
+        'soak_time': 'SoakingTime',
+        'soak_vol': 'SoakTransferVol',
+        'solv_frac': 'SolventFraction',
+        'stock_conc': 'CompoundStockConcentration',
+        'visit': 'LabVisit'
+    }
+
+    return lab
+
+# TODO: ADD TRANSFER OF DATA TO DJANGO
+def transfer_table(translate_dict, results):
+    for row in results:
+        d = {}
+        row_keys = row.keys()
+        row_values = list(tuple(row))
+
+        for i, x in enumerate(row_keys):
+            if x in dict((v, k) for k, v in translate_dict.items()).keys():
+                key = dict((v, k) for k, v in translate_dict.items())[x]
+                if key not in d.keys():
+                    d[key] = ''
+                d[key] = row_values[i]
+
+        print(d)
+
+
+def soakdb_query(filename):
+    conn = sqlite3.connect(filename)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute('''select LabVisit, LibraryPlate, LibraryName, CompoundSMILES, CompoundCode,
                                             ProteinName, CompoundStockConcentration, CompoundConcentration, SolventFraction, 
                                             SoakTransferVol, SoakStatus, CryoStockFraction, CryoFraction, CryoTransferVolume, 
                                             CryoStatus, SoakingTime, HarvestStatus, CrystalName, MountingResult, MountingTime, 
@@ -95,10 +145,11 @@ def soakdb_query(cursor):
                                             and CrystalName IS NOT NULL 		
                                             and CompoundSMILES not like ? 
                                             and CompoundSMILES IS NOT NULL''',
-               ('None', compsmiles))
+               ('None', 'None'))
 
-    results = cursor.fetchall()
+    results = c.fetchall()
     return results
+
 
 def define_dicts_and_keys():
     lab_dict = {}
@@ -109,15 +160,43 @@ def define_dicts_and_keys():
     refinement_dict = {}
 
     # define keys for xchem postgres DB
+    # class Lab(models.Model):
+    #     compound_code = models.TextField(blank=True, null=True)
+    #     cryo_frac = models.TextField(blank=True, null=True)
+    #     cryo_status = models.TextField(blank=True, null=True)
+    #     cryo_stock_frac = models.TextField(blank=True, null=True)
+    #     cryo_transfer_vol = models.TextField(blank=True, null=True)
+    #     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+    #     data_collection_visit = models.TextField(blank=True, null=True)
+    #     expr_conc = models.TextField(blank=True, null=True)
+    #     file_id = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)  # changed to use soakdb file
+    #     harvest_status = models.TextField(blank=True, null=True)
+    #     library_name = models.TextField(blank=True, null=True)
+    #     library_plate = models.TextField(blank=True, null=True)
+    #     mounting_result = models.TextField(blank=True, null=True)
+    #     mounting_time = models.TextField(blank=True, null=True)
+    #     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
+    #     smiles = models.TextField(blank=True, null=True)
+    #     soak_status = models.TextField(blank=True, null=True)
+    #     soak_time = models.TextField(blank=True, null=True)
+    #     soak_vol = models.TextField(blank=True, null=True)
+    #     solv_frac = models.TextField(blank=True, null=True)
+    #     stock_conc = models.TextField(blank=True, null=True)
+    #     visit = models.TextField(blank=True, null=True)
+
     lab_dictionary_keys = ['visit', 'library_plate', 'library_name', 'smiles', 'compound_code', 'protein',
                            'stock_conc', 'expr_conc',
                            'solv_frac', 'soak_vol', 'soak_status', 'cryo_stock_frac', 'cryo_frac',
                            'cryo_transfer_vol', 'cryo_status',
                            'soak_time', 'harvest_status', 'crystal_name', 'mounting_result', 'mounting_time',
-                           'data_collection_visit', 'crystal_id', 'file_id']
+                           'data_collection_visit',
+                           # 'crystal_id',
+                           'file_id']
 
     crystal_dictionary_keys = ['tag', 'name', 'spacegroup', 'point_group', 'a', 'b', 'c', 'alpha',
-                               'beta', 'gamma', 'volume', 'crystal_name', 'crystal_id', 'file_id']
+                               'beta', 'gamma', 'volume', 'crystal_name',
+                               # 'crystal_id',
+                               'file_id']
 
     data_collection_dictionary_keys = ['date', 'outcome', 'wavelength', 'crystal_name', 'crystal_id', 'file_id']
 
@@ -135,11 +214,15 @@ def define_dicts_and_keys():
                                        'unit_cell_vol',
                                        'alert', 'score', 'status', 'r_cryst', 'r_free', 'dimple_pdb_path',
                                        'dimple_mtz_path',
-                                       'dimple_status', 'crystal_name', 'crystal_id', 'file_id']
+                                       'dimple_status', 'crystal_name',
+                                       # 'crystal_id',
+                                       'file_id']
 
     dimple_dictionary_keys = ['res_high', 'r_free', 'pdb_path', 'mtz_path', 'reference_pdb', 'status', 'pandda_run',
                               'pandda_hit',
-                              'pandda_reject', 'pandda_path', 'crystal_name', 'crystal_id', 'file_id']
+                              'pandda_reject', 'pandda_path', 'crystal_name',
+                              # 'crystal_id',
+                              'file_id']
 
     refinement_dictionary_keys = ['res', 'res_TL', 'rcryst', 'rcryst_TL', 'r_free', 'rfree_TL', 'spacegroup',
                                   'lig_cc', 'rmsd_bonds',
@@ -148,7 +231,9 @@ def define_dicts_and_keys():
                                   'pdb_latest', 'mtz_latest', 'matrix_weight', 'refinement_path', 'lig_confidence',
                                   'lig_bound_conf', 'bound_conf', 'molprobity_score', 'molprobity_score_TL',
                                   'ramachandran_outliers', 'ramachandran_outliers_TL', 'ramachandran_favoured',
-                                  'ramachandran_favoured_TL', 'status', 'crystal_name', 'crystal_id', 'file_id']
+                                  'ramachandran_favoured_TL', 'status', 'crystal_name',
+                                  # 'crystal_id',
+                                  'file_id']
 
     dictionaries = [[lab_dict, lab_dictionary_keys], [crystal_dict, crystal_dictionary_keys],
                     [data_collection_dict, data_collection_dictionary_keys],
@@ -202,6 +287,39 @@ def clean_df_db_dups(df, tablename, engine, dup_cols=[],
     df = df[df['_merge'] == 'left_only']
     df.drop(['_merge'], axis=1, inplace=True)
     return df
+
+# def transfer_lab_data(database_file):
+#     conn = sqlite3.connect(str(database_file))
+#     c = conn.cursor()
+#
+#     c.execute(
+#         '''select
+#         LabVisit,
+#         LibraryPlate,
+#         LibraryName,
+#         CompoundSMILES,
+#         CompoundCode,
+#         ProteinName,
+#         CompoundStockConcentration,
+#         CompoundConcentration,
+#         SolventFraction,
+#         SoakTransferVol,
+#         SoakStatus,
+#         CryoStockFraction,
+#         CryoFraction,
+#         CryoTransferVolume,
+#         CryoStatus,
+#         SoakingTime,
+#         HarvestStatus,
+#         CrystalName,
+#         MountingResult,
+#         MountingTime,
+#         DataCollectionVisit
+#     ''')
+#
+#     lab_table = {''}
+#
+#     for row in cursor.fetchall():
 
 
 def transfer_data(database_file):

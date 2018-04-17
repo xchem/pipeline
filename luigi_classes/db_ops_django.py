@@ -165,10 +165,12 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
-    file_id = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    # no longer need this - assigned by django
+    # file_id = luigi.Parameter()
 
     def requires(self):
-        return CheckFiles()
+        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
         pass
@@ -190,12 +192,16 @@ class TransferChangedDataFile(luigi.Task):
 
 class TransferNewDataFile(luigi.Task):
     data_file = luigi.Parameter()
-    file_id = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    # no longer need this - assigned by django
+    # file_id = luigi.Parameter()
 
     def requires(self):
-        return CheckFiles()
+        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def run(self):
+        ## TODO: doing this!
         db_functions.transfer_data(self.data_file)
         conn, c = db_functions.connectDB()
         c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))

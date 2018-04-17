@@ -19,7 +19,6 @@ class Target(models.Model):
 
 
 class SoakdbFiles(models.Model):
-    # id = models.BigIntegerField(blank=False, null=False, primary_key=True)
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.TextField(blank=False, null=False)
@@ -27,7 +26,6 @@ class SoakdbFiles(models.Model):
 
 
 class DataProcessing(models.Model):
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     alert = models.TextField(blank=True, null=True)
     auto_assigned = models.TextField(blank=True, null=True)
     cchalf_high = models.TextField(blank=True, null=True)
@@ -77,7 +75,6 @@ class DataProcessing(models.Model):
 
 
 class Dimple(models.Model):
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
     file_id = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)  # changed to use soakdb file
     mtz_path = models.TextField(blank=True, null=True)
@@ -94,7 +91,6 @@ class Dimple(models.Model):
 
 
 class Lab(models.Model):
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     compound_code = models.TextField(blank=True, null=True)
     cryo_frac = models.TextField(blank=True, null=True)
     cryo_status = models.TextField(blank=True, null=True)
@@ -120,7 +116,6 @@ class Lab(models.Model):
 
 
 class LigandEdstats(models.Model):
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     baa = models.TextField(blank=True, null=True)  # Field name made lowercase.
     ccpa = models.TextField(blank=True, null=True)  # Field name made lowercase.
     ccsa = models.TextField(blank=True, null=True)  # Field name made lowercase.
@@ -140,8 +135,6 @@ class LigandEdstats(models.Model):
 
 
 class ProasisHits(models.Model):
-    # level_0 = models.BigIntegerField(blank=True, null=True)
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     bound_conf = models.TextField(blank=True, null=True)
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
     modification_date = models.TextField(blank=True, null=True)
@@ -156,7 +149,6 @@ class ProasisHits(models.Model):
 
 
 class ProasisLeads(models.Model):
-    # level_0 = models.BigIntegerField(blank=True, null=True)
     index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     pandda_path = models.TextField(blank=True, null=True)
     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
@@ -165,7 +157,6 @@ class ProasisLeads(models.Model):
 
 
 class Refinement(models.Model):
-    index = models.BigIntegerField(blank=False, null=False, primary_key=True)
     bound_conf = models.TextField(blank=True, null=True)
     cif = models.TextField(blank=True, null=True)
     cif_prog = models.TextField(blank=True, null=True)
