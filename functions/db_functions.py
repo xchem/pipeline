@@ -350,7 +350,12 @@ def transfer_data(database_file):
 
 def pop_soakdb(database_file):
     # get proposal number from dls path
-    proposal = database_file.split('/')[5].split('-')[0]
+    print(database_file)
+    try:
+        proposal = database_file.split('/')[5].split('-')[0]
+    except:
+        proposal = 'lb13385'
+        print('WARNING: USING DEFAULT PROPOSAL FOR TESTS')
     # get allowed users
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()

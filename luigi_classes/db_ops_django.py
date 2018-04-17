@@ -39,25 +39,23 @@ class FindSoakDBFiles(luigi.Task):
 
 class CheckFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
         soakdb = list(SoakdbFiles.objects.all())
 
         if not soakdb:
             # TODO: up to here: need to redo run method
-            return TransferAllFedIDsAndDatafiles()
+            return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
+                    FindSoakDBFiles(filepath=self.soak_db_filepath)]
         else:
-            return FindSoakDBFiles()
+            return ['', FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
 
     def run(self):
-
-        # shouldn't need this
-        # conn, c = db_functions.connectDB()
-        # exists = db_functions.table_exists(c, 'soakdb_files')
-
+        # a list to hold filenames that have been checked
         checked = []
 
         # Status codes:-
@@ -65,55 +63,64 @@ class CheckFiles(luigi.Task):
         # 1 = changed
         # 2 = not changed
 
-        # if exists:
-        with self.input().open('r') as f:
+        with self.input()[1].open('r') as f:
             files = f.readlines()
 
+        print(files)
+
         for filename in files:
-
+            # remove any newline characters
             filename_clean = filename.rstrip('\n')
-            c.execute('select filename, modification_date, status_code from soakdb_files where filename like %s;', (filename_clean,))
-
+            # find the relevant entry in the soakdbfiles table
             soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
 
-            #for entry in c.fetchall():
-            if len(soakdb_query) > 0:
-                for i in range(0, len(soakdb_query)):
-                    data_file = soakdb_query[i].filename
-                    checked.append(data_file)
-                    old_mod_date = soakdb_query[i].modification_date
-                    current_mod_date = misc_functions.get_mod_date(data_file)
-                    id_number = soakdb_query[i].id
+            # raise an exception if the file is not in the soakdb table
+            if len(soakdb_query) == 0:
+                raise Exception(str('No entry found for ' + str(filename_clean)))
 
-                    if current_mod_date > old_mod_date:
-                        update_satus = SoakdbFiles.objects.get(id=id_number)
-                        update_satus.value = '1'
-                        update_satus.save()
-                        # c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
-                        # c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
-                        # conn.commit()
+            # only one entry should exist per file
+            if len(soakdb_query) == 1:
+                # get the filename back from the query
+                data_file = soakdb_query[0].filename
+                # add the file to the list of those that have been checked
+                checked.append(data_file)
+                # get the modification date as stored in the db
+                old_mod_date = soakdb_query[0].modification_date
+                # get the current modification date of the file
+                current_mod_date = misc_functions.get_mod_date(data_file)
+                # get the id of the entry to write to
+                id_number = soakdb_query[0].id
 
+                # if the file has changed since the db was last updated for the entry, change status to indicate this
+                if int(current_mod_date) > int(old_mod_date):
+                    update_satus = SoakdbFiles.objects.get(id=id_number)
+                    update_satus.value = 1
+                    update_satus.save()
+            # if there is more than one entry, raise an exception (should never happen - filename field is unique)
+            if len(soakdb_query) > 1:
+                raise Exception('More than one entry for file! Something has gone wrong!')
+
+            # if the file is not in the database at all
             if filename_clean not in checked:
+                # add the file to soakdb
                 out, err, proposal = db_functions.pop_soakdb(filename_clean)
+                # add the proposal to proposal
                 db_functions.pop_proposals(proposal)
+                # retrieve the new db entry
                 soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
-                # TODO: UPTO HERE!!!
+                # get the id to update
+                id_number = soakdb_query[0].id
+                # update the relevant status to 0, indicating it as a new file
+                update_status = SoakdbFiles.objects.get(id=id_number)
+                update_status.value = 0
+                update_status.save()
 
-
-                c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                conn.commit()
-
-        c.execute('select filename from soakdb_files;')
-
-            # for row in c.fetchall():
-            #     if str(row[0]) not in checked:
-            #         data_file = str(row[0])
-
-        exists = db_functions.table_exists(c, 'lab')
-        if not exists:
+        # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
+        lab = list(Lab.objects.all())
+        if not lab:
             # this is to set all file statuses to 0 (new file)
-            c.execute('UPDATE soakdb_files SET status_code = 0;')
-            conn.commit()
+            soakdb = SoakdbFiles.objects.all()
+            soakdb.update(status=0)
 
         # write output to signify job done
         with self.output().open('w') as f:
@@ -123,10 +130,11 @@ class CheckFiles(luigi.Task):
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     # needs a list of soakDB files from the same day
     def requires(self):
-        return FindSoakDBFiles()
+        return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     # output is just a log file
     def output(self):

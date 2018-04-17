@@ -23,7 +23,7 @@ class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.TextField(blank=False, null=False)
-    status_code = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
 
 
 class DataProcessing(models.Model):
