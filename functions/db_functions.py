@@ -159,30 +159,6 @@ def define_dicts_and_keys():
     dimple_dict = {}
     refinement_dict = {}
 
-    # define keys for xchem postgres DB
-    # class Lab(models.Model):
-    #     compound_code = models.TextField(blank=True, null=True)
-    #     cryo_frac = models.TextField(blank=True, null=True)
-    #     cryo_status = models.TextField(blank=True, null=True)
-    #     cryo_stock_frac = models.TextField(blank=True, null=True)
-    #     cryo_transfer_vol = models.TextField(blank=True, null=True)
-    #     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
-    #     data_collection_visit = models.TextField(blank=True, null=True)
-    #     expr_conc = models.TextField(blank=True, null=True)
-    #     file_id = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)  # changed to use soakdb file
-    #     harvest_status = models.TextField(blank=True, null=True)
-    #     library_name = models.TextField(blank=True, null=True)
-    #     library_plate = models.TextField(blank=True, null=True)
-    #     mounting_result = models.TextField(blank=True, null=True)
-    #     mounting_time = models.TextField(blank=True, null=True)
-    #     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
-    #     smiles = models.TextField(blank=True, null=True)
-    #     soak_status = models.TextField(blank=True, null=True)
-    #     soak_time = models.TextField(blank=True, null=True)
-    #     soak_vol = models.TextField(blank=True, null=True)
-    #     solv_frac = models.TextField(blank=True, null=True)
-    #     stock_conc = models.TextField(blank=True, null=True)
-    #     visit = models.TextField(blank=True, null=True)
 
     lab_dictionary_keys = ['visit', 'library_plate', 'library_name', 'smiles', 'compound_code', 'protein',
                            'stock_conc', 'expr_conc',
@@ -287,39 +263,6 @@ def clean_df_db_dups(df, tablename, engine, dup_cols=[],
     df = df[df['_merge'] == 'left_only']
     df.drop(['_merge'], axis=1, inplace=True)
     return df
-
-# def transfer_lab_data(database_file):
-#     conn = sqlite3.connect(str(database_file))
-#     c = conn.cursor()
-#
-#     c.execute(
-#         '''select
-#         LabVisit,
-#         LibraryPlate,
-#         LibraryName,
-#         CompoundSMILES,
-#         CompoundCode,
-#         ProteinName,
-#         CompoundStockConcentration,
-#         CompoundConcentration,
-#         SolventFraction,
-#         SoakTransferVol,
-#         SoakStatus,
-#         CryoStockFraction,
-#         CryoFraction,
-#         CryoTransferVolume,
-#         CryoStatus,
-#         SoakingTime,
-#         HarvestStatus,
-#         CrystalName,
-#         MountingResult,
-#         MountingTime,
-#         DataCollectionVisit
-#     ''')
-#
-#     lab_table = {''}
-#
-#     for row in cursor.fetchall():
 
 
 def transfer_data(database_file):
