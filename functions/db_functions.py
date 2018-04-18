@@ -6,6 +6,7 @@ import subprocess
 import setup_django
 from db import models
 from functions import misc_functions
+from django.db import IntegrityError
 
 
 def lab_translations():
@@ -40,17 +41,6 @@ def lab_translations():
 def crystal_translations():
     crystal = {
         'crystal_name': 'CrystalName',
-        'tag': 'CrystalTag',
-        'spacegroup': 'CrystalFormSpaceGroup',
-        'point_group': 'CrystalFormPointGroup',
-        'a': 'CrystalFormA',
-        'b': 'CrystalFormB',
-        'c': 'CrystalFormC',
-        'alpha': 'CrystalFormAlpha',
-        'beta': 'CrystalFormBeta',
-        'gamma': 'CrystalFormGamma',
-        'volume': 'CrystalFormVolume',
-        'form_name': 'CrystalFormName'
     }
 
     return crystal
@@ -176,7 +166,7 @@ def refinement_translations():
     return refinement
 
 # TODO: ADD TRANSFER OF DATA TO DJANGO
-def transfer_table(translate_dict, results):
+def transfer_table(translate_dict, results, model):
     for row in results:
         d = {}
         row_keys = row.keys()
@@ -189,7 +179,20 @@ def transfer_table(translate_dict, results):
                     d[key] = ''
                 d[key] = row_values[i]
 
-        print(d)
+        model_fields = [f.name for f in model._meta.local_fields]
+        for key in d.keys():
+            if key not in model_fields:
+                print(str(key + ' not in ' + str(model_fields)))
+
+        for key in model_fields:
+            if key not in d.keys() and key != 'id':
+                print(str(key + ' not in ' + str(d.keys())))
+        try:
+            m = model(**d)
+            m.save()
+        except IntegrityError as e:
+                print('WARNING: ' + str(e.__cause__))
+                continue
 
 
 def soakdb_query(filename):
@@ -197,8 +200,7 @@ def soakdb_query(filename):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute('''select * from mainTable where CrystalName NOT LIKE ? and CrystalName IS NOT NULL 
-    and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL''', ('None', 'None'))
+    c.execute("select * from mainTable where CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL", ('None', 'None'))
 
     results = c.fetchall()
     return results

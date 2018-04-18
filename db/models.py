@@ -11,18 +11,7 @@ from django.db import models
 
 
 class Crystal(models.Model):
-    crystal_name = models.TextField(blank=False, null=False)
-    tag = models.TextField(blank=True, null=True)
-    form_name = models.TextField(blank=True, null=True)
-    spacegroup = models.TextField(blank=True, null=True)
-    point_group = models.TextField(blank=True, null=True)
-    a = models.TextField(blank=True, null=True)
-    b = models.TextField(blank=True, null=True)
-    c = models.TextField(blank=True, null=True)
-    alpha = models.TextField(blank=True, null=True)
-    beta = models.TextField(blank=True, null=True)
-    gamma = models.TextField(blank=True, null=True)
-    volume = models.TextField(blank=True, null=True)
+    crystal_name = models.TextField(blank=False, null=False, unique=True)
 
 
 class Target(models.Model):
