@@ -15,8 +15,7 @@ class Crystal(models.Model):
 
 
 class Target(models.Model):
-    target_name = models.TextField(blank=False, null=False)
-
+    target_name = models.TextField(blank=False, null=False, unique=True)
 
 class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)

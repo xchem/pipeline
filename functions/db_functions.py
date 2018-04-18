@@ -7,6 +7,7 @@ import setup_django
 from db import models
 from functions import misc_functions
 from django.db import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def lab_translations():
@@ -46,16 +47,16 @@ def crystal_translations():
     return crystal
 
 
-def data_collection_tanslations():
-    data_collection = {
-        'date': 'DataCollectionDate',
-        'outcome': 'DataCollectionOutcome',
-        'wavelength': 'DataCollectionOutcome',
-        'crystal_name': 'CrystalName',
-
-    }
-
-    return data_collection
+# def data_collection_tanslations():
+#     data_collection = {
+#         'date': 'DataCollectionDate',
+#         'outcome': 'DataCollectionOutcome',
+#         'wavelength': 'DataCollectionOutcome',
+#         'crystal_name': 'CrystalName',
+#         'protein': 'ProteinName'
+#     }
+#
+#     return data_collection
 
 
 def data_processing_translations():
@@ -86,7 +87,7 @@ def data_processing_translations():
         'cchalf_overall': 'DataProcessingCChalfOverall',
         'cchalf_low': 'DataProcessingCChalfLow',
         'cchalf_high': 'DataProcessingCChalfHigh',
-        'logfile_path': 'DataProcessingPathToLogFile',
+        'logfile_path': 'DataProcessingPathToLogfile',
         'mtz_path': 'DataProcessingPathToMTZfile',
         'log_name': 'DataProcessingLOGfileName',
         'mtz_name': 'DataProcessingMTZfileName',
@@ -104,6 +105,7 @@ def data_processing_translations():
         'dimple_mtz_path': 'DataProcessingPathToDimpleMTZfile',
         'dimple_status': 'DataProcessingDimpleSuccessful',
         'crystal_name': 'CrystalName',
+        'protein': 'ProteinName'
     }
 
     return data_processing
@@ -121,7 +123,8 @@ def dimple_translations():
         'pandda_hit': 'DimplePANDDAhit',
         'pandda_reject': 'DimplePANDDAreject',
         'pandda_path': 'DimplePANDDApath',
-        'crystal_name' : 'CrystalName'
+        'crystal_name': 'CrystalName',
+        'protein': 'ProteinName'
     }
 
     return dimple
@@ -160,36 +163,79 @@ def refinement_translations():
         'ramachandran_favoured': 'RefinementRamachandranFavored',
         'ramachandran_favoured_tl': 'RefinementRamachandranFavoredTL',
         'status': 'RefinementStatus',
-        'crystal_name': 'CrystalName'
+        'crystal_name': 'CrystalName',
+        'protein': 'ProteinName'
     }
 
     return refinement
 
-# TODO: ADD TRANSFER OF DATA TO DJANGO
-def transfer_table(translate_dict, results, model):
+
+def transfer_table(translate_dict, filename, model):
+    # standard soakdb query for all data
+    results = soakdb_query(filename)
+
+    # for each row found in soakdb
     for row in results:
+        # set up blank dictionary to hold model values
         d = {}
+        # get the keys and values of the query
         row_keys = row.keys()
         row_values = list(tuple(row))
 
+        if len(row_keys)!=len(row_values):
+            raise Exception('ARGHHHH!')
+
+        # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
                 key = dict((v, k) for k, v in translate_dict.items())[x]
+                # if model == models.DataProcessing:
+                #     print(key)
+                #     print(dict((v, k) for k, v in translate_dict.items()))
                 if key not in d.keys():
                     d[key] = ''
                 d[key] = row_values[i]
 
+        # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
-        for key in d.keys():
-            if key not in model_fields:
-                print(str(key + ' not in ' + str(model_fields)))
 
+        for key in d.keys():
+            # raise an exception if a rogue key is found - means translate_dict or model is wrong
+            if key not in model_fields:
+                raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
+
+            # find relevant entries for foreign keys and set as value - crystal names and proteins
+            if key == 'crystal_name' and model != models.Crystal:
+                try:
+                    d[key] = models.Crystal.objects.get(crystal_name=d[key])
+                except:
+                    crystal = models.Crystal(crystal_name=crystal)
+                    crystal.save()
+                    d[key] = crystal
+            if key == 'protein':
+                try:
+                    d[key] = models.Target.objects.get(target_name=d[key])
+                except ObjectDoesNotExist:
+                    target = models.Target(target_name=d[key])
+                    target.save()
+                    d[key] = target
+
+        # check that file_id's can be written
         for key in model_fields:
-            if key not in d.keys() and key != 'id':
-                print(str(key + ' not in ' + str(d.keys())))
+            if key == 'file_id':
+                try:
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+                except ObjectDoesNotExist:
+                    _, _, proposal = pop_soakdb(filename)
+                    pop_proposals(proposal)
+            # if key not in d.keys() and key != 'id' and key != 'file_id':
+            #     print(str('KEY: ' + key + ' FROM DB_FUNCTIONS not in '
+            #                         + str(d.keys()) + ' ' + str(d.items())))
         try:
+            # write out the row to the relevant model (table)
             m = model(**d)
             m.save()
+
         except IntegrityError as e:
                 print('WARNING: ' + str(e.__cause__))
                 continue
@@ -200,7 +246,9 @@ def soakdb_query(filename):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("select * from mainTable where CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL", ('None', 'None'))
+    c.execute("select * from mainTable where CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
+              "and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL "
+              "and ProteinName not like ? and ProteinName not NULL", ('None', 'None', 'None'))
 
     results = c.fetchall()
     return results

@@ -35,6 +35,9 @@ class TestDataTransfer(unittest.TestCase):
         # delete rows created in proposals table
         proposal_rows = Proposals.objects.all()
         proposal_rows.delete()
+        # delete rows created in crystals table
+        crystal_rows = Crystal.objects.all()
+        crystal_rows.delete()
 
     def test_findsoakdb(self):
         os.chdir(self.working_dir)
@@ -243,10 +246,30 @@ class TestDataTransfer(unittest.TestCase):
                          'SHH-x58', 'SHH-x59', 'SHH-x6', 'SHH-x60', 'SHH-x61', 'SHH-x62', 'SHH-x63', 'SHH-x64',
                          'SHH-x65', 'SHH-x66', 'SHH-x67', 'SHH-x68', 'SHH-x69', 'SHH-x7', 'SHH-x70', 'SHH-x71',
                          'SHH-x72', 'SHH-x73', 'SHH-x74', 'SHH-x75', 'SHH-x76', 'SHH-x77', 'SHH-x78', 'SHH-x8',
-                         'SHH-x9',
-                         'coot-download', 'coot-backup', 'coot-refmac']
+                         'SHH-x9']
 
-        results = db_functions.soakdb_query(self.db_full_path)
-        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), results=results, model=Crystal)
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(),
+                                    filename=self.db_full_path, model=Crystal)
+
         crystals = Crystal.objects.values_list('crystal_name', flat=True)
         self.assertTrue(set(crystals) == set(crystals_list))
+
+    def test_transfer_lab(self):
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.db_full_path,
+                                    model=Lab)
+        self.assertTrue(list(Lab.objects.all()))
+
+    def test_transfer_refinement(self):
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.db_full_path,
+                                    model=Refinement)
+        self.assertTrue(list(Refinement.objects.all()))
+
+    def test_transfer_dimple(self):
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.db_full_path,
+                                    model=Dimple)
+        self.assertTrue(list(Dimple.objects.all()))
+
+    def test_transfer_data_processing(self):
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=self.db_full_path, model=DataProcessing)
+        self.assertTrue(list(DataProcessing.objects.all()))
