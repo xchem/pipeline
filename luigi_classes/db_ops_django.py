@@ -49,7 +49,7 @@ class CheckFiles(luigi.Task):
             return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
                     FindSoakDBFiles(filepath=self.soak_db_filepath)]
         else:
-            return FindSoakDBFiles(filepath=self.soak_db_filepath)
+            return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
@@ -63,7 +63,7 @@ class CheckFiles(luigi.Task):
         # 1 = changed
         # 2 = not changed
 
-        with self.input().open('r') as f:
+        with open(self.input()[1].path, 'r') as f:
             files = f.readlines()
 
         print(files)
@@ -170,24 +170,47 @@ class TransferChangedDataFile(luigi.Task):
     # file_id = luigi.Parameter()
 
     def requires(self):
-        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
+        return CheckFiles(soak_db_filepath=self.data_file)
 
     def output(self):
         pass
 
     def run(self):
-        conn, c = db_functions.connectDB()
-        c.execute('delete from lab where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from refinement where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from dimple where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from data_processing where file_id=%s', (self.file_id,))
-        conn.commit()
-        db_functions.transfer_data(self.data_file)
-        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
-        conn.commit()
+        # pass
+        # delete all fields from soakdb filename
+        # retrieve the new db entry
+        print(list(SoakdbFiles.objects.all()))
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        # delete everything
+        lab = Lab.objects.filter(file_id=soakdb_query)
+        lab.delete()
+
+        refinement = Refinement.objects.filter(file_id=soakdb_query)
+        refinement.delete()
+
+        dimple = Dimple.objects.filter(file_id=soakdb_query)
+        dimple.delete()
+
+        data_proc = DataProcessing.objects.filter(file_id=soakdb_query)
+        data_proc.delete()
+
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=self.data_file, model=DataProcessing)
+
+        # retrieve the new db entry
+        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        # get the id to update
+        id_number = soakdb_query[0].id
+        # update the relevant status to 0, indicating it as a new file
+        update_status = SoakdbFiles.objects.get(id=id_number)
+        update_status.status = 2
+        update_status.save()
 
 
 class TransferNewDataFile(luigi.Task):
@@ -201,7 +224,6 @@ class TransferNewDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def run(self):
-        ## TODO: doing this!
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
                                     model=Lab)
         db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,

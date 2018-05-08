@@ -274,14 +274,31 @@ class TestDataTransfer(unittest.TestCase):
                                     filename=self.db_full_path, model=DataProcessing)
         self.assertTrue(list(DataProcessing.objects.all()))
 
-    def test_transfer_new_file(self):
+    def test_transfers(self):
         test_new_file = run_luigi_worker(db_ops_django.TransferNewDataFile(data_file=self.db_full_path,
                                                                            soak_db_filepath=str(os.path.join
                                                                                                (self.working_dir,
                                                                                                 self.filepath)
                                                                                                + '/*')))
         self.assertTrue(test_new_file)
+
         # get the status value from soakdb entry for current file
         status = list(SoakdbFiles.objects.values_list('status', flat=True))
         # check == 2 (not changed - ie. has been successfully added)
         self.assertEqual(int(status[0]), 2)
+
+        test_changed_file = run_luigi_worker(db_ops_django.TransferChangedDataFile(data_file=self.db_full_path,
+                                                                           soak_db_filepath=str(os.path.join
+                                                                                               (self.working_dir,
+                                                                                                self.filepath)
+                                                                                               + '/*')))
+
+        self.assertTrue(test_changed_file)
+
+        status = list(SoakdbFiles.objects.values_list('status', flat=True))
+        # check == 2 (not changed - ie. has been successfully added)
+        self.assertEqual(int(status[0]), 2)
+
+
+
+
