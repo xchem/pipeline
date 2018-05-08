@@ -281,5 +281,7 @@ class TestDataTransfer(unittest.TestCase):
                                                                                                 self.filepath)
                                                                                                + '/*')))
         self.assertTrue(test_new_file)
-        status = SoakdbFiles.objects.values_list('status', flat=True)
-        print(status)
+        # get the status value from soakdb entry for current file
+        status = list(SoakdbFiles.objects.values_list('status', flat=True))
+        # check == 2 (not changed - ie. has been successfully added)
+        self.assertEqual(int(status[0]), 2)
