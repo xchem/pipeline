@@ -25,7 +25,6 @@ class SoakdbFiles(models.Model):
 
 
 class DataProcessing(models.Model):
-    alert = models.TextField(blank=True, null=True)
     auto_assigned = models.TextField(blank=True, null=True)
     cchalf_high = models.TextField(blank=True, null=True)
     cchalf_low = models.TextField(blank=True, null=True)
@@ -167,7 +166,6 @@ class Refinement(models.Model):
     lig_confidence = models.TextField(blank=True, null=True)
     matrix_weight = models.TextField(blank=True, null=True)
     molprobity_score = models.TextField(blank=True, null=True)
-    molprobity_score_tl = models.TextField(db_column='molprobity_score_TL', blank=True, null=True)  # Field name made lowercase.
     mtz_free = models.TextField(blank=True, null=True)
     mtz_latest = models.TextField(blank=True, null=True)
     outcome = models.TextField(blank=True, null=True)
@@ -175,19 +173,12 @@ class Refinement(models.Model):
     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
     r_free = models.TextField(blank=True, null=True)
     ramachandran_favoured = models.TextField(blank=True, null=True)
-    ramachandran_favoured_tl = models.TextField(db_column='ramachandran_favoured_TL', blank=True, null=True)  # Field name made lowercase.
     ramachandran_outliers = models.TextField(blank=True, null=True)
-    ramachandran_outliers_tl = models.TextField(db_column='ramachandran_outliers_TL', blank=True, null=True)  # Field name made lowercase.
     rcryst = models.TextField(blank=True, null=True)
-    rcryst_tl = models.TextField(db_column='rcryst_TL', blank=True, null=True)  # Field name made lowercase.
     refinement_path = models.TextField(blank=True, null=True)
     res = models.TextField(blank=True, null=True)
-    res_tl = models.TextField(db_column='res_TL', blank=True, null=True)  # Field name made lowercase.
-    rfree_tl = models.TextField(db_column='rfree_TL', blank=True, null=True)  # Field name made lowercase.
     rmsd_angles = models.TextField(blank=True, null=True)
-    rmsd_angles_tl = models.TextField(db_column='rmsd_angles_TL', blank=True, null=True)  # Field name made lowercase.
     rmsd_bonds = models.TextField(blank=True, null=True)
-    rmsd_bonds_tl = models.TextField(db_column='rmsd_bonds_TL', blank=True, null=True)  # Field name made lowercase.
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
 

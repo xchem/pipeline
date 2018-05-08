@@ -49,7 +49,7 @@ class CheckFiles(luigi.Task):
             return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
                     FindSoakDBFiles(filepath=self.soak_db_filepath)]
         else:
-            return ['', FindSoakDBFiles(filepath=self.soak_db_filepath)]
+            return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
@@ -63,7 +63,7 @@ class CheckFiles(luigi.Task):
         # 1 = changed
         # 2 = not changed
 
-        with self.input()[1].open('r') as f:
+        with self.input().open('r') as f:
             files = f.readlines()
 
         print(files)
@@ -93,9 +93,9 @@ class CheckFiles(luigi.Task):
 
                 # if the file has changed since the db was last updated for the entry, change status to indicate this
                 if int(current_mod_date) > int(old_mod_date):
-                    update_satus = SoakdbFiles.objects.get(id=id_number)
-                    update_satus.value = 1
-                    update_satus.save()
+                    update_status = SoakdbFiles.objects.get(id=id_number)
+                    update_status.status = 1
+                    update_status.save()
             # if there is more than one entry, raise an exception (should never happen - filename field is unique)
             if len(soakdb_query) > 1:
                 raise Exception('More than one entry for file! Something has gone wrong!')
@@ -112,7 +112,7 @@ class CheckFiles(luigi.Task):
                 id_number = soakdb_query[0].id
                 # update the relevant status to 0, indicating it as a new file
                 update_status = SoakdbFiles.objects.get(id=id_number)
-                update_status.value = 0
+                update_status.status = 0
                 update_status.save()
 
         # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
@@ -202,10 +202,23 @@ class TransferNewDataFile(luigi.Task):
 
     def run(self):
         ## TODO: doing this!
-        db_functions.transfer_data(self.data_file)
-        conn, c = db_functions.connectDB()
-        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
-        conn.commit()
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=self.data_file, model=DataProcessing)
+
+        # retrieve the new db entry
+        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        # get the id to update
+        id_number = soakdb_query[0].id
+        # update the relevant status to 0, indicating it as a new file
+        update_status = SoakdbFiles.objects.get(id=id_number)
+        update_status.status = 2
+        update_status.save()
 
 
 class StartTransfers(luigi.Task):

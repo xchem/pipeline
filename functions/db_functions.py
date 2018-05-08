@@ -47,18 +47,6 @@ def crystal_translations():
     return crystal
 
 
-# def data_collection_tanslations():
-#     data_collection = {
-#         'date': 'DataCollectionDate',
-#         'outcome': 'DataCollectionOutcome',
-#         'wavelength': 'DataCollectionOutcome',
-#         'crystal_name': 'CrystalName',
-#         'protein': 'ProteinName'
-#     }
-#
-#     return data_collection
-
-
 def data_processing_translations():
     data_processing = {
         'image_path': 'DataProcessingPathToImageFiles',
@@ -96,7 +84,6 @@ def data_processing_translations():
         'lattice': 'DataProcessingLattice',
         'point_group': 'DataProcessingPointGroup',
         'unit_cell_vol': 'DataProcessingUnitCellVolume',
-        'alert': 'DataProcessingAlert',
         'score': 'DataProcessingScore',
         'status': 'DataProcessingStatus',
         'r_cryst': 'DataProcessingRcryst',
@@ -133,17 +120,12 @@ def dimple_translations():
 def refinement_translations():
     refinement = {
         'res': 'RefinementResolution',
-        'res_tl': 'RefinementResolutionTL',
         'rcryst': 'RefinementRcryst',
-        'rcryst_tl': 'RefinementRcrystTraficLight',
         'r_free': 'RefinementRfree',
-        'rfree_tl': 'RefinementRfreeTraficLight',
         'spacegroup': 'RefinementSpaceGroup',
         'lig_cc': 'RefinementLigandCC',
         'rmsd_bonds': 'RefinementRmsdBonds',
-        'rmsd_bonds_tl': 'RefinementRmsdBondsTL',
         'rmsd_angles': 'RefinementRmsdAngles',
-        'rmsd_angles_tl': 'RefinementRmsdAnglesTL',
         'outcome': 'RefinementOutcome',
         'mtz_free': 'RefinementMTZfree',
         'cif': 'RefinementCIF',
@@ -157,11 +139,8 @@ def refinement_translations():
         'lig_bound_conf': 'RefinementLigandBoundConformation',
         'bound_conf': 'RefinementBoundConformation',
         'molprobity_score': 'RefinementMolProbityScore',
-        'molprobity_score_tl': 'RefinementMolProbityScoreTL',
         'ramachandran_outliers': 'RefinementRamachandranOutliers',
-        'ramachandran_outliers_tl': 'RefinementRamachandranOutliersTL',
         'ramachandran_favoured': 'RefinementRamachandranFavored',
-        'ramachandran_favoured_tl': 'RefinementRamachandranFavoredTL',
         'status': 'RefinementStatus',
         'crystal_name': 'CrystalName',
         'protein': 'ProteinName'
@@ -228,9 +207,6 @@ def transfer_table(translate_dict, filename, model):
                 except ObjectDoesNotExist:
                     _, _, proposal = pop_soakdb(filename)
                     pop_proposals(proposal)
-            # if key not in d.keys() and key != 'id' and key != 'file_id':
-            #     print(str('KEY: ' + key + ' FROM DB_FUNCTIONS not in '
-            #                         + str(d.keys()) + ' ' + str(d.items())))
         try:
             # write out the row to the relevant model (table)
             m = model(**d)
@@ -238,6 +214,7 @@ def transfer_table(translate_dict, filename, model):
 
         except IntegrityError as e:
                 print('WARNING: ' + str(e.__cause__))
+                print(model_fields)
                 continue
 
 
