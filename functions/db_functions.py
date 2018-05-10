@@ -161,16 +161,12 @@ def transfer_table(translate_dict, filename, model):
         row_keys = row.keys()
         row_values = list(tuple(row))
 
-        if len(row_keys)!=len(row_values):
-            raise Exception('ARGHHHH!')
 
         # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
                 key = dict((v, k) for k, v in translate_dict.items())[x]
-                # if model == models.DataProcessing:
-                #     print(key)
-                #     print(dict((v, k) for k, v in translate_dict.items()))
+
                 if key not in d.keys():
                     d[key] = ''
                 d[key] = row_values[i]
@@ -185,19 +181,14 @@ def transfer_table(translate_dict, filename, model):
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
             if key == 'crystal_name' and model != models.Crystal:
-                try:
-                    d[key] = models.Crystal.objects.get(crystal_name=d[key])
-                except:
-                    crystal = models.Crystal(crystal_name=crystal)
-                    crystal.save()
-                    d[key] = crystal
+                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key])[0]
+
             if key == 'protein':
-                try:
-                    d[key] = models.Target.objects.get(target_name=d[key])
-                except ObjectDoesNotExist:
-                    target = models.Target(target_name=d[key])
-                    target.save()
-                    d[key] = target
+                d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
+
+            if key == 'smiles':
+                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+
 
         # check that file_id's can be written
         for key in model_fields:

@@ -17,6 +17,9 @@ class Crystal(models.Model):
 class Target(models.Model):
     target_name = models.TextField(blank=False, null=False, unique=True)
 
+class Compounds(models.Model):
+    smiles = models.TextField(blank=False, null=False, unique=True)
+
 class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
@@ -104,7 +107,7 @@ class Lab(models.Model):
     mounting_result = models.TextField(blank=True, null=True)
     mounting_time = models.TextField(blank=True, null=True)
     protein = models.ForeignKey(Target, on_delete=models.CASCADE) # added as foreign key
-    smiles = models.TextField(blank=True, null=True)
+    smiles = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     soak_status = models.TextField(blank=True, null=True)
     soak_time = models.TextField(blank=True, null=True)
     soak_vol = models.TextField(blank=True, null=True)
@@ -137,7 +140,7 @@ class ProasisHits(models.Model):
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
     modification_date = models.TextField(blank=True, null=True)
     protein = models.ForeignKey(Target, on_delete=models.CASCADE)  # added as foreign key
-    smiles = models.TextField(blank=True, null=True)
+    smiles = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     strucid = models.TextField(blank=True, null=True)
     ligand_list = models.TextField(blank=True, null=True)
     exists_pdb = models.TextField(blank=True, null=True)
@@ -181,6 +184,7 @@ class Refinement(models.Model):
     rmsd_bonds = models.TextField(blank=True, null=True)
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
+
 
 class Proposals(models.Model):
     proposal = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
