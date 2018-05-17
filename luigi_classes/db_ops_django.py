@@ -293,19 +293,19 @@ class StartTransfers(luigi.Task):
 
 
 class FindProjects(luigi.Task):
-    def add_to_postgres(self, table, protein, subset_list, data_dump_dict, title):
-        xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-
-        temp_frame = table.loc[table['protein'] == protein]
-        temp_frame.reset_index(inplace=True)
-        temp2 = temp_frame.drop_duplicates(subset=subset_list)
-
-        try:
-            nodups = db_functions.clean_df_db_dups(temp2, title, xchem_engine,
-                                                   list(data_dump_dict.keys()))
-            nodups.to_sql(title, xchem_engine, if_exists='append')
-        except:
-            temp2.to_sql(title, xchem_engine, if_exists='append')
+    # def add_to_postgres(self, table, protein, subset_list, data_dump_dict, title):
+    #     xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
+    #
+    #     temp_frame = table.loc[table['protein'] == protein]
+    #     temp_frame.reset_index(inplace=True)
+    #     temp2 = temp_frame.drop_duplicates(subset=subset_list)
+    #
+    #     try:
+    #         nodups = db_functions.clean_df_db_dups(temp2, title, xchem_engine,
+    #                                                list(data_dump_dict.keys()))
+    #         nodups.to_sql(title, xchem_engine, if_exists='append')
+    #     except:
+    #         temp2.to_sql(title, xchem_engine, if_exists='append')
 
 
     def requires(self):
@@ -316,19 +316,28 @@ class FindProjects(luigi.Task):
 
     def run(self):
         # all data necessary for uploading hits
-        crystal_data_dump_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
+        hits_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
                                   'modification_date': [], 'strucid':[]}
 
         # all data necessary for uploading leads
-        project_data_dump_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
+        leads_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
 
         # selcet everything from refinement equal to in refinement (3) or above:
         # SELECT * FROM refinement WHERE outcome SIMILAR TO ('%3%'|'%4%'|'%5%);,
 
-        ref_or_above = Refinement.objects.select_related(
-            Q(outcome__contains='3') | Q(outcome__contains='4') | Q(outcome__contains='5') | Q(outcome__contains='6')
+        ref_or_above = Refinement.objects.select_related('crystal_name', 'protein').filter(
+            (Q(outcome__contains='3') | Q(outcome__contains='4') | Q(outcome__contains='5') | Q(outcome__contains='6'))
         )
-        print(ref_or_above.values())
+
+        for entry in ref_or_above:
+            lab_entry = Lab.objects.select_related('smiles', 'protein').get(crystal_name=entry.crystal_name)
+
+            hits_dict['crystal_name'].append(Crystal.objects.get(pk=lab_entry.crystal_name.pk))
+            hits_dict['protein'].append(Target.objects.get(pk=lab_entry.protein.pk))
+            hits_dict['smiles'].append(Compounds.objects.get(pk=lab_entry.smiles.pk))
+            hits_dict['strucid'].append('')
+            hits_dict['bound_conf'].append()
+            hits_dict['modification_date'].append(ref_or_above.bound_conf)
 
         # lab_table_select = Lab.objects.filter(crystal_name=ref_or_above.crystal_name)
         #
