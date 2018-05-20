@@ -9,11 +9,15 @@ from functions import misc_functions
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
+def reference_translations():
+    reference = {
+        'reference':'DimpleReferencePDB'
+    }
 
 def lab_translations():
     # TODO: crystal_name, fileid
     lab = {
-        'compound_code': 'CompoundCode',
+        # 'compound_code': 'CompoundCode',
         'cryo_frac': 'CryoFraction',
         'cryo_status': 'CryoStatus',
         'cryo_stock_frac': 'CryoStockFraction',
@@ -26,8 +30,6 @@ def lab_translations():
         'library_plate': 'LibraryPlate',
         'mounting_result': 'MountingResult',
         'mounting_time': 'MountingTime',
-        'protein': 'ProteinName',
-        'smiles': 'CompoundSMILES',
         'soak_status': 'SoakStatus',
         'soak_time': 'SoakingTime',
         'soak_vol': 'SoakTransferVol',
@@ -38,10 +40,19 @@ def lab_translations():
 
     return lab
 
+# crystal_name = models.TextField(blank=False, null=False, unique=True)
+#     target = models.ForeignKey(Target, on_delete=models.CASCADE)
+#     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
+#     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+#     reference = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
 def crystal_translations():
     crystal = {
         'crystal_name': 'CrystalName',
+        'target': 'ProteinName',
+        'compound': 'CompoundSMILES',
+        'file': '',
+        'reference': 'DimpleReferencePDB'
     }
 
     return crystal
@@ -91,8 +102,7 @@ def data_processing_translations():
         'dimple_pdb_path': 'DataProcessingPathToDimplePDBfile',
         'dimple_mtz_path': 'DataProcessingPathToDimpleMTZfile',
         'dimple_status': 'DataProcessingDimpleSuccessful',
-        'crystal_name': 'CrystalName',
-        'protein': 'ProteinName'
+        'crystal_name': 'CrystalName'
     }
 
     return data_processing
@@ -104,14 +114,13 @@ def dimple_translations():
         'r_free': 'DimpleRfree',
         'pdb_path': 'DimplePathToPDB',
         'mtz_path': 'DimplePathToMTZ',
-        'reference_pdb': 'DimpleReferencePDB',
+        # 'reference_pdb': 'DimpleReferencePDB',
         'status': 'DimpleStatus',
         'pandda_run': 'DimplePANDDAwasRun',
         'pandda_hit': 'DimplePANDDAhit',
         'pandda_reject': 'DimplePANDDAreject',
         'pandda_path': 'DimplePANDDApath',
-        'crystal_name': 'CrystalName',
-        'protein': 'ProteinName'
+        'crystal_name': 'CrystalName'
     }
 
     return dimple
@@ -142,8 +151,7 @@ def refinement_translations():
         'ramachandran_outliers': 'RefinementRamachandranOutliers',
         'ramachandran_favoured': 'RefinementRamachandranFavored',
         'status': 'RefinementStatus',
-        'crystal_name': 'CrystalName',
-        'protein': 'ProteinName'
+        'crystal_name': 'CrystalName'
     }
 
     return refinement
@@ -152,6 +160,7 @@ def refinement_translations():
 def transfer_table(translate_dict, filename, model):
     # standard soakdb query for all data
     results = soakdb_query(filename)
+    print(filename)
 
     # for each row found in soakdb
     for row in results:
@@ -183,16 +192,22 @@ def transfer_table(translate_dict, filename, model):
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key])[0]
 
-            if key == 'protein':
+            if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
 
-            if key == 'smiles':
+            if key == 'compound':
                 d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+
+
+            if key == 'reference':
+                if d[key]:
+                    # print(d[key])
+                    d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
 
 
         # check that file_id's can be written
         for key in model_fields:
-            if key == 'file_id':
+            if key == 'file':
                 try:
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
                 except ObjectDoesNotExist:

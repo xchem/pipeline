@@ -246,6 +246,9 @@ class TransferNewDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def run(self):
+        #db_functions.transfer_table(translate_dict=db_functions)
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                    model=Crystal)
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
                                     model=Lab)
         db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
