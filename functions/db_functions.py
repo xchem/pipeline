@@ -52,7 +52,7 @@ def crystal_translations():
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
         'file': '',
-        'reference': 'DimpleReferencePDB'
+        # 'reference': 'DimpleReferencePDB'
     }
 
     return crystal
@@ -116,11 +116,12 @@ def dimple_translations():
         'mtz_path': 'DimplePathToMTZ',
         # 'reference_pdb': 'DimpleReferencePDB',
         'status': 'DimpleStatus',
-        'pandda_run': 'DimplePANDDAwasRun',
-        'pandda_hit': 'DimplePANDDAhit',
-        'pandda_reject': 'DimplePANDDAreject',
-        'pandda_path': 'DimplePANDDApath',
-        'crystal_name': 'CrystalName'
+        # 'pandda_run': 'DimplePANDDAwasRun',
+        # 'pandda_hit': 'DimplePANDDAhit',
+        # 'pandda_reject': 'DimplePANDDAreject',
+        # 'pandda_path': 'DimplePANDDApath',
+        'crystal_name': 'CrystalName',
+        'reference': 'DimpleReferencePDB'
     }
 
     return dimple
@@ -183,7 +184,10 @@ def transfer_table(translate_dict, filename, model):
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
 
+        d = {k: v for k, v in d.items() if v!=None and v!='None'}
+
         for key in d.keys():
+
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
@@ -197,7 +201,6 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'compound':
                 d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
-
 
             if key == 'reference':
                 if d[key]:
@@ -213,15 +216,18 @@ def transfer_table(translate_dict, filename, model):
                 except ObjectDoesNotExist:
                     _, _, proposal = pop_soakdb(filename)
                     pop_proposals(proposal)
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+
         try:
             # write out the row to the relevant model (table)
             m = model(**d)
             m.save()
 
         except IntegrityError as e:
-                print('WARNING: ' + str(e.__cause__))
-                print(model_fields)
-                continue
+            print(d)
+            print('WARNING: ' + str(e.__cause__))
+            print(model_fields)
+            continue
 
 
 def soakdb_query(filename):
