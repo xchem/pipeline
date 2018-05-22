@@ -152,7 +152,7 @@ class Refinement(models.Model):
     molprobity_score = models.FloatField(blank=True, null=True)
     mtz_free = models.TextField(blank=True, null=True)
     mtz_latest = models.TextField(blank=True, null=True)
-    outcome = models.TextField(blank=True, null=True)
+    outcome = models.IntegerField(blank=True, null=True)
     pdb_latest = models.TextField(blank=True, null=True)
     r_free = models.FloatField(blank=True, null=True)
     ramachandran_favoured = models.TextField(blank=True, null=True)

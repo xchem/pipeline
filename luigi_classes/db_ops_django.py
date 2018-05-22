@@ -200,22 +200,13 @@ class TransferChangedDataFile(luigi.Task):
     def run(self):
         # pass
         # delete all fields from soakdb filename
-        # retrieve the new db entry
-        print(list(SoakdbFiles.objects.all()))
         soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-        # delete everything
-        lab = Lab.objects.filter(file_id=soakdb_query)
-        lab.delete()
+        soakdb_query.delete()
 
-        refinement = Refinement.objects.filter(file_id=soakdb_query)
-        refinement.delete()
+        db_functions.pop_soakdb(self.data_file)
 
-        dimple = Dimple.objects.filter(file_id=soakdb_query)
-        dimple.delete()
-
-        data_proc = DataProcessing.objects.filter(file_id=soakdb_query)
-        data_proc.delete()
-
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                    model=Crystal)
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
                                     model=Lab)
         db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
@@ -226,6 +217,7 @@ class TransferChangedDataFile(luigi.Task):
                                     filename=self.data_file, model=DataProcessing)
 
         # retrieve the new db entry
+
         soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
         # get the id to update
         id_number = soakdb_query[0].id

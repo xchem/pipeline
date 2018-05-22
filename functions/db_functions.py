@@ -2,7 +2,7 @@ import csv
 import os
 import sqlite3
 import subprocess
-
+import re
 import setup_django
 from db import models
 from functions import misc_functions
@@ -206,6 +206,13 @@ def transfer_table(translate_dict, filename, model):
                 if d[key]:
                     # print(d[key])
                     d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
+
+            if key == 'outcome':
+                pattern = re.compile('-?\d+')
+                value = pattern.findall(d[key])
+                if len(value) > 1:
+                    raise Exception('multiple values found in outcome string')
+                d[key] = int(value[0])
 
 
         # check that file_id's can be written
