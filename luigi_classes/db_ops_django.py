@@ -288,23 +288,10 @@ class StartTransfers(luigi.Task):
 
 
 class FindProjects(luigi.Task):
-    # def add_to_postgres(self, table, protein, subset_list, data_dump_dict, title):
-    #     xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-    #
-    #     temp_frame = table.loc[table['protein'] == protein]
-    #     temp_frame.reset_index(inplace=True)
-    #     temp2 = temp_frame.drop_duplicates(subset=subset_list)
-    #
-    #     try:
-    #         nodups = db_functions.clean_df_db_dups(temp2, title, xchem_engine,
-    #                                                list(data_dump_dict.keys()))
-    #         nodups.to_sql(title, xchem_engine, if_exists='append')
-    #     except:
-    #         temp2.to_sql(title, xchem_engine, if_exists='append')
-
 
     def requires(self):
-        return CheckFiles(), StartTransfers()
+        pass
+        # return CheckFiles(), StartTransfers()
 
     def output(self):
         return luigi.LocalTarget('logs/findprojects.done')
@@ -317,22 +304,22 @@ class FindProjects(luigi.Task):
         # all data necessary for uploading leads
         leads_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
 
-        # selcet everything from refinement equal to in refinement (3) or above:
-        # SELECT * FROM refinement WHERE outcome SIMILAR TO ('%3%'|'%4%'|'%5%);,
+        # class ProasisHits(models.Model):
+        #     bound_pdb = models.ForeignKey(Refinement, to_field='bound_conf', on_delete=models.CASCADE, unique=True)
+        #     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+        #     modification_date = models.TextField(blank=True, null=True)
+        #     strucid = models.TextField(blank=True, null=True)
+        #     ligand_list = models.IntegerField(blank=True, null=True)
 
-        ref_or_above = Refinement.objects.select_related('crystal_name', 'protein').filter(
-            (Q(outcome__contains='3') | Q(outcome__contains='4') | Q(outcome__contains='5') | Q(outcome__contains='6'))
-        )
+        ref_or_above = Refinement.objects.filter(outcome__in=[3, 4, 5, 6])
 
         for entry in ref_or_above:
-            lab_entry = Lab.objects.select_related('smiles', 'protein').get(crystal_name=entry.crystal_name)
-
-            hits_dict['crystal_name'].append(Crystal.objects.get(pk=lab_entry.crystal_name.pk))
-            hits_dict['protein'].append(Target.objects.get(pk=lab_entry.protein.pk))
-            hits_dict['smiles'].append(Compounds.objects.get(pk=lab_entry.smiles.pk))
-            hits_dict['strucid'].append('')
-            hits_dict['bound_conf'].append()
-            hits_dict['modification_date'].append(ref_or_above.bound_conf)
+            print(entry.crystal_name.crystal_name)
+            if entry.bound_conf:
+                print(entry.bound_conf)
+            else:
+                print(entry.pdb_latest)
+            print(entry.)
 
         # lab_table_select = Lab.objects.filter(crystal_name=ref_or_above.crystal_name)
         #

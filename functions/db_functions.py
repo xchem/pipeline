@@ -15,9 +15,7 @@ def reference_translations():
     }
 
 def lab_translations():
-    # TODO: crystal_name, fileid
     lab = {
-        # 'compound_code': 'CompoundCode',
         'cryo_frac': 'CryoFraction',
         'cryo_status': 'CryoStatus',
         'cryo_stock_frac': 'CryoStockFraction',
@@ -40,11 +38,6 @@ def lab_translations():
 
     return lab
 
-# crystal_name = models.TextField(blank=False, null=False, unique=True)
-#     target = models.ForeignKey(Target, on_delete=models.CASCADE)
-#     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
-#     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
-#     reference = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
 def crystal_translations():
     crystal = {
@@ -52,7 +45,6 @@ def crystal_translations():
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
         'file': '',
-        # 'reference': 'DimpleReferencePDB'
     }
 
     return crystal
@@ -204,7 +196,6 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'reference':
                 if d[key]:
-                    # print(d[key])
                     d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
 
             if key == 'outcome':
