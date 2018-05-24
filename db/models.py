@@ -90,7 +90,7 @@ class DataProcessing(models.Model):
     res_high_outer_shell = models.FloatField(blank=True, null=True)
     res_low = models.FloatField(blank=True, null=True)
     res_low_inner_shell = models.FloatField(blank=True, null=True)
-    res_overall = models.TextField(blank=True, null=True)
+    res_overall = models.TextField(blank=True, null=True) # range
     score = models.FloatField(blank=True, null=True)
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
@@ -237,7 +237,7 @@ class Proposals(models.Model):
 
 
 class PanddaRun(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     input_dir = models.TextField(blank=True, null=True)
     pandda_dir = models.TextField(blank=True, null=True)
     pandda_input_mtz = models.TextField(blank=True, null=True)
@@ -247,7 +247,7 @@ class PanddaRun(models.Model):
 
     class Meta:
         db_table = 'pandda_run'
-        unique_together = ('crystal', 'pandda_log')
+        # unique_together = ('crystal', 'pandda_log')
 
 
 class PanddaSite(models.Model):
