@@ -4,6 +4,7 @@ import shutil
 import datetime
 import setup_django
 from test_functions import run_luigi_worker
+import functions.pandda_functions as pf
 from luigi_classes import db_ops_django
 from db.models import *
 
@@ -48,3 +49,20 @@ class TestFindLogs(unittest.TestCase):
         self.assertTrue(find_logs)
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
                                                     self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))))
+
+    def test_add_pandda_runs(self):
+        print('finding files from logs...')
+        log_files = pf.find_log_files(
+            '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice').split()
+
+        for file in log_files:
+
+            pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(file)
+
+            add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
+                file=file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
+                events_file=events_file))
+
+            self.assertTrue(add_run)
+
+

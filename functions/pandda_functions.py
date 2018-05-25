@@ -29,6 +29,8 @@ def find_log_files(path):
 
     files_list = out.decode('ascii')
 
+    print(files_list)
+
     return files_list
 
 

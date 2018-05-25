@@ -405,7 +405,7 @@ class FindPanddaLogs(luigi.Task):
             f.write(log_files)
 
 
-class AddPanddaEventsSites(luigi.Task):
+class AddPanddaSites(luigi.Task):
     file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
@@ -421,6 +421,25 @@ class AddPanddaEventsSites(luigi.Task):
 
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.file)
+
+class AddPanddaEvents(luigi.Task):
+    file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+
+    def requires(self):
+        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+                            sites_file=self.sites_file, events_file=self.events_file)
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
 
 class AddPanddaRun(luigi.Task):
     file = luigi.Parameter()
