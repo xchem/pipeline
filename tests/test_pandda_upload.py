@@ -23,6 +23,7 @@ class TestFindLogs(unittest.TestCase):
         cls.db_full_path = os.path.join(cls.working_dir, cls.db_file_name)
         print('Working dir: ' + cls.working_dir)
         shutil.copytree(os.path.join(cls.top_dir, cls.filepath), cls.working_dir)
+        os.chdir(cls.working_dir)
 
     @classmethod
     def tearDownClass(cls):
@@ -45,3 +46,5 @@ class TestFindLogs(unittest.TestCase):
         soak_db_filepath=str(self.working_dir + '*')))
 
         self.assertTrue(find_logs)
+        self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
+                                                    self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))))

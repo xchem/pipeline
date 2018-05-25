@@ -44,6 +44,7 @@ class CheckFiles(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
+        print('Finding soakdb files via CheckFiles')
         soakdb = list(SoakdbFiles.objects.all())
 
         if not soakdb:
@@ -267,22 +268,24 @@ class StartTransfers(luigi.Task):
     def get_file_list(self, status_code):
 
         status_query = SoakdbFiles.objects.filter(status=status_code)
-        datafiles = [filename for filename in status_query.filename]
+        datafiles = [object.filename for object in status_query]
 
         return datafiles
 
     def requires(self):
-        new_list = self.get_file_list(0)
-        changed_list = self.get_file_list(1)
-        return [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                for datafile in new_list], \
-               [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                for datafile in changed_list]
+        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
         return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
 
     def run(self):
+        new_list = self.get_file_list(0)
+        changed_list = self.get_file_list(1)
+        yield [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                for datafile in new_list], \
+               [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                for datafile in changed_list]
+
         with self.output().open('w') as f:
             f.write('')
 
@@ -396,6 +399,7 @@ class FindPanddaLogs(luigi.Task):
         return luigi.LocalTarget(self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))
 
     def run(self):
+        print('RUNNING')
         log_files = pandda_functions.find_log_files(self.search_path)
         with self.output().open('w') as f:
             f.write(log_files)
