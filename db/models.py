@@ -237,7 +237,6 @@ class Proposals(models.Model):
 
 
 class PanddaRun(models.Model):
-    # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     input_dir = models.TextField(blank=True, null=True)
     pandda_dir = models.TextField(blank=True, null=True)
     pandda_input_mtz = models.TextField(blank=True, null=True)

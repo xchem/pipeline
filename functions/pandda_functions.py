@@ -128,11 +128,11 @@ def get_file_names(BDC, crystal, input_dir, output_dir):
     map_file_name = ''.join([crystal, '-event_', event, '_1-BDC_', BDC, '_map.native.ccp4'])
     map_file_path = os.path.join(input_dir.replace('*', ''), crystal, map_file_name)
 
-    input_pdb_name = ''.join([crystal, '-pandda-input.pdb'])
-    input_pdb_path = os.path.join(input_dir.replace('*', ''), crystal, input_pdb_name)
-
-    input_mtz_name = input_pdb_name.replace('.pdb', '.mtz')
-    input_mtz_path = input_pdb_path.replace(input_pdb_name, input_mtz_name)
+    # input_pdb_name = ''.join([crystal, '-pandda-input.pdb'])
+    # input_pdb_path = os.path.join(input_dir.replace('*', ''), crystal, input_pdb_name)
+    #
+    # input_mtz_name = input_pdb_name.replace('.pdb', '.mtz')
+    # input_mtz_path = input_pdb_path.replace(input_pdb_name, input_mtz_name)
 
     aligned_pdb_name = ''.join([crystal, '-aligned.pdb'])
     aligned_pdb_path = os.path.join(output_dir, 'aligned_structures', aligned_pdb_name)
