@@ -27,7 +27,7 @@ def find_log_files(path):
 
     out, err = process.communicate()
 
-    files_list = out.decode('ascii').split()
+    files_list = out.decode('ascii')
 
     return files_list
 

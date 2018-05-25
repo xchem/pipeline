@@ -2,7 +2,7 @@ import luigi
 import subprocess
 import os
 import datetime
-from functions import db_functions, misc_functions
+from functions import db_functions, misc_functions, pandda_functions
 from sqlalchemy import create_engine
 import pandas
 import sqlite3
@@ -319,7 +319,7 @@ class FindProjects(luigi.Task):
                 print(entry.bound_conf)
             else:
                 print(entry.pdb_latest)
-            print(entry.)
+
 
         # lab_table_select = Lab.objects.filter(crystal_name=ref_or_above.crystal_name)
         #
@@ -382,4 +382,34 @@ class FindProjects(luigi.Task):
         #
         # with self.output().open('wb') as f:
         #     f.write('')
+
+
+class FindPanddaLogs(luigi.Task):
+    search_path = luigi.Parameter()
+    date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_path = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        return StartTransfers(soak_db_path=self.soak_db_path)
+
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))
+
+    def run(self):
+        log_files = pandda_functions.find_log_files(self.search_path)
+        with self.output().open('w') as f:
+            f.write(log_files)
+
+class AddPanddaTables(luigi.Task):
+
+    def requires(self):
+        return FindPanddaLogs()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
+
 
