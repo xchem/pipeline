@@ -387,10 +387,10 @@ class FindProjects(luigi.Task):
 class FindPanddaLogs(luigi.Task):
     search_path = luigi.Parameter()
     date = luigi.DateParameter(default=datetime.date.today())
-    soak_db_path = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
-        return StartTransfers(soak_db_path=self.soak_db_path)
+        return StartTransfers(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))
@@ -400,16 +400,79 @@ class FindPanddaLogs(luigi.Task):
         with self.output().open('w') as f:
             f.write(log_files)
 
-class AddPanddaTables(luigi.Task):
 
+class AddPanddaEventsSites(luigi.Task):
+    file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
     def requires(self):
-        return FindPanddaLogs()
+        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+                            sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
         pass
 
     def run(self):
+        run = PanddaRun.objects.get(pandda_log=self.file)
+
+class AddPanddaRun(luigi.Task):
+    file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+
+    def requires(self):
         pass
+
+    def complete(self):
+        if PanddaRun.objects.filter(pandda_log=self.file).exists():
+            return True
+        else:
+            return False
+
+    def run(self):
+        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.file)[0]
+        pandda_run.pandda_dir = self.output_dir
+        pandda_run.input_dir = self.input_dir
+        pandda_run.pandda_version = self.pver
+        pandda_run.sites_file = self.sites_file
+        pandda_run.events_file = self.events_file
+        pandda_run.save()
+
+
+class AddPanddaTables(luigi.Task):
+    search_path = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        return FindPanddaLogs(search_path=self.search_path, soak_db_path=self.soak_db_filepath)
+
+    def output(self):
+        pass
+
+    def run(self):
+        # read the list of log files
+        with self.input().open('r') as f:
+            log_files = f.readlines().split()
+
+        # dict to hold info for subsequent things
+        results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
+                        'events_file': [], 'err': []}
+
+        for file in log_files:
+
+            results_dict['log_file'].append(file)
+            # read information from the log file
+            pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(file)
+            if not err:
+                yield AddPanddaRun(file=file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                                   sites_file=sites_file, events_file=events_file)
+
 
 
 
