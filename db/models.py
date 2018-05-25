@@ -239,8 +239,6 @@ class Proposals(models.Model):
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
     pandda_dir = models.TextField(blank=True, null=True)
-    pandda_input_mtz = models.TextField(blank=True, null=True)
-    pandda_input_pdb = models.TextField(blank=True, null=True)
     pandda_log = models.TextField(blank=True, null=True)
     pandda_version = models.TextField(blank=True, null=True)
 
@@ -256,6 +254,8 @@ class PanddaSite(models.Model):
     site_aligned_centroid = models.TextField(blank=True, null=True)
     site_native_centroid = models.TextField(blank=True, null=True)
     pandda_model_pdb = models.TextField(blank=True, null=True)
+    pandda_input_mtz = models.TextField(blank=True, null=True)
+    pandda_input_pdb = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'pandda_site'
