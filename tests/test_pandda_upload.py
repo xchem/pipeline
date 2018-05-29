@@ -7,7 +7,52 @@ from test_functions import run_luigi_worker
 import functions.pandda_functions as pf
 from luigi_classes import db_ops_django
 from db.models import *
+import pandas as pd
 
+
+# class PanddaRun(models.Model):
+#     input_dir = models.TextField(blank=True, null=True)
+#     pandda_dir = models.TextField(blank=True, null=True)
+#     pandda_log = models.TextField(blank=True, null=True)
+#     pandda_version = models.TextField(blank=True, null=True)
+#     sites_file = models.TextField(blank=True, null=True)
+#     events_file = models.TextField(blank=True, null=True)
+#
+#     class Meta:
+#         db_table = 'pandda_run'
+#         # unique_together = ('crystal', 'pandda_log')
+#
+#
+# class PanddaSite(models.Model):
+#     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+#     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+#     site = models.IntegerField(blank=True, null=True)
+#     site_aligned_centroid = models.TextField(blank=True, null=True)
+#     site_native_centroid = models.TextField(blank=True, null=True)
+#     pandda_model_pdb = models.TextField(blank=True, null=True)
+#     pandda_input_mtz = models.TextField(blank=True, null=True)
+#     pandda_input_pdb = models.TextField(blank=True, null=True)
+#
+#     class Meta:
+#         db_table = 'pandda_site'
+#         unique_together = ('crystal', 'run', 'site')
+#
+#
+# class PanddaEvent(models.Model):
+#     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+#     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
+#     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+#     event = models.IntegerField(blank=True, null=True)
+#     event_centroid = models.TextField(blank=True, null=True)
+#     event_dist_from_site_centroid = models.TextField(blank=True, null=True)
+#     lig_centroid = models.TextField(blank=True, null=True)
+#     lig_dist_event = models.FloatField(blank=True, null=True)
+#     lig_id = models.TextField(blank=True, null=True)
+#     pandda_event_map_native = models.TextField(blank=True, null=True)
+#
+#     class Meta:
+#         db_table = 'pandda_event'
+#         unique_together = ('site', 'event', 'crystal', 'run')
 
 class TestFindLogs(unittest.TestCase):
     # filepath where test data is
@@ -68,11 +113,17 @@ class TestFindLogs(unittest.TestCase):
                 print('sites_file: ' + str(sites_file))
                 print('events_file: ' + str(events_file))
                 print('err: ' + str(err))
-                
+
                 add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
                     file=file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
                     events_file=events_file))
 
                 self.assertTrue(add_run)
+
+                sites_frame = pd.DataFrame.read_csv(sites_file)
+
+                print(sites_frame)
+
+
 
 
