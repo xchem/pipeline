@@ -88,7 +88,6 @@ class TestFindLogs(unittest.TestCase):
         pandda_runs = PanddaRun.objects.all()
         pandda_runs.delete()
 
-
     def test_find_pandda_logs(self):
         find_logs = run_luigi_worker(db_ops_django.FindPanddaLogs(
             search_path=
@@ -103,6 +102,7 @@ class TestFindLogs(unittest.TestCase):
         print('finding files from logs...')
         log_files = pf.find_log_files(
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice').split()
+        print(log_files)
 
         for log_file in log_files:
 
