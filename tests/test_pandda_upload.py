@@ -115,7 +115,7 @@ class TestFindLogs(unittest.TestCase):
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
 
-            if not err and sites_file and events_file and float(pver.replace('-dev', ''))>=0.2:
+            if not err and sites_file and events_file and '0.1.' not in pver:
 
                 print('Adding pandda run from log: ' + str(log_file))
                 print('pver: ' + str(pver))
