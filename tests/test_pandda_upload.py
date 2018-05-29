@@ -107,8 +107,8 @@ class TestFindLogs(unittest.TestCase):
         print('\n')
         print('finding files from logs...')
         log_files = pf.find_log_files(
-            '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice').split()
-        print(log_files)
+            '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/')
+        print('log_files: ' + str(log_files))
 
         for log_file in log_files:
 
