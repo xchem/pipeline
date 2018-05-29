@@ -257,7 +257,7 @@ class PanddaSite(models.Model):
 
     class Meta:
         db_table = 'pandda_site'
-        unique_together = ('crystal', 'run', 'site')
+        unique_together = ('run', 'site')
 
 
 class PanddaEvent(models.Model):
