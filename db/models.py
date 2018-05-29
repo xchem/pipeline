@@ -250,7 +250,6 @@ class PanddaRun(models.Model):
 
 
 class PanddaSite(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     site = models.IntegerField(blank=True, null=True)
     site_aligned_centroid = models.TextField(blank=True, null=True)

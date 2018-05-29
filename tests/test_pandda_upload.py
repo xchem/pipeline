@@ -115,7 +115,7 @@ class TestFindLogs(unittest.TestCase):
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
 
-            if not err and sites_file and events_file:
+            if not err and sites_file and events_file and float(pver)>=0.2:
 
                 print('Adding pandda run from log: ' + str(log_file))
                 print('pver: ' + str(pver))
@@ -131,11 +131,11 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_run)
 
-                sites_frame = pd.DataFrame.from_csv(sites_file)
+                sites_frame = pd.DataFrame.from_csv(sites_file, index_col=None)
 
                 print(sites_frame)
 
-                for i in range(0,len(sites_frame['site_idx'])):
+                for i in range(0, len(sites_frame['site_idx'])):
                     print(sites_frame['site_idx'][i])
                     print(sites_frame['centroid'][i])
                     print(sites_frame['native_centroid'][i])
