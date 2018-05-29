@@ -239,7 +239,7 @@ class Proposals(models.Model):
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
     pandda_dir = models.TextField(blank=True, null=True)
-    pandda_log = models.TextField(blank=True, null=True)
+    pandda_log = models.TextField(blank=True, null=True, unique=True)
     pandda_version = models.TextField(blank=True, null=True)
     sites_file = models.TextField(blank=True, null=True)
     events_file = models.TextField(blank=True, null=True)
