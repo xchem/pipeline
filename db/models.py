@@ -255,9 +255,6 @@ class PanddaSite(models.Model):
     site = models.IntegerField(blank=True, null=True)
     site_aligned_centroid = models.TextField(blank=True, null=True)
     site_native_centroid = models.TextField(blank=True, null=True)
-    pandda_model_pdb = models.TextField(blank=True, null=True)
-    pandda_input_mtz = models.TextField(blank=True, null=True)
-    pandda_input_pdb = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'pandda_site'
@@ -275,6 +272,9 @@ class PanddaEvent(models.Model):
     lig_dist_event = models.FloatField(blank=True, null=True)
     lig_id = models.TextField(blank=True, null=True)
     pandda_event_map_native = models.TextField(blank=True, null=True)
+    pandda_model_pdb = models.TextField(blank=True, null=True)
+    pandda_input_mtz = models.TextField(blank=True, null=True)
+    pandda_input_pdb = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'pandda_event'
