@@ -133,7 +133,7 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_run)
 
-                sites_frame = pd.DataFrame.read_csv(sites_file)
+                sites_frame = pd.DataFrame.from_csv(sites_file)
 
                 print(sites_frame)
 
