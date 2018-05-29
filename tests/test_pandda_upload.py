@@ -59,10 +59,20 @@ class TestFindLogs(unittest.TestCase):
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(file)
 
-            add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
-                file=file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
-                events_file=events_file))
+            if not err:
 
-            self.assertTrue(add_run)
+                print('Adding pandda run from log: ' + str(file))
+                print('pver: ' + str(pver))
+                print('input_dir: ' + str(input_dir))
+                print('output_dir: ' + str(output_dir))
+                print('sites_file: ' + str(sites_file))
+                print('events_file: ' + str(events_file))
+                print('err: ' + str(err))
+                
+                add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
+                    file=file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
+                    events_file=events_file))
+
+                self.assertTrue(add_run)
 
 
