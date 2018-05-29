@@ -453,7 +453,7 @@ class AddPanddaRun(luigi.Task):
         pass
 
     def complete(self):
-        if PanddaRun.objects.filter(pandda_log=self.file).exists():
+        if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
             return True
         else:
             return False
