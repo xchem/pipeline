@@ -84,6 +84,10 @@ class TestFindLogs(unittest.TestCase):
         # # delete rows created in crystals table
         crystal_rows = Crystal.objects.all()
         crystal_rows.delete()
+        # delete pandda runs
+        pandda_runs = PanddaRun.objects.all()
+        pandda_runs.delete()
+
 
     def test_find_pandda_logs(self):
         find_logs = run_luigi_worker(db_ops_django.FindPanddaLogs(
