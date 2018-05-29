@@ -104,15 +104,15 @@ class TestFindLogs(unittest.TestCase):
         log_files = pf.find_log_files(
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice').split()
 
-        for file in log_files:
+        for log_file in log_files:
 
-            pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(file)
+            pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
 
-            print(file)
+            print(log_file)
 
             if not err:
 
-                print('Adding pandda run from log: ' + str(file))
+                print('Adding pandda run from log: ' + str(log_file))
                 print('pver: ' + str(pver))
                 print('input_dir: ' + str(input_dir))
                 print('output_dir: ' + str(output_dir))
@@ -121,7 +121,7 @@ class TestFindLogs(unittest.TestCase):
                 print('err: ' + str(err))
 
                 add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
-                    file=file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
+                    log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
                     events_file=events_file))
 
                 self.assertTrue(add_run)

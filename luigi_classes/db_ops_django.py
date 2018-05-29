@@ -442,7 +442,7 @@ class AddPanddaEvents(luigi.Task):
 
 
 class AddPanddaRun(luigi.Task):
-    file = luigi.Parameter()
+    log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
     pver = luigi.Parameter()
