@@ -14,7 +14,7 @@ import numpy as np
 def find_log_files(path):
     command = ' '.join(['find',
                         path,
-                        '-maxdepth 5 -path "*/lab36/*" -prune -o',
+                        '-maxdepth 10 -path "*/lab36/*" -prune -o',
                         '-path "*/initial_model/*" -prune -o',
                         '-path "*/beamline/*" -prune -o',
                         '-path "*ackup*" -prune -o',
