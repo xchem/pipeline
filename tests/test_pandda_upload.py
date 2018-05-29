@@ -117,7 +117,7 @@ class TestFindLogs(unittest.TestCase):
 
             print(log_file)
 
-            if err!='False' or err!=False:
+            if not err:
 
                 print('Adding pandda run from log: ' + str(log_file))
                 print('pver: ' + str(pver))

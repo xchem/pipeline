@@ -459,7 +459,7 @@ class AddPanddaRun(luigi.Task):
             return False
 
     def run(self):
-        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.file)[0]
+        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file)[0]
         pandda_run.pandda_dir = self.output_dir
         pandda_run.input_dir = self.input_dir
         pandda_run.pandda_version = self.pver
