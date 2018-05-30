@@ -139,6 +139,7 @@ class Lab(models.Model):
     class Meta:
         db_table = 'lab'
 
+
 class Refinement(models.Model):
     bound_conf = models.TextField(blank=True, null=True, unique=True)
     cif = models.TextField(blank=True, null=True)
@@ -236,9 +237,16 @@ class Proposals(models.Model):
         db_table = 'proposals'
 
 
+class PanddaAnalysis(models.Model):
+    pandda_dir = models.TextField()
+
+    class Meta:
+        db_table = 'pandda_analysis'
+
+
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
-    pandda_dir = models.TextField(blank=True, null=True)
+    analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
     pandda_log = models.TextField(blank=True, null=True, unique=True)
     pandda_version = models.TextField(blank=True, null=True)
     sites_file = models.TextField(blank=True, null=True)
@@ -246,7 +254,6 @@ class PanddaRun(models.Model):
 
     class Meta:
         db_table = 'pandda_run'
-        # unique_together = ('crystal', 'pandda_log')
 
 
 class PanddaSite(models.Model):
