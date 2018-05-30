@@ -137,7 +137,7 @@ class TestFindLogs(unittest.TestCase):
 
                 for i in range(0, len(sites_frame['site_idx'])):
                     print(sites_frame['site_idx'][i])
-                    print(sites_frame['centroid'][i])
+                    print(sites_frame['centroid'][i][0])
                     print(sites_frame['native_centroid'][i])
 
 
