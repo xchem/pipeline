@@ -259,8 +259,12 @@ class PanddaRun(models.Model):
 class PanddaSite(models.Model):
     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     site = models.IntegerField(blank=True, null=True)
-    site_aligned_centroid = models.TextField(blank=True, null=True)
-    site_native_centroid = models.TextField(blank=True, null=True)
+    site_aligned_centroid_x = models.FloatField(blank=True, null=True)
+    site_aligned_centroid_y = models.FloatField(blank=True, null=True)
+    site_aligned_centroid_z = models.FloatField(blank=True, null=True)
+    site_native_centroid_x = models.FloatField(blank=True, null=True)
+    site_native_centroid_y = models.FloatField(blank=True, null=True)
+    site_native_centroid_z = models.FloatField(blank=True, null=True)
 
     class Meta:
         db_table = 'pandda_site'
@@ -272,7 +276,9 @@ class PanddaEvent(models.Model):
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     event = models.IntegerField(blank=True, null=True)
-    event_centroid = models.TextField(blank=True, null=True)
+    event_centroid_x = models.FloatField(blank=True, null=True)
+    event_centroid_y = models.FloatField(blank=True, null=True)
+    event_centroid_z = models.FloatField(blank=True, null=True)
     event_dist_from_site_centroid = models.TextField(blank=True, null=True)
     lig_centroid = models.TextField(blank=True, null=True)
     lig_dist_event = models.FloatField(blank=True, null=True)
