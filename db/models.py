@@ -256,6 +256,17 @@ class PanddaRun(models.Model):
         db_table = 'pandda_run'
 
 
+class PanddaStatisticalMap(models.Model):
+    resolution_from = models.FloatField()
+    resolution_to = models.FloatField()
+    dataset_list = models.TextField()
+    run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'pandda_statistical_map'
+        unique_together = ('resolution_from', 'resolution_to', 'run')
+
+
 class PanddaSite(models.Model):
     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     site = models.IntegerField(blank=True, null=True)
