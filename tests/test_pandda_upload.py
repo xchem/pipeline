@@ -137,9 +137,17 @@ class TestFindLogs(unittest.TestCase):
 
                 for i in range(0, len(sites_frame['site_idx'])):
                     print(sites_frame['site_idx'][i])
-                    print(sites_frame['centroid'][i][0])
-                    print(sites_frame['native_centroid'][i])
-
+                    centroid_tuple = eval(sites_frame['centroid'][i])
+                    centroid_x = centroid_tuple[0]
+                    centroid_y = centroid_tuple[1]
+                    centroid_z = centroid_tuple[2]
+                    native_centroid_tuple = eval(sites_frame['native_centroid'][i])
+                    native_centroid_x = native_centroid_tuple[0]
+                    native_centroid_y = native_centroid_tuple[1]
+                    native_centroid_z = native_centroid_tuple[2]
+                    print(native_centroid_x)
+                    print(native_centroid_y)
+                    print(native_centroid_z)
 
 
 
