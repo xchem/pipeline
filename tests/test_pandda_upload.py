@@ -138,5 +138,27 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_sites)
 
+                events_frame = pd.DataFrame.from_csv(events_file, index_col=None)
+
+                print(events_frame)
+
+                # for i in range(0, len(events_frame['']))
+
+                # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+                # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
+                # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+                # event = models.IntegerField(blank=True, null=True)
+                # event_centroid_x = models.FloatField(blank=True, null=True)
+                # event_centroid_y = models.FloatField(blank=True, null=True)
+                # event_centroid_z = models.FloatField(blank=True, null=True)
+                # event_dist_from_site_centroid = models.TextField(blank=True, null=True)
+                # lig_centroid = models.TextField(blank=True, null=True)
+                # lig_dist_event = models.FloatField(blank=True, null=True)
+                # lig_id = models.TextField(blank=True, null=True)
+                # pandda_event_map_native = models.TextField(blank=True, null=True)
+                # pandda_model_pdb = models.TextField(blank=True, null=True)
+                # pandda_input_mtz = models.TextField(blank=True, null=True)
+                # pandda_input_pdb = models.TextField(blank=True, null=True)
+
 
 
