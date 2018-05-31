@@ -460,8 +460,10 @@ class AddPanddaRun(luigi.Task):
 
     def run(self):
         pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file)[0]
+        print(pandda_run)
         pandda_run.pandda_dir = self.output_dir
         pandda_run.analysis_folder = PanddaAnalysis.get_or_create(pandda_dir=self.input_dir)[0]
+        print(pandda_run.analysis_folder)
         pandda_run.pandda_version = self.pver
         pandda_run.sites_file = self.sites_file
         pandda_run.events_file = self.events_file
