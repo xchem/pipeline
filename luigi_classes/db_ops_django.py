@@ -467,9 +467,9 @@ class AddPanddaRun(luigi.Task):
         # sites_file = models.TextField(blank=True, null=True)
         # events_file = models.TextField(blank=True, null=True)
 
-    
+
         pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.output_dir,
-                                                     analysis_folder=PanddaAnalysis.get_or_create(
+                                                     analysis_folder=PanddaAnalysis.objects.get_or_create(
                                                          pandda_dir=self.input_dir)[0],
                                                      pandda_version=self.pver, sites_file=self.sites_file,
                                                      events_file=self.events_file)[0]
