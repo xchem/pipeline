@@ -459,18 +459,20 @@ class AddPanddaRun(luigi.Task):
             return False
 
     def run(self):
-        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file)[0]
-        print(pandda_run)
-        pandda_run.pandda_dir = self.output_dir
-        print(pandda_run.pandda_dir)
-        pandda_run.analysis_folder = PanddaAnalysis.get_or_create(pandda_dir=self.input_dir)[0]
-        print(pandda_run.analysis_folder)
-        pandda_run.pandda_version = self.pver
-        print(pandda_run.pandda_version)
-        pandda_run.sites_file = self.sites_file
-        print(pandda_run.pandda_version)
-        pandda_run.events_file = self.events_file
-        print(self.events_file)
+
+        # input_dir = models.TextField(blank=True, null=True)
+        # analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
+        # pandda_log = models.TextField(blank=True, null=True, unique=True)
+        # pandda_version = models.TextField(blank=True, null=True)
+        # sites_file = models.TextField(blank=True, null=True)
+        # events_file = models.TextField(blank=True, null=True)
+
+    
+        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.output_dir,
+                                                     analysis_folder=PanddaAnalysis.get_or_create(
+                                                         pandda_dir=self.input_dir)[0],
+                                                     pandda_version=self.pver, sites_file=self.sites_file,
+                                                     events_file=self.events_file)[0]
         pandda_run.save()
 
 
