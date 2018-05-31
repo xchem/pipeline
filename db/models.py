@@ -46,6 +46,24 @@ class Crystal(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    # TODO: change bools to options
+    # model types
+    PREPROCESSING = 'PP'
+    PANDDA = 'PD'
+    PROASIS = 'PR'
+
+
+
+    exists_proasis_pdb = models.BooleanField(blank=True, null=True)
+    exists_proasis_mtz = models.BooleanField()
+    exists_proasis_2fofc = models.BooleanField()
+    exists_proasis_fofc = models.BooleanField()
+    exists_pandda_event_map = models.BooleanField()
+    exists_ligand_cif = models.BooleanField()
+    exists_bound_state_pdb = models.BooleanField()
+    exists_bound_state_mtz = models.BooleanField()
+    exists_ground_state_pdb = models.BooleanField()
+    exists_ground_state_mtz = models.BooleanField()
 
     # date
 
@@ -184,16 +202,7 @@ class ProasisHits(models.Model):
 
 class CrystalStatus(models.Model):
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    exists_proasis_pdb = models.BooleanField()
-    exists_proasis_mtz = models.BooleanField()
-    exists_proasis_2fofc = models.BooleanField()
-    exists_proasis_fofc = models.BooleanField()
-    exists_pandda_event_map = models.BooleanField()
-    exists_ligand_cif = models.BooleanField()
-    exists_bound_state_pdb = models.BooleanField()
-    exists_bound_state_mtz = models.BooleanField()
-    exists_ground_state_pdb = models.BooleanField()
-    exists_ground_state_mtz = models.BooleanField()
+
 
     class Meta:
         db_table = 'crystal_status'
@@ -230,7 +239,7 @@ class ProasisLeads(models.Model):
 
 
 class Proposals(models.Model):
-    proposal = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    proposal = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE, unique=True)
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -238,7 +247,7 @@ class Proposals(models.Model):
 
 
 class PanddaAnalysis(models.Model):
-    pandda_dir = models.TextField()
+    pandda_dir = models.TextField(unique=True)
 
     class Meta:
         db_table = 'pandda_analysis'
@@ -254,6 +263,7 @@ class PanddaRun(models.Model):
 
     class Meta:
         db_table = 'pandda_run'
+
 
 
 class PanddaStatisticalMap(models.Model):
