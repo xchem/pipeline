@@ -51,19 +51,31 @@ class Crystal(models.Model):
     PREPROCESSING = 'PP'
     PANDDA = 'PD'
     PROASIS = 'PR'
+    REFINEMENT = 'RE'
+    COMPCHEM = 'CC'
+    DEPOSITION = 'DP'
 
+    CHOICES = (
+        (PREPROCESSING, 'preprocessing'),
+        (PANDDA, 'pandda'),
+        (PROASIS, 'proasis'),
+        (REFINEMENT, 'refinement'),
+        (COMPCHEM, 'comp_chem'),
+        (DEPOSITION, 'deposition')
+    )
 
+    status = models.CharField(choices=CHOICES, max_length=2, default=PREPROCESSING)
 
-    exists_proasis_pdb = models.BooleanField(blank=True, null=True)
-    exists_proasis_mtz = models.BooleanField()
-    exists_proasis_2fofc = models.BooleanField()
-    exists_proasis_fofc = models.BooleanField()
-    exists_pandda_event_map = models.BooleanField()
-    exists_ligand_cif = models.BooleanField()
-    exists_bound_state_pdb = models.BooleanField()
-    exists_bound_state_mtz = models.BooleanField()
-    exists_ground_state_pdb = models.BooleanField()
-    exists_ground_state_mtz = models.BooleanField()
+    # exists_proasis_pdb = models.BooleanField(blank=True, null=True)
+    # exists_proasis_mtz = models.BooleanField()
+    # exists_proasis_2fofc = models.BooleanField()
+    # exists_proasis_fofc = models.BooleanField()
+    # exists_pandda_event_map = models.BooleanField()
+    # exists_ligand_cif = models.BooleanField()
+    # exists_bound_state_pdb = models.BooleanField()
+    # exists_bound_state_mtz = models.BooleanField()
+    # exists_ground_state_pdb = models.BooleanField()
+    # exists_ground_state_mtz = models.BooleanField()
 
     # date
 
