@@ -2,11 +2,14 @@ import luigi
 import subprocess
 import os
 import datetime
-from functions import db_functions, misc_functions
+from functions import db_functions, misc_functions, pandda_functions
 from sqlalchemy import create_engine
 import pandas
 import sqlite3
-from test_xchem.db.models import SoakdbFiles
+import setup_django
+from db.models import *
+from django.db.models import Q
+import pandas as pd
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -29,6 +32,7 @@ class FindSoakDBFiles(luigi.Task):
         # run process to find sqlite files
         out, err = process.communicate()
         out = out.decode('ascii')
+        print('OUTPUT:')
         print(out)
 
         # write filepaths to file as output
@@ -38,24 +42,28 @@ class FindSoakDBFiles(luigi.Task):
 
 class CheckFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
+        print('Finding soakdb files via CheckFiles')
         soakdb = list(SoakdbFiles.objects.all())
 
-
         if not soakdb:
-            return TransferAllFedIDsAndDatafiles()
+            return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
+                    FindSoakDBFiles(filepath=self.soak_db_filepath)]
         else:
-            return FindSoakDBFiles()
+            return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
 
     def run(self):
+        soakdb = SoakdbFiles.objects.all()
+        print('SOAKDB:')
+        for item in soakdb:
+            print(item)
 
-        conn, c = db_functions.connectDB()
-        exists = db_functions.table_exists(c, 'soakdb_files')
-
+        # a list to hold filenames that have been checked
         checked = []
 
         # Status codes:-
@@ -63,45 +71,82 @@ class CheckFiles(luigi.Task):
         # 1 = changed
         # 2 = not changed
 
-        if exists:
-            with self.input().open('r') as f:
-                files = f.readlines()
+        print('INPUT NAME:')
+        print(self.input()[1].path)
 
-            for filename in files:
+        with open(self.input()[1].path, 'r') as f:
+            files = f.readlines()
+            print('FILES:')
+            print(files)
 
-                filename_clean = filename.rstrip('\n')
+        for filename in files:
+            # remove any newline characters
+            filename_clean = filename.rstrip('\n')
+            # find the relevant entry in the soakdbfiles table
+            soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
 
-                c.execute('select filename, modification_date, status_code from soakdb_files where filename like %s;', (filename_clean,))
+            print(len(soakdb_query))
 
-                for row in c.fetchall():
-                    if len(row) > 0:
-                        data_file = str(row[0])
-                        checked.append(data_file)
-                        old_mod_date = str(row[1])
-                        current_mod_date = misc_functions.get_mod_date(data_file)
+            # raise an exception if the file is not in the soakdb table
+            if len(soakdb_query) == 0:
+                raise Exception(str('No entry found for ' + str(filename_clean)))
 
-                        if current_mod_date > old_mod_date:
-                            c.execute('UPDATE soakdb_files SET status_code = 1 where filename like %s;', (filename_clean,))
-                            c.execute('UPDATE soakdb_files SET modification_date = %s where filename like %s;', (current_mod_date, filename_clean))
-                            conn.commit()
+            # only one entry should exist per file
+            if len(soakdb_query) == 1:
+                # get the filename back from the query
+                data_file = soakdb_query[0].filename
+                # add the file to the list of those that have been checked
+                checked.append(data_file)
+                # get the modification date as stored in the db
+                old_mod_date = soakdb_query[0].modification_date
+                # get the current modification date of the file
+                current_mod_date = misc_functions.get_mod_date(data_file)
+                # get the id of the entry to write to
+                id_number = soakdb_query[0].id
 
-                if filename_clean not in checked:
-                    out, err, proposal = db_functions.pop_soakdb(filename_clean)
-                    db_functions.pop_proposals(proposal)
-                    c.execute('UPDATE soakdb_files SET status_code = 0 where filename like %s;', (filename_clean,))
-                    conn.commit()
+                print(old_mod_date)
+                print(current_mod_date)
 
-            c.execute('select filename from soakdb_files;')
+                # if the file has changed since the db was last updated for the entry, change status to indicate this
+                if int(current_mod_date) > int(old_mod_date):
+                    update_status = SoakdbFiles.objects.get(id=id_number)
+                    update_status.status = 1
+                    update_status.save()
 
-            # for row in c.fetchall():
-            #     if str(row[0]) not in checked:
-            #         data_file = str(row[0])
+                else:
+                    update_status = SoakdbFiles.objects.get(id=id_number)
+                    update_status.status = 0
+                    update_status.save()
 
-        exists = db_functions.table_exists(c, 'lab')
-        if not exists:
-            c.execute('UPDATE soakdb_files SET status_code = 0;')
-            conn.commit()
+            # if there is more than one entry, raise an exception (should never happen - filename field is unique)
+            if len(soakdb_query) > 1:
+                raise Exception('More than one entry for file! Something has gone wrong!')
 
+            # if the file is not in the database at all
+            if filename_clean not in checked:
+                # add the file to soakdb
+                out, err, proposal = db_functions.pop_soakdb(filename_clean)
+                # add the proposal to proposal
+                db_functions.pop_proposals(proposal)
+                # retrieve the new db entry
+                soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
+                # get the id to update
+                id_number = soakdb_query[0].id
+                # update the relevant status to 0, indicating it as a new file
+                update_status = SoakdbFiles.objects.get(id=id_number)
+                update_status.status = 0
+                update_status.save()
+
+
+        # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
+        lab = list(Lab.objects.all())
+        if not lab:
+            # this is to set all file statuses to 0 (new file)
+            soakdb = SoakdbFiles.objects.all()
+            soakdb.status = 0
+            soakdb.update()
+
+        # write output to signify job done
         with self.output().open('w') as f:
             f.write('')
 
@@ -109,10 +154,11 @@ class CheckFiles(luigi.Task):
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     # needs a list of soakDB files from the same day
     def requires(self):
-        return FindSoakDBFiles()
+        return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     # output is just a log file
     def output(self):
@@ -120,198 +166,370 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
     # transfers data to a central postgres db
     def run(self):
-        # connect to central postgres db
-        conn, c = db_functions.connectDB()
 
         # use list from previous step as input to write to postgres
         with self.input().open('r') as database_list:
             for database_file in database_list.readlines():
                 database_file = database_file.replace('\n', '')
 
+                # populate the soakdb table for each db file found by FindSoakDBFiles
                 out, err, proposal = db_functions.pop_soakdb(database_file)
 
-        proposal_list = []
-        c.execute('SELECT proposal FROM soakdb_files')
-        rows = c.fetchall()
-        for row in rows:
-            proposal_list.append(str(row[0]))
+        # return a list of all proposals from db
+        proposal_list = list(SoakdbFiles.objects.values_list('proposal', flat=True))
 
+        # add fedid permissions via proposals table
         for proposal_number in set(proposal_list):
             db_functions.pop_proposals(proposal_number)
 
-        c.close()
-
+        # write output to show job done
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 
 
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
-    file_id = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    # no longer need this - assigned by django
+    # file_id = luigi.Parameter()
 
     def requires(self):
-        return CheckFiles()
+        return CheckFiles(soak_db_filepath=self.data_file)
 
     def output(self):
         pass
 
     def run(self):
-        conn, c = db_functions.connectDB()
-        c.execute('delete from lab where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from refinement where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from dimple where file_id=%s', (self.file_id,))
-        conn.commit()
-        c.execute('delete from data_processing where file_id=%s', (self.file_id,))
-        conn.commit()
-        db_functions.transfer_data(self.data_file)
-        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
-        conn.commit()
+        # pass
+        # delete all fields from soakdb filename
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        soakdb_query.delete()
+
+        db_functions.pop_soakdb(self.data_file)
+
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                    model=Crystal)
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=self.data_file, model=DataProcessing)
+
+        # retrieve the new db entry
+
+        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        # get the id to update
+        id_number = soakdb_query[0].id
+        # update the relevant status to 0, indicating it as a new file
+        update_status = SoakdbFiles.objects.get(id=id_number)
+        update_status.status = 2
+        update_status.save()
 
 
 class TransferNewDataFile(luigi.Task):
     data_file = luigi.Parameter()
-    file_id = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    # no longer need this - assigned by django
+    # file_id = luigi.Parameter()
 
     def requires(self):
-        return CheckFiles()
+        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def run(self):
-        db_functions.transfer_data(self.data_file)
-        conn, c = db_functions.connectDB()
-        c.execute('UPDATE soakdb_files SET status_code=2 where filename like %s;', (self.data_file,))
-        conn.commit()
+        #db_functions.transfer_table(translate_dict=db_functions)
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                    model=Crystal)
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=self.data_file, model=DataProcessing)
+
+        # retrieve the new db entry
+        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        # get the id to update
+        id_number = soakdb_query[0].id
+        # update the relevant status to 0, indicating it as a new file
+        update_status = SoakdbFiles.objects.get(id=id_number)
+        update_status.status = 2
+        update_status.save()
 
 
 class StartTransfers(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def get_file_list(self, status_code):
-        datafiles = []
-        fileids = []
-        conn, c = db_functions.connectDB()
-        c.execute('SELECT filename, id FROM soakdb_files WHERE status_code = %s', (str(status_code),))
-        rows = c.fetchall()
-        for row in rows:
-            datafiles.append(str(row[0]))
-            fileids.append(str(row[1]))
 
-        out_list = list(zip(datafiles, fileids))
-        return out_list
+        status_query = SoakdbFiles.objects.filter(status=status_code)
+        datafiles = [object.filename for object in status_query]
+
+        return datafiles
 
     def requires(self):
-        new_list = self.get_file_list(0)
-        changed_list = self.get_file_list(1)
-        return [TransferNewDataFile(data_file=datafile, file_id=fileid) for (datafile, fileid) in new_list], \
-               [TransferChangedDataFile(data_file=newfile, file_id=newfileid) for (newfile, newfileid) in changed_list]
+        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
         return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
 
     def run(self):
+        new_list = self.get_file_list(0)
+        changed_list = self.get_file_list(1)
+        yield [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                for datafile in new_list], \
+               [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                for datafile in changed_list]
+
         with self.output().open('w') as f:
             f.write('')
 
 
 class FindProjects(luigi.Task):
-    def add_to_postgres(self, table, protein, subset_list, data_dump_dict, title):
-        xchem_engine = create_engine('postgresql://uzw12877@localhost:5432/xchem')
-
-        temp_frame = table.loc[table['protein'] == protein]
-        temp_frame.reset_index(inplace=True)
-        temp2 = temp_frame.drop_duplicates(subset=subset_list)
-
-        try:
-            nodups = db_functions.clean_df_db_dups(temp2, title, xchem_engine,
-                                                   list(data_dump_dict.keys()))
-            nodups.to_sql(title, xchem_engine, if_exists='append')
-        except:
-            temp2.to_sql(title, xchem_engine, if_exists='append')
-
 
     def requires(self):
-        return CheckFiles(), StartTransfers()
+        pass
+        # return CheckFiles(), StartTransfers()
 
     def output(self):
         return luigi.LocalTarget('logs/findprojects.done')
 
     def run(self):
         # all data necessary for uploading hits
-        crystal_data_dump_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
+        hits_dict = {'crystal_name': [], 'protein': [], 'smiles': [], 'bound_conf': [],
                                   'modification_date': [], 'strucid':[]}
 
         # all data necessary for uploading leads
-        project_data_dump_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
+        leads_dict = {'protein': [], 'pandda_path': [], 'reference_pdb': [], 'strucid':[]}
 
-        outcome_string = '(%3%|%4%|%5%|%6%)'
+        # class ProasisHits(models.Model):
+        #     bound_pdb = models.ForeignKey(Refinement, to_field='bound_conf', on_delete=models.CASCADE, unique=True)
+        #     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+        #     modification_date = models.TextField(blank=True, null=True)
+        #     strucid = models.TextField(blank=True, null=True)
+        #     ligand_list = models.IntegerField(blank=True, null=True)
 
-        conn, c = db_functions.connectDB()
+        ref_or_above = Refinement.objects.filter(outcome__in=[3, 4, 5, 6])
 
-        c.execute('''SELECT crystal_id, bound_conf, pdb_latest FROM refinement WHERE outcome SIMILAR TO %s''',
-                  (str(outcome_string),))
-
-        rows = c.fetchall()
-
-        print((str(len(rows)) + ' crystals were found to be in refinement or above'))
-
-        for row in rows:
-
-            c.execute('''SELECT smiles, protein FROM lab WHERE crystal_id = %s''', (str(row[0]),))
-
-            lab_table = c.fetchall()
-
-            if len(str(row[0])) < 3:
-                continue
-
-            if len(lab_table) > 1:
-                print(('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table'))
-                # print lab_table
-
-            for entry in lab_table:
-                if len(str(entry[1])) < 2 or 'None' in str(entry[1]):
-                    protein_name = str(row[0]).split('-')[0]
-                else:
-                    protein_name = str(entry[1])
+        for entry in ref_or_above:
+            print(entry.crystal_name.crystal_name)
+            if entry.bound_conf:
+                print(entry.bound_conf)
+            else:
+                print(entry.pdb_latest)
 
 
-                crystal_data_dump_dict['protein'].append(protein_name)
-                crystal_data_dump_dict['smiles'].append(entry[0])
-                crystal_data_dump_dict['crystal_name'].append(row[0])
-                crystal_data_dump_dict['bound_conf'].append(row[1])
-                crystal_data_dump_dict['strucid'].append('')
+        # lab_table_select = Lab.objects.filter(crystal_name=ref_or_above.crystal_name)
+        #
+        # for row in rows:
+        #
+        #     c.execute('''SELECT smiles, protein FROM lab WHERE crystal_id = %s''', (str(row[0]),))
+        #
+        #     lab_table = c.fetchall()
+        #
+        #     if len(str(row[0])) < 3:
+        #         continue
+        #
+        #     if len(lab_table) > 1:
+        #         print(('WARNING: ' + str(row[0]) + ' has multiple entries in the lab table'))
+        #         # print lab_table
+        #
+        #     for entry in lab_table:
+        #         if len(str(entry[1])) < 2 or 'None' in str(entry[1]):
+        #             protein_name = str(row[0]).split('-')[0]
+        #         else:
+        #             protein_name = str(entry[1])
+        #
+        #
+        #         crystal_data_dump_dict['protein'].append(protein_name)
+        #         crystal_data_dump_dict['smiles'].append(entry[0])
+        #         crystal_data_dump_dict['crystal_name'].append(row[0])
+        #         crystal_data_dump_dict['bound_conf'].append(row[1])
+        #         crystal_data_dump_dict['strucid'].append('')
+        #
+        #         try:
+        #             modification_date = misc_functions.get_mod_date(str(row[1]))
+        #
+        #         except:
+        #             modification_date = ''
+        #
+        #         crystal_data_dump_dict['modification_date'].append(modification_date)
+        #
+        #     c.execute('''SELECT pandda_path, reference_pdb FROM dimple WHERE crystal_id = %s''', (str(row[0]),))
+        #
+        #     pandda_info = c.fetchall()
+        #
+        #     for pandda_entry in pandda_info:
+        #         project_data_dump_dict['protein'].append(protein_name)
+        #         project_data_dump_dict['pandda_path'].append(pandda_entry[0])
+        #         project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
+        #         project_data_dump_dict['strucid'].append('')
+        #
+        # project_table = pandas.DataFrame.from_dict(project_data_dump_dict)
+        # crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
+        #
+        # protein_list = set(list(project_data_dump_dict['protein']))
+        # print(protein_list)
+        #
+        # for protein in protein_list:
+        #
+        #     self.add_to_postgres(project_table, protein, ['reference_pdb'], project_data_dump_dict, 'proasis_leads')
+        #
+        #     self.add_to_postgres(crystal_table, protein, ['crystal_name', 'smiles', 'bound_conf'],
+        #                          crystal_data_dump_dict, 'proasis_hits')
+        #
+        # with self.output().open('wb') as f:
+        #     f.write('')
 
-                try:
-                    modification_date = misc_functions.get_mod_date(str(row[1]))
 
-                except:
-                    modification_date = ''
+class FindPanddaLogs(luigi.Task):
+    search_path = luigi.Parameter()
+    date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
-                crystal_data_dump_dict['modification_date'].append(modification_date)
+    def requires(self):
+        return StartTransfers(soak_db_filepath=self.soak_db_filepath)
 
-            c.execute('''SELECT pandda_path, reference_pdb FROM dimple WHERE crystal_id = %s''', (str(row[0]),))
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))
 
-            pandda_info = c.fetchall()
+    def run(self):
+        print('RUNNING')
+        log_files = pandda_functions.find_log_files(self.search_path)
+        with self.output().open('w') as f:
+            f.write(log_files)
 
-            for pandda_entry in pandda_info:
-                project_data_dump_dict['protein'].append(protein_name)
-                project_data_dump_dict['pandda_path'].append(pandda_entry[0])
-                project_data_dump_dict['reference_pdb'].append(pandda_entry[1])
-                project_data_dump_dict['strucid'].append('')
 
-        project_table = pandas.DataFrame.from_dict(project_data_dump_dict)
-        crystal_table = pandas.DataFrame.from_dict(crystal_data_dump_dict)
+class AddPanddaSites(luigi.Task):
+    file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+    def requires(self):
+        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+                            sites_file=self.sites_file, events_file=self.events_file)
 
-        protein_list = set(list(project_data_dump_dict['protein']))
-        print(protein_list)
+    def output(self):
+        pass
 
-        for protein in protein_list:
+    def run(self):
+        run = PanddaRun.objects.get(pandda_log=self.file)
+        sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
 
-            self.add_to_postgres(project_table, protein, ['reference_pdb'], project_data_dump_dict, 'proasis_leads')
+        # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+        # site = models.IntegerField(blank=True, null=True)
+        # site_aligned_centroid_x = models.FloatField(blank=True, null=True)
+        # site_aligned_centroid_y = models.FloatField(blank=True, null=True)
+        # site_aligned_centroid_z = models.FloatField(blank=True, null=True)
+        # site_native_centroid_x = models.FloatField(blank=True, null=True)
+        # site_native_centroid_y = models.FloatField(blank=True, null=True)
+        # site_native_centroid_z = models.FloatField(blank=True, null=True)
 
-            self.add_to_postgres(crystal_table, protein, ['crystal_name', 'smiles', 'bound_conf'],
-                                 crystal_data_dump_dict, 'proasis_hits')
+        for i in range(0, len(sites_frame['site_idx'])):
+            site = sites_frame['site_idx'][i]
+            aligned_centroid = eval(sites_frame['centroid'][i])
+            native_centroid = eval(sites_frame['native_centroid'][i])
 
-        with self.output().open('wb') as f:
-            f.write('')
+
+            pandda_site = PanddaSite.objects.get_or_create(run=run, site=site,
+                                                           site_aligned_centroid_x=aligned_centroid[0],
+                                                           site_aligned_centroid_y=aligned_centroid[1],
+                                                           site_aligned_centroid_z=aligned_centroid[2],
+                                                           site_native_centroid_x=native_centroid[0],
+                                                           site_native_centroid_y=native_centroid[1],
+                                                           site_native_centroid_z=native_centroid[2])
+            pandda_site.save()
+
+class AddPanddaEvents(luigi.Task):
+    file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+
+    def requires(self):
+        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+                            sites_file=self.sites_file, events_file=self.events_file)
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
+
+class AddPanddaRun(luigi.Task):
+    log_file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def complete(self):
+        if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
+            return True
+        else:
+            return False
+
+    def run(self):
+
+        # input_dir = models.TextField(blank=True, null=True)
+        # analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
+        # pandda_log = models.TextField(blank=True, null=True, unique=True)
+        # pandda_version = models.TextField(blank=True, null=True)
+        # sites_file = models.TextField(blank=True, null=True)
+        # events_file = models.TextField(blank=True, null=True)
+
+
+        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.output_dir,
+                                                     analysis_folder=PanddaAnalysis.objects.get_or_create(
+                                                         pandda_dir=self.input_dir)[0],
+                                                     pandda_version=self.pver, sites_file=self.sites_file,
+                                                     events_file=self.events_file)[0]
+        pandda_run.save()
+
+
+class AddPanddaTables(luigi.Task):
+    search_path = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        return FindPanddaLogs(search_path=self.search_path, soak_db_path=self.soak_db_filepath)
+
+    def output(self):
+        pass
+
+    def run(self):
+        # read the list of log files
+        with self.input().open('r') as f:
+            log_files = f.readlines().split()
+
+        # dict to hold info for subsequent things
+        results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
+                        'events_file': [], 'err': []}
+
+        for file in log_files:
+
+            results_dict['log_file'].append(file)
+            # read information from the log file
+            pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(file)
+            if not err:
+                yield AddPanddaRun(file=file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                                   sites_file=sites_file, events_file=events_file)
+
+
+
 

@@ -10,3 +10,4 @@ hits/*
 transfer_logs/*
 logs/*
 test_xchem/test_xchem/settings.py
+db/migrations/*
