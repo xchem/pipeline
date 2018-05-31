@@ -131,18 +131,12 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_run)
 
-                sites_frame = pd.DataFrame.from_csv(sites_file, index_col=None)
+                add_sites = run_luigi_worker(db_ops_django.AddPanddaSites(log_file=log_file, pver=pver,
+                                                                          input_dir=input_dir, output_dir=output_dir,
+                                                                          sites_file=sites_file,
+                                                                          events_file=events_file))
 
-                for i in range(0, len(sites_frame['site_idx'])):
-                    print(sites_frame['site_idx'][i])
-                    centroid_tuple = eval(sites_frame['centroid'][i])
-                    centroid_x = centroid_tuple[0]
-                    centroid_y = centroid_tuple[1]
-                    centroid_z = centroid_tuple[2]
-                    native_centroid_tuple = eval(sites_frame['native_centroid'][i])
-                    native_centroid_x = native_centroid_tuple[0]
-                    native_centroid_y = native_centroid_tuple[1]
-                    native_centroid_z = native_centroid_tuple[2]
+                self.assertTrue(add_sites)
 
 
 

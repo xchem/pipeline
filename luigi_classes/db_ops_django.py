@@ -9,6 +9,7 @@ import sqlite3
 import setup_django
 from db.models import *
 from django.db.models import Q
+import pandas as pd
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -421,6 +422,31 @@ class AddPanddaSites(luigi.Task):
 
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.file)
+        sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
+
+        # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+        # site = models.IntegerField(blank=True, null=True)
+        # site_aligned_centroid_x = models.FloatField(blank=True, null=True)
+        # site_aligned_centroid_y = models.FloatField(blank=True, null=True)
+        # site_aligned_centroid_z = models.FloatField(blank=True, null=True)
+        # site_native_centroid_x = models.FloatField(blank=True, null=True)
+        # site_native_centroid_y = models.FloatField(blank=True, null=True)
+        # site_native_centroid_z = models.FloatField(blank=True, null=True)
+
+        for i in range(0, len(sites_frame['site_idx'])):
+            site = sites_frame['site_idx'][i]
+            aligned_centroid = eval(sites_frame['centroid'][i])
+            native_centroid = eval(sites_frame['native_centroid'][i])
+
+
+            pandda_site = PanddaSite.objects.get_or_create(run=run, site=site,
+                                                           site_aligned_centroid_x=aligned_centroid[0],
+                                                           site_aligned_centroid_y=aligned_centroid[1],
+                                                           site_aligned_centroid_z=aligned_centroid[2],
+                                                           site_native_centroid_x=native_centroid[0],
+                                                           site_native_centroid_y=native_centroid[1],
+                                                           site_native_centroid_z=native_centroid[2])
+            pandda_site.save()
 
 class AddPanddaEvents(luigi.Task):
     file = luigi.Parameter()
