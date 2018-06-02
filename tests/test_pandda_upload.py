@@ -124,19 +124,25 @@ class TestFindLogs(unittest.TestCase):
                                                                         output_dir=output_directory,
                                                                         event=events_frame['event_idx'][i])
 
-                    lig_strings = pf.find_ligands(pandda_model_path)
+                    if sum(exists_array)==len(exists_array):
 
-                    event_ligand, event_ligand_centroid = pf.find_ligand_site_event(ex=events_frame['x'][i],
-                                                             ey=events_frame['y'][i],
-                                                             ez=events_frame['z'][i],
-                                                             nx=site.site_native_centroid_x,
-                                                             ny=site.site_native_centroid_y,
-                                                             nz=site.site_native_centroid_z,
-                                                             lig_strings=lig_strings,
-                                                             pandda_model_path=pandda_model_path
-                                                             )
+                        lig_strings = pf.find_ligands(pandda_model_path)
 
-                    print(event_ligand)
+
+
+                        event_ligand, event_ligand_centroid = pf.find_ligand_site_event(ex=events_frame['x'][i],
+                                                                 ey=events_frame['y'][i],
+                                                                 ez=events_frame['z'][i],
+                                                                 nx=site.site_native_centroid_x,
+                                                                 ny=site.site_native_centroid_y,
+                                                                 nz=site.site_native_centroid_z,
+                                                                 lig_strings=lig_strings,
+                                                                 pandda_model_path=pandda_model_path
+                                                                 )
+
+                        print(event_ligand)
+                    else:
+                        print(exists_array)
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
