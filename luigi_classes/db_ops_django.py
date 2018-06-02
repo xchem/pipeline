@@ -438,7 +438,7 @@ class AddPanddaSites(luigi.Task):
             aligned_centroid = eval(sites_frame['centroid'][i])
             native_centroid = eval(sites_frame['native_centroid'][i])
 
-            print('Adding pandda site: ' + site)
+            print('Adding pandda site: ' + str(site))
 
             pandda_site = PanddaSite.objects.get_or_create(run=run, site=site,
                                                            site_aligned_centroid_x=aligned_centroid[0],
