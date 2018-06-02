@@ -10,50 +10,6 @@ from db.models import *
 import pandas as pd
 
 
-# class PanddaRun(models.Model):
-#     input_dir = models.TextField(blank=True, null=True)
-#     pandda_dir = models.TextField(blank=True, null=True)
-#     pandda_log = models.TextField(blank=True, null=True)
-#     pandda_version = models.TextField(blank=True, null=True)
-#     sites_file = models.TextField(blank=True, null=True)
-#     events_file = models.TextField(blank=True, null=True)
-#
-#     class Meta:
-#         db_table = 'pandda_run'
-#         # unique_together = ('crystal', 'pandda_log')
-#
-#
-# class PanddaSite(models.Model):
-#     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-#     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-#     site = models.IntegerField(blank=True, null=True)
-#     site_aligned_centroid = models.TextField(blank=True, null=True)
-#     site_native_centroid = models.TextField(blank=True, null=True)
-#     pandda_model_pdb = models.TextField(blank=True, null=True)
-#     pandda_input_mtz = models.TextField(blank=True, null=True)
-#     pandda_input_pdb = models.TextField(blank=True, null=True)
-#
-#     class Meta:
-#         db_table = 'pandda_site'
-#         unique_together = ('crystal', 'run', 'site')
-#
-#
-# class PanddaEvent(models.Model):
-#     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-#     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
-#     run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-#     event = models.IntegerField(blank=True, null=True)
-#     event_centroid = models.TextField(blank=True, null=True)
-#     event_dist_from_site_centroid = models.TextField(blank=True, null=True)
-#     lig_centroid = models.TextField(blank=True, null=True)
-#     lig_dist_event = models.FloatField(blank=True, null=True)
-#     lig_id = models.TextField(blank=True, null=True)
-#     pandda_event_map_native = models.TextField(blank=True, null=True)
-#
-#     class Meta:
-#         db_table = 'pandda_event'
-#         unique_together = ('site', 'event', 'crystal', 'run')
-
 class TestFindLogs(unittest.TestCase):
     # filepath where test data is
     filepath = 'tests/docking_files/database/'
@@ -142,7 +98,23 @@ class TestFindLogs(unittest.TestCase):
 
                 print(events_frame)
 
-                # for i in range(0, len(events_frame['']))
+                for i in range(0, len(events_frame['dtag'])):
+                    print(events_frame['dtag'][i])
+                    print(events_frame['event_idx'][i])
+                    event_site = (events_frame['site_idx'][i])
+                    print(events_frame['x'][i])
+                    print(events_frame['y'][i])
+                    print(events_frame['z'][i])
+                    print(events_frame['1-BDC'][i])
+
+                    run = PanddaRun.objects.get(pandda_log=log_file)
+                    site = PanddaSite.objects.get(site=event_site, run=run)
+
+                    input_directory = run.input_dir
+                    output_directory = PanddaAnalysis.objects.get(pk=run.analysis_folder).pandda_dir
+
+                    print(input_directory)
+                    print(output_directory)
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
