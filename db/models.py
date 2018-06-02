@@ -46,7 +46,6 @@ class Crystal(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
-    # TODO: change bools to options
     # model types
     PREPROCESSING = 'PP'
     PANDDA = 'PD'
@@ -66,19 +65,6 @@ class Crystal(models.Model):
 
     status = models.CharField(choices=CHOICES, max_length=2, default=PREPROCESSING)
 
-    # exists_proasis_pdb = models.BooleanField(blank=True, null=True)
-    # exists_proasis_mtz = models.BooleanField()
-    # exists_proasis_2fofc = models.BooleanField()
-    # exists_proasis_fofc = models.BooleanField()
-    # exists_pandda_event_map = models.BooleanField()
-    # exists_ligand_cif = models.BooleanField()
-    # exists_bound_state_pdb = models.BooleanField()
-    # exists_bound_state_mtz = models.BooleanField()
-    # exists_ground_state_pdb = models.BooleanField()
-    # exists_ground_state_mtz = models.BooleanField()
-
-    # date
-
     class Meta:
         db_table = 'crystal'
 
@@ -91,7 +77,7 @@ class DataProcessing(models.Model):
     completeness_high = models.FloatField(blank=True, null=True)
     completeness_low = models.FloatField(blank=True, null=True)
     completeness_overall = models.FloatField(blank=True, null=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE) # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True) # changed to foreign key
     dimple_mtz_path = models.TextField(blank=True, null=True)
     dimple_pdb_path = models.TextField(blank=True, null=True)
     dimple_status = models.TextField(blank=True, null=True)
@@ -133,7 +119,7 @@ class DataProcessing(models.Model):
 
 
 class Dimple(models.Model):
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
     mtz_path = models.TextField(blank=True, null=True)
     pdb_path = models.TextField(blank=True, null=True)
     r_free = models.FloatField(blank=True, null=True)
@@ -151,7 +137,7 @@ class Lab(models.Model):
     cryo_status = models.TextField(blank=True, null=True)
     cryo_stock_frac = models.FloatField(blank=True, null=True)
     cryo_transfer_vol = models.FloatField(blank=True, null=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
     data_collection_visit = models.TextField(blank=True, null=True)
     expr_conc = models.FloatField(blank=True, null=True)
     harvest_status = models.TextField(blank=True, null=True)
@@ -175,7 +161,7 @@ class Refinement(models.Model):
     cif = models.TextField(blank=True, null=True)
     cif_prog = models.TextField(blank=True, null=True)
     cif_status = models.TextField(blank=True, null=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
     lig_bound_conf = models.TextField(blank=True, null=True)
     lig_cc = models.TextField(blank=True, null=True)
     lig_confidence = models.TextField(blank=True, null=True)
@@ -203,21 +189,13 @@ class Refinement(models.Model):
 
 class ProasisHits(models.Model):
     bound_pdb = models.ForeignKey(Refinement, to_field='bound_conf', on_delete=models.CASCADE, unique=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
     modification_date = models.TextField(blank=True, null=True)
     strucid = models.TextField(blank=True, null=True)
     ligand_list = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'proasis_hits'
-
-
-class CrystalStatus(models.Model):
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-
-
-    class Meta:
-        db_table = 'crystal_status'
 
 
 class LigandEdstats(models.Model):
@@ -244,7 +222,7 @@ class LigandEdstats(models.Model):
 
 class ProasisLeads(models.Model):
     reference_pdb = models.ForeignKey(Reference, to_field='reference_pdb', on_delete=models.CASCADE, unique=True)
-    strucid = models.TextField(blank=True, null=True)
+    strucid = models.TextField(blank=True, null=True, unique=True)
 
     class Meta:
         db_table = 'proasis_leads'
