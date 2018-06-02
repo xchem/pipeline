@@ -438,6 +438,7 @@ class AddPanddaSites(luigi.Task):
             aligned_centroid = eval(sites_frame['centroid'][i])
             native_centroid = eval(sites_frame['native_centroid'][i])
 
+            print('Adding pandda site: ' + site)
 
             pandda_site = PanddaSite.objects.get_or_create(run=run, site=site,
                                                            site_aligned_centroid_x=aligned_centroid[0],
@@ -493,7 +494,7 @@ class AddPanddaRun(luigi.Task):
         # sites_file = models.TextField(blank=True, null=True)
         # events_file = models.TextField(blank=True, null=True)
 
-
+        print('ADDING PANDDA RUN...')
         pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.output_dir,
                                                      analysis_folder=PanddaAnalysis.objects.get_or_create(
                                                          pandda_dir=self.input_dir)[0],
