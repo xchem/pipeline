@@ -124,7 +124,7 @@ class TestFindLogs(unittest.TestCase):
                                                                         output_dir=output_directory,
                                                                         event=events_frame['event_idx'][i])
 
-                    
+
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)

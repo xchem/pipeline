@@ -127,7 +127,7 @@ def get_sites_from_events(events_file):
 
 def get_file_names(BDC, crystal, input_dir, output_dir, event):
 
-    map_file_name = ''.join([crystal, '-event_', event, '_1-BDC_', BDC, '_map.native.ccp4'])
+    map_file_name = ''.join([crystal, '-event_', str(event), '_1-BDC_', str(BDC), '_map.native.ccp4'])
     map_file_path = os.path.join(input_dir.replace('*', ''), crystal, map_file_name)
 
     input_pdb_name = ''.join([crystal, '-pandda-input.pdb'])
