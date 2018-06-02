@@ -62,6 +62,10 @@ class TestFindLogs(unittest.TestCase):
         for log_file in log_files:
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
+            print('IN & OUT FROM PF.GETFILES: ')
+            print(input_dir)
+            print(output_dir)
+            print('\n')
 
             if not err and sites_file and events_file and '0.1.' not in pver:
 
@@ -80,7 +84,6 @@ class TestFindLogs(unittest.TestCase):
 
                 events_frame = pd.DataFrame.from_csv(events_file, index_col=None)
 
-
                 for i in range(0, len(events_frame['dtag'])):
                     # print(events_frame['dtag'][i])
                     # print(events_frame['event_idx'][i])
@@ -93,25 +96,27 @@ class TestFindLogs(unittest.TestCase):
                     run = PanddaRun.objects.get(pandda_log=log_file)
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
+                    print('IN & OUT FROM DB: ')
                     input_directory = run.input_dir
                     print(input_directory)
 
                     output_directory = run.analysis_folder.pandda_dir
                     print(output_directory)
-
-                    map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
-                    pandda_model_path, exists_array = pf.get_file_names(BDC=events_frame['1-BDC'][i],
-                                                                        crystal=events_frame['dtag'][i],
-                                                                        input_dir=input_directory,
-                                                                        output_dir=output_directory,
-                                                                        event=events_frame['event_idx'][i])
-
-                    print(map_file_path)
-                    print(input_pdb_path)
-                    print(input_mtz_path)
-                    print(aligned_pdb_path)
-                    print(pandda_model_path)
-                    print(exists_array)
+                    print('\n')
+                    #
+                    # map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
+                    # pandda_model_path, exists_array = pf.get_file_names(BDC=events_frame['1-BDC'][i],
+                    #                                                     crystal=events_frame['dtag'][i],
+                    #                                                     input_dir=input_directory,
+                    #                                                     output_dir=output_directory,
+                    #                                                     event=events_frame['event_idx'][i])
+                    #
+                    # print(map_file_path)
+                    # print(input_pdb_path)
+                    # print(input_mtz_path)
+                    # print(aligned_pdb_path)
+                    # print(pandda_model_path)
+                    # print(exists_array)
 
                     # if sum(exists_array)==len(exists_array):
                     #
