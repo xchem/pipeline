@@ -193,4 +193,4 @@ def find_ligand_site_event(nx, ny, nz, ex, ey, ez, lig_strings, pandda_model_pat
     ligand = lig_strings[ind]
     lig_centroid = lig_centres[ind]
 
-    return ligand, lig_centroid
+    return ligand, lig_centroid, min_dist

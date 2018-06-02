@@ -48,7 +48,7 @@ class TestFindLogs(unittest.TestCase):
         find_logs = run_luigi_worker(db_ops_django.FindPanddaLogs(
             search_path=
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice',
-        soak_db_filepath=str(self.working_dir + '*')))
+            soak_db_filepath=str(self.working_dir + '*')))
 
         self.assertTrue(find_logs)
         self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
@@ -85,13 +85,7 @@ class TestFindLogs(unittest.TestCase):
                 events_frame = pd.DataFrame.from_csv(events_file, index_col=None)
 
                 for i in range(0, len(events_frame['dtag'])):
-                    # print(events_frame['dtag'][i])
-                    # print(events_frame['event_idx'][i])
                     event_site = (events_frame['site_idx'][i])
-                    # print(events_frame['x'][i])
-                    # print(events_frame['y'][i])
-                    # print(events_frame['z'][i])
-                    # print(events_frame['1-BDC'][i])
 
                     run = PanddaRun.objects.get(pandda_log=log_file)
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
@@ -122,20 +116,23 @@ class TestFindLogs(unittest.TestCase):
 
                         lig_strings = pf.find_ligands(pandda_model_path)
 
-                        event_ligand, event_ligand_centroid = pf.find_ligand_site_event(ex=events_frame['x'][i],
-                                                                 ey=events_frame['y'][i],
-                                                                 ez=events_frame['z'][i],
-                                                                 nx=site.site_native_centroid_x,
-                                                                 ny=site.site_native_centroid_y,
-                                                                 nz=site.site_native_centroid_z,
-                                                                 lig_strings=lig_strings,
-                                                                 pandda_model_path=pandda_model_path
-                                                                 )
+                        try:
+                            event_ligand, event_ligand_centroid, event_lig_dist = pf.find_ligand_site_event(
+                                ex=events_frame['x'][i],
+                                ey=events_frame['y'][i],
+                                ez=events_frame['z'][i],
+                                nx=site.site_native_centroid_x,
+                                ny=site.site_native_centroid_y,
+                                nz=site.site_native_centroid_z,
+                                lig_strings=lig_strings,
+                                pandda_model_path=pandda_model_path
+                            )
 
-                        print(event_ligand)
+                            print(event_ligand)
+                        except:
+                            continue
                     else:
                         print(exists_array)
-
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
@@ -152,6 +149,3 @@ class TestFindLogs(unittest.TestCase):
                 # pandda_model_pdb = models.TextField(blank=True, null=True)
                 # pandda_input_mtz = models.TextField(blank=True, null=True)
                 # pandda_input_pdb = models.TextField(blank=True, null=True)
-
-
-
