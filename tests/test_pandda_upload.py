@@ -45,9 +45,6 @@ class TestFindLogs(unittest.TestCase):
         pandda_runs.delete()
 
     def test_find_pandda_logs(self):
-        print('\n')
-        print('TEST: test_find_pandda_logs')
-        print('\n')
         find_logs = run_luigi_worker(db_ops_django.FindPanddaLogs(
             search_path=
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice',
@@ -58,28 +55,15 @@ class TestFindLogs(unittest.TestCase):
                                                     self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))))
 
     def test_add_pandda_runs(self):
-        print('\n')
-        print('TEST: test_add_pandda_runs')
-        print('\n')
-        print('finding files from logs...')
         log_files = pf.find_log_files(
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/')
         log_files = log_files.split()
-        print('log_files: ' + str(log_files))
 
         for log_file in log_files:
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
 
             if not err and sites_file and events_file and '0.1.' not in pver:
-
-                print('Adding pandda run from log: ' + str(log_file))
-                print('pver: ' + str(pver))
-                print('input_dir: ' + str(input_dir))
-                print('output_dir: ' + str(output_dir))
-                print('sites_file: ' + str(sites_file))
-                print('events_file: ' + str(events_file))
-                print('err: ' + str(err))
 
                 add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
                     log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
@@ -96,7 +80,6 @@ class TestFindLogs(unittest.TestCase):
 
                 events_frame = pd.DataFrame.from_csv(events_file, index_col=None)
 
-                print(events_frame)
 
                 for i in range(0, len(events_frame['dtag'])):
                     # print(events_frame['dtag'][i])
@@ -108,10 +91,6 @@ class TestFindLogs(unittest.TestCase):
                     # print(events_frame['1-BDC'][i])
 
                     run = PanddaRun.objects.get(pandda_log=log_file)
-                    print(run)
-
-                    print(int(event_site))
-
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
                     input_directory = run.input_dir
@@ -124,25 +103,32 @@ class TestFindLogs(unittest.TestCase):
                                                                         output_dir=output_directory,
                                                                         event=events_frame['event_idx'][i])
 
-                    if sum(exists_array)==len(exists_array):
+                    print(map_file_path)
+                    print(input_pdb_path)
+                    print(input_mtz_path)
+                    print(aligned_pdb_path)
+                    print(pandda_model_path)
+                    print(exists_array)
 
-                        lig_strings = pf.find_ligands(pandda_model_path)
+                    # if sum(exists_array)==len(exists_array):
+                    #
+                    #     lig_strings = pf.find_ligands(pandda_model_path)
+                    #
+                    #
+                    #
+                    #     event_ligand, event_ligand_centroid = pf.find_ligand_site_event(ex=events_frame['x'][i],
+                    #                                              ey=events_frame['y'][i],
+                    #                                              ez=events_frame['z'][i],
+                    #                                              nx=site.site_native_centroid_x,
+                    #                                              ny=site.site_native_centroid_y,
+                    #                                              nz=site.site_native_centroid_z,
+                    #                                              lig_strings=lig_strings,
+                    #                                              pandda_model_path=pandda_model_path
+                    #                                              )
+                    #
+                    #     print(event_ligand)
+                    # else:
 
-
-
-                        event_ligand, event_ligand_centroid = pf.find_ligand_site_event(ex=events_frame['x'][i],
-                                                                 ey=events_frame['y'][i],
-                                                                 ez=events_frame['z'][i],
-                                                                 nx=site.site_native_centroid_x,
-                                                                 ny=site.site_native_centroid_y,
-                                                                 nz=site.site_native_centroid_z,
-                                                                 lig_strings=lig_strings,
-                                                                 pandda_model_path=pandda_model_path
-                                                                 )
-
-                        print(event_ligand)
-                    else:
-                        print(exists_array)
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
