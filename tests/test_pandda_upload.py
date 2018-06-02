@@ -41,8 +41,8 @@ class TestFindLogs(unittest.TestCase):
         crystal_rows = Crystal.objects.all()
         crystal_rows.delete()
         # delete pandda runs
-        pandda_runs = PanddaRun.objects.all()
-        pandda_runs.delete()
+        # pandda_runs = PanddaRun.objects.all()
+        # pandda_runs.delete()
 
     def test_find_pandda_logs(self):
         print('\n')
@@ -109,6 +109,8 @@ class TestFindLogs(unittest.TestCase):
 
                     run = PanddaRun.objects.get(pandda_log=log_file)
                     print(run)
+
+                    print(int(event_site))
 
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
