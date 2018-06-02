@@ -159,8 +159,10 @@ def find_ligands(pandda_model_path):
     return lig_strings
 
 
-def find_ligand_site_event(events_frame, lig_strings, pandda_model_path):
-    event_centroid = [events_frame['x'][i], events_frame['y'][i], events_frame['z'][i]]
+def find_ligand_site_event(nx, ny, nz, ex, ey, ez, lig_strings, pandda_model_path):
+    # nn = native_centroid n, en = event_centroid n
+    event_centroid = [ex,ey,ez]
+    native_centroid = [nx, ny, nz]
     event_displacement = np.linalg.norm([native_centroid, event_centroid])
     lig_distances = []
     lig_centres = []
