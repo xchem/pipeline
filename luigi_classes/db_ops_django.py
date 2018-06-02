@@ -446,7 +446,7 @@ class AddPanddaSites(luigi.Task):
                                                            site_aligned_centroid_z=aligned_centroid[2],
                                                            site_native_centroid_x=native_centroid[0],
                                                            site_native_centroid_y=native_centroid[1],
-                                                           site_native_centroid_z=native_centroid[2])
+                                                           site_native_centroid_z=native_centroid[2])[0]
             pandda_site.save()
 
 class AddPanddaEvents(luigi.Task):
