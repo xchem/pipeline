@@ -105,12 +105,7 @@ class TestFindLogs(unittest.TestCase):
                                                                         output_dir=output_directory,
                                                                         event=events_frame['event_idx'][i])
 
-                    print(map_file_path)
-                    print(input_pdb_path)
-                    print(input_mtz_path)
-                    print(aligned_pdb_path)
-                    print(pandda_model_path)
-                    print(exists_array)
+
 
                     if False not in exists_array:
 
@@ -129,6 +124,13 @@ class TestFindLogs(unittest.TestCase):
                             )
 
                             print(event_ligand)
+                            print(map_file_path)
+                            print(input_pdb_path)
+                            print(input_mtz_path)
+                            print(aligned_pdb_path)
+                            print(pandda_model_path)
+                            print(exists_array)
+                            
                         except:
                             continue
                     else:
