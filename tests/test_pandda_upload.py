@@ -108,7 +108,9 @@ class TestFindLogs(unittest.TestCase):
                     print(events_frame['1-BDC'][i])
 
                     run = PanddaRun.objects.get(pandda_log=log_file)
-                    site = PanddaSite.objects.get(site=event_site, run=run)
+                    print(run)
+
+                    site = PanddaSite.objects.get(site=int(event_site), run=run)
 
                     input_directory = run.input_dir
                     output_directory = PanddaAnalysis.objects.get(pk=run.analysis_folder).pandda_dir
