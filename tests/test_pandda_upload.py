@@ -94,7 +94,10 @@ class TestFindLogs(unittest.TestCase):
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
                     input_directory = run.input_dir
+                    print(input_directory)
+
                     output_directory = run.analysis_folder.pandda_dir
+                    print(output_directory)
 
                     map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
                     pandda_model_path, exists_array = pf.get_file_names(BDC=events_frame['1-BDC'][i],
