@@ -414,7 +414,7 @@ class AddPanddaSites(luigi.Task):
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
     def requires(self):
-        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+        return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
@@ -458,7 +458,7 @@ class AddPanddaEvents(luigi.Task):
     events_file = luigi.Parameter()
 
     def requires(self):
-        return AddPanddaRun(file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+        return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
@@ -528,7 +528,7 @@ class AddPanddaTables(luigi.Task):
             # read information from the log file
             pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(file)
             if not err:
-                yield AddPanddaRun(file=file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                yield AddPanddaRun(log_file=file, pver=pver, input_dir=input_dir, output_dir=output_dir,
                                    sites_file=sites_file, events_file=events_file)
 
 
