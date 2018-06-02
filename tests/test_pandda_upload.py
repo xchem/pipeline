@@ -99,13 +99,13 @@ class TestFindLogs(unittest.TestCase):
                 print(events_frame)
 
                 for i in range(0, len(events_frame['dtag'])):
-                    print(events_frame['dtag'][i])
-                    print(events_frame['event_idx'][i])
+                    # print(events_frame['dtag'][i])
+                    # print(events_frame['event_idx'][i])
                     event_site = (events_frame['site_idx'][i])
-                    print(events_frame['x'][i])
-                    print(events_frame['y'][i])
-                    print(events_frame['z'][i])
-                    print(events_frame['1-BDC'][i])
+                    # print(events_frame['x'][i])
+                    # print(events_frame['y'][i])
+                    # print(events_frame['z'][i])
+                    # print(events_frame['1-BDC'][i])
 
                     run = PanddaRun.objects.get(pandda_log=log_file)
                     print(run)
@@ -115,11 +115,16 @@ class TestFindLogs(unittest.TestCase):
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
                     input_directory = run.input_dir
-                    print(run.analysis_folder.pandda_dir)
-                    # output_directory = PanddaAnalysis.objects.get(pk=run.analysis_folder)
+                    output_directory = run.analysis_folder.pandda_dir
 
-                    print(input_directory)
-                    # print(output_directory)
+                    map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
+                    pandda_model_path, exists_array = pf.get_file_names(BDC=events_frame['1-BDC'][i],
+                                                                        crystal=events_frame['dtag'][i],
+                                                                        input_dir=input_directory,
+                                                                        output_dir=output_directory,
+                                                                        event=events_frame['event_idx'][i])
+
+                    
 
                 # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
                 # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
