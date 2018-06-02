@@ -115,7 +115,7 @@ class TestFindLogs(unittest.TestCase):
                     site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
                     input_directory = run.input_dir
-                    print(run.analysis_folder)
+                    print(run.analysis_folder.pandda_dir)
                     # output_directory = PanddaAnalysis.objects.get(pk=run.analysis_folder)
 
                     print(input_directory)
