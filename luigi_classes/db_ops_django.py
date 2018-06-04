@@ -542,8 +542,8 @@ class AddPanddaEvents(luigi.Task):
             else:
                 continue
 
-            with self.output().open('w') as f:
-                f.write('')
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class AddPanddaRun(luigi.Task):
@@ -578,7 +578,6 @@ class AddPanddaTables(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
-        print(FindPanddaLogs(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath).output().path)
         return FindPanddaLogs(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
