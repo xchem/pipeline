@@ -563,7 +563,7 @@ class AddPanddaTables(luigi.Task):
     def run(self):
         # read the list of log files
         with self.input().open('r') as f:
-            log_files = f.readlines().split()
+            log_files = [logfile.rstrip() for logfile in f.readlines()]
 
         # dict to hold info for subsequent things
         # results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
