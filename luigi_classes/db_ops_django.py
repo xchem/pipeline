@@ -414,7 +414,7 @@ class AddPanddaSites(luigi.Task):
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str(self.log_file + '.sites.done'))
 
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.log_file)
@@ -436,6 +436,9 @@ class AddPanddaSites(luigi.Task):
                                                            site_native_centroid_z=native_centroid[2])[0]
             pandda_site.save()
 
+            with self.output().open('w') as f:
+                f.write('')
+
 
 class AddPanddaEvents(luigi.Task):
     log_file = luigi.Parameter()
@@ -452,7 +455,7 @@ class AddPanddaEvents(luigi.Task):
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str(self.log_file + '.events.done'))
 
     def run(self):
 
@@ -520,6 +523,9 @@ class AddPanddaEvents(luigi.Task):
                     print(exc)
             else:
                 continue
+
+            with self.output().open('w') as f:
+                f.write('')
 
 
 class AddPanddaRun(luigi.Task):
