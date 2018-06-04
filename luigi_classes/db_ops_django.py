@@ -1,15 +1,11 @@
 import luigi
+import setup_django
 import subprocess
-import os
 import datetime
 from functions import db_functions, misc_functions, pandda_functions
-from sqlalchemy import create_engine
-import pandas
-import sqlite3
-import setup_django
 from db.models import *
-from django.db.models import Q
 import pandas as pd
+import traceback
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -200,7 +196,6 @@ class TransferChangedDataFile(luigi.Task):
         pass
 
     def run(self):
-        # pass
         # delete all fields from soakdb filename
         soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         soakdb_query.delete()
@@ -240,7 +235,6 @@ class TransferNewDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def run(self):
-        #db_functions.transfer_table(translate_dict=db_functions)
         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
                                     model=Crystal)
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
@@ -413,6 +407,7 @@ class AddPanddaSites(luigi.Task):
     pver = luigi.Parameter()
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
+
     def requires(self):
         return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
@@ -423,15 +418,6 @@ class AddPanddaSites(luigi.Task):
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.file)
         sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
-
-        # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-        # site = models.IntegerField(blank=True, null=True)
-        # site_aligned_centroid_x = models.FloatField(blank=True, null=True)
-        # site_aligned_centroid_y = models.FloatField(blank=True, null=True)
-        # site_aligned_centroid_z = models.FloatField(blank=True, null=True)
-        # site_native_centroid_x = models.FloatField(blank=True, null=True)
-        # site_native_centroid_y = models.FloatField(blank=True, null=True)
-        # site_native_centroid_z = models.FloatField(blank=True, null=True)
 
         for i in range(0, len(sites_frame['site_idx'])):
             site = sites_frame['site_idx'][i]
@@ -465,7 +451,71 @@ class AddPanddaEvents(luigi.Task):
         pass
 
     def run(self):
-        pass
+
+        events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
+
+        for i in range(0, len(events_frame['dtag'])):
+            event_site = (events_frame['site_idx'][i])
+
+            run = PanddaRun.objects.get(pandda_log=self.file)
+            site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
+
+            input_directory = run.input_dir
+
+            output_directory = run.analysis_folder.pandda_dir
+
+            map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
+            pandda_model_path, exists_array = pandda_functions.get_file_names(BDC=events_frame['1-BDC'][i],
+                                                                              crystal=events_frame['dtag'][i],
+                                                                              input_dir=input_directory,
+                                                                              output_dir=output_directory,
+                                                                              event=events_frame['event_idx'][i])
+
+            if False not in exists_array:
+
+                lig_strings = pandda_functions.find_ligands(pandda_model_path)
+
+                try:
+                    event_ligand, event_ligand_centroid, event_lig_dist, site_event_dist = \
+                        pandda_functions.find_ligand_site_event(
+                            ex=events_frame['x'][i],
+                            ey=events_frame['y'][i],
+                            ez=events_frame['z'][i],
+                            nx=site.site_native_centroid_x,
+                            ny=site.site_native_centroid_y,
+                            nz=site.site_native_centroid_z,
+                            lig_strings=lig_strings,
+                            pandda_model_path=pandda_model_path
+                        )
+
+                    pandda_event = PanddaEvent.objects.get_or_create(crystal=Crystal.objects.get(
+                        crystal_name=events_frame['dtag'][i],
+                        site=site,
+                        run=run,
+                        event=events_frame['event_idx'][i],
+                        event_centroid_x=events_frame['x'][i],
+                        event_centroid_y=events_frame['y'][i],
+                        event_centroid_z=events_frame['z'][i],
+                        event_dist_from_site_centroid=site_event_dist,
+                        lig_centroid_x=event_ligand_centroid[0],
+                        lig_centroid_y=event_ligand_centroid[1],
+                        lig_centroid_z=event_ligand_centroid[2],
+                        lig_dist_event=event_lig_dist,
+                        lig_id=event_ligand,
+                        pandda_event_map_native=map_file_path,
+                        pandda_model_pdb=pandda_model_path,
+                        pandda_input_pdb=input_pdb_path,
+                        pandda_input_mtz=input_mtz_path
+
+                    ))[0]
+
+                    pandda_event.save()
+
+                except Exception as exc:
+                    print(traceback.format_exc())
+                    print(exc)
+            else:
+                continue
 
 
 class AddPanddaRun(luigi.Task):
@@ -486,14 +536,6 @@ class AddPanddaRun(luigi.Task):
             return False
 
     def run(self):
-
-        # input_dir = models.TextField(blank=True, null=True)
-        # analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
-        # pandda_log = models.TextField(blank=True, null=True, unique=True)
-        # pandda_version = models.TextField(blank=True, null=True)
-        # sites_file = models.TextField(blank=True, null=True)
-        # events_file = models.TextField(blank=True, null=True)
-
         print('ADDING PANDDA RUN...')
         pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
                                                      analysis_folder=PanddaAnalysis.objects.get_or_create(
