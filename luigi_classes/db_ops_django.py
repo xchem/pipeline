@@ -622,11 +622,16 @@ class FindSearchPaths(luigi.Task):
             paths = [datafile.rstrip() for datafile in f.readlines()]
 
         search_paths=[]
+        soak_db_files=[]
 
         for path in paths:
             search_path = path.split('database')
             if len(search_path)>1:
                 search_paths.append(search_path[0])
+                soak_db_files.append(str('database/' + search_path[1]))
+
+        if len(set(search_paths))==len(search_paths):
+            print('HOORAY!')
 
         print(search_paths)
 
