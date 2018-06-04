@@ -446,9 +446,9 @@ class AddPanddaEvents(luigi.Task):
     events_file = luigi.Parameter()
 
     def requires(self):
-        return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file), \
-               AddPanddaSites(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+               AddPanddaSites(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
