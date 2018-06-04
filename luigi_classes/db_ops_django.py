@@ -574,7 +574,7 @@ class AddPanddaTables(luigi.Task):
             # read information from the log file
             pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(log_file)
             if not err:
-                yield AddPanddaSites(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
                                    sites_file=sites_file, events_file=events_file)
 
 
