@@ -1,4 +1,5 @@
 import luigi
+import os
 import setup_django
 import subprocess
 import datetime
@@ -391,7 +392,7 @@ class FindPanddaLogs(luigi.Task):
         return StartTransfers(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))
+        return luigi.LocalTarget(os.path.join(self.search_path, self.date.strftime('pandda_logs_%Y%m%d.txt')))
 
     def run(self):
         print('RUNNING')
@@ -401,7 +402,7 @@ class FindPanddaLogs(luigi.Task):
 
 
 class AddPanddaSites(luigi.Task):
-    file = luigi.Parameter()
+    log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
     pver = luigi.Parameter()
@@ -409,14 +410,14 @@ class AddPanddaSites(luigi.Task):
     events_file = luigi.Parameter()
 
     def requires(self):
-        return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
         pass
 
     def run(self):
-        run = PanddaRun.objects.get(pandda_log=self.file)
+        run = PanddaRun.objects.get(pandda_log=self.log_file)
         sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
 
         for i in range(0, len(sites_frame['site_idx'])):
@@ -435,8 +436,9 @@ class AddPanddaSites(luigi.Task):
                                                            site_native_centroid_z=native_centroid[2])[0]
             pandda_site.save()
 
+
 class AddPanddaEvents(luigi.Task):
-    file = luigi.Parameter()
+    log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
     pver = luigi.Parameter()
@@ -445,6 +447,8 @@ class AddPanddaEvents(luigi.Task):
 
     def requires(self):
         return AddPanddaRun(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+                            sites_file=self.sites_file, events_file=self.events_file), \
+               AddPanddaSites(log_file=self.file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
@@ -457,7 +461,7 @@ class AddPanddaEvents(luigi.Task):
         for i in range(0, len(events_frame['dtag'])):
             event_site = (events_frame['site_idx'][i])
 
-            run = PanddaRun.objects.get(pandda_log=self.file)
+            run = PanddaRun.objects.get(pandda_log=self.log_file)
             site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
 
             input_directory = run.input_dir
@@ -561,16 +565,15 @@ class AddPanddaTables(luigi.Task):
             log_files = f.readlines().split()
 
         # dict to hold info for subsequent things
-        results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
-                        'events_file': [], 'err': []}
+        # results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
+        #                 'events_file': [], 'err': []}
 
-        for file in log_files:
-
-            results_dict['log_file'].append(file)
+        for log_file in log_files:
+            # results_dict['log_file'].append(file)
             # read information from the log file
             pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(file)
             if not err:
-                yield AddPanddaRun(log_file=file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                yield AddPanddaSites(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
                                    sites_file=sites_file, events_file=events_file)
 
 

@@ -82,3 +82,5 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_sites)
 
+    def test_all_for_nudt7_en(self):
+        pass
