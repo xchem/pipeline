@@ -525,17 +525,18 @@ class AddPanddaEvents(luigi.Task):
                     print(exc)
             else:
                 with open(error_file, 'a') as f:
-                    f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) +' SITE: ' + str(site) +
-                            ' EVENT: ' + str(events_frame['event_idx'][i]))
+                    f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) +' SITE: ' + str(event_site) +
+                            ' EVENT: ' + str(events_frame['event_idx'][i]) + '\n')
                     print('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
-                    f.write('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
+                    f.write('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]) + '\n')
                     print('EXPECTED: ')
-                    f.write('EXPECTED: ')
+                    f.write('EXPECTED: ' + '\n')
                     print(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
-                    f.write(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
+                    f.write(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path])
+                            + '\n')
                     print(exists_array)
-                    f.write(str(exists_array))
-                    f.write('\n')
+                    f.write(str(exists_array)+ '\n')
+                    f.write('\n\n')
 
 
         with self.output().open('w') as f:
