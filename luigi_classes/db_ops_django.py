@@ -461,7 +461,7 @@ class AddPanddaEvents(luigi.Task):
 
         events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
 
-        error_file = str(self.log_file + .transfer.err)
+        error_file = str(self.log_file + '.transfer.err')
 
         for i in range(0, len(events_frame['dtag'])):
             event_site = (events_frame['site_idx'][i])
