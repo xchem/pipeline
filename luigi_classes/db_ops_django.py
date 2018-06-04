@@ -626,7 +626,7 @@ class FindSearchPaths(luigi.Task):
         for path in paths:
             search_path = path.split('database')
             if len(search_path)>1:
-                search_paths.append(search_path)
+                search_paths.append(search_path[0])
 
         print(search_paths)
 
