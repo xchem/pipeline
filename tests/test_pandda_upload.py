@@ -112,16 +112,17 @@ class TestFindLogs(unittest.TestCase):
                         lig_strings = pf.find_ligands(pandda_model_path)
 
                         try:
-                            event_ligand, event_ligand_centroid, event_lig_dist = pf.find_ligand_site_event(
-                                ex=events_frame['x'][i],
-                                ey=events_frame['y'][i],
-                                ez=events_frame['z'][i],
-                                nx=site.site_native_centroid_x,
-                                ny=site.site_native_centroid_y,
-                                nz=site.site_native_centroid_z,
-                                lig_strings=lig_strings,
-                                pandda_model_path=pandda_model_path
-                            )
+                            event_ligand, event_ligand_centroid, event_lig_dist, site_event_dist = \
+                                pf.find_ligand_site_event(
+                                    ex=events_frame['x'][i],
+                                    ey=events_frame['y'][i],
+                                    ez=events_frame['z'][i],
+                                    nx=site.site_native_centroid_x,
+                                    ny=site.site_native_centroid_y,
+                                    nz=site.site_native_centroid_z,
+                                    lig_strings=lig_strings,
+                                    pandda_model_path=pandda_model_path
+                                )
 
                             print(event_ligand)
                             print(map_file_path)
@@ -139,8 +140,10 @@ class TestFindLogs(unittest.TestCase):
                                 event_centroid_x=events_frame['x'][i],
                                 event_centroid_y=events_frame['y'][i],
                                 event_centroid_z=events_frame['z'][i],
-                                event_dist_from_site_centroid='',
-                                lig_centroid='',
+                                event_dist_from_site_centroid=site_event_dist,
+                                lig_centroid_x=event_ligand_centroid[0],
+                                lig_centroid_y=event_ligand_centroid[1],
+                                event_centroid_z=event_ligand_centroid[2],
                                 lig_dist_event=event_lig_dist,
                                 lig_id=event_ligand,
                                 pandda_event_map_native=map_file_path,
