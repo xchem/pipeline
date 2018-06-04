@@ -42,7 +42,7 @@ class SoakdbFiles(models.Model):
 
 
 class Crystal(models.Model):
-    crystal_name = models.TextField(blank=False, null=False, unique=True)
+    crystal_name = models.TextField(blank=False, null=False)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
@@ -67,6 +67,7 @@ class Crystal(models.Model):
 
     class Meta:
         db_table = 'crystal'
+        unique_together = ('crystal_name', 'file')
 
 
 class DataProcessing(models.Model):

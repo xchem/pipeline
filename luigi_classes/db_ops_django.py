@@ -608,5 +608,22 @@ class AddPanddaTables(luigi.Task):
             f.write('')
 
 
+class FindSearchPaths(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        return FindSoakDBFiles(filepath=self.soak_db_filepath)
+
+    def output(self):
+        pass
+
+    def run(self):
+        with self.input().open('r') as f:
+            paths = [datafile.rstrip() for datafile in f.readlines()]
+
+        for path in paths:
+            print(path)
+
+
 
 

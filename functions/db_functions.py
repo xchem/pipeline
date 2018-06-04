@@ -186,7 +186,9 @@ def transfer_table(translate_dict, filename, model):
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key])[0]
+                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
+                                                              file=models.SoakdbFiles.objects.get_or_create(
+                                                                  filename=filename)[0])[0]
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
@@ -226,13 +228,13 @@ def transfer_table(translate_dict, filename, model):
             print('WARNING: ' + str(e.__cause__))
             print(model_fields)
             continue
-
-        except ValueError as e:
-            print(d)
-            print('WARNING: ' + str(e.__cause__))
-            print(e)
-            print(model_fields)
-            continue
+        # uncomment to debug
+        # except ValueError as e:
+        #     print(d)
+        #     print('WARNING: ' + str(e.__cause__))
+        #     print(e)
+        #     print(model_fields)
+        #     continue
 
 
 def soakdb_query(filename):
