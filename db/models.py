@@ -246,10 +246,10 @@ class PanddaAnalysis(models.Model):
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
     analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
-    pandda_log = models.TextField(blank=True, null=True, unique=True)
-    pandda_version = models.TextField(blank=True, null=True)
-    sites_file = models.TextField(blank=True, null=True)
-    events_file = models.TextField(blank=True, null=True)
+    pandda_log = models.TextField(unique=True)
+    pandda_version = models.TextField()
+    sites_file = models.TextField()
+    events_file = models.TextField()
 
     class Meta:
         db_table = 'pandda_run'
