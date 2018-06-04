@@ -461,6 +461,8 @@ class AddPanddaEvents(luigi.Task):
 
         events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
 
+        error_file = str(self.log_file + .transfer.err)
+
         for i in range(0, len(events_frame['dtag'])):
             event_site = (events_frame['site_idx'][i])
 
@@ -516,34 +518,24 @@ class AddPanddaEvents(luigi.Task):
 
                     )[0]
 
-                    # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-                    # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
-                    # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-                    # event = models.IntegerField(blank=True, null=True)
-                    # event_centroid_x = models.FloatField(blank=True, null=True)
-                    # event_centroid_y = models.FloatField(blank=True, null=True)
-                    # event_centroid_z = models.FloatField(blank=True, null=True)
-                    # event_dist_from_site_centroid = models.TextField(blank=True, null=True)
-                    # lig_centroid_x = models.FloatField(blank=True, null=True)
-                    # lig_centroid_y = models.FloatField(blank=True, null=True)
-                    # lig_centroid_z = models.FloatField(blank=True, null=True)
-                    # lig_dist_event = models.FloatField(blank=True, null=True)
-                    # lig_id = models.TextField(blank=True, null=True)
-                    # pandda_event_map_native = models.TextField(blank=True, null=True)
-                    # pandda_model_pdb = models.TextField(blank=True, null=True)
-                    # pandda_input_mtz = models.TextField(blank=True, null=True)
-                    # pandda_input_pdb = models.TextField(blank=True, null=True)
-
                     pandda_event.save()
 
                 except Exception as exc:
                     print(traceback.format_exc())
                     print(exc)
             else:
-                print('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
-                print('EXPECTED: ')
-                print([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path])
-                print(exists_array)
+                with error_file.open('a') as f:
+                    f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) +' SITE: ' + str(site) +
+                            ' EVENT: ' + str(events_frame['event_idx'][i]))
+                    print('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
+                    f.write('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
+                    print('EXPECTED: ')
+                    f.write('EXPECTED: ')
+                    print([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path])
+                    f.write(([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
+                    print(exists_array)
+                    f.write((exists_array))
+                    f.write('\n')
 
 
         with self.output().open('w') as f:
