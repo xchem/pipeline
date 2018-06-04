@@ -582,7 +582,7 @@ class AddPanddaTables(luigi.Task):
         return FindPanddaLogs(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str(self.input().path + '.tables.done'))
 
     def run(self):
         # read the list of log files
@@ -600,6 +600,9 @@ class AddPanddaTables(luigi.Task):
             if not err and sites_file and events_file and '0.1.' not in pver:
                 yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
                                    sites_file=sites_file, events_file=events_file)
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 
