@@ -637,9 +637,9 @@ class FindSearchPaths(luigi.Task):
 
         print(search_paths)
 
-        for path in search_paths:
-            print(path)
-            yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath)
+        # for path in search_paths:
+        #     print(path)
+        #     yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath)
 
 
 
