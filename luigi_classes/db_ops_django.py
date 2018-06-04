@@ -495,8 +495,8 @@ class AddPanddaEvents(luigi.Task):
                             pandda_model_path=pandda_model_path
                         )
 
-                    pandda_event = PanddaEvent.objects.get_or_create(crystal=Crystal.objects.get(
-                        crystal_name=events_frame['dtag'][i],
+                    pandda_event = PanddaEvent.objects.get_or_create(
+                        crystal=Crystal.objects.get(crystal_name=events_frame['dtag'][i]),
                         site=site,
                         run=run,
                         event=events_frame['event_idx'][i],
@@ -514,7 +514,25 @@ class AddPanddaEvents(luigi.Task):
                         pandda_input_pdb=input_pdb_path,
                         pandda_input_mtz=input_mtz_path
 
-                    ))[0]
+                    )[0]
+
+                    # crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+                    # site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
+                    # run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+                    # event = models.IntegerField(blank=True, null=True)
+                    # event_centroid_x = models.FloatField(blank=True, null=True)
+                    # event_centroid_y = models.FloatField(blank=True, null=True)
+                    # event_centroid_z = models.FloatField(blank=True, null=True)
+                    # event_dist_from_site_centroid = models.TextField(blank=True, null=True)
+                    # lig_centroid_x = models.FloatField(blank=True, null=True)
+                    # lig_centroid_y = models.FloatField(blank=True, null=True)
+                    # lig_centroid_z = models.FloatField(blank=True, null=True)
+                    # lig_dist_event = models.FloatField(blank=True, null=True)
+                    # lig_id = models.TextField(blank=True, null=True)
+                    # pandda_event_map_native = models.TextField(blank=True, null=True)
+                    # pandda_model_pdb = models.TextField(blank=True, null=True)
+                    # pandda_input_mtz = models.TextField(blank=True, null=True)
+                    # pandda_input_pdb = models.TextField(blank=True, null=True)
 
                     pandda_event.save()
 
