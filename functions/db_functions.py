@@ -227,6 +227,12 @@ def transfer_table(translate_dict, filename, model):
             print(model_fields)
             continue
 
+        except ValueError as e:
+            print(d)
+            print('WARNING: ' + str(e.__cause__))
+            print(model_fields)
+            continue
+
 
 def soakdb_query(filename):
     conn = sqlite3.connect(filename)
