@@ -621,9 +621,14 @@ class FindSearchPaths(luigi.Task):
         with self.input().open('r') as f:
             paths = [datafile.rstrip() for datafile in f.readlines()]
 
+        search_paths=[]
+
         for path in paths:
             search_path = path.split('database')
-            print(search_path)
+            if len(search_path)>1:
+                search_paths.append(search_path)
+
+        print(search_paths)
 
 
 
