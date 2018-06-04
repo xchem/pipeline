@@ -524,7 +524,7 @@ class AddPanddaEvents(luigi.Task):
                     print(traceback.format_exc())
                     print(exc)
             else:
-                with error_file.open('a') as f:
+                with open(error_file, 'a') as f:
                     f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) +' SITE: ' + str(site) +
                             ' EVENT: ' + str(events_frame['event_idx'][i]))
                     print('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
