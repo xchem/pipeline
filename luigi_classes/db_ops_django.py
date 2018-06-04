@@ -531,10 +531,10 @@ class AddPanddaEvents(luigi.Task):
                     f.write('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
                     print('EXPECTED: ')
                     f.write('EXPECTED: ')
-                    print([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path])
-                    f.write(([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
+                    print(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
+                    f.write(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path]))
                     print(exists_array)
-                    f.write((exists_array))
+                    f.write(str(exists_array))
                     f.write('\n')
 
 
