@@ -497,8 +497,10 @@ class AddPanddaEvents(luigi.Task):
                             pandda_model_path=pandda_model_path
                         )
 
+                    crystal = Crystal.objects.get(crystal_name=events_frame['dtag'][i])
+
                     pandda_event = PanddaEvent.objects.get_or_create(
-                        crystal=Crystal.objects.get(crystal_name=events_frame['dtag'][i]),
+                        crystal=crystal,
                         site=site,
                         run=run,
                         event=events_frame['event_idx'][i],
@@ -519,6 +521,11 @@ class AddPanddaEvents(luigi.Task):
                     )[0]
 
                     pandda_event.save()
+
+                    crystal.status = Crystal.PANDDA
+                    crystal.save()
+
+
 
                 except Exception as exc:
                     print(traceback.format_exc())
