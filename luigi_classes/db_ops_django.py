@@ -634,6 +634,8 @@ class FindSearchPaths(luigi.Task):
                 search_paths.append(search_path[0])
                 soak_db_files.append(str('database/' + search_path[1]))
 
+        print(list(zip(search_paths, soak_db_files)))
+
         if len(set(search_paths))==len(search_paths):
             print('HOORAY!')
 
