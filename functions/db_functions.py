@@ -230,6 +230,7 @@ def transfer_table(translate_dict, filename, model):
         except ValueError as e:
             print(d)
             print('WARNING: ' + str(e.__cause__))
+            print(e)
             print(model_fields)
             continue
 
