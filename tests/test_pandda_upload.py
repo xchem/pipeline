@@ -130,7 +130,26 @@ class TestFindLogs(unittest.TestCase):
                             print(aligned_pdb_path)
                             print(pandda_model_path)
                             print(exists_array)
-                            
+
+                            pandda_event = PanddaEvent.objects.get_or_create(crystal=Crystal.objects.get(
+                                crystal_name=events_frame['dtag'][i],
+                                site=site,
+                                run=run,
+                                event=events_frame['event_idx'][i],
+                                event_centroid_x=events_frame['x'][i],
+                                event_centroid_y=events_frame['y'][i],
+                                event_centroid_z=events_frame['z'][i],
+                                event_dist_from_site_centroid='',
+                                lig_centroid='',
+                                lig_dist_event=event_lig_dist,
+                                lig_id=event_ligand,
+                                pandda_event_map_native=map_file_path,
+                                pandda_model_pdb=pandda_model_path,
+                                pandda_input_pdb=input_pdb_path,
+                                pandda_input_mtz=input_mtz_path
+
+                            ))[0]
+
                         except:
                             continue
                     else:
