@@ -171,6 +171,9 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
                 # populate the soakdb table for each db file found by FindSoakDBFiles
                 out, err, proposal = db_functions.pop_soakdb(database_file)
+                print(out)
+                print(err)
+                print(proposal)
 
         # return a list of all proposals from db
         proposal_list = list(SoakdbFiles.objects.values_list('proposal', flat=True))
