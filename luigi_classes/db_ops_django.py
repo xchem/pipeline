@@ -199,23 +199,22 @@ class TransferChangedDataFile(luigi.Task):
     def run(self):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
-        print(maint_exists)
+        if maint_exists == 1:
+            soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+            soakdb_query.delete()
 
-        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-        soakdb_query.delete()
+            db_functions.pop_soakdb(self.data_file)
 
-        db_functions.pop_soakdb(self.data_file)
-
-        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
-                                    model=Crystal)
-        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
-                                    model=Lab)
-        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
-                                    model=Refinement)
-        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
-                                    model=Dimple)
-        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
-                                    filename=self.data_file, model=DataProcessing)
+            db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                        model=Crystal)
+            db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                        model=Lab)
+            db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                        model=Refinement)
+            db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                        model=Dimple)
+            db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                        filename=self.data_file, model=DataProcessing)
 
         # retrieve the new db entry
 
@@ -240,18 +239,17 @@ class TransferNewDataFile(luigi.Task):
 
     def run(self):
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
-        print(maint_exists)
-
-        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
-                                    model=Crystal)
-        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
-                                    model=Lab)
-        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
-                                    model=Refinement)
-        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
-                                    model=Dimple)
-        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
-                                    filename=self.data_file, model=DataProcessing)
+        if maint_exists==1:
+            db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
+                                        model=Crystal)
+            db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
+                                        model=Lab)
+            db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
+                                        model=Refinement)
+            db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
+                                        model=Dimple)
+            db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                        filename=self.data_file, model=DataProcessing)
 
         # retrieve the new db entry
         soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
