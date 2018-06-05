@@ -18,7 +18,7 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.TextField(blank=False, null=False, unique=True)
+    smiles = models.TextField(blank=True, null=True, unique=True)
 
     class Meta:
         db_table = 'compounds'
