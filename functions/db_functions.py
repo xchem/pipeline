@@ -249,6 +249,7 @@ def soakdb_query(filename):
               "and ProteinName not like ? and ProteinName not NULL", ('None', 'None', 'None'))
 
     results = c.fetchall()
+    conn.close()
     return results
 
 
@@ -257,6 +258,7 @@ def check_table_sqlite(filename, tablename):
     c = conn.cursor()
     c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?;", (tablename,))
     results = c.fetchall()[0][0]
+    conn.close()
 
     return results
 
@@ -295,132 +297,135 @@ def pop_proposals(proposal_number):
     proposal_entry = models.Proposals(proposal=soakdb_entry, fedids=str(append_list))
     proposal_entry.save()
 
-def query_and_list(query, proposals_list, proposal_dict, strucid_list):
-    conn, c = connectDB()
-    c.execute(query)
-    rows = c.fetchall()
-    for row in rows:
-        try:
-            proposal = str(row[0]).split('/')[5].split('-')[0]
-        except:
-            continue
-        if proposal not in proposals_list:
-            proposals_list.append(proposal)
-            proposal_dict.update({proposal: []})
-        else:
-            proposal_dict[proposal].append(str(row[1]))
-
-        strucid_list.append(str(row[1]))
-
-    return proposals_list, proposal_dict, strucid_list
-
-def get_strucid_list():
-
-    proposals_list = []
-    strucid_list = []
-    proposal_dict = {}
-
-    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT bound_conf, strucid FROM proasis_hits',
-                                                                 proposals_list, proposal_dict, strucid_list)
-
-    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT reference_pdb, strucid FROM proasis_leads',
-                                                                 proposals_list, proposal_dict, strucid_list)
-
-    strucids = list(set(strucid_list))
-
-    return proposal_dict, strucids
-
-
-def get_fedid_list():
-    master_list = []
-    conn, c = connectDB()
-    c.execute('select fedids from proposals')
-    rows = c.fetchall()
-    for row in rows:
-        if len(row[0]) > 1:
-            fedid_list = str(row[0]).split(',')
-            for item in fedid_list:
-                master_list.append(item)
-
-    final_list = list(set(master_list))
-    return final_list
-
-def create_blacklist(fedid, proposal_dict, dir_path):
-    search_string=str('%' + fedid + '%')
-    proposal_list = []
-    all_proposals = list(set(list(proposal_dict.keys())))
-    strucid_list = []
-    conn, c = connectDB()
-    c.execute('select proposal from proposals where fedids like %s', (search_string,))
-    rows = c.fetchall()
-    for row in rows:
-        proposal_list.append(str(row[0]))
-    for proposal in proposal_list:
-        if proposal in all_proposals:
-            all_proposals.remove(proposal)
-    for proposal in all_proposals:
-        try:
-            temp_vals = proposal_dict[proposal]
-        except:
-            continue
-        for item in temp_vals:
-            strucid_list.append(item)
-
-    blacklist_file = str(dir_path + '/' + fedid + '.dat')
-    with open(blacklist_file, 'wb') as writefile:
-        wr = csv.writer(writefile)
-        wr.writerow(strucid_list)
-
-def get_pandda_ligand(datafile, pandda_path, crystal):
-    conn = sqlite3.connect(datafile)
-    c = conn.cursor()
-    lig_list = []
-    for row in c.execute('''select PANDDA_site_ligand_resname, PANDDA_site_ligand_chain, PANDDA_site_ligand_sequence_number
-                  from panddaTable where PANDDAPath like ? and CrystalName like ?''', (pandda_path, crystal)):
-        resname = str(row[0])
-        chain = str(row[1])
-        sequence = str(row[2])
-        lig_list.append([resname, chain, sequence])
-    return lig_list
-
-def get_pandda_lig_list(bound_conf):
-    conn, c = connectDB()
-    c.execute('select file_id from refinement where bound_conf like %s', (bound_conf,))
-    file_id = str(c.fetchall()[0][0])
-    c.execute('select filename from soakdb_files where id = %s', (file_id,))
-    datafile = str(c.fetchall()[0][0])
-    c.execute('select crystal_name from proasis_hits where bound_conf like %s', (bound_conf,))
-    crystal = str(c.fetchall()[0][0])
-    c.execute('select pandda_path from dimple where file_id = %s and crystal_name like %s', (file_id, crystal))
-    pandda_directory = str(c.fetchall()[0][0])
-
-    lig_list = get_pandda_ligand(datafile,pandda_directory,crystal)
-
-    return lig_list
-
-def check_file_status(filetype, filename, bound_pdb):
-    conn, c = connectDB()
-
-    pdb_file_name = str(bound_pdb).split('/')[-1]
-
-    if 'Refine' in str(bound_pdb).replace(pdb_file_name, ''):
-        remove_string = str(str(bound_pdb).split('/')[-2] + '/' + pdb_file_name)
-        map_directory = str(bound_pdb).replace(remove_string, '')
-    else:
-        map_directory = str(bound_pdb).replace(pdb_file_name, '')
-
-    exists = column_exists('proasis_hits', str('exists_' + filetype))
-
-    if not exists:
-        execute_string = str("ALTER TABLE proasis_hits ADD COLUMN exists_" + filetype + " text;")
-        c.execute(execute_string)
-        conn.commit()
-
-    execute_string = str("UPDATE proasis_hits SET exists_" + filetype + "=1 where bound_conf like %s")
-    if os.path.isfile(str(map_directory + filename)):
-        c.execute(execute_string, (bound_pdb,))
-        conn.commit()
-    else:
-        c.execute(execute_string.replace('1','0'), (bound_pdb,))
-        conn.commit()
-
+# def query_and_list(query, proposals_list, proposal_dict, strucid_list):
+#     conn, c = connectDB()
+#     c.execute(query)
+#     rows = c.fetchall()
+#     for row in rows:
+#         try:
+#             proposal = str(row[0]).split('/')[5].split('-')[0]
+#         except:
+#             continue
+#         if proposal not in proposals_list:
+#             proposals_list.append(proposal)
+#             proposal_dict.update({proposal: []})
+#         else:
+#             proposal_dict[proposal].append(str(row[1]))
+#
+#         strucid_list.append(str(row[1]))
+#
+#     conn.close()
+#
+#     return proposals_list, proposal_dict, strucid_list
+#
+# def get_strucid_list():
+#
+#     proposals_list = []
+#     strucid_list = []
+#     proposal_dict = {}
+#
+#     proposals_list, proposal_dict, strucid_list = query_and_list('SELECT bound_conf, strucid FROM proasis_hits',
+#                                                                  proposals_list, proposal_dict, strucid_list)
+#
+#     proposals_list, proposal_dict, strucid_list = query_and_list('SELECT reference_pdb, strucid FROM proasis_leads',
+#                                                                  proposals_list, proposal_dict, strucid_list)
+#
+#     strucids = list(set(strucid_list))
+#
+#     return proposal_dict, strucids
+#
+#
+# def get_fedid_list():
+#     master_list = []
+#     conn, c = connectDB()
+#     c.execute('select fedids from proposals')
+#     rows = c.fetchall()
+#     for row in rows:
+#         if len(row[0]) > 1:
+#             fedid_list = str(row[0]).split(',')
+#             for item in fedid_list:
+#                 master_list.append(item)
+#
+#     final_list = list(set(master_list))
+#     conn.close()
+#     return final_list
+#
+# def create_blacklist(fedid, proposal_dict, dir_path):
+#     search_string=str('%' + fedid + '%')
+#     proposal_list = []
+#     all_proposals = list(set(list(proposal_dict.keys())))
+#     strucid_list = []
+#     conn, c = connectDB()
+#     c.execute('select proposal from proposals where fedids like %s', (search_string,))
+#     rows = c.fetchall()
+#     for row in rows:
+#         proposal_list.append(str(row[0]))
+#     for proposal in proposal_list:
+#         if proposal in all_proposals:
+#             all_proposals.remove(proposal)
+#     for proposal in all_proposals:
+#         try:
+#             temp_vals = proposal_dict[proposal]
+#         except:
+#             continue
+#         for item in temp_vals:
+#             strucid_list.append(item)
+#
+#     blacklist_file = str(dir_path + '/' + fedid + '.dat')
+#     with open(blacklist_file, 'wb') as writefile:
+#         wr = csv.writer(writefile)
+#         wr.writerow(strucid_list)
+#
+# def get_pandda_ligand(datafile, pandda_path, crystal):
+#     conn = sqlite3.connect(datafile)
+#     c = conn.cursor()
+#     lig_list = []
+#     for row in c.execute('''select PANDDA_site_ligand_resname, PANDDA_site_ligand_chain, PANDDA_site_ligand_sequence_number
+#                   from panddaTable where PANDDAPath like ? and CrystalName like ?''', (pandda_path, crystal)):
+#         resname = str(row[0])
+#         chain = str(row[1])
+#         sequence = str(row[2])
+#         lig_list.append([resname, chain, sequence])
+#     return lig_list
+#
+# def get_pandda_lig_list(bound_conf):
+#     conn, c = connectDB()
+#     c.execute('select file_id from refinement where bound_conf like %s', (bound_conf,))
+#     file_id = str(c.fetchall()[0][0])
+#     c.execute('select filename from soakdb_files where id = %s', (file_id,))
+#     datafile = str(c.fetchall()[0][0])
+#     c.execute('select crystal_name from proasis_hits where bound_conf like %s', (bound_conf,))
+#     crystal = str(c.fetchall()[0][0])
+#     c.execute('select pandda_path from dimple where file_id = %s and crystal_name like %s', (file_id, crystal))
+#     pandda_directory = str(c.fetchall()[0][0])
+#
+#     lig_list = get_pandda_ligand(datafile,pandda_directory,crystal)
+#
+#     return lig_list
+#
+# def check_file_status(filetype, filename, bound_pdb):
+#     conn, c = connectDB()
+#
+#     pdb_file_name = str(bound_pdb).split('/')[-1]
+#
+#     if 'Refine' in str(bound_pdb).replace(pdb_file_name, ''):
+#         remove_string = str(str(bound_pdb).split('/')[-2] + '/' + pdb_file_name)
+#         map_directory = str(bound_pdb).replace(remove_string, '')
+#     else:
+#         map_directory = str(bound_pdb).replace(pdb_file_name, '')
+#
+#     exists = column_exists('proasis_hits', str('exists_' + filetype))
+#
+#     if not exists:
+#         execute_string = str("ALTER TABLE proasis_hits ADD COLUMN exists_" + filetype + " text;")
+#         c.execute(execute_string)
+#         conn.commit()
+#
+#     execute_string = str("UPDATE proasis_hits SET exists_" + filetype + "=1 where bound_conf like %s")
+#     if os.path.isfile(str(map_directory + filename)):
+#         c.execute(execute_string, (bound_pdb,))
+#         conn.commit()
+#     else:
+#         c.execute(execute_string.replace('1','0'), (bound_pdb,))
+#         conn.commit()
+#
