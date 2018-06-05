@@ -197,7 +197,7 @@ class TransferChangedDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.data_file)
 
     def complete(self):
-        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         if soakdb_query.status == 2:
             return True
         else:
@@ -245,7 +245,7 @@ class TransferNewDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def complete(self):
-        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         if soakdb_query.status == 2:
             return True
         else:
