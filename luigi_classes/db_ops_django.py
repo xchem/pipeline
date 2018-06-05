@@ -408,10 +408,12 @@ class AddPanddaSites(luigi.Task):
     pver = luigi.Parameter()
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
+    soakdb_filename=luigi.Parameter()
 
     def requires(self):
-        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
-                            sites_file=self.sites_file, events_file=self.events_file)
+        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
+                            pver=self.pver, sites_file=self.sites_file, events_file=self.events_file,
+                            soakdb_filename=self.soakdb_filename)
 
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.sites.done'))
@@ -447,6 +449,7 @@ class AddPanddaEvents(luigi.Task):
     pver = luigi.Parameter()
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
+    soakdb_filename = luigi.Parameter()
 
     def requires(self):
         return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
@@ -497,7 +500,10 @@ class AddPanddaEvents(luigi.Task):
                             pandda_model_path=pandda_model_path
                         )
 
-                    crystal = Crystal.objects.get(crystal_name=events_frame['dtag'][i])
+                    crystal = Crystal.objects.get(crystal_name=events_frame['dtag'][i],
+                                                  file=SoakdbFiles.objects.get_or_create(
+                                                      filename=self.soakdb_filename)[0]
+                                                  )
 
                     pandda_event = PanddaEvent.objects.get_or_create(
                         crystal=crystal,
@@ -628,9 +634,10 @@ class FindSearchPaths(luigi.Task):
             search_path = path.split('database')
             if len(search_path)>1:
                 if search_path[0] in search_paths:
+                    print('\n')
                     print('already an entry for this...')
-                    print(search_path[0])
-                    print(str('database/' + search_path[1]))
+                    print(search_path[0] + str('database/' + search_path[1]))
+                    print('\n')
                 search_paths.append(search_path[0])
                 soak_db_files.append(str('database/' + search_path[1]))
 
