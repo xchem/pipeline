@@ -241,7 +241,7 @@ class TransferNewDataFile(luigi.Task):
     def run(self):
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
         print(maint_exists)
-        
+
         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
                                     model=Crystal)
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,

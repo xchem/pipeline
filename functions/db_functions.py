@@ -254,7 +254,7 @@ def check_table_sqlite(filename, tablename):
     conn = sqlite3.connect(filename)
     c = conn.cursor()
     c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?;", (tablename,))
-    results = c.fetchall()[0]
+    results = c.fetchall()[0][0]
 
     return results
 
