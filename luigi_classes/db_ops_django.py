@@ -614,6 +614,13 @@ class AddPanddaTables(luigi.Task):
                 # if no error, and sites and events present, add events from events file
                 yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
                                    sites_file=sites_file, events_file=events_file, sdbfile=self.sdbfile)
+            else:
+                print(pver)
+                print(input_dir)
+                print(output_dir)
+                print(sites_file)
+                print(events_file)
+                print(err)
 
         with self.output().open('w') as f:
             f.write('')
