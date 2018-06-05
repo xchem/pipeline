@@ -633,20 +633,26 @@ class FindSearchPaths(luigi.Task):
         for path in paths:
             search_path = path.split('database')
             if len(search_path)>1:
-                if search_path[0] in search_paths:
-                    print('\n')
-                    print('already an entry for this...')
-                    print(search_path[0] + str('database/' + search_path[1]))
-                    print('\n')
+                # if search_path[0] in search_paths:
+                #     print('\n')
+                #     print('already an entry for this...')
+                #     print(search_path[0] + str('database/' + search_path[1]))
+                #     print('\n')
                 search_paths.append(search_path[0])
                 soak_db_files.append(str('database/' + search_path[1]))
 
-        print(list(zip(search_paths, soak_db_files)))
+        zipped = list(zip(search_paths, soak_db_files))
 
-        if len(set(search_paths))==len(search_paths):
-            print('HOORAY!')
+        for path in list(set(search_paths)):
+            count = search_paths.count(path)
+            if count > 1:
+                print(path)
+                print([i for (x, i) in zipped if x == path])
 
-        print(search_paths)
+        # if len(set(search_paths))==len(search_paths):
+        #     print('HOORAY!')
+        #
+        # print(search_paths)
 
         # for path in search_paths:
         #     print(path)
