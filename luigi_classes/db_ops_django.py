@@ -653,8 +653,8 @@ class FindSearchPaths(luigi.Task):
             print(path)
             print(sdbfile)
             print(os.path.join(path, sdbfile))
-            # yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath,
-            #                       sdbfile=os.path.join(path, sdbfile))
+            yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath,
+                                  sdbfile=os.path.join(path, sdbfile))
 
         if to_exclude:
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
