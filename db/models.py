@@ -34,7 +34,7 @@ class Reference(models.Model):
 class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
-    proposal = models.TextField(blank=False, null=False)
+    proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -230,7 +230,7 @@ class ProasisLeads(models.Model):
 
 
 class Proposals(models.Model):
-    proposal = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE, unique=True)
+    proposal = models.TextField(blank=False, null=False)
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:

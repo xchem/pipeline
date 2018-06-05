@@ -277,24 +277,24 @@ def pop_soakdb(database_file):
     # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
     # add info to soakdbfiles table
-    soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=proposal)
+    soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=models.Proposals.objects.get_or_create(proposal=proposal)[0])
     soakdb_entry.save()
 
     return out, err, proposal
+
 
 def pop_proposals(proposal_number):
     # get proposal number from shell
     proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
     # create list of fedids (or blank if none found)
-    if len(out.decode('ascii'))==0:
+    if len(out.decode('ascii')) == 0:
         append_list = ''
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
-    # get soakdbfiles instance where proposal is the same
-    soakdb_entry = models.SoakdbFiles.objects.get(proposal=proposal_number)
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals(proposal=soakdb_entry, fedids=str(append_list))
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)
+    proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
 # def query_and_list(query, proposals_list, proposal_dict, strucid_list):
