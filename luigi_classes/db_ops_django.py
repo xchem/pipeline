@@ -449,7 +449,7 @@ class AddPanddaEvents(luigi.Task):
     pver = luigi.Parameter()
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
-    soakdb_filename = luigi.Parameter()
+    sdbfile = luigi.Parameter()
 
     def requires(self):
         return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
@@ -502,7 +502,7 @@ class AddPanddaEvents(luigi.Task):
 
                     crystal = Crystal.objects.get(crystal_name=events_frame['dtag'][i],
                                                   file=SoakdbFiles.objects.get_or_create(
-                                                      filename=self.soakdb_filename)[0]
+                                                      filename=self.sdbfile)[0]
                                                   )
 
                     pandda_event = PanddaEvent.objects.get_or_create(
@@ -586,6 +586,7 @@ class AddPanddaRun(luigi.Task):
 class AddPanddaTables(luigi.Task):
     search_path = luigi.Parameter()
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    sdbfile = luigi.Parameter()
 
     def requires(self):
         return FindPanddaLogs(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath)
@@ -598,17 +599,14 @@ class AddPanddaTables(luigi.Task):
         with self.input().open('r') as f:
             log_files = [logfile.rstrip() for logfile in f.readlines()]
 
-        # dict to hold info for subsequent things
-        # results_dict = {'log_file': [], 'pver': [], 'input_dir': [], 'output_dir': [], 'sites_file': [],
-        #                 'events_file': [], 'err': []}
 
         for log_file in log_files:
-            # results_dict['log_file'].append(file)
             # read information from the log file
             pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(log_file)
             if not err and sites_file and events_file and '0.1.' not in pver:
+                # if no error, and sites and events present, add events from events file
                 yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
-                                   sites_file=sites_file, events_file=events_file)
+                                   sites_file=sites_file, events_file=events_file, sdbfile=self.sdbfile)
 
         with self.output().open('w') as f:
             f.write('')
@@ -634,7 +632,7 @@ class FindSearchPaths(luigi.Task):
             search_path = path.split('database')
             if len(search_path) > 1:
                 search_paths.append(search_path[0])
-                soak_db_files.append(str('database/' + search_path[1]))
+                soak_db_files.append(str('database' + search_path[1]))
 
         zipped = list(zip(search_paths, soak_db_files))
 
@@ -651,9 +649,12 @@ class FindSearchPaths(luigi.Task):
 
                 to_exclude.append(path)
 
-        # for path in search_paths:
-        #     print(path)
-        #     yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath)
+        for path, sdbfile in zipped:
+            print(path)
+            print(sdbfile)
+            print(os.path.join(path, sdbfile))
+            # yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath,
+            #                       sdbfile=os.path.join(path, sdbfile))
 
         if to_exclude:
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
