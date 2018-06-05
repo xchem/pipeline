@@ -198,6 +198,9 @@ class TransferChangedDataFile(luigi.Task):
 
     def run(self):
         # delete all fields from soakdb filename
+        maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
+        print(maint_exists)
+
         soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         soakdb_query.delete()
 

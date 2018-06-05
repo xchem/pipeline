@@ -250,6 +250,15 @@ def soakdb_query(filename):
     return results
 
 
+def check_table_sqlite(filename, tablename):
+    conn = sqlite3.connect(filename)
+    c = conn.cursor()
+    c.execute("SELECT count(*) FROM sqlite_master WHERE type = 'table' AND name = ?;", (tablename,))
+    results = c.fetchall()[0]
+
+    return results
+
+
 def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
