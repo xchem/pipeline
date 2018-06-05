@@ -31,6 +31,14 @@ class Reference(models.Model):
         db_table = 'reference'
 
 
+class Proposals(models.Model):
+    proposal = models.TextField(blank=False, null=False)
+    fedids = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'proposals'
+
+
 class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
@@ -227,14 +235,6 @@ class ProasisLeads(models.Model):
 
     class Meta:
         db_table = 'proasis_leads'
-
-
-class Proposals(models.Model):
-    proposal = models.TextField(blank=False, null=False)
-    fedids = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'proposals'
 
 
 class PanddaAnalysis(models.Model):
