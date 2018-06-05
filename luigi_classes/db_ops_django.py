@@ -627,21 +627,18 @@ class FindSearchPaths(luigi.Task):
         with self.input().open('r') as f:
             paths = [datafile.rstrip() for datafile in f.readlines()]
 
-        search_paths=[]
-        soak_db_files=[]
+        search_paths = []
+        soak_db_files = []
 
         for path in paths:
             search_path = path.split('database')
-            if len(search_path)>1:
-                # if search_path[0] in search_paths:
-                #     print('\n')
-                #     print('already an entry for this...')
-                #     print(search_path[0] + str('database/' + search_path[1]))
-                #     print('\n')
+            if len(search_path) > 1:
                 search_paths.append(search_path[0])
                 soak_db_files.append(str('database/' + search_path[1]))
 
         zipped = list(zip(search_paths, soak_db_files))
+
+        to_exclude = []
 
         for path in list(set(search_paths)):
             count = search_paths.count(path)
@@ -649,14 +646,19 @@ class FindSearchPaths(luigi.Task):
                 print(path)
                 print([i for (x, i) in zipped if x == path])
 
-        # if len(set(search_paths))==len(search_paths):
-        #     print('HOORAY!')
-        #
-        # print(search_paths)
+                while path in search_paths:
+                    search_paths.remove(path)
+
+                to_exclude.append(path)
 
         # for path in search_paths:
         #     print(path)
         #     yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath)
+
+        if to_exclude:
+            raise Exception('Multiple soakdb files were found in the following paths, and these will not'
+                            ' be included in data upload, as it is impossible to link data back to the correct'
+                            ' soakdbfiles when there are multiple per project:\n' + ', '.join(to_exclude))
 
 
 
