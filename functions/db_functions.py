@@ -176,7 +176,9 @@ def transfer_table(translate_dict, filename, model):
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
 
-        d = {k: v for k, v in d.items() if v!=None and v!='None' and v!=''}
+        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending']
+
+        d = {k: v for k, v in d.items() if v not in disallowed_floats}
 
         for key in d.keys():
 
