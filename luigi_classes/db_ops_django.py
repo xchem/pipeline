@@ -225,13 +225,9 @@ class TransferChangedDataFile(luigi.Task):
 
         # retrieve the new db entry
 
-        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
-        # get the id to update
-        id_number = soakdb_query[0].id
-        # update the relevant status to 0, indicating it as a new file
-        update_status = SoakdbFiles.objects.get(id=id_number)
-        update_status.status = 2
-        update_status.save()
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        soakdb_query.status = 2
+        soakdb_query.save()
 
 
 class TransferNewDataFile(luigi.Task):
@@ -265,14 +261,9 @@ class TransferNewDataFile(luigi.Task):
             db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
                                         filename=self.data_file, model=DataProcessing)
 
-        # retrieve the new db entry
-        soakdb_query = list(SoakdbFiles.objects.filter(filename=self.data_file))
-        # get the id to update
-        id_number = soakdb_query[0].id
-        # update the relevant status to 0, indicating it as a new file
-        update_status = SoakdbFiles.objects.get(id=id_number)
-        update_status.status = 2
-        update_status.save()
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        soakdb_query.status = 2
+        soakdb_query.save()
 
 
 class StartTransfers(luigi.Task):

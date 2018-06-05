@@ -8,6 +8,7 @@ from db import models
 from functions import misc_functions
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.transaction import commit_on_success
 
 def reference_translations():
     reference = {
@@ -149,7 +150,7 @@ def refinement_translations():
 
     return refinement
 
-
+@commit_on_success
 def transfer_table(translate_dict, filename, model):
     # standard soakdb query for all data
     results = soakdb_query(filename)
