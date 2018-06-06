@@ -7,6 +7,7 @@ from functions import db_functions, misc_functions, pandda_functions
 from db.models import *
 import pandas as pd
 import traceback
+from functions import misc_functions
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -203,6 +204,10 @@ class TransferChangedDataFile(luigi.Task):
         else:
             return False
 
+    def output(self):
+        modification_date = misc_functions.get_mod_date(self.data_file)
+        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
+
     def run(self):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
@@ -246,6 +251,10 @@ class TransferNewDataFile(luigi.Task):
             return True
         else:
             return False
+
+    def output(self):
+        modification_date = misc_functions.get_mod_date(self.data_file)
+        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')

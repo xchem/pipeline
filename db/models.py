@@ -32,7 +32,7 @@ class Reference(models.Model):
 
 
 class Proposals(models.Model):
-    proposal = models.TextField(blank=False, null=False)
+    proposal = models.TextField(blank=False, null=False, unique=True)
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -246,7 +246,7 @@ class PanddaAnalysis(models.Model):
 
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
-    analysis_folder = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
+    pandda_analysis = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
     pandda_log = models.TextField(unique=True)
     pandda_version = models.TextField(blank=True, null=True)
     sites_file = models.TextField(blank=True, null=True)
@@ -256,20 +256,19 @@ class PanddaRun(models.Model):
         db_table = 'pandda_run'
 
 
-
 class PanddaStatisticalMap(models.Model):
     resolution_from = models.FloatField()
     resolution_to = models.FloatField()
     dataset_list = models.TextField()
-    run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'pandda_statistical_map'
-        unique_together = ('resolution_from', 'resolution_to', 'run')
+        unique_together = ('resolution_from', 'resolution_to', 'pandda_run')
 
 
 class PanddaSite(models.Model):
-    run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     site = models.IntegerField(blank=True, null=True)
     site_aligned_centroid_x = models.FloatField(blank=True, null=True)
     site_aligned_centroid_y = models.FloatField(blank=True, null=True)
@@ -280,13 +279,13 @@ class PanddaSite(models.Model):
 
     class Meta:
         db_table = 'pandda_site'
-        unique_together = ('run', 'site')
+        unique_together = ('pandda_run', 'site')
 
 
 class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
-    run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
+    pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     event = models.IntegerField(blank=True, null=True)
     event_centroid_x = models.FloatField(blank=True, null=True)
     event_centroid_y = models.FloatField(blank=True, null=True)
@@ -304,5 +303,5 @@ class PanddaEvent(models.Model):
 
     class Meta:
         db_table = 'pandda_event'
-        unique_together = ('site', 'event', 'crystal', 'run')
+        unique_together = ('site', 'event', 'crystal', 'pandda_run')
 
