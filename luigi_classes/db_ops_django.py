@@ -447,7 +447,7 @@ class AddPanddaSites(luigi.Task):
 
             print('Adding pandda site: ' + str(site))
 
-            pandda_site = PanddaSite.objects.get_or_create(run=run, site=site,
+            pandda_site = PanddaSite.objects.get_or_create(pandda_run=run, site=site,
                                                            site_aligned_centroid_x=aligned_centroid[0],
                                                            site_aligned_centroid_y=aligned_centroid[1],
                                                            site_aligned_centroid_z=aligned_centroid[2],
@@ -488,7 +488,7 @@ class AddPanddaEvents(luigi.Task):
             event_site = (events_frame['site_idx'][i])
 
             run = PanddaRun.objects.get(pandda_log=self.log_file)
-            site = PanddaSite.objects.get(site=int(event_site), run=run.pk)
+            site = PanddaSite.objects.get(site=int(event_site), pandda_run=run.pk)
 
             input_directory = run.input_dir
 
@@ -526,7 +526,7 @@ class AddPanddaEvents(luigi.Task):
                     pandda_event = PanddaEvent.objects.get_or_create(
                         crystal=crystal,
                         site=site,
-                        run=run,
+                        pandda_run=run,
                         event=events_frame['event_idx'][i],
                         event_centroid_x=events_frame['x'][i],
                         event_centroid_y=events_frame['y'][i],
