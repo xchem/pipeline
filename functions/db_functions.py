@@ -189,19 +189,19 @@ def transfer_table(translate_dict, filename, model):
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
-                                                              file=models.SoakdbFiles.objects.get_or_create(
+                d[key] = models.Crystal.objects.select_for_update().get_or_create(crystal_name=d[key],
+                                                              file=models.SoakdbFiles.objects.select_for_update().get_or_create(
                                                                   filename=filename)[0])[0]
 
             if key == 'target':
-                d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
+                d[key] = models.Target.objects.select_for_update().get_or_create(target_name=d[key])[0]
 
             if key == 'compound':
-                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+                d[key] = models.Compounds.objects.select_for_update().get_or_create(smiles=d[key])[0]
 
             if key == 'reference':
                 if d[key]:
-                    d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
+                    d[key] = models.Reference.objects.select_for_update().get_or_create(reference_pdb=d[key])[0]
 
             if key == 'outcome':
                 pattern = re.compile('-?\d+')
@@ -279,7 +279,7 @@ def pop_soakdb(database_file):
     # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
     # add info to soakdbfiles table
-    soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=models.Proposals.objects.get_or_create(proposal=proposal)[0])
+    soakdb_entry = models.SoakdbFiles(modification_date=modification_date, filename=database_file, proposal=models.Proposals.objects.select_for_update().get_or_create(proposal=proposal)[0])
     soakdb_entry.save()
 
     return out, err, proposal
@@ -295,7 +295,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)[0]
+    proposal_entry = models.Proposals.objects.select_for_update().get_or_create(proposal=proposal_number)[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
