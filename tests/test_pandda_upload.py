@@ -51,8 +51,6 @@ class TestFindLogs(unittest.TestCase):
             soak_db_filepath=str(self.working_dir + '*')))
 
         self.assertTrue(find_logs)
-        self.assertTrue(os.path.isfile(os.path.join(self.working_dir,
-                                                    self.date.strftime('logs/pandda/pandda_logs_%Y%m%d.txt'))))
 
     def test_add_pandda_runs(self):
         log_files = pf.find_log_files(
@@ -62,12 +60,10 @@ class TestFindLogs(unittest.TestCase):
         for log_file in log_files:
 
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
-            print('IN & OUT FROM PF.GETFILES: ')
-            print(input_dir)
-            print(output_dir)
-            print('\n')
 
             if not err and sites_file and events_file and '0.1.' not in pver:
+                remove_path = str('/' + '/'.join(log_file.split('/')[:-1]))
+                print(remove_path)
 
                 add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
                     log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
