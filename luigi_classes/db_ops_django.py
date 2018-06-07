@@ -144,8 +144,9 @@ class CheckFiles(luigi.Task):
         if not lab:
             # this is to set all file statuses to 0 (new file)
             soakdb = SoakdbFiles.objects.select_for_update().all()
-            soakdb.status = 0
-            soakdb.save()
+            for filename in soakdb:
+                filename.status = 0
+                filename.save()
 
         # write output to signify job done
         with self.output().open('w') as f:
