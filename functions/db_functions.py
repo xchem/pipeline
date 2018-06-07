@@ -225,7 +225,7 @@ def transfer_table(translate_dict, filename, model):
             # write out the row to the relevant model (table)
             with transaction.atomic():
                 m = model(**d)
-                # m.save()
+                m.save()
 
         except IntegrityError as e:
             print(d)

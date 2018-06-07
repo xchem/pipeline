@@ -81,7 +81,7 @@ class CheckFiles(luigi.Task):
             # remove any newline characters
             filename_clean = filename.rstrip('\n')
             # find the relevant entry in the soakdbfiles table
-            soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
+            soakdb_query = list(SoakdbFiles.objects.select_for_update().filter(filename=filename_clean))
 
             print(len(soakdb_query))
 
@@ -107,12 +107,12 @@ class CheckFiles(luigi.Task):
 
                 # if the file has changed since the db was last updated for the entry, change status to indicate this
                 if int(current_mod_date) > int(old_mod_date):
-                    update_status = SoakdbFiles.objects.get(id=id_number)
+                    update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
                     update_status.status = 1
                     update_status.save()
 
                 else:
-                    update_status = SoakdbFiles.objects.get(id=id_number)
+                    update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
                     update_status.status = 0
                     update_status.save()
 
@@ -127,11 +127,11 @@ class CheckFiles(luigi.Task):
                 # add the proposal to proposal
                 db_functions.pop_proposals(proposal)
                 # retrieve the new db entry
-                soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
+                soakdb_query = list(SoakdbFiles.objects.select_for_update().filter(filename=filename_clean))
                 # get the id to update
                 id_number = soakdb_query[0].id
                 # update the relevant status to 0, indicating it as a new file
-                update_status = SoakdbFiles.objects.get(id=id_number)
+                update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
                 update_status.status = 0
                 update_status.save()
 
@@ -140,9 +140,9 @@ class CheckFiles(luigi.Task):
         lab = list(Lab.objects.all())
         if not lab:
             # this is to set all file statuses to 0 (new file)
-            soakdb = SoakdbFiles.objects.all()
+            soakdb = SoakdbFiles.objects.select_for_update().all()
             soakdb.status = 0
-            soakdb.update()
+            soakdb.save()
 
         # write output to signify job done
         with self.output().open('w') as f:
@@ -198,7 +198,7 @@ class TransferChangedDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.data_file)
 
     def complete(self):
-        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
         if soakdb_query.status == 2:
             return True
         else:
@@ -212,7 +212,7 @@ class TransferChangedDataFile(luigi.Task):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
         if maint_exists == 1:
-            soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+            soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
             soakdb_query.delete()
 
             db_functions.pop_soakdb(self.data_file)
@@ -230,7 +230,7 @@ class TransferChangedDataFile(luigi.Task):
 
         # retrieve the new db entry
 
-        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+        soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
         soakdb_query.status = 2
         soakdb_query.save()
 
@@ -447,13 +447,19 @@ class AddPanddaSites(luigi.Task):
 
             print('Adding pandda site: ' + str(site))
 
-            pandda_site = PanddaSite.objects.get_or_create(pandda_run=run, site=site,
-                                                           site_aligned_centroid_x=aligned_centroid[0],
-                                                           site_aligned_centroid_y=aligned_centroid[1],
-                                                           site_aligned_centroid_z=aligned_centroid[2],
-                                                           site_native_centroid_x=native_centroid[0],
-                                                           site_native_centroid_y=native_centroid[1],
-                                                           site_native_centroid_z=native_centroid[2])[0]
+            pandda_site = PanddaSite.objects.select_for_update().get_or_create(pandda_run=run, site=site,
+                                                                               site_aligned_centroid_x=aligned_centroid[
+                                                                                   0],
+                                                                               site_aligned_centroid_y=aligned_centroid[
+                                                                                   1],
+                                                                               site_aligned_centroid_z=aligned_centroid[
+                                                                                   2],
+                                                                               site_native_centroid_x=native_centroid[
+                                                                                   0],
+                                                                               site_native_centroid_y=native_centroid[
+                                                                                   1],
+                                                                               site_native_centroid_z=native_centroid[
+                                                                                   2])[0]
             pandda_site.save()
 
             with self.output().open('w') as f:
@@ -487,8 +493,8 @@ class AddPanddaEvents(luigi.Task):
         for i in range(0, len(events_frame['dtag'])):
             event_site = (events_frame['site_idx'][i])
 
-            run = PanddaRun.objects.get(pandda_log=self.log_file)
-            site = PanddaSite.objects.get(site=int(event_site), pandda_run=run.pk)
+            run = PanddaRun.objects.select_for_update().get(pandda_log=self.log_file)
+            site = PanddaSite.objects.select_for_update().get(site=int(event_site), pandda_run=run.pk)
 
             input_directory = run.input_dir
 
@@ -518,12 +524,12 @@ class AddPanddaEvents(luigi.Task):
                             pandda_model_path=pandda_model_path
                         )
 
-                    crystal = Crystal.objects.get(crystal_name=events_frame['dtag'][i],
-                                                  file=SoakdbFiles.objects.get_or_create(
-                                                      filename=self.sdbfile)[0]
-                                                  )
+                    crystal = Crystal.objects.select_for_update().get_or_create(crystal_name=events_frame['dtag'][i],
+                                                                                file=SoakdbFiles.objects.get_or_create(
+                                                                                    filename=self.sdbfile)[0]
+                                                                                )
 
-                    pandda_event = PanddaEvent.objects.get_or_create(
+                    pandda_event = PanddaEvent.objects.select_for_update().get_or_create(
                         crystal=crystal,
                         site=site,
                         pandda_run=run,
@@ -569,7 +575,6 @@ class AddPanddaEvents(luigi.Task):
                     f.write(str(exists_array)+ '\n')
                     f.write('\n\n')
 
-
         with self.output().open('w') as f:
             f.write('')
 
@@ -593,11 +598,12 @@ class AddPanddaRun(luigi.Task):
 
     def run(self):
         print('ADDING PANDDA RUN...')
-        pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
-                                                     pandda_analysis=PanddaAnalysis.objects.get_or_create(
-                                                         pandda_dir=self.output_dir)[0],
-                                                     pandda_version=self.pver, sites_file=self.sites_file,
-                                                     events_file=self.events_file)[0]
+        pandda_run = \
+        PanddaRun.objects.select_for_update().get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
+                                                            pandda_analysis=PanddaAnalysis.objects.get_or_create(
+                                                                pandda_dir=self.output_dir)[0],
+                                                            pandda_version=self.pver, sites_file=self.sites_file,
+                                                            events_file=self.events_file)[0]
         pandda_run.save()
 
 
