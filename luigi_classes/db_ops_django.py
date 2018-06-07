@@ -492,7 +492,7 @@ class AddPanddaEvents(luigi.Task):
 
             input_directory = run.input_dir
 
-            output_directory = run.analysis_folder.pandda_dir
+            output_directory = run.pandda_analysis.pandda_dir
 
             map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
             pandda_model_path, exists_array = pandda_functions.get_file_names(BDC=events_frame['1-BDC'][i],
@@ -594,7 +594,7 @@ class AddPanddaRun(luigi.Task):
     def run(self):
         print('ADDING PANDDA RUN...')
         pandda_run = PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
-                                                     analysis_folder=PanddaAnalysis.objects.get_or_create(
+                                                     pandda_analysis=PanddaAnalysis.objects.get_or_create(
                                                          pandda_dir=self.output_dir)[0],
                                                      pandda_version=self.pver, sites_file=self.sites_file,
                                                      events_file=self.events_file)[0]

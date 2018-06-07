@@ -75,7 +75,7 @@ class TestFindLogs(unittest.TestCase):
 
                 self.assertTrue(add_run)
 
-                add_sites = run_luigi_worker(db_ops_django.AddPanddaSites(file=log_file, pver=pver,
+                add_sites = run_luigi_worker(db_ops_django.AddPanddaSites(log_file=log_file, pver=pver,
                                                                           input_dir=input_dir, output_dir=output_dir,
                                                                           sites_file=sites_file,
                                                                           events_file=events_file))
