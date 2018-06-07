@@ -601,6 +601,9 @@ class AddPanddaRun(luigi.Task):
         else:
             return False
 
+    def output(self):
+        return luigi.LocalTarget(str(self.log_file + '.run.done'))
+
     @transaction.atomic
     def run(self):
         print('ADDING PANDDA RUN...')
@@ -611,6 +614,9 @@ class AddPanddaRun(luigi.Task):
                                                             pandda_version=self.pver, sites_file=self.sites_file,
                                                             events_file=self.events_file)[0]
         pandda_run.save()
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class AddPanddaTables(luigi.Task):
