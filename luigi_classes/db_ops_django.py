@@ -434,8 +434,7 @@ class AddPanddaSites(luigi.Task):
 
     def requires(self):
         return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
-                            pver=self.pver, sites_file=self.sites_file, events_file=self.events_file,
-                            soakdb_filename=self.soakdb_filename)
+                            pver=self.pver, sites_file=self.sites_file, events_file=self.events_file)
 
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.sites.done'))
