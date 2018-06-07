@@ -150,6 +150,7 @@ def refinement_translations():
 
     return refinement
 
+
 @transaction.atomic
 def transfer_table(translate_dict, filename, model):
     # standard soakdb query for all data
@@ -264,7 +265,7 @@ def check_table_sqlite(filename, tablename):
 
     return results
 
-
+@transaction.atomic
 def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
@@ -284,7 +285,7 @@ def pop_soakdb(database_file):
 
     return out, err, proposal
 
-
+@transaction.atomic
 def pop_proposals(proposal_number):
     # get proposal number from shell
     proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)

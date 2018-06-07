@@ -8,6 +8,7 @@ from db.models import *
 import pandas as pd
 import traceback
 from functions import misc_functions
+from django.db import transaction
 
 
 class FindSoakDBFiles(luigi.Task):
@@ -55,6 +56,7 @@ class CheckFiles(luigi.Task):
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
 
+    @transaction.atomic
     def run(self):
         soakdb = SoakdbFiles.objects.all()
         print('SOAKDB:')
@@ -81,6 +83,7 @@ class CheckFiles(luigi.Task):
             # remove any newline characters
             filename_clean = filename.rstrip('\n')
             # find the relevant entry in the soakdbfiles table
+
             soakdb_query = list(SoakdbFiles.objects.select_for_update().filter(filename=filename_clean))
 
             print(len(soakdb_query))
@@ -198,7 +201,7 @@ class TransferChangedDataFile(luigi.Task):
         return CheckFiles(soak_db_filepath=self.data_file)
 
     def complete(self):
-        soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         if soakdb_query.status == 2:
             return True
         else:
@@ -208,6 +211,7 @@ class TransferChangedDataFile(luigi.Task):
         modification_date = misc_functions.get_mod_date(self.data_file)
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
+    @transaction.atomic
     def run(self):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
@@ -426,7 +430,7 @@ class AddPanddaSites(luigi.Task):
     pver = luigi.Parameter()
     sites_file = luigi.Parameter()
     events_file = luigi.Parameter()
-    soakdb_filename=luigi.Parameter()
+    soakdb_filename = luigi.Parameter()
 
     def requires(self):
         return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
@@ -436,6 +440,7 @@ class AddPanddaSites(luigi.Task):
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.sites.done'))
 
+    @transaction.atomic
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.log_file)
         sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
@@ -484,6 +489,7 @@ class AddPanddaEvents(luigi.Task):
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.events.done'))
 
+    @transaction.atomic
     def run(self):
 
         events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
@@ -596,6 +602,7 @@ class AddPanddaRun(luigi.Task):
         else:
             return False
 
+    @transaction.atomic
     def run(self):
         print('ADDING PANDDA RUN...')
         pandda_run = \
@@ -630,7 +637,7 @@ class AddPanddaTables(luigi.Task):
             if not err and sites_file and events_file and '0.1.' not in pver:
                 # if no error, and sites and events present, add events from events file
                 yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
-                                   sites_file=sites_file, events_file=events_file, sdbfile=self.sdbfile)
+                                      sites_file=sites_file, events_file=events_file, sdbfile=self.sdbfile)
             else:
                 print(pver)
                 print(input_dir)
