@@ -53,6 +53,9 @@ class TestFindLogs(unittest.TestCase):
         self.assertTrue(find_logs)
 
     def test_add_pandda_runs(self):
+
+        remove_files = []
+
         log_files = pf.find_log_files(
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/')
         log_files = log_files.split()
@@ -62,8 +65,8 @@ class TestFindLogs(unittest.TestCase):
             pver, input_dir, output_dir, sites_file, events_file, err = pf.get_files_from_log(log_file)
 
             if not err and sites_file and events_file and '0.1.' not in pver:
-                remove_path = str('/' + '/'.join(log_file.split('/')[:-1]))
-                print(remove_path)
+                remove_path = str('/'.join(log_file.split('/')[:-1]))
+                remove_files.append(remove_path)
 
                 add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
                     log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
@@ -80,6 +83,9 @@ class TestFindLogs(unittest.TestCase):
                                              )
 
                 self.assertTrue(add_sites)
+
+                if os.path.isfile(str(log_file + '.sites.done')):
+                    os.remove(str(log_file + '.sites.done'))
 
     def test_all_for_nudt7_en(self):
         pass
