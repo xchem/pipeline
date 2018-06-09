@@ -189,15 +189,15 @@ def transfer_table(translate_dict, filename, model):
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
-            if key == 'target' and d[key] in disallowed_floats:
-                continue
-
-            if key == 'crystal_name' and d[key] in disallowed_floats:
-                continue
+            # if key == 'target' and d[key] in disallowed_floats:
+            #     continue
+            #
+            # if key == 'crystal_name' and d[key] in disallowed_floats:
+            #     continue
 
             if key == 'crystal_name' and model != models.Crystal:
                 try:
-                    d[key] = models.Crystal.objects.select_for_update().get_or_create(crystal_name=d[key],
+                    d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
                                                                   file=models.SoakdbFiles.objects.select_for_update().get_or_create(
                                                                       filename=filename)[0])[0]
                 except IntegrityError as e:
@@ -208,7 +208,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'target':
                 try:
-                    d[key] = models.Target.objects.select_for_update().get_or_create(target_name=d[key])[0]
+                    d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
                 except IntegrityError as e:
                     print(d)
                     print('WARNING: ' + str(e.__cause__))
@@ -216,11 +216,11 @@ def transfer_table(translate_dict, filename, model):
                     continue
 
             if key == 'compound':
-                d[key] = models.Compounds.objects.select_for_update().get_or_create(smiles=d[key])[0]
+                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
 
             if key == 'reference':
                 if d[key]:
-                    d[key] = models.Reference.objects.select_for_update().get_or_create(reference_pdb=d[key])[0]
+                    d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
 
             if key == 'outcome':
                 pattern = re.compile('-?\d+')
