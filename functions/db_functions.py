@@ -178,7 +178,7 @@ def transfer_table(translate_dict, filename, model):
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
 
-        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL']
+        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?']
 
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
 
@@ -198,7 +198,7 @@ def transfer_table(translate_dict, filename, model):
             if key == 'crystal_name' and model != models.Crystal:
                 try:
                     d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
-                                                                  file=models.SoakdbFiles.objects.select_for_update().get_or_create(
+                                                                  file=models.SoakdbFiles.objects.get_or_create(
                                                                       filename=filename)[0])[0]
                 except IntegrityError as e:
                     print(d)
