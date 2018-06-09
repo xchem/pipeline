@@ -180,13 +180,18 @@ def transfer_table(translate_dict, filename, model):
 
         disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?']
 
-        d = {k: v for k, v in d.items() if v not in disallowed_floats}
-
         for key in d.keys():
 
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
+
+            # find relevant entries for foreign keys and set as value - crystal names and proteins
+            if key == 'target' and d[key] in disallowed_floats:
+                continue
+
+            if key == 'crystal_name' and d[key] in disallowed_floats:
+                continue
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
@@ -213,6 +218,7 @@ def transfer_table(translate_dict, filename, model):
                 except:
                     continue
 
+        d = {k: v for k, v in d.items() if v not in disallowed_floats}
 
         # check that file_id's can be written
         for key in model_fields:
