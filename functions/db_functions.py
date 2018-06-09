@@ -189,24 +189,12 @@ def transfer_table(translate_dict, filename, model):
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             if key == 'crystal_name' and model != models.Crystal:
-                try:
-                    d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
-                                                                  file=models.SoakdbFiles.objects.get_or_create(
-                                                                      filename=filename)[0])[0]
-                except IntegrityError as e:
-                    print(d)
-                    print('WARNING: ' + str(e.__cause__))
-                    print(model_fields)
-                    continue
+                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
+                                                              file=models.SoakdbFiles.objects.get_or_create(
+                                                                  filename=filename)[0])[0]
 
             if key == 'target':
-                try:
-                    d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
-                except IntegrityError as e:
-                    print(d)
-                    print('WARNING: ' + str(e.__cause__))
-                    print(model_fields)
-                    continue
+                d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
 
             if key == 'compound':
                 d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
