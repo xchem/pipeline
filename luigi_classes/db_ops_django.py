@@ -279,6 +279,9 @@ class TransferNewDataFile(luigi.Task):
         soakdb_query.status = 2
         soakdb_query.save()
 
+        with self.output().open('w') as f:
+            f.write('')
+
 
 class StartTransfers(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
