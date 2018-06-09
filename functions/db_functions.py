@@ -261,8 +261,8 @@ def soakdb_query(filename):
     c = conn.cursor()
 
     c.execute("select * from mainTable where CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
-              "and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL "
-              "and ProteinName not like ? and ProteinName not NULL", ('None', 'None', 'None'))
+              "and CompoundSMILES not like ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
+              "and ProteinName not like ? and ProteinName not NULL and ProteinName !=''", ('None', 'None', 'None'))
 
     results = c.fetchall()
     conn.close()
