@@ -217,7 +217,7 @@ class TransferChangedDataFile(luigi.Task):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
         if maint_exists == 1:
-            soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
+            soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
             soakdb_query.delete()
 
             db_functions.pop_soakdb(self.data_file)
@@ -235,9 +235,12 @@ class TransferChangedDataFile(luigi.Task):
 
         # retrieve the new db entry
 
-        soakdb_query = SoakdbFiles.objects.select_for_update().get(filename=self.data_file)
+        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
         soakdb_query.status = 2
         soakdb_query.save()
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class TransferNewDataFile(luigi.Task):
