@@ -196,12 +196,24 @@ def transfer_table(translate_dict, filename, model):
                 continue
 
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.select_for_update().get_or_create(crystal_name=d[key],
-                                                              file=models.SoakdbFiles.objects.select_for_update().get_or_create(
-                                                                  filename=filename)[0])[0]
+                try:
+                    d[key] = models.Crystal.objects.select_for_update().get_or_create(crystal_name=d[key],
+                                                                  file=models.SoakdbFiles.objects.select_for_update().get_or_create(
+                                                                      filename=filename)[0])[0]
+                except IntegrityError as e:
+                    print(d)
+                    print('WARNING: ' + str(e.__cause__))
+                    print(model_fields)
+                    continue
 
             if key == 'target':
-                d[key] = models.Target.objects.select_for_update().get_or_create(target_name=d[key])[0]
+                try:
+                    d[key] = models.Target.objects.select_for_update().get_or_create(target_name=d[key])[0]
+                except IntegrityError as e:
+                    print(d)
+                    print('WARNING: ' + str(e.__cause__))
+                    print(model_fields)
+                    continue
 
             if key == 'compound':
                 d[key] = models.Compounds.objects.select_for_update().get_or_create(smiles=d[key])[0]
