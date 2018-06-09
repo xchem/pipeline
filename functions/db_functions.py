@@ -194,11 +194,11 @@ def transfer_table(translate_dict, filename, model):
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
-            if key == 'target' and d[key] in disallowed_floats:
-                continue
-
-            if key == 'crystal_name' and d[key] in disallowed_floats:
-                continue
+            # if key == 'target' and d[key] in disallowed_floats:
+            #     continue
+            #
+            # if key == 'crystal_name' and d[key] in disallowed_floats:
+            #     continue
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
