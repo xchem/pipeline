@@ -178,7 +178,8 @@ def transfer_table(translate_dict, filename, model):
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
 
-        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?']
+        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
+                             'Analysis Pending']
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
 
         if model != models.Reference and 'crystal_name' not in d.keys():
