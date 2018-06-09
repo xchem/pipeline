@@ -217,7 +217,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'outcome':
                 pattern = re.compile('-?\d+')
-                value = pattern.findall(d[key])
+                value = pattern.findall(str(d[key]))
                 if len(value) > 1:
                     raise Exception('multiple values found in outcome string')
                 try:
