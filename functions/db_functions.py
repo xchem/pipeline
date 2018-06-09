@@ -189,6 +189,12 @@ def transfer_table(translate_dict, filename, model):
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
+            if key == 'target' and d[key] in disallowed_floats:
+                continue
+
+            if key == 'crystal_name' and d[key] in disallowed_floats:
+                continue
+
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.select_for_update().get_or_create(crystal_name=d[key],
                                                               file=models.SoakdbFiles.objects.select_for_update().get_or_create(
@@ -209,7 +215,10 @@ def transfer_table(translate_dict, filename, model):
                 value = pattern.findall(d[key])
                 if len(value) > 1:
                     raise Exception('multiple values found in outcome string')
-                d[key] = int(value[0])
+                try:
+                    d[key] = int(value[0])
+                except:
+                    continue
 
 
         # check that file_id's can be written
