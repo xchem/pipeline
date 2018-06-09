@@ -151,7 +151,7 @@ def refinement_translations():
     return refinement
 
 
-@transaction.atomic
+# @transaction.atomic
 def transfer_table(translate_dict, filename, model):
     # standard soakdb query for all data
     results = soakdb_query(filename)
@@ -232,9 +232,9 @@ def transfer_table(translate_dict, filename, model):
 
         try:
             # write out the row to the relevant model (table)
-            with transaction.atomic():
-                m = model(**d)
-                m.save()
+            # with transaction.atomic():
+            m = model(**d)
+            m.save()
 
         except IntegrityError as e:
             print(d)
