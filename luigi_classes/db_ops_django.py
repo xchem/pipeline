@@ -474,8 +474,8 @@ class AddPanddaSites(luigi.Task):
                                                                                    2])[0]
             pandda_site.save()
 
-            with self.output().open('w') as f:
-                f.write('')
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class AddPanddaEvents(luigi.Task):
