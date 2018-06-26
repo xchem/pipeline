@@ -44,14 +44,14 @@ class CheckFiles(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
-        # print('Finding soakdb files via CheckFiles')
-        # soakdb = list(SoakdbFiles.objects.all())
-        #
-        # if not soakdb:
-        return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
-                FindSoakDBFiles(filepath=self.soak_db_filepath)]
-        # else:
-        #     return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
+        print('Finding soakdb files via CheckFiles')
+        soakdb = list(SoakdbFiles.objects.all())
+
+        if not soakdb:
+            return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
+                    FindSoakDBFiles(filepath=self.soak_db_filepath)]
+        else:
+            return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
@@ -90,7 +90,8 @@ class CheckFiles(luigi.Task):
 
             # raise an exception if the file is not in the soakdb table
             if len(soakdb_query) == 0:
-                raise Exception(str('No entry found for ' + str(filename_clean)))
+                out, err, prop = db_functions.pop_soakdb(filename_clean)
+                db_functions.pop_proposals(prop)
 
             # only one entry should exist per file
             if len(soakdb_query) == 1:
