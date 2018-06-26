@@ -44,14 +44,14 @@ class CheckFiles(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
-        print('Finding soakdb files via CheckFiles')
-        soakdb = list(SoakdbFiles.objects.all())
-
-        if not soakdb:
-            return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
-                    FindSoakDBFiles(filepath=self.soak_db_filepath)]
-        else:
-            return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
+        # print('Finding soakdb files via CheckFiles')
+        # soakdb = list(SoakdbFiles.objects.all())
+        #
+        # if not soakdb:
+        return [TransferAllFedIDsAndDatafiles(soak_db_filepath=self.soak_db_filepath),
+                FindSoakDBFiles(filepath=self.soak_db_filepath)]
+        # else:
+        #     return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
         return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
