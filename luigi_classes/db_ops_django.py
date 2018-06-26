@@ -507,7 +507,7 @@ class AddPanddaEvents(luigi.Task):
             event_site = (events_frame['site_idx'][i])
 
             run = PanddaRun.objects.select_for_update().get(pandda_log=self.log_file)
-            site = PanddaSite.objects.select_for_update().get(site=int(event_site), pandda_run=run.pk)
+            site = PanddaSite.objects.select_for_update().get_or_create(site=int(event_site), pandda_run=run.pk)[0]
 
             input_directory = run.input_dir
 
