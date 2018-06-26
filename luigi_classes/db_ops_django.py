@@ -537,10 +537,10 @@ class AddPanddaEvents(luigi.Task):
                             pandda_model_path=pandda_model_path
                         )
 
-                    crystal = Crystal.objects.select_for_update().get_or_create(crystal_name=events_frame['dtag'][i],
+                    crystal = Crystal.objects.get_or_create(crystal_name=events_frame['dtag'][i],
                                                                                 file=SoakdbFiles.objects.get_or_create(
                                                                                     filename=self.sdbfile)[0]
-                                                                                )
+                                                                                )[0]
 
                     pandda_event = PanddaEvent.objects.select_for_update().get_or_create(
                         crystal=crystal,
