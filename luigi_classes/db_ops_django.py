@@ -415,14 +415,14 @@ class FindProjects(luigi.Task):
 
 class FindPanddaLogs(luigi.Task):
     search_path = luigi.Parameter()
-    date = luigi.DateParameter(default=datetime.date.today())
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
         return StartTransfers(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.search_path, self.date.strftime('pandda_logs_%Y%m%d.txt')))
+        return luigi.LocalTarget(os.path.join(self.search_path, self.date_time.strftime('pandda_logs_%Y%m%d%H.txt')))
 
     def run(self):
         print('RUNNING')
