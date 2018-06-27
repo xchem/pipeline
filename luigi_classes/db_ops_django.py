@@ -714,9 +714,9 @@ class FindSearchPaths(luigi.Task):
 
         frame = pd.DataFrame.from_dict(out_dict)
 
-        print(self.output().path())
+        print(self.output().path)
 
-        frame.to_csv(self.output().path())
+        frame.to_csv(self.output().path)
 
         if to_exclude:
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
@@ -729,7 +729,7 @@ class StartPipeline(luigi.Task):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path()
+        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path
         print(in_file)
         if not os.path.isfile(in_file):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
