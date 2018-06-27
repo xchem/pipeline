@@ -213,7 +213,6 @@ class TransferChangedDataFile(luigi.Task):
         modification_date = misc_functions.get_mod_date(self.data_file)
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
-    @transaction.atomic
     def run(self):
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
@@ -221,7 +220,8 @@ class TransferChangedDataFile(luigi.Task):
             soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
             soakdb_query.delete()
 
-            db_functions.pop_soakdb(self.data_file)
+            out, err, proposal = db_functions.pop_soakdb(self.data_file)
+            db_functions.pop_proposals(proposal)
 
             db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
                                         model=Crystal)
@@ -629,7 +629,7 @@ class AddPanddaRun(luigi.Task):
             f.write('')
 
 
-class AddPanddaTables(luigi.Task):
+class FindPanddaInfo(luigi.Task):
     search_path = luigi.Parameter()
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     sdbfile = luigi.Parameter()
@@ -638,21 +638,38 @@ class AddPanddaTables(luigi.Task):
         return FindPanddaLogs(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(str(self.input().path + '.tables.done'))
+        return luigi.LocalTarget(str(self.input().path + '.info.csv'))
 
     def run(self):
         # read the list of log files
         with self.input().open('r') as f:
             log_files = [logfile.rstrip() for logfile in f.readlines()]
 
+        out_dict = {
+            'log_file': [],
+            'pver': [],
+            'input_dir': [],
+            'output_dir': [],
+            'sites_file': [],
+            'events_file': [],
+            'sdb_file': []
+        }
 
         for log_file in log_files:
+
             # read information from the log file
             pver, input_dir, output_dir, sites_file, events_file, err = pandda_functions.get_files_from_log(log_file)
             if not err and sites_file and events_file and '0.1.' not in pver:
                 # if no error, and sites and events present, add events from events file
-                yield AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
-                                      sites_file=sites_file, events_file=events_file, sdbfile=self.sdbfile)
+                # yield AddPanddaEvents(
+                out_dict['log_file'].append(log_file)
+                out_dict['pver'].append(pver)
+                out_dict['input_dir'].append(input_dir)
+                out_dict['output_dir'].append(output_dir)
+                out_dict['sites_file'].append(sites_file)
+                out_dict['events_file'].append(events_file)
+                out_dict['sdbfile'].append(self.sdbfile)
+
             else:
                 print(pver)
                 print(input_dir)
@@ -661,8 +678,35 @@ class AddPanddaTables(luigi.Task):
                 print(events_file)
                 print(err)
 
-        with self.output().open('w') as f:
-            f.write('')
+        frame = pd.DataFrame.from_dict(out_dict)
+
+        frame.to_csv(self.output().path)
+
+        # with self.output().open('w') as f:
+        #     f.write('')
+
+
+class AddPanddaData(luigi.Task):
+    search_path = luigi.Parameter()
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    sdbfile = luigi.Parameter()
+
+    def requires(self):
+        if not os.path.isfile(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
+                              sdbfile=self.sdbfile).output().path):
+            return FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
+                                  sdbfile=self.sdbfile)
+        else:
+            frame = pd.DataFrame.from_csv(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
+                              sdbfile=self.sdbfile).output().path)
+
+            return[AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                                   sites_file=sites_file, events_file=events_file, sdbfile=sdbfile) for
+                   log_file, pver, input_dir, output_dir, sites_file, events_file, sdbfile in
+                   list(zip(
+                       frame['log_file'], frame['pver'], frame['input_dir'], frame['output_dir'], frame['sites_file'],
+                       frame['events_file'], frame['sdbfile']
+                   ))]
 
 
 class FindSearchPaths(luigi.Task):
@@ -737,7 +781,7 @@ class StartPipeline(luigi.Task):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
         else:
             frame = pd.DataFrame.from_csv(in_file)
-            return [AddPanddaTables(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
+            return [AddPanddaData(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
                     search_path, filepath, sdbfile in list(
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
 
