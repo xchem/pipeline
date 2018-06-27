@@ -737,7 +737,7 @@ class StartPipeline(luigi.Task):
             frame = pd.DataFrame.from_csv(in_file)
             return [AddPanddaTables(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
                     search_path, filepath, sdbfile in list(
-                    zip([frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']]))]
+                    zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
 
 
 
