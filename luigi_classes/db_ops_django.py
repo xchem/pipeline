@@ -714,7 +714,9 @@ class FindSearchPaths(luigi.Task):
 
         frame = pd.DataFrame.from_dict(out_dict)
 
-        frame.to_csv()
+        print(self.output().path())
+
+        frame.to_csv(self.output().path())
 
         if to_exclude:
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
