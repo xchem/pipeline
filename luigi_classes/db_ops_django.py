@@ -652,7 +652,7 @@ class FindPanddaInfo(luigi.Task):
             'output_dir': [],
             'sites_file': [],
             'events_file': [],
-            'sdb_file': []
+            'sdbfile': []
         }
 
         for log_file in log_files:
