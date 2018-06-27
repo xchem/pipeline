@@ -665,12 +665,13 @@ class AddPanddaTables(luigi.Task):
 
 class FindSearchPaths(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
         return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str('logs/search_paths_' + str(self.datetime) + '.csv'))
 
     def run(self):
         with self.input().open('r') as f:
@@ -700,17 +701,43 @@ class FindSearchPaths(luigi.Task):
 
                 to_exclude.append(path)
 
+        out_dict = {'search_path':[], 'soak_db_filepath':[], 'sdbfile':[]}
+
         for path, sdbfile in zipped:
             print(path)
             print(sdbfile)
             print(os.path.join(path, sdbfile))
-            yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath,
-                                  sdbfile=os.path.join(path, sdbfile))
+            # yield AddPanddaTables(
+            out_dict.search_path.append(path)
+            out_dict.soak_db_filepath.append(self.soak_db_filepath)
+            out_dict.sdbfile.append(os.path.join(path, sdbfile))
+
+        frame = pd.DataFrame.from_dict(out_dict)
+
+        frame.to_csv()
 
         if to_exclude:
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
                             ' be included in data upload, as it is impossible to link data back to the correct'
                             ' soakdbfiles when there are multiple per project:\n' + ', '.join(to_exclude))
+
+
+class StartPipeline(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+    def requires(self):
+        in_file = os.path.join(os.getcwd(), str('logs/search_paths_' + str(self.datetime) + '.csv'))
+        if not os.path.isfile(in_file):
+            return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
+        else:
+            frame = pd.DataFrame.from_csv(in_file)
+            return [AddPanddaTables(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
+                    search_path, filepath, sdbfile in list(
+                    zip([frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']])
+                )]
+
+
 
 
 
