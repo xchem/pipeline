@@ -422,7 +422,7 @@ class FindPanddaLogs(luigi.Task):
         return StartTransfers(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.search_path, self.date_time.strftime('pandda_logs_%Y%m%d%H.txt')))
+        return luigi.LocalTarget(os.path.join(self.search_path, str(self.date_time) + '.txt'))
 
     def run(self):
         print('RUNNING')
