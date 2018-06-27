@@ -701,9 +701,9 @@ class FindSearchPaths(luigi.Task):
                 to_exclude.append(path)
 
         for path, sdbfile in zipped:
-            # print(path)
-            # print(sdbfile)
-            # print(os.path.join(path, sdbfile))
+            print(path)
+            print(sdbfile)
+            print(os.path.join(path, sdbfile))
             yield AddPanddaTables(search_path=path, soak_db_filepath=self.soak_db_filepath,
                                   sdbfile=os.path.join(path, sdbfile))
 
