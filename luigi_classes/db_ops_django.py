@@ -708,9 +708,9 @@ class FindSearchPaths(luigi.Task):
             print(sdbfile)
             print(os.path.join(path, sdbfile))
             # yield AddPanddaTables(
-            out_dict.search_path.append(path)
-            out_dict.soak_db_filepath.append(self.soak_db_filepath)
-            out_dict.sdbfile.append(os.path.join(path, sdbfile))
+            out_dict['search_path'].append(path)
+            out_dict['soak_db_filepath'].append(self.soak_db_filepath)
+            out_dict['sdbfile'].append(os.path.join(path, sdbfile))
 
         frame = pd.DataFrame.from_dict(out_dict)
 
