@@ -671,7 +671,7 @@ class FindSearchPaths(luigi.Task):
         return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(str('logs/search_paths_' + str(self.datetime) + '.csv'))
+        return luigi.LocalTarget(str('logs/search_paths_' + str(self.date_time) + '.csv'))
 
     def run(self):
         with self.input().open('r') as f:
@@ -727,7 +727,7 @@ class StartPipeline(luigi.Task):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        in_file = os.path.join(os.getcwd(), str('logs/search_paths_' + str(self.datetime) + '.csv'))
+        in_file = os.path.join(os.getcwd(), str('logs/search_paths_' + str(self.date_time) + '.csv'))
         if not os.path.isfile(in_file):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
         else:
