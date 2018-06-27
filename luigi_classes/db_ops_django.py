@@ -426,6 +426,8 @@ class FindPanddaLogs(luigi.Task):
 
     def run(self):
         print('RUNNING')
+        if os.path.isfile(self.output().path.replace(str(self.date_time), str(int(str(self.date_time))-1))):
+            os.remove(self.output().path.replace(str(self.date_time), str(int(str(self.date_time))-1)))
         log_files = pandda_functions.find_log_files(self.search_path)
         with self.output().open('w') as f:
             f.write(log_files)
