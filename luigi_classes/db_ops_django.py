@@ -729,15 +729,15 @@ class StartPipeline(luigi.Task):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        in_file = os.path.join(os.getcwd(), str('logs/search_paths_' + str(self.date_time) + '.csv'))
+        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path()
+        print(in_file)
         if not os.path.isfile(in_file):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
         else:
             frame = pd.DataFrame.from_csv(in_file)
             return [AddPanddaTables(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
                     search_path, filepath, sdbfile in list(
-                    zip([frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']])
-                )]
+                    zip([frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']]))]
 
 
 
