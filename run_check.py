@@ -18,6 +18,9 @@ def check_table(model, results, translation):
             if isinstance(test_xchem_val, float):
                 if float(test_xchem_val)==float(soakdb_val):
                     continue
+            if isinstance(test_xchem_val, int):
+                if int(soakdb_val)==int(test_xchem_val):
+                    continue
             if test_xchem_val != soakdb_val:
                 print('FAIL:')
                 print(test_xchem_val)
