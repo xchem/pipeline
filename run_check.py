@@ -52,7 +52,7 @@ results = soakdb_query(database_file)
 
 # print(str(results))
 with open('results.txt', 'a') as f:
-    f.write(json.dumps(dict(results)))
+    f.write(json.dumps([dict(x) for x in results]))
 
 # print('Number of rows from file = ' + str(len(results)))
 # transfer_table(data_processing_translations(), database_file, DataProcessing)
