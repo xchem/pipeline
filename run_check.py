@@ -34,7 +34,7 @@ def check_table(model, results, translation):
                 print(key)
                 print(test_xchem_val)
                 print(soakdb_val)
-                print(lab_object.crystal_name)
+                print(lab_object[0])
                 # error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
                 # error_dict['soakdb_field'].append(translation[key])
                 # error_dict['model_field'].append(key)
