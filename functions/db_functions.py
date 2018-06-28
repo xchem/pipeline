@@ -191,6 +191,16 @@ def transfer_table(translate_dict, filename, model):
         if model == models.Crystal and 'target' not in d.keys():
             continue
 
+        # check that file_id's can be written
+        for key in model_fields:
+            if key == 'file':
+                try:
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+                except ObjectDoesNotExist:
+                    _, _, proposal = pop_soakdb(filename)
+                    pop_proposals(proposal)
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+
         for key in d.keys():
 
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
@@ -229,15 +239,7 @@ def transfer_table(translate_dict, filename, model):
                 # except:
                 #     continue
 
-        # check that file_id's can be written
-        for key in model_fields:
-            if key == 'file':
-                try:
-                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
-                except ObjectDoesNotExist:
-                    _, _, proposal = pop_soakdb(filename)
-                    pop_proposals(proposal)
-                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+
 
         try:
             # write out the row to the relevant model (table)
