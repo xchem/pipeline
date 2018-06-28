@@ -1,6 +1,7 @@
 import setup_django
 from db.models import *
 from functions.db_functions import *
+import json
 
 def check_table(model, results, translation):
     error_dict = {
@@ -49,7 +50,7 @@ print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
 results = soakdb_query(database_file)
 with open('results.txt', 'w') as f:
-    f.write(results)
+    f.write(json.dumps(results))
 
 # print('Number of rows from file = ' + str(len(results)))
 # transfer_table(data_processing_translations(), database_file, DataProcessing)
