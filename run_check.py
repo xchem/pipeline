@@ -38,7 +38,7 @@ for row in results:
     lab_object = Lab.objects.filter(crystal_name__crystal_name=row['CrystalName'])
     print(lab_object)
     for key in lab_trans.keys():
-        print(lab_object.key)
+        print(eval(str('lab_object.' + key)))
 #
 #
 # print(len(proteins))
