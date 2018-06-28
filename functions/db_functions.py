@@ -150,114 +150,110 @@ def refinement_translations():
 
     return refinement
 
-def transfer_row(row, model, translate_dict, filename):
-    # set up blank dictionary to hold model values
-    d = {}
-    # get the keys and values of the query
-    row_keys = row.keys()
-    row_values = list(tuple(row))
-
-    # swap the keys over for lookup, and give any missing keys a none value to skip them
-    for i, x in enumerate(row_keys):
-        if x in dict((v, k) for k, v in translate_dict.items()).keys():
-            key = dict((v, k) for k, v in translate_dict.items())[x]
-
-            if key not in d.keys():
-                d[key] = ''
-            d[key] = row_values[i]
-
-    # get the fields that must exist in the model (i.e. table)
-    model_fields = [f.name for f in model._meta.local_fields]
-
-    disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
-                         'Analysis Pending', 'in-situ']
-    d = {k: v for k, v in d.items() if v not in disallowed_floats}
-
-    if model != models.Reference and 'crystal_name' not in d.keys():
-        return None
-
-    if model == models.Crystal and 'target' not in d.keys():
-        return None
-
-    for key in d.keys():
-
-        # raise an exception if a rogue key is found - means translate_dict or model is wrong
-        if key not in model_fields:
-            raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
-
-        # find relevant entries for foreign keys and set as value - crystal names and proteins
-        # if key == 'target' and d[key] in disallowed_floats:
-        #     continue
-        #
-        # if key == 'crystal_name' and d[key] in disallowed_floats:
-        #     continue
-
-        if key == 'crystal_name' and model != models.Crystal:
-            d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
-                                                          file=models.SoakdbFiles.objects.get_or_create(
-                                                              filename=filename)[0])[0]
-
-        if key == 'target':
-            d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
-
-        if key == 'compound':
-            d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
-
-        if key == 'reference':
-            if d[key]:
-                d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
-
-        if key == 'outcome':
-            pattern = re.compile('-?\d+')
-            value = pattern.findall(str(d[key]))
-            if len(value) > 1:
-                raise Exception('multiple values found in outcome string')
-            try:
-                d[key] = int(value[0])
-            except:
-                continue
-
-    # check that file_id's can be written
-    for key in model_fields:
-        if key == 'file':
-            try:
-                d[key] = models.SoakdbFiles.objects.get(filename=filename)
-            except ObjectDoesNotExist:
-                _, _, proposal = pop_soakdb(filename)
-                pop_proposals(proposal)
-                d[key] = models.SoakdbFiles.objects.get(filename=filename)
-
-    return d, model_fields
-
-def save_d(model, d, model_fields):
-
-    try:
-        # write out the row to the relevant model (table)
-        with transaction.atomic():
-            m = model(**d)
-            m.save()
-
-    except IntegrityError as e:
-        print(d)
-        print('WARNING: ' + str(e.__cause__))
-        print(model_fields)
-
-def transfer(filename, results, translate_dict, model):
-    # for each row found in soakdb
-    for row in results:
-        row_results = transfer_row(row, model, translate_dict, filename)
-        if row_results==None:
-            continue
-        d = row_results[0]
-        model_fields = row_results[1]
-        save_d(model,d,model_fields)
 
 # @transaction.atomic
 def transfer_table(translate_dict, filename, model):
     # standard soakdb query for all data
     results = soakdb_query(filename)
     print(filename)
-    transfer(filename, results, translate_dict, model)
+
+    # for each row found in soakdb
+    for row in results:
+        # set up blank dictionary to hold model values
+        d = {}
+        # get the keys and values of the query
+        row_keys = row.keys()
+        row_values = list(tuple(row))
+
+
+        # swap the keys over for lookup, and give any missing keys a none value to skip them
+        for i, x in enumerate(row_keys):
+            if x in dict((v, k) for k, v in translate_dict.items()).keys():
+                key = dict((v, k) for k, v in translate_dict.items())[x]
+
+                if key not in d.keys():
+                    d[key] = ''
+                d[key] = row_values[i]
+
+        # get the fields that must exist in the model (i.e. table)
+        model_fields = [f.name for f in model._meta.local_fields]
+
+        disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
+                             'Analysis Pending', 'in-situ']
+        d = {k: v for k, v in d.items() if v not in disallowed_floats}
+
+        if model != models.Reference and 'crystal_name' not in d.keys():
+            continue
+
+        if model == models.Crystal and 'target' not in d.keys():
+            continue
+
+        for key in d.keys():
+
+            # raise an exception if a rogue key is found - means translate_dict or model is wrong
+            if key not in model_fields:
+                raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
+
+            # find relevant entries for foreign keys and set as value - crystal names and proteins
+            # if key == 'target' and d[key] in disallowed_floats:
+            #     continue
+            #
+            # if key == 'crystal_name' and d[key] in disallowed_floats:
+            #     continue
+
+            if key == 'crystal_name' and model != models.Crystal:
+                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
+                                                              file=models.SoakdbFiles.objects.get_or_create(
+                                                                  filename=filename)[0])[0]
+
+            if key == 'target':
+                d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
+
+            if key == 'compound':
+                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+
+            if key == 'reference':
+                if d[key]:
+                    d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
+
+            if key == 'outcome':
+                pattern = re.compile('-?\d+')
+                value = pattern.findall(str(d[key]))
+                if len(value) > 1:
+                    raise Exception('multiple values found in outcome string')
+                try:
+                    d[key] = int(value[0])
+                except:
+                    continue
+
+        # check that file_id's can be written
+        for key in model_fields:
+            if key == 'file':
+                try:
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+                except ObjectDoesNotExist:
+                    _, _, proposal = pop_soakdb(filename)
+                    pop_proposals(proposal)
+                    d[key] = models.SoakdbFiles.objects.get(filename=filename)
+
+        try:
+            # write out the row to the relevant model (table)
+            with transaction.atomic():
+                m = model(**d)
+                m.save()
+
+        except IntegrityError as e:
+            print(d)
+            print('WARNING: ' + str(e.__cause__))
+            print(model_fields)
+            continue
+        # uncomment to debug
+        # except ValueError as e:
+        #     print(d)
+        #     print('WARNING: ' + str(e.__cause__))
+        #     print(e)
+        #     print(model_fields)
+        #     continue
 
 
 def soakdb_query(filename):
@@ -265,7 +261,7 @@ def soakdb_query(filename):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("select * from mainTable where CrystalName = 'SagaMurD-x0374' and CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
+    c.execute("select * from mainTable where CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
               "and CompoundSMILES not like ? and CompoundSMILES NOT LIKE ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
               "and ProteinName not like ? and ProteinName NOT LIKE ? and ProteinName not NULL and ProteinName !=''", ('None', 'null','None', 'null', 'None', 'null'))
 
