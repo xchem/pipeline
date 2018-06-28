@@ -261,7 +261,7 @@ def soakdb_query(filename):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("select * from mainTable where CrystalName = 'SagaMurD-x0002' and CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
+    c.execute("select * from mainTable where CrystalName = 'SagaMurD-x0374' and CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
               "and CompoundSMILES not like ? and CompoundSMILES NOT LIKE ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
               "and ProteinName not like ? and ProteinName NOT LIKE ? and ProteinName not NULL and ProteinName !=''", ('None', 'null','None', 'null', 'None', 'null'))
 

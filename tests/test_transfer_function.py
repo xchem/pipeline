@@ -6,6 +6,6 @@ from functions import db_functions
 
 class TestTasks(unittest.TestCase):
 
-    sql_query =
+    sql_result = ''''''
 
     def test_transfer_sagamurd(self):
