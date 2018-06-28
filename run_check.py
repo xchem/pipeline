@@ -23,16 +23,20 @@ print('Unique targets in soakdb file: ' + str(proteins))
 
 lab_trans = lab_translations()
 
-for key in lab_trans.keys():
-    print(lab_trans[key])
-    for row in results:
-        try:
-            value = row[lab_trans[key]]
-            key_for_db = key
-            if key_for_db == 'crystal_name':
-                print(Lab.objects.filter(crystal_name__crystal_name=value))
-        except:
-            print('no entry for: ' + str(row[lab_trans[key]]))
+# for key in lab_trans.keys():
+#     print(lab_trans[key])
+#     for row in results:
+#         try:
+#             value = row[lab_trans[key]]
+#             key_for_db = key
+#             if key_for_db == 'crystal_name':
+#                 print(Lab.objects.filter(crystal_name__crystal_name=value))
+#         except:
+#             print('no entry for: ' + str(row[lab_trans[key]]))
+
+for row in results:
+    lab_object = Lab.objects.filter(crystal_name__crystal_name=row['CrystalName'])
+    print(lab_object)
 #
 #
 # print(len(proteins))
