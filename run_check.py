@@ -26,7 +26,7 @@ lab_trans = lab_translations()
 for key in lab_trans.keys():
     print(lab_trans[key])
     for row in results:
-        print row[key]
+        print(row[key])
 
 #
 #
