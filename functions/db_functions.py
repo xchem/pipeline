@@ -157,6 +157,8 @@ def transfer_table(translate_dict, filename, model):
     results = soakdb_query(filename)
     print(filename)
 
+    
+
     # for each row found in soakdb
     for row in results:
         # set up blank dictionary to hold model values

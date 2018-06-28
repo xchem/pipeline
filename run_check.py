@@ -2,6 +2,8 @@ import setup_django
 from db.models import *
 from functions.db_functions import *
 import json
+from luigi_classes.db_ops_django import TransferNewDataFile
+from tests.test_functions import run_luigi_worker
 
 def check_table(model, results, translation):
     error_dict = {
@@ -48,11 +50,13 @@ def check_table(model, results, translation):
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
+status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
+print(status)
 results = soakdb_query(database_file)
 
 
 print('Number of rows from file = ' + str(len(results)))
-transfer_table(data_processing_translations(), database_file, DataProcessing)
+
 
 if len(Crystal.objects.filter(file__filename=database_file)) == len(results):
     status = True
@@ -66,7 +70,6 @@ if not status:
 proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
 
 print('Unique targets in soakdb file: ' + str(proteins))
-
 
 print('Checking Lab table...')
 lab_errors = check_table(Lab, results, lab_translations())
