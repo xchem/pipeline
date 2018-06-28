@@ -3,6 +3,14 @@ from db.models import *
 from functions.db_functions import *
 
 def check_table(model, results, translation):
+    error_dict = {
+        'crystal':[],
+        'soakdb_field':[],
+        'model_field':[],
+        'soakdb_value':[],
+        'model_value': []
+
+    }
     for row in results:
         lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
         for key in translation.keys():
@@ -11,7 +19,6 @@ def check_table(model, results, translation):
             if translation[key] == 'CrystalName':
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
             if translation[key] == 'DimpleReferencePDB' and soakdb_val:
-                print(str('lab_object[0].' + key + '.reference_pdb'))
                 test_xchem_val = (eval(str('lab_object[0].' + key + '.reference_pdb')))
             if soakdb_val == '' or soakdb_val == 'None':
                 continue
@@ -22,10 +29,13 @@ def check_table(model, results, translation):
                 if int(soakdb_val)==int(test_xchem_val):
                     continue
             if test_xchem_val != soakdb_val:
-                print('FAIL:')
-                print(test_xchem_val)
-                print(soakdb_val)
-                print('\n')
+                error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                error_dict['soakdb_field'].append(translation[key])
+                error_dict['model_field'].append(key)
+                error_dict['soakdb_value'].append(soakdb_val)
+                error_dict['model_value'].append(test_xchem_val)
+
+    return error_dict
 
 
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
@@ -47,22 +57,25 @@ proteins = list(set([protein for protein in [protein['ProteinName'] for protein 
 
 print('Unique targets in soakdb file: ' + str(proteins))
 
-lab_trans = lab_translations()
 
 print('Checking Lab table...')
-check_table(Lab, results, lab_translations())
+lab_errors = check_table(Lab, results, lab_translations())
+print(lab_errors)
 
 print('Checking Dimple table...')
-check_table(Dimple, results, dimple_translations())
+dimple_errors = check_table(Dimple, results, dimple_translations())
+print(dimple_errors)
 
 print('Checking DataProcessing table...')
-check_table(DataProcessing, results, data_processing_translations())
+data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
+print(data_proc_errors)
 
 print('Checking Refinement table...')
-check_table(Refinement, results, refinement_translations())
+ref_errors = check_table(Refinement, results, refinement_translations())
+print(ref_errors)
 
 print('Checking Reference table...')
-check_table(Reference, results, reference_translations())
-
+reference_errors = check_table(Reference, results, reference_translations())
+print(reference_errors)
 
 
