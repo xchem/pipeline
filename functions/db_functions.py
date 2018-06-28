@@ -182,6 +182,7 @@ def transfer_table(translate_dict, filename, model):
 
         disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
                              'Analysis Pending', 'in-situ']
+
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
 
         if model != models.Reference and 'crystal_name' not in d.keys():
@@ -223,10 +224,10 @@ def transfer_table(translate_dict, filename, model):
                 value = pattern.findall(str(d[key]))
                 if len(value) > 1:
                     raise Exception('multiple values found in outcome string')
-                try:
-                    d[key] = int(value[0])
-                except:
-                    continue
+                # try:
+                d[key] = int(value[0])
+                # except:
+                #     continue
 
         # check that file_id's can be written
         for key in model_fields:
@@ -240,9 +241,9 @@ def transfer_table(translate_dict, filename, model):
 
         try:
             # write out the row to the relevant model (table)
-            with transaction.atomic():
-                m = model(**d)
-                m.save()
+            # with transaction.atomic():
+            m = model(**d)
+            m.save()
 
         except IntegrityError as e:
             print(d)
