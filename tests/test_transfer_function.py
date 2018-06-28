@@ -17,8 +17,6 @@ class TestTasks(unittest.TestCase):
         model = Crystal
         translate_dict = db_functions.crystal_translations()
 
-        db_functions.transfer(filename, results, translate_dict, model)
-
         d, model_fields = db_functions.transfer_row(results[0], model, translate_dict, filename)
 
         print(d)
