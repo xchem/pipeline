@@ -244,6 +244,12 @@ def transfer_table(translate_dict, filename, model):
 
             print(d)
 
+            for i,x in enumerate(d.items()):
+                try:
+                    d.items()[i] = float[x]
+                except ValueError:
+                    pass
+
 
 
         # try:
