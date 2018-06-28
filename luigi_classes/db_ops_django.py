@@ -691,6 +691,9 @@ class AddPanddaData(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     sdbfile = luigi.Parameter()
 
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.search_path, 'transfer_pandda_data.done'))
+
     def requires(self):
         if not os.path.isfile(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
                               sdbfile=self.sdbfile).output().path):
@@ -707,6 +710,10 @@ class AddPanddaData(luigi.Task):
                        frame['log_file'], frame['pver'], frame['input_dir'], frame['output_dir'], frame['sites_file'],
                        frame['events_file'], frame['sdbfile']
                    ))]
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class FindSearchPaths(luigi.Task):
