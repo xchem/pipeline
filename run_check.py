@@ -5,7 +5,6 @@ from functions.db_functions import *
 def check_table(model, results, translation):
     for row in results:
         lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
-        print(lab_object)
         for key in translation.keys():
             test_xchem_val = eval(str('lab_object[0].' + key))
             soakdb_val = row[translation[key]]
