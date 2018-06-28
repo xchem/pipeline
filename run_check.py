@@ -13,7 +13,7 @@ def check_table(model, results, translation):
     }
     for row in results:
         lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
-        print(len(lab_object))
+        # print(len(lab_object))
         for key in translation.keys():
             test_xchem_val = eval(str('lab_object[0].' + key))
             soakdb_val = row[translation[key]]
@@ -24,17 +24,17 @@ def check_table(model, results, translation):
             if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
                 continue
             if isinstance(test_xchem_val, float):
-                if float(test_xchem_val)==float(soakdb_val):
+                if float(test_xchem_val) == float(soakdb_val):
                     continue
             if isinstance(test_xchem_val, int):
-                if int(soakdb_val)==int(test_xchem_val):
+                if int(soakdb_val) == int(test_xchem_val):
                     continue
             if test_xchem_val != soakdb_val:
                 print(translation[key])
                 print(key)
                 print(test_xchem_val)
                 print(soakdb_val)
-                print(lab_object.crystal_name.crystal_name)
+                print(lab_object.crystal_name)
                 # error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
                 # error_dict['soakdb_field'].append(translation[key])
                 # error_dict['model_field'].append(key)
