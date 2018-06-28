@@ -38,7 +38,13 @@ for row in results:
     lab_object = Lab.objects.filter(crystal_name__crystal_name=row['CrystalName'])
     print(lab_object)
     for key in lab_trans.keys():
-        print(eval(str('lab_object[0].' + key)))
+        test_xchem_val = eval(str('lab_object[0].' + key))
+        soakdb_val = row[lab_trans[key]]
+        if test_xchem_val != soakdb_val:
+            print('FAIL:')
+            print(test_xchem_val)
+            print(soakdb_val)
+            print('\n')
 #
 #
 # print(len(proteins))
