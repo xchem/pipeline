@@ -1,6 +1,6 @@
 import setup_django
 from db.models import *
-from functions.db_functions import soakdb_query
+from functions.db_functions import *
 
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
 print('Checking Database file ' + database_file)
@@ -20,6 +20,11 @@ if not status:
 proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
 
 print('Unique targets in soakdb file: ' + str(proteins))
+
+lab_trans = lab_translations()
+
+for key in lab_trans.keys():
+    print(lab_trans[key])
 
 #
 #
