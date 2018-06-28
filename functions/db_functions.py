@@ -242,6 +242,8 @@ def transfer_table(translate_dict, filename, model):
                 # except:
                 #     continue
 
+            print(d)
+
 
 
         # try:
