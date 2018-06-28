@@ -216,7 +216,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
-                                                              file=models.SoakdbFiles.objects.get_or_create(
+                                                              file=models.SoakdbFiles.objects.get(
                                                                   filename=filename)[0])[0]
 
             if key == 'target':
@@ -241,17 +241,17 @@ def transfer_table(translate_dict, filename, model):
 
 
 
-        try:
+        # try:
             # write out the row to the relevant model (table)
             # with transaction.atomic():
-            m = model(**d)
-            m.save()
+        m = model(**d)
+        m.save()
 
-        except IntegrityError as e:
-            print(d)
-            print('WARNING: ' + str(e.__cause__))
-            print(model_fields)
-            continue
+        # except IntegrityError as e:
+        #     print(d)
+        #     print('WARNING: ' + str(e.__cause__))
+        #     print(model_fields)
+        #     continue
         # uncomment to debug
         # except ValueError as e:
         #     print(d)
