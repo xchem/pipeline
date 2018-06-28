@@ -50,45 +50,42 @@ print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
 results = soakdb_query(database_file)
 
-# print(str(results))
-with open('results.txt', 'a') as f:
-    f.write(json.dumps([dict(x) for x in results]))
 
-# print('Number of rows from file = ' + str(len(results)))
-# transfer_table(data_processing_translations(), database_file, DataProcessing)
-#
-# if len(Crystal.objects.filter(file__filename=database_file)) == len(results):
-#     status = True
-# else:
-#     status = False
-#
-# print('Checking same number of rows in test_xchem: ' + str(status))
-# if not status:
-#     print('FAIL: no of entries in test_xchem = ' + str(len(Crystal.objects.filter(file__filename=database_file))))
-#
-# proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
-#
-# print('Unique targets in soakdb file: ' + str(proteins))
-#
-#
-# print('Checking Lab table...')
-# lab_errors = check_table(Lab, results, lab_translations())
-# print(lab_errors)
-#
-# print('Checking Dimple table...')
-# dimple_errors = check_table(Dimple, results, dimple_translations())
-# print(dimple_errors)
-#
-# print('Checking DataProcessing table...')
-# data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
-# print(data_proc_errors)
-#
-# print('Checking Refinement table...')
-# ref_errors = check_table(Refinement, results, refinement_translations())
-# print(ref_errors)
-#
-# print('Checking Reference table...')
-# reference_errors = check_table(Reference, results, reference_translations())
+print('Number of rows from file = ' + str(len(results)))
+transfer_table(data_processing_translations(), database_file, DataProcessing)
+
+if len(Crystal.objects.filter(file__filename=database_file)) == len(results):
+    status = True
+else:
+    status = False
+
+print('Checking same number of rows in test_xchem: ' + str(status))
+if not status:
+    print('FAIL: no of entries in test_xchem = ' + str(len(Crystal.objects.filter(file__filename=database_file))))
+
+proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
+
+print('Unique targets in soakdb file: ' + str(proteins))
+
+
+print('Checking Lab table...')
+lab_errors = check_table(Lab, results, lab_translations())
+print(lab_errors)
+
+print('Checking Dimple table...')
+dimple_errors = check_table(Dimple, results, dimple_translations())
+print(dimple_errors)
+
+print('Checking DataProcessing table...')
+data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
+print(data_proc_errors)
+
+print('Checking Refinement table...')
+ref_errors = check_table(Refinement, results, refinement_translations())
+print(ref_errors)
+
+print('Checking Reference table...')
+reference_errors = check_table(Reference, results, reference_translations())
 print(reference_errors)
 
 
