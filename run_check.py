@@ -28,7 +28,7 @@ for key in lab_trans.keys():
     for row in results:
         try:
             value = row[lab_trans[key]]
-            key_for_db = lab_trans[key]
+            key_for_db = key
             if key_for_db == 'crystal_name':
                 print(Lab.objects.filter(crystal_name__crystal_name=value))
         except:
