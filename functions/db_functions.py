@@ -246,8 +246,9 @@ def transfer_table(translate_dict, filename, model):
 
             for key in d.keys():
                 try:
+                    # print(d[key])
                     d[key] = float(d[key])
-                except ValueError:
+                except:
                     pass
 
 
