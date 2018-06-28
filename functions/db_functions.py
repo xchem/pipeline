@@ -244,11 +244,13 @@ def transfer_table(translate_dict, filename, model):
 
             print(d)
 
-            for i,x in enumerate(d.items()):
+            for key in d.keys():
                 try:
-                    d.items()[i] = float[x]
+                    d[key] = float(d[key])
                 except ValueError:
                     pass
+
+
 
 
 
