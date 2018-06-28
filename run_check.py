@@ -49,8 +49,9 @@ database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDat
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
 results = soakdb_query(database_file)
-with open('results.txt', 'w') as f:
-    f.write(json.dumps(results))
+print(str(results))
+# with open('results.txt', 'w') as f:
+#     f.write(json.dumps(results))
 
 # print('Number of rows from file = ' + str(len(results)))
 # transfer_table(data_processing_translations(), database_file, DataProcessing)
