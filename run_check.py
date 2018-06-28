@@ -49,6 +49,7 @@ print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
 results = soakdb_query(database_file)
 print('Number of rows from file = ' + str(len(results)))
+transfer_table(data_processing_translations(), database_file, DataProcessing)
 
 if len(Crystal.objects.filter(file__filename=database_file)) == len(results):
     status = True
