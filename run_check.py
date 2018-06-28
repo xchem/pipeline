@@ -29,6 +29,8 @@ def check_table(model, results, translation):
                 if int(soakdb_val)==int(test_xchem_val):
                     continue
             if test_xchem_val != soakdb_val:
+                print(test_xchem_val)
+                print(soakdb_val)
                 error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
                 error_dict['soakdb_field'].append(translation[key])
                 error_dict['model_field'].append(key)
