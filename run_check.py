@@ -40,6 +40,10 @@ for row in results:
     for key in lab_trans.keys():
         test_xchem_val = eval(str('lab_object[0].' + key))
         soakdb_val = row[lab_trans[key]]
+        if lab_trans[key] == 'CrystalName':
+            test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+        if soakdb_val == '' or soakdb_val == 'None':
+            continue
         if test_xchem_val != soakdb_val:
             print('FAIL:')
             print(test_xchem_val)
