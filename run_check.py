@@ -11,6 +11,7 @@ def check_table(model, results, translation):
             if translation[key] == 'CrystalName':
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
             if translation[key] == 'DimpleReferencePDB':
+                print(str('lab_object[0].' + key + '.reference_pdb'))
                 print(eval(str('lab_object[0].' + key + '.reference_pdb')))
             if soakdb_val == '' or soakdb_val == 'None':
                 continue
