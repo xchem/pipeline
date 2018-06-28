@@ -50,8 +50,8 @@ def check_table(model, results, translation):
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
-status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
-print(status)
+# status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
+# print(status)
 results = soakdb_query(database_file)
 
 
