@@ -27,9 +27,9 @@ for key in lab_trans.keys():
     print(lab_trans[key])
     for row in results:
         try:
-            print(row[key])
+            print(row[lab_trans[key]])
         except:
-            print('no entry for: ' +str(key))
+            print('no entry for: ' + str(row[lab_trans[key]]))
 #
 #
 # print(len(proteins))
