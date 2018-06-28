@@ -10,6 +10,8 @@ def check_table(model, results, translation):
             soakdb_val = row[translation[key]]
             if translation[key] == 'CrystalName':
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+            if translation[key] == 'DimpleReferencePDB':
+                test_xchem_val = eval(str('lab_object[0].' + key + '.reference_pdb'))
             if soakdb_val == '' or soakdb_val == 'None':
                 continue
             if isinstance(test_xchem_val, float):
@@ -43,10 +45,19 @@ print('Unique targets in soakdb file: ' + str(proteins))
 
 lab_trans = lab_translations()
 
+print('Checking Lab table...')
 check_table(Lab, results, lab_translations())
+
+print('Checking Dimple table...')
 check_table(Dimple, results, dimple_translations())
+
+print('Checking DataProcessing table...')
 check_table(DataProcessing, results, data_processing_translations())
+
+print('Checking Refinement table...')
 check_table(Refinement, results, refinement_translations())
+
+print('Checking Reference table...')
 check_table(Reference, results, reference_translations())
 
 
