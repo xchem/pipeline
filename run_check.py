@@ -2,6 +2,24 @@ import setup_django
 from db.models import *
 from functions.db_functions import *
 
+def check_table(model, results, translation):
+    for row in results:
+        lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
+        print(lab_object)
+        for key in translation.keys():
+            test_xchem_val = eval(str('lab_object[0].' + key))
+            soakdb_val = row[translation[key]]
+            if translation[key] == 'CrystalName':
+                test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+            if soakdb_val == '' or soakdb_val == 'None':
+                continue
+            if test_xchem_val != soakdb_val:
+                print('FAIL:')
+                print(test_xchem_val)
+                print(soakdb_val)
+                print('\n')
+
+
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
@@ -23,44 +41,11 @@ print('Unique targets in soakdb file: ' + str(proteins))
 
 lab_trans = lab_translations()
 
-# for key in lab_trans.keys():
-#     print(lab_trans[key])
-#     for row in results:
-#         try:
-#             value = row[lab_trans[key]]
-#             key_for_db = key
-#             if key_for_db == 'crystal_name':
-#                 print(Lab.objects.filter(crystal_name__crystal_name=value))
-#         except:
-#             print('no entry for: ' + str(row[lab_trans[key]]))
+check_table(Lab, results, lab_translations())
+check_table(Dimple, results, dimple_translations())
+check_table(DataProcessing, results, data_processing_translations())
+check_table(Refinement, results, refinement_translations())
+check_table(Reference, results, reference_translations())
 
-for row in results:
-    lab_object = Lab.objects.filter(crystal_name__crystal_name=row['CrystalName'])
-    print(lab_object)
-    for key in lab_trans.keys():
-        test_xchem_val = eval(str('lab_object[0].' + key))
-        soakdb_val = row[lab_trans[key]]
-        if lab_trans[key] == 'CrystalName':
-            test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
-        if soakdb_val == '' or soakdb_val == 'None':
-            continue
-        if test_xchem_val != soakdb_val:
-            print('FAIL:')
-            print(test_xchem_val)
-            print(soakdb_val)
-            print('\n')
-#
-#
-# print(len(proteins))
-#
-# print(proteins)
-#
-# for row in results:
-#     # set up blank dictionary to hold model values
-#     d = {}
-#     # get the keys and values of the query
-#     row_keys = row.keys()
-#     row_values = list(tuple(row))
-#
-# # print())
-#
+
+
