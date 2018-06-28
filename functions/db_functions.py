@@ -215,9 +215,9 @@ def transfer_table(translate_dict, filename, model):
             #     continue
 
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.get_or_create(crystal_name=d[key],
+                d[key] = models.Crystal.objects.get(crystal_name=d[key],
                                                               file=models.SoakdbFiles.objects.get(
-                                                                  filename=filename)[0])[0]
+                                                                  filename=filename))
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
