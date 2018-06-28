@@ -12,6 +12,9 @@ def check_table(model, results, translation):
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
             if soakdb_val == '' or soakdb_val == 'None':
                 continue
+            if isinstance(test_xchem_val, float):
+                if float(test_xchem_val)==float(soakdb_val):
+                    continue
             if test_xchem_val != soakdb_val:
                 print('FAIL:')
                 print(test_xchem_val)
