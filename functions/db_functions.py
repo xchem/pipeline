@@ -211,6 +211,8 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
 
         for key in d.keys():
+            if key == 'r_merge_high':
+                print(key)
 
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
