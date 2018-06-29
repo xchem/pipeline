@@ -268,8 +268,10 @@ def transfer_table(translate_dict, filename, model):
         # with transaction.atomic():
         m = model.objects.create(**d)
         try:
+            print row['DataProcessingRMergeHigh']
             # print('r_merge_high')
             print('d:' + d['r_merge_high'])
+
         except:
             continue
         # print(d)
