@@ -77,18 +77,18 @@ print(lab_errors)
 
 print('Checking Dimple table...')
 dimple_errors = check_table(Dimple, results, dimple_translations())
-print(dimple_errors)
+# print(dimple_errors)
 
-print('Checking DataProcessing table...')
-data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
-print(data_proc_errors)
-
-print('Checking Refinement table...')
-ref_errors = check_table(Refinement, results, refinement_translations())
-print(ref_errors)
-
-print('Checking Reference table...')
-reference_errors = check_table(Reference, results, reference_translations())
-print(reference_errors)
+# print('Checking DataProcessing table...')
+# data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
+# print(data_proc_errors)
+#
+# print('Checking Refinement table...')
+# ref_errors = check_table(Refinement, results, refinement_translations())
+# print(ref_errors)
+#
+# print('Checking Reference table...')
+# reference_errors = check_table(Reference, results, reference_translations())
+# print(reference_errors)
 
 
