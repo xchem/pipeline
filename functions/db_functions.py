@@ -267,6 +267,7 @@ def transfer_table(translate_dict, filename, model):
             # write out the row to the relevant model (table)
         # with transaction.atomic():
         model.objects.create(**d)
+        print(d)
             # print(m.query)
             # m.save()
 
