@@ -11,10 +11,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 # To get all sql queries sent by Django from py shell
-import logging
-l = logging.getLogger('django.db.backends')
-l.setLevel(logging.DEBUG)
-l.addHandler(logging.StreamHandler())
+# import logging
+# l = logging.getLogger('django.db.backends')
+# l.setLevel(logging.DEBUG)
+# l.addHandler(logging.StreamHandler())
 
 def reference_translations():
     reference = {
@@ -266,8 +266,13 @@ def transfer_table(translate_dict, filename, model):
         # try:
             # write out the row to the relevant model (table)
         # with transaction.atomic():
-        model.objects.create(**d)
-        print(d)
+        m = model.objects.create(**d)
+        try:
+            # print('r_merge_high')
+            print('d:' + d['r_merge_high'])
+        except:
+            continue
+        # print(d)
             # print(m.query)
             # m.save()
 
