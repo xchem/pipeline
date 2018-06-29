@@ -260,8 +260,8 @@ def transfer_table(translate_dict, filename, model):
         # try:
             # write out the row to the relevant model (table)
         with transaction.atomic():
-            print(model(**d).query)
-            # print(m)
+            m = model.objects.create(**d).query
+            print(m.query)
             # m.save()
 
         # except IntegrityError as e:
