@@ -10,6 +10,12 @@ from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
+# To get all sql queries sent by Django from py shell
+import logging
+l = logging.getLogger('django.db.backends')
+l.setLevel(logging.DEBUG)
+l.addHandler(logging.StreamHandler())
+
 def reference_translations():
     reference = {
         'reference':'DimpleReferencePDB'
@@ -259,9 +265,9 @@ def transfer_table(translate_dict, filename, model):
 
         # try:
             # write out the row to the relevant model (table)
-        with transaction.atomic():
-            m = model.objects.create(**d)
-            print(m.query)
+        # with transaction.atomic():
+        model.objects.create(**d)
+            # print(m.query)
             # m.save()
 
         # except IntegrityError as e:
