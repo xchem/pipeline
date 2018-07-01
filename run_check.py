@@ -1,9 +1,9 @@
 import setup_django
 from db.models import *
 from functions.db_functions import *
-import json
 from luigi_classes.db_ops_django import TransferNewDataFile
 from tests.test_functions import run_luigi_worker
+import re
 
 def check_table(model, results, translation):
     error_dict = {
@@ -20,6 +20,9 @@ def check_table(model, results, translation):
         for key in translation.keys():
             test_xchem_val = eval(str('lab_object[0].' + key))
             soakdb_val = row[translation[key]]
+            if key == 'outcome':
+                pattern = re.compile('-?\d+')
+                soakdb_val = int(pattern.findall(str(soakdb_val)))
             if translation[key] == 'CrystalName':
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
             if translation[key] == 'DimpleReferencePDB' and soakdb_val:
