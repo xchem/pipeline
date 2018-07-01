@@ -160,12 +160,9 @@ def refinement_translations():
 def transfer_table(translate_dict, filename, model):
 
     print(translate_dict)
-    
+
     # standard soakdb query for all data
     results = soakdb_query(filename)
-    print(filename)
-
-    
 
     # for each row found in soakdb
     for row in results:
@@ -175,7 +172,7 @@ def transfer_table(translate_dict, filename, model):
         row_keys = row.keys()
         row_values = list(tuple(row))
 
-        print(row_keys)
+        # print(row_keys)
 
 
         # swap the keys over for lookup, and give any missing keys a none value to skip them
@@ -187,7 +184,7 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = ''
                 d[key] = row_values[i]
 
-        print(d)
+        # print(d)
 
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
@@ -216,9 +213,6 @@ def transfer_table(translate_dict, filename, model):
                     pop_proposals(proposal)
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
 
-        for key in d.keys():
-            if key == 'r_merge_high':
-                print(key)
 
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
