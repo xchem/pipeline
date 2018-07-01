@@ -251,7 +251,6 @@ def transfer_table(translate_dict, filename, model):
                     # except:
                     #     continue
                 except:
-                    print(d[key])
                     continue
 
             # print(d)
