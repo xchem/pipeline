@@ -33,16 +33,16 @@ def check_table(model, results, translation):
                 if int(soakdb_val) == int(test_xchem_val):
                     continue
             if test_xchem_val != soakdb_val:
-                print(translation[key])
-                print(key)
-                print(test_xchem_val)
-                print(soakdb_val)
-                print(lab_object[0])
-                # error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
-                # error_dict['soakdb_field'].append(translation[key])
-                # error_dict['model_field'].append(key)
-                # error_dict['soakdb_value'].append(soakdb_val)
-                # error_dict['model_value'].append(test_xchem_val)
+                # print(translation[key])
+                # print(key)
+                # print(test_xchem_val)
+                # print(soakdb_val)
+                # print(lab_object[0])
+                error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                error_dict['soakdb_field'].append(translation[key])
+                error_dict['model_field'].append(key)
+                error_dict['soakdb_value'].append(soakdb_val)
+                error_dict['model_value'].append(test_xchem_val)
 
     return error_dict
 
@@ -77,18 +77,18 @@ print(lab_errors)
 
 print('Checking Dimple table...')
 dimple_errors = check_table(Dimple, results, dimple_translations())
-# print(dimple_errors)
+print(dimple_errors)
 
-# print('Checking DataProcessing table...')
-# data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
-# print(data_proc_errors)
-#
-# print('Checking Refinement table...')
-# ref_errors = check_table(Refinement, results, refinement_translations())
-# print(ref_errors)
-#
-# print('Checking Reference table...')
-# reference_errors = check_table(Reference, results, reference_translations())
-# print(reference_errors)
+print('Checking DataProcessing table...')
+data_proc_errors = check_table(DataProcessing, results, data_processing_translations())
+print(data_proc_errors)
+
+print('Checking Refinement table...')
+ref_errors = check_table(Refinement, results, refinement_translations())
+print(ref_errors)
+
+print('Checking Reference table...')
+reference_errors = check_table(Reference, results, reference_translations())
+print(reference_errors)
 
 
