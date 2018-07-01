@@ -33,16 +33,20 @@ def check_table(model, results, translation):
                 if int(soakdb_val) == int(test_xchem_val):
                     continue
             if test_xchem_val != soakdb_val:
-                print(translation[key])
-                print(key)
-                print(test_xchem_val)
-                print(soakdb_val)
-                print(lab_object[0])
-                # error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
-                # error_dict['soakdb_field'].append(translation[key])
-                # error_dict['model_field'].append(key)
-                # error_dict['soakdb_value'].append(soakdb_val)
-                # error_dict['model_value'].append(test_xchem_val)
+                if soakdb_val in [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
+                                  'Analysis Pending', 'in-situ']:
+                    continue
+                else:
+                # print(translation[key])
+                # print(key)
+                # print(test_xchem_val)
+                # print(soakdb_val)
+                # print(lab_object[0])
+                    error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                    error_dict['soakdb_field'].append(translation[key])
+                    error_dict['model_field'].append(key)
+                    error_dict['soakdb_value'].append(soakdb_val)
+                    error_dict['model_value'].append(test_xchem_val)
 
     return error_dict
 
