@@ -241,14 +241,18 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
 
             if key == 'outcome':
-                pattern = re.compile('-?\d+')
-                value = pattern.findall(str(d[key]))
-                if len(value) > 1:
-                    raise Exception('multiple values found in outcome string')
-                # try:
-                d[key] = int(value[0])
-                # except:
-                #     continue
+                try:
+                    pattern = re.compile('-?\d+')
+                    value = pattern.findall(str(d[key]))
+                    if len(value) > 1:
+                        raise Exception('multiple values found in outcome string')
+                    # try:
+                    d[key] = int(value[0])
+                    # except:
+                    #     continue
+                except:
+                    print(d[key])
+                    continue
 
             # print(d)
 
