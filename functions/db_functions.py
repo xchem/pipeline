@@ -156,9 +156,11 @@ def refinement_translations():
 
     return refinement
 
-
-@transaction.atomic
+# @transaction.atomic
 def transfer_table(translate_dict, filename, model):
+
+    print(translate_dict)
+    
     # standard soakdb query for all data
     results = soakdb_query(filename)
     print(filename)
@@ -173,6 +175,8 @@ def transfer_table(translate_dict, filename, model):
         row_keys = row.keys()
         row_values = list(tuple(row))
 
+        print(row_keys)
+
 
         # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
@@ -182,6 +186,8 @@ def transfer_table(translate_dict, filename, model):
                 if key not in d.keys():
                     d[key] = ''
                 d[key] = row_values[i]
+
+        print(d)
 
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
@@ -267,16 +273,10 @@ def transfer_table(translate_dict, filename, model):
 
         # try:
             # write out the row to the relevant model (table)
-        # with transaction.atomic():
-        m = model.objects.create(**d)
-        try:
-            print(row['DataProcessingRMergeHigh'])
-            print(d)
-            # print('r_merge_high')
-            print('d:' + d['r_merge_high'])
+        with transaction.atomic():
+            m = model.objects.create(**d)
+            m.save
 
-        except:
-            continue
         # print(d)
             # print(m.query)
             # m.save()
