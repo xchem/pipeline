@@ -22,10 +22,10 @@ def check_table(model, results, translation):
             soakdb_val = row[translation[key]]
             if key == 'outcome':
                 pattern = re.compile('-?\d+')
-                if len(pattern.findall(str(soakdb_val))) > 1:
-                    print('FUCK')
-                else:
+                try:
                     soakdb_val = int(pattern.findall(str(soakdb_val))[0])
+                except:
+                    continue
             if translation[key] == 'CrystalName':
                 test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
             if translation[key] == 'DimpleReferencePDB' and soakdb_val:
