@@ -68,11 +68,11 @@ def data_processing_translations():
         'res_low': 'DataProcessingResolutionLow',
         'res_low_inner_shell': 'DataProcessingResolutionLowInnerShell',
         'res_high': 'DataProcessingResolutionHigh',
-        'res_high_15_sigma': 'DataProcessingResolutionHigh15Sigma',
+        'res_high_15_sigma': 'DataProcessingResolutionHigh15sigma',
         'res_high_outer_shell': 'DataProcessingResolutionHighOuterShell',
-        'r_merge_overall': 'DataProcessingRMergeOverall',
-        'r_merge_low': 'DataProcessingRMergeLow',
-        'r_merge_high': 'DataProcessingRMergeHigh',
+        'r_merge_overall': 'DataProcessingRmergeOverall',
+        'r_merge_low': 'DataProcessingRmergeLow',
+        'r_merge_high': 'DataProcessingRmergeHigh',
         'isig_overall': 'DataProcessingIsigOverall',
         'isig_low': 'DataProcessingIsigLow',
         'isig_high': 'DataProcessingIsigHigh',
@@ -159,11 +159,6 @@ def refinement_translations():
 # @transaction.atomic
 def transfer_table(translate_dict, filename, model):
 
-    # print(translate_dict)
-    # print(translate_dict.items())
-    print(dict((v, k) for k, v in translate_dict.items()))
-    print(dict((v, k) for k, v in translate_dict.items()).keys())
-
     # standard soakdb query for all data
     results = soakdb_query(filename)
 
@@ -177,33 +172,20 @@ def transfer_table(translate_dict, filename, model):
 
         # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
-            print('I: ' + str(i))
-            print('X: ' + str(x))
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
                 key = dict((v, k) for k, v in translate_dict.items())[x]
-                print('KEY: ' + key)
 
                 if key not in d.keys():
-                    print('NOT KEY: ' + (key))
                     d[key] = ''
                 d[key] = row_values[i]
 
-        if 'res_high_15_sigma' in d.keys():
-            print(d)
-
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
-        # print(model_fields)
 
         disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
                              'Analysis Pending', 'in-situ']
 
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
-
-        if 'res_high_15_sigma' in d.keys():
-            print(d)
-
-        # print(d)
 
         if model != models.Reference and 'crystal_name' not in d.keys():
             continue
@@ -228,11 +210,6 @@ def transfer_table(translate_dict, filename, model):
                 raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
-            # if key == 'target' and d[key] in disallowed_floats:
-            #     continue
-            #
-            # if key == 'crystal_name' and d[key] in disallowed_floats:
-            #     continue
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get(crystal_name=d[key],
@@ -254,48 +231,15 @@ def transfer_table(translate_dict, filename, model):
                 value = pattern.findall(str(d[key]))
                 if len(value) > 1:
                     raise Exception('multiple values found in outcome string')
-                # try:
-                d[key] = int(value[0])
-                # except:
-                #     continue
+                try:
+                    d[key] = int(value[0])
+                except:
+                    continue
 
-            # print(d)
-
-            # for key in d.keys():
-            #     try:
-            #         # print(d[key])
-            #         d[key] = float(d[key])
-            #     except:
-            #         pass
-
-
-
-        # string = ',' .join(['key'=d[key] for
-        #
-        # ])
-
-        # try:
-            # write out the row to the relevant model (table)
+        # write out the row to the relevant model (table)
         with transaction.atomic():
             m = model.objects.create(**d)
             m.save
-
-        # print(d)
-            # print(m.query)
-            # m.save()
-
-        # except IntegrityError as e:
-        #     print(d)
-        #     print('WARNING: ' + str(e.__cause__))
-        #     print(model_fields)
-        #     continue
-        # uncomment to debug
-        # except ValueError as e:
-        #     print(d)
-        #     print('WARNING: ' + str(e.__cause__))
-        #     print(e)
-        #     print(model_fields)
-        #     continue
 
 
 def soakdb_query(filename):
