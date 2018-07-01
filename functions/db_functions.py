@@ -172,9 +172,6 @@ def transfer_table(translate_dict, filename, model):
         row_keys = row.keys()
         row_values = list(tuple(row))
 
-        # print(row_keys)
-
-
         # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
@@ -184,7 +181,8 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = ''
                 d[key] = row_values[i]
 
-        # print(d)
+        if 'res_high_15_sigma' in d.keys():
+            print(d)
 
         # get the fields that must exist in the model (i.e. table)
         model_fields = [f.name for f in model._meta.local_fields]
@@ -194,6 +192,9 @@ def transfer_table(translate_dict, filename, model):
                              'Analysis Pending', 'in-situ']
 
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
+
+        if 'res_high_15_sigma' in d.keys():
+            print(d)
 
         # print(d)
 
