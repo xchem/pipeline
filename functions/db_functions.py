@@ -177,10 +177,14 @@ def transfer_table(translate_dict, filename, model):
 
         # swap the keys over for lookup, and give any missing keys a none value to skip them
         for i, x in enumerate(row_keys):
+            print('I: ' + str(i))
+            print('X: ' + str(x))
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
                 key = dict((v, k) for k, v in translate_dict.items())[x]
+                print('KEY: ' + key)
 
                 if key not in d.keys():
+                    print('NOT KEY: ' + (key))
                     d[key] = ''
                 d[key] = row_values[i]
 
