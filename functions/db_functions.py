@@ -213,6 +213,7 @@ def transfer_table(translate_dict, filename, model):
                     pop_proposals(proposal)
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
 
+        for key in d.keys():
 
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
@@ -241,17 +242,14 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = models.Reference.objects.get_or_create(reference_pdb=d[key])[0]
 
             if key == 'outcome':
-                try:
-                    pattern = re.compile('-?\d+')
-                    value = pattern.findall(str(d[key]))
-                    if len(value) > 1:
-                        raise Exception('multiple values found in outcome string')
-                    # try:
-                    d[key] = int(value[0])
-                    # except:
-                    #     continue
-                except:
-                    continue
+                pattern = re.compile('-?\d+')
+                value = pattern.findall(str(d[key]))
+                if len(value) > 1:
+                    raise Exception('multiple values found in outcome string')
+                # try:
+                d[key] = int(value[0])
+                # except:
+                #     continue
 
             # print(d)
 
