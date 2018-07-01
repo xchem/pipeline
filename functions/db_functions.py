@@ -159,8 +159,10 @@ def refinement_translations():
 # @transaction.atomic
 def transfer_table(translate_dict, filename, model):
 
-    print(translate_dict)
-    print(translate_dict.items())
+    # print(translate_dict)
+    # print(translate_dict.items())
+    print(dict((v, k) for k, v in translate_dict.items()))
+    print(dict((v, k) for k, v in translate_dict.items()).keys())
 
     # standard soakdb query for all data
     results = soakdb_query(filename)
@@ -177,8 +179,6 @@ def transfer_table(translate_dict, filename, model):
         for i, x in enumerate(row_keys):
             if x in dict((v, k) for k, v in translate_dict.items()).keys():
                 key = dict((v, k) for k, v in translate_dict.items())[x]
-                if key == 'res_high_15_sigma':
-                    print(key)
 
                 if key not in d.keys():
                     d[key] = ''
