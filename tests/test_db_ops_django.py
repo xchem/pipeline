@@ -4,9 +4,9 @@ import shutil
 import unittest
 import setup_django
 from db.models import *
-from django.db.models import Q
 from functions import db_functions
-from luigi_classes import db_ops_django
+from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
+    TransferNewDataFile, TransferChangedDataFile
 from test_functions import run_luigi_worker
 
 
@@ -44,7 +44,7 @@ class TestTasks(unittest.TestCase):
         print('TESTING FINDSOAKDB: test_findsoakdb')
         os.chdir(self.working_dir)
         print(os.path.join(self.working_dir) + '*')
-        find_file = run_luigi_worker(db_ops_django.FindSoakDBFiles(
+        find_file = run_luigi_worker(FindSoakDBFiles(
             filepath=str(self.working_dir + '*')))
         self.assertTrue(find_file)
 
@@ -52,16 +52,16 @@ class TestTasks(unittest.TestCase):
         soakdb_rows = SoakdbFiles.objects.all()
         soakdb_rows.delete()
 
-        run_luigi_worker(db_ops_django.FindSoakDBFiles(
+        run_luigi_worker(FindSoakDBFiles(
             filepath=str(self.working_dir + '*')))
         print('TESTING FEDIDS: test_transfer_fedids_files')
-        transfer = run_luigi_worker(db_ops_django.TransferAllFedIDsAndDatafiles(
+        transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(
             date=self.date, soak_db_filepath=str(self.working_dir + '*')))
         self.assertTrue(transfer)
 
     def test_check_files(self):
         print('TESTING CHECK_FILES: test_check_files')
-        check_files = run_luigi_worker(db_ops_django.CheckFiles(soak_db_filepath=str(self.working_dir + '*')))
+        check_files = run_luigi_worker(CheckFiles(soak_db_filepath=str(self.working_dir + '*')))
         self.assertTrue(check_files)
 
         # get the status value from soakdb entry for current file
@@ -73,10 +73,10 @@ class TestTasks(unittest.TestCase):
 
     def test_transfers(self):
         print('TESTING TRANSFERS: test_transfers')
-        find_file = run_luigi_worker(db_ops_django.FindSoakDBFiles(
+        find_file = run_luigi_worker(FindSoakDBFiles(
             filepath=str(self.working_dir + '*')))
         self.assertTrue(find_file)
-        test_new_file = run_luigi_worker(db_ops_django.TransferNewDataFile(data_file=self.db_full_path,
+        test_new_file = run_luigi_worker(TransferNewDataFile(data_file=self.db_full_path,
                                                                            soak_db_filepath=str(self.working_dir + '*')
                                                                            ))
         self.assertTrue(test_new_file)
@@ -87,7 +87,7 @@ class TestTasks(unittest.TestCase):
         # check == 2 (not changed - ie. has been successfully added)
         self.assertEqual(int(status[0]), 2)
 
-        test_changed_file = run_luigi_worker(db_ops_django.TransferChangedDataFile(data_file=self.db_full_path,
+        test_changed_file = run_luigi_worker(TransferChangedDataFile(data_file=self.db_full_path,
                                                                            soak_db_filepath=str(self.working_dir + '*')
                                                                                    ))
 

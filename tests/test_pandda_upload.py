@@ -5,10 +5,8 @@ import datetime
 import setup_django
 from test_functions import run_luigi_worker
 import functions.pandda_functions as pf
-from luigi_classes import db_ops_django
+from luigi_classes.transfer_pandda import FindPanddaLogs, AddPanddaRun, AddPanddaSites
 from db.models import *
-import pandas as pd
-
 
 class TestFindLogs(unittest.TestCase):
     # filepath where test data is
@@ -45,7 +43,7 @@ class TestFindLogs(unittest.TestCase):
         pandda_runs.delete()
 
     def test_find_pandda_logs(self):
-        find_logs = run_luigi_worker(db_ops_django.FindPanddaLogs(
+        find_logs = run_luigi_worker(FindPanddaLogs(
             search_path=
             '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/tests/docking_files/panddas_alice',
             soak_db_filepath=str(self.working_dir + '*')))
@@ -68,13 +66,13 @@ class TestFindLogs(unittest.TestCase):
                 remove_path = str('/'.join(log_file.split('/')[:-1]))
                 remove_files.append(remove_path)
 
-                add_run = run_luigi_worker(db_ops_django.AddPanddaRun(
+                add_run = run_luigi_worker(AddPanddaRun(
                     log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir, sites_file=sites_file,
                     events_file=events_file))
 
                 self.assertTrue(add_run)
 
-                add_sites = run_luigi_worker(db_ops_django.AddPanddaSites(log_file=log_file, pver=pver,
+                add_sites = run_luigi_worker(AddPanddaSites(log_file=log_file, pver=pver,
                                                                           input_dir=input_dir, output_dir=output_dir,
                                                                           sites_file=sites_file,
                                                                           events_file=events_file,

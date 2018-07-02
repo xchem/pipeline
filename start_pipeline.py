@@ -1,44 +1,21 @@
-from luigi_classes import data_in_proasis
-from luigi_classes import html_generators
-from luigi_classes import pandda_for_tindspect
-from luigi_classes.batch_classes import FindCompChemReady
-from luigi_classes import run_dock
+import setup_django
 import luigi
 import os
+import pandas as pd
+from luigi_classes.transfer_pandda import FindSearchPaths, AddPanddaData
 
-from luigi_classes import ligand_analysis
 
-class KickOff(luigi.Task):
-    def output(self):
-        return luigi.LocalTarget('pipeline.done')
+class StartPipeline(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        try:
-            os.system('./pg_backup.sh')
-            os.system('rm logs/ligand_search.done')
-            os.system('rm logs/batchdock.done')
-            os.system('rm logs/pipeline.done')
-            os.system('rm logs/summary_html.done')
-            os.system('rm logs/violin_html.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/hits.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/leads.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/transfer.txt')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/hits.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/findprojects.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/blacklists.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/edstats.done')
-            os.system('rm /dls/science/groups/i04-1/software/luigi_pipeline/logs/cleanup.done')
-        except:
-            print('Whoops...')
-
-        yield data_in_proasis.WriteBlackLists()
-        # yield ligand_analysis.StartEdstatsScores()
-        yield html_generators.ProjectSummaryHTML()
-        yield html_generators.LigandEdstatsViolinHTML()
-        yield FindCompChemReady()
-        yield pandda_for_tindspect.StartParse()
-        yield run_dock.BatchDock()
-
-    def run(self):
-        with self.output().open('wb') as f:
-            f.write('')
+        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path
+        print(in_file)
+        if not os.path.isfile(in_file):
+            return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
+        else:
+            frame = pd.DataFrame.from_csv(in_file)
+            return [AddPanddaData(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
+                    search_path, filepath, sdbfile in list(
+                    zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]

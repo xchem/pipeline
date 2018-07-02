@@ -1,8 +1,8 @@
 import setup_django
 from db.models import *
 from functions.db_functions import *
-from luigi_classes.db_ops_django import TransferNewDataFile
-from tests.test_functions import run_luigi_worker
+# from luigi_classes.transfer_soakdb import TransferNewDataFile
+# from tests.test_functions import run_luigi_worker
 import re
 
 def check_table(model, results, translation):
@@ -55,8 +55,8 @@ database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDat
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
 
-status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
-print(status)
+# status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
+# print(status)
 
 results = soakdb_query(database_file)
 
