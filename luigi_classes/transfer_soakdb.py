@@ -1,5 +1,6 @@
 import luigi
 import os
+import re
 import setup_django
 import subprocess
 import datetime
@@ -299,18 +300,105 @@ class StartTransfers(luigi.Task):
         return datafiles
 
     def requires(self):
-        return CheckFiles(soak_db_filepath=self.soak_db_filepath)
+        if not os.path.isfile(CheckFiles(soak_db_filepath=self.soak_db_filepath).output().path):
+            return CheckFiles(soak_db_filepath=self.soak_db_filepath)
+        else:
+            new_list = self.get_file_list(0)
+            changed_list = self.get_file_list(1)
+            return [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                   for datafile in new_list], \
+                   [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
+                   for datafile in changed_list]
 
     def output(self):
         return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
 
     def run(self):
-        new_list = self.get_file_list(0)
-        changed_list = self.get_file_list(1)
-        yield [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                for datafile in new_list], \
-               [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                for datafile in changed_list]
-
         with self.output().open('w') as f:
             f.write('')
+
+
+class CheckFileUpload(luigi.Task):
+    filename = luigi.Parameter()
+    model = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        results = db_functions.soakdb_query(self.filename)
+        translations = {Lab: db_functions.lab_translations(),
+                        Refinement: db_functions.refinement_translations(),
+                        DataProcessing: db_functions.data_processing_translations(),
+                        Dimple: db_functions.dimple_translations()}
+
+        translation = translations[self.model]
+
+        error_dict = {
+            'crystal': [],
+            'soakdb_field': [],
+            'model_field': [],
+            'soakdb_value': [],
+            'model_value': []
+
+        }
+        for row in results:
+            lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
+            for key in translation.keys():
+                test_xchem_val = eval(str('lab_object[0].' + key))
+                soakdb_val = row[translation[key]]
+                if key == 'outcome':
+                    pattern = re.compile('-?\d+')
+                    try:
+                        soakdb_val = int(pattern.findall(str(soakdb_val))[0])
+                    except:
+                        continue
+                if translation[key] == 'CrystalName':
+                    test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+                if translation[key] == 'DimpleReferencePDB' and soakdb_val:
+                    test_xchem_val = (eval(str('lab_object[0].' + key + '.reference_pdb')))
+                if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
+                    continue
+                if isinstance(test_xchem_val, float):
+                    if float(test_xchem_val) == float(soakdb_val):
+                        continue
+                if isinstance(test_xchem_val, int):
+                    if int(soakdb_val) == int(test_xchem_val):
+                        continue
+                if test_xchem_val != soakdb_val:
+                    if soakdb_val in [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?',
+                                      'None\t',
+                                      'Analysis Pending', 'in-situ']:
+                        continue
+                    else:
+                        error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                        error_dict['soakdb_field'].append(translation[key])
+                        error_dict['model_field'].append(key)
+                        error_dict['soakdb_value'].append(soakdb_val)
+                        error_dict['model_value'].append(test_xchem_val)
+
+        if error_dict['crystal']:
+            raise Exception(error_dict)
+
+class CheckUploadedFiles(luigi.Task):
+    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        if not os.path.isfile(StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)):
+            return StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)
+        else:
+            soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
+            models = [Lab, Dimple, DataProcessing, Refinement]
+            zipped = []
+            for filename in soakdb_files:
+                for model in models:
+                    zipped.append(tuple([filename, model]))
+
+            return [CheckFileUpload(filename=filename, model=model) for (filename, model) in zipped]
+
+
+
