@@ -55,7 +55,6 @@ class Crystal(models.Model):
     crystal_name = models.TextField(blank=False, null=False)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
-    file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
 
     # model types
@@ -79,7 +78,7 @@ class Crystal(models.Model):
 
     class Meta:
         db_table = 'crystal'
-        unique_together = ('crystal_name', 'file')
+        unique_together = ('crystal_name', 'visit')
 
 
 class DataProcessing(models.Model):
