@@ -23,7 +23,7 @@ def submit_job(job_directory, job_script, remote_sub_command='ssh -t uzw12877@cs
         number = int(out)
 
     if number > int(max_jobs):
-        raise Exception('Max jobs (' + str(self.max_jobs) + ') exceeded. Please increase max_jobs or wait!')
+        raise Exception('Max jobs (' + str(max_jobs) + ') exceeded. Please increase max_jobs or wait!')
 
     os.chdir(job_directory)
 
