@@ -51,7 +51,7 @@ def crystal_translations():
         'crystal_name': 'CrystalName',
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
-        'file': '',
+        'visit': '',
     }
 
     return crystal
@@ -195,7 +195,7 @@ def transfer_table(translate_dict, filename, model):
 
         # check that file_id's can be written
         for key in model_fields:
-            if key == 'file':
+            if key == 'visit' and model == models.Crystal:
                 try:
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
                 except ObjectDoesNotExist:
@@ -270,7 +270,8 @@ def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
     try:
-        proposal = database_file.split('/')[5].split('-')[0]
+        visit = database_file.split('/')[5]
+        proposal = visit.split('-')[0]
     except:
         proposal = 'lb13385'
         print('WARNING: USING DEFAULT PROPOSAL FOR TESTS')
@@ -282,7 +283,7 @@ def pop_soakdb(database_file):
     # add info to soakdbfiles table
     soakdb_entry = models.SoakdbFiles.objects.get_or_create(modification_date=modification_date, filename=database_file,
                                                             proposal=models.Proposals.objects.get_or_create(
-                                                                proposal=proposal)[0])[0]
+                                                                proposal=proposal)[0], visit=visit)[0]
     soakdb_entry.save()
     return out, err, proposal
 
