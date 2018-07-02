@@ -3,6 +3,7 @@ from db.models import *
 import os
 import glob
 import pandas as pd
+
 soakdb_rows = SoakdbFiles.objects.all()
 
 for row in soakdb_rows:
@@ -24,5 +25,18 @@ for path in search_paths:
         if 'txt' in f:
             os.remove(f)
 
+pandda_runs = PanddaRun.objects.all()
+logfiles = [run.pandda_log for run in pandda_runs]
+
+for logfile in logfiles:
+    if os.path.isfile(logfile + '.run.done'):
+        print(str(logfile + '.run.done'))
+        os.remove(logfile + '.run.done')
+    if os.path.isfile(logfile + '.events.done'):
+        print(str(logfile + '.events.done'))
+        os.remove(logfile + '.events.done')
+    if os.path.isfile(logfile + '.sites.done'):
+        print(str(logfile + '.sites.done'))
+        os.remove(logfile + '.sites.done')
 
 
