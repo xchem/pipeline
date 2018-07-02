@@ -16,7 +16,6 @@ def check_table(model, results, translation):
     }
     for row in results:
         lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
-        # print(len(lab_object))
         for key in translation.keys():
             test_xchem_val = eval(str('lab_object[0].' + key))
             soakdb_val = row[translation[key]]
@@ -43,11 +42,6 @@ def check_table(model, results, translation):
                                   'Analysis Pending', 'in-situ']:
                     continue
                 else:
-                # print(translation[key])
-                # print(key)
-                # print(test_xchem_val)
-                # print(soakdb_val)
-                # print(lab_object[0])
                     error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
                     error_dict['soakdb_field'].append(translation[key])
                     error_dict['model_field'].append(key)
@@ -60,13 +54,13 @@ def check_table(model, results, translation):
 database_file = '/dls/labxchem/data/2017/lb17884-1/processing/database/soakDBDataFile.sqlite'
 print('Checking Database file ' + database_file)
 print('Running soakdb_query...')
+
 status = run_luigi_worker(TransferNewDataFile(data_file=database_file))
 print(status)
+
 results = soakdb_query(database_file)
 
-
 print('Number of rows from file = ' + str(len(results)))
-
 
 if len(Crystal.objects.filter(file__filename=database_file)) == len(results):
     status = True
@@ -97,8 +91,5 @@ print('Checking Refinement table...')
 ref_errors = check_table(Refinement, results, refinement_translations())
 print(ref_errors)
 
-print('Checking Reference table...')
-reference_errors = check_table(Reference, results, reference_translations())
-print(reference_errors)
 
 
