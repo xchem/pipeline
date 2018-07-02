@@ -43,10 +43,12 @@ class SoakdbFiles(models.Model):
     filename = models.TextField(blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
+    visit = models.TextField(blank=False, null=False)
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'soakdb_files'
+        unique_together = ('filename', 'visit')
 
 
 class Crystal(models.Model):
@@ -54,6 +56,8 @@ class Crystal(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
     file = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+
     # model types
     PREPROCESSING = 'PP'
     PANDDA = 'PD'
