@@ -20,6 +20,8 @@ latest_file = max(list_of_files, key=os.path.getctime)
 search_paths = [path for path in pd.DataFrame.from_csv(latest_file)['search_path']]
 
 for path in search_paths:
+    if os.path.isfile(os.path.join(path, 'transfer_pandda_data.done')):
+        os.remove(os.path.join(path, 'transfer_pandda_data.done'))
     files_to_check = glob.glob(os.path.join(path,'*201806*'))
     for f in files_to_check:
         if 'txt' in f:
@@ -38,5 +40,7 @@ for logfile in logfiles:
     if os.path.isfile(logfile + '.sites.done'):
         print(str(logfile + '.sites.done'))
         os.remove(logfile + '.sites.done')
+
+
 
 
