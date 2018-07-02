@@ -330,6 +330,23 @@ class CheckFileUpload(luigi.Task):
 
     def run(self):
         results = db_functions.soakdb_query(self.filename)
+
+        print('Number of rows from file = ' + str(len(results)))
+
+        if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
+            status = True
+        else:
+            status = False
+
+        print('Checking same number of rows in test_xchem: ' + str(status))
+        if not status:
+            raise Exception('FAIL: no of entries in test_xchem = ' + str(
+                len(Crystal.objects.filter(visit__filename=self.filename))))
+
+        proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
+
+        print('Unique targets in soakdb file: ' + str(proteins))
+
         translations = {Lab: db_functions.lab_translations(),
                         Refinement: db_functions.refinement_translations(),
                         DataProcessing: db_functions.data_processing_translations(),
