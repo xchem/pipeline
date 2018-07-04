@@ -7,7 +7,7 @@ from db.models import *
 import pandas as pd
 import traceback
 from django.db import transaction
-from transfer_soakdb import StartTransfers, FindSoakDBFiles
+from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 
 class FindPanddaLogs(luigi.Task):
     search_path = luigi.Parameter()

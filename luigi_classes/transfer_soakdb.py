@@ -197,18 +197,10 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
-    # no longer need this - assigned by django
-    # file_id = luigi.Parameter()
 
     def requires(self):
         return CheckFiles(soak_db_filepath=self.data_file)
 
-    # def complete(self):
-    #     soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-    #     if soakdb_query.status == 2:
-    #         return True
-    #     else:
-    #         return False
 
     def output(self):
         modification_date = misc_functions.get_mod_date(self.data_file)
@@ -249,18 +241,8 @@ class TransferNewDataFile(luigi.Task):
     data_file = luigi.Parameter()
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
-    # no longer need this - assigned by django
-    # file_id = luigi.Parameter()
-
     def requires(self):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
-
-    # def complete(self):
-    #     soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-    #     if soakdb_query.status == 2:
-    #         return True
-    #     else:
-    #         return False
 
     def output(self):
         modification_date = misc_functions.get_mod_date(self.data_file)
