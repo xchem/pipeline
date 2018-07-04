@@ -387,7 +387,7 @@ class CheckUploadedFiles(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
-        if not os.path.isfile(StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)):
+        if not os.path.isfile(StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath).output().path):
             return StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)
         else:
             soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
