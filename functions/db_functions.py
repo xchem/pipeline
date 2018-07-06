@@ -212,7 +212,11 @@ def test_duplicate_method(filename):
 
             print(unique)
             print(len(results))
-            print('\n')
+
+            if unique==len(results):
+                for result in results:
+                    print(result['LastUpdated'])
+                print('/n')
 
 
 
