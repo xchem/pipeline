@@ -257,6 +257,8 @@ def check_db_duplicates(filename):
                                                                     filename=filename)[0]
                                                                 )
         if not was_created:
+            if str(filename)==str(obj.visit.filename):
+                continue
             print(duplicates_dict)
             duplicates_dict['crystal'].append(vals[0])
             duplicates_dict['smiles'].append(vals[1])
