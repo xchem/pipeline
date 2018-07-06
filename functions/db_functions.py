@@ -229,7 +229,7 @@ def check_db_duplicates(filename):
     pop_soakdb(filename)
     duplicates_file = 'duplicates.csv'
     if os.path.isfile(os.path.join(os.getcwd(), duplicates_file)):
-        duplicates_dict = pd.DataFrame.from_csv(duplicates_file).to_dict()
+        duplicates_dict = pd.DataFrame.from_csv(duplicates_file).to_dict(orient=list)
     else:
         duplicates_dict = {'crystal': [],
                            'file_1': [],
@@ -257,6 +257,7 @@ def check_db_duplicates(filename):
                                                                     filename=filename)[0]
                                                                 )
         if not was_created:
+            print(duplicates_dict)
             duplicates_dict['crystal'].append(vals[0])
             duplicates_dict['smiles'].append(vals[1])
             duplicates_dict['target'].append(vals[2])
