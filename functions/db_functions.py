@@ -216,7 +216,7 @@ def test_duplicate_method(filename):
 
             if unique == len(results):
                 for result in results:
-                    print(int(result['LastUpdated'].replace('-','').replace(':','').rstrip()))
+                    print(int(result['LastUpdated'].replace('-','').replace(':','').replace(' ', '')))
                 print('/n')
 
 
