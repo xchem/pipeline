@@ -9,6 +9,7 @@ from functions import misc_functions
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+import datetime
 
 # To get all sql queries sent by Django from py shell
 # import logging
@@ -213,9 +214,9 @@ def test_duplicate_method(filename):
             print(unique)
             print(len(results))
 
-            if unique==len(results):
+            if unique == len(results):
                 for result in results:
-                    print(result['LastUpdated'])
+                    print(datetime.datetime.strptime(result['LastUpdated']))
                 print('/n')
 
 
