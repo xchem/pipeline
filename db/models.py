@@ -48,7 +48,6 @@ class SoakdbFiles(models.Model):
 
     class Meta:
         db_table = 'soakdb_files'
-        unique_together = ('filename', 'visit')
 
 
 class Crystal(models.Model):
