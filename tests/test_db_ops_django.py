@@ -87,78 +87,78 @@ class TestTasks(unittest.TestCase):
         # check == 2 (not changed - ie. has been successfully added)
         self.assertEqual(int(status[0]), 2)
 
-        test_changed_file = run_luigi_worker(TransferChangedDataFile(data_file=self.db_full_path,
-                                                                           soak_db_filepath=str(self.working_dir + '*')
-                                                                                   ))
-
-        self.assertTrue(test_changed_file)
-
-        status = list(SoakdbFiles.objects.values_list('status', flat=True))
-        # check == 2 (not changed - ie. has been successfully added)
-        self.assertEqual(int(status[0]), 2)
-
-
-class TestTransferFunctions(unittest.TestCase):
-    # filepath where test data is
-    filepath = 'tests/docking_files/database/'
-    db_file_name = 'soakDBDataFile.sqlite'
-    # tmp directory to test in
-    tmp_dir = 'tmp/'
-    date = datetime.date.today()
-
-    @classmethod
-    def setUpClass(cls):
-        cls.top_dir = os.getcwd()
-        cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
-        cls.db_full_path = os.path.join(cls.working_dir, cls.db_file_name)
-        print('Working dir: ' + cls.working_dir)
-        shutil.copytree(os.path.join(cls.top_dir, cls.filepath), cls.working_dir)
-
-    @classmethod
-    def tearDownClass(cls):
-        shutil.rmtree(cls.working_dir)
-        os.chdir(cls.top_dir)
-        # delete rows created in soakdb table
-        # soakdb_rows = SoakdbFiles.objects.all()
-        # soakdb_rows.delete()
-        # # delete rows created in proposals table
-        # proposal_rows = Proposals.objects.all()
-        # proposal_rows.delete()
-        # # delete rows created in crystals table
-        # crystal_rows = Crystal.objects.all()
-        # crystal_rows.delete()
-
-    def test_transfer_crystal(self):
-        print('TESTING CRYSTAL: test_transfer_crystal')
-
-        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(),
-                                    filename=self.db_full_path, model=Crystal)
-
-        self.assertTrue(list(Crystal.objects.all()))
-
-        crystals = Crystal.objects.values_list('crystal_name', flat=True)
-        print(crystals)
-
-    def test_transfer_lab(self):
-        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.db_full_path,
-                                    model=Lab)
-        self.assertTrue(list(Lab.objects.all()))
-
-    def test_transfer_refinement(self):
-        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.db_full_path,
-                                    model=Refinement)
-        self.assertTrue(list(Refinement.objects.all()))
-
-
-    def test_transfer_dimple(self):
-        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.db_full_path,
-                                    model=Dimple)
-        self.assertTrue(list(Dimple.objects.all()))
-
-    def test_transfer_data_processing(self):
-        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
-                                    filename=self.db_full_path, model=DataProcessing)
-        self.assertTrue(list(DataProcessing.objects.all()))
+#         test_changed_file = run_luigi_worker(TransferChangedDataFile(data_file=self.db_full_path,
+#                                                                            soak_db_filepath=str(self.working_dir + '*')
+#                                                                                    ))
+#
+#         self.assertTrue(test_changed_file)
+#
+#         status = list(SoakdbFiles.objects.values_list('status', flat=True))
+#         # check == 2 (not changed - ie. has been successfully added)
+#         self.assertEqual(int(status[0]), 2)
+#
+#
+# class TestTransferFunctions(unittest.TestCase):
+#     # filepath where test data is
+#     filepath = 'tests/docking_files/database/'
+#     db_file_name = 'soakDBDataFile.sqlite'
+#     # tmp directory to test in
+#     tmp_dir = 'tmp/'
+#     date = datetime.date.today()
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.top_dir = os.getcwd()
+#         cls.working_dir = os.path.join(os.getcwd(), cls.tmp_dir)
+#         cls.db_full_path = os.path.join(cls.working_dir, cls.db_file_name)
+#         print('Working dir: ' + cls.working_dir)
+#         shutil.copytree(os.path.join(cls.top_dir, cls.filepath), cls.working_dir)
+#
+#     @classmethod
+#     def tearDownClass(cls):
+#         shutil.rmtree(cls.working_dir)
+#         os.chdir(cls.top_dir)
+#         # delete rows created in soakdb table
+#         # soakdb_rows = SoakdbFiles.objects.all()
+#         # soakdb_rows.delete()
+#         # # delete rows created in proposals table
+#         # proposal_rows = Proposals.objects.all()
+#         # proposal_rows.delete()
+#         # # delete rows created in crystals table
+#         # crystal_rows = Crystal.objects.all()
+#         # crystal_rows.delete()
+#
+#     def test_transfer_crystal(self):
+#         print('TESTING CRYSTAL: test_transfer_crystal')
+#
+#         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(),
+#                                     filename=self.db_full_path, model=Crystal)
+#
+#         self.assertTrue(list(Crystal.objects.all()))
+#
+#         crystals = Crystal.objects.values_list('crystal_name', flat=True)
+#         print(crystals)
+#
+#     def test_transfer_lab(self):
+#         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.db_full_path,
+#                                     model=Lab)
+#         self.assertTrue(list(Lab.objects.all()))
+#
+#     def test_transfer_refinement(self):
+#         db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.db_full_path,
+#                                     model=Refinement)
+#         self.assertTrue(list(Refinement.objects.all()))
+#
+#
+#     def test_transfer_dimple(self):
+#         db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.db_full_path,
+#                                     model=Dimple)
+#         self.assertTrue(list(Dimple.objects.all()))
+#
+#     def test_transfer_data_processing(self):
+#         db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+#                                     filename=self.db_full_path, model=DataProcessing)
+#         self.assertTrue(list(DataProcessing.objects.all()))
 
 
 
