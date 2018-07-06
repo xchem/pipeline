@@ -212,9 +212,8 @@ def transfer_table(translate_dict, filename, model):
             # find relevant entries for foreign keys and set as value - crystal names and proteins
 
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.get(crystal_name=d[key],
-                                                              file=models.SoakdbFiles.objects.get(
-                                                                  filename=filename))
+                d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
+                    filename=filename))
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
