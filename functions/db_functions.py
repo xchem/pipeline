@@ -206,7 +206,7 @@ def test_duplicate_method(filename):
             for result in results:
                 print(result)
                 tmp = []
-                for key in keys:
+                for key in key_list:
                     print(key)
                     tmp.append(result[key])
                 holder.append(tmp)
