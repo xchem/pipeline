@@ -262,7 +262,7 @@ def check_db_duplicates(filename):
             duplicates_dict['smiles'].append(vals[1])
             duplicates_dict['target'].append(vals[2])
             duplicates_dict['file_1'].append(filename)
-            duplicates_dict['file_2'].append(obj.visit__filename)
+            duplicates_dict['file_2'].append(obj.visit.filename)
 
     pd.DataFrame.from_dict(duplicates_dict).to_csv(duplicates_file)
 
