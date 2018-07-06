@@ -12,6 +12,25 @@ from functions import misc_functions
 from django.db import transaction
 
 
+def transfer_file(data_file):
+    maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
+    if maint_exists == 1:
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=data_file,
+                                    model=Crystal)
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=data_file, model=DataProcessing)
+
+    soakdb_query = SoakdbFiles.objects.get(filename=data_file)
+    soakdb_query.status = 2
+    soakdb_query.save()
+
+
 class FindSoakDBFiles(luigi.Task):
     # date parameter - needs to be changed
     date = luigi.DateParameter(default=datetime.date.today())
@@ -216,22 +235,7 @@ class TransferChangedDataFile(luigi.Task):
             out, err, proposal = db_functions.pop_soakdb(self.data_file)
             db_functions.pop_proposals(proposal)
 
-            db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
-                                        model=Crystal)
-            db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
-                                        model=Lab)
-            db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
-                                        model=Refinement)
-            db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
-                                        model=Dimple)
-            db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
-                                        filename=self.data_file, model=DataProcessing)
-
-        # retrieve the new db entry
-
-        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-        soakdb_query.status = 2
-        soakdb_query.save()
+        transfer_file(self.data_file)
 
         with self.output().open('w') as f:
             f.write('')
@@ -249,22 +253,8 @@ class TransferNewDataFile(luigi.Task):
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
-        maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
-        if maint_exists==1:
-            db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=self.data_file,
-                                        model=Crystal)
-            db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=self.data_file,
-                                        model=Lab)
-            db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=self.data_file,
-                                        model=Refinement)
-            db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=self.data_file,
-                                        model=Dimple)
-            db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
-                                        filename=self.data_file, model=DataProcessing)
 
-        soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-        soakdb_query.status = 2
-        soakdb_query.save()
+        transfer_file(self.data_file)
 
         with self.output().open('w') as f:
             f.write('')

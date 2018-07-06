@@ -156,6 +156,34 @@ def refinement_translations():
 
     return refinement
 
+def distinct_crystals_sqlite(filename):
+    conn = sqlite3.connect(filename)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    # items that would be unique crystal entries
+    c.execute("select CrystalName from mainTable where CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
+              "and CompoundSMILES not like ? and CompoundSMILES NOT LIKE ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
+              "and ProteinName not like ? and ProteinName NOT LIKE ? and ProteinName not NULL and ProteinName !=''", ('None', 'null','None', 'null', 'None', 'null'))
+
+    results = c.fetchall()
+    conn.close()
+    crystal_names = [row['CrystalName'] for row in results]
+
+    seen = {}
+    dupes = []
+
+    for x in crystal_names:
+        if x not in seen:
+            seen[x] = 1
+        else:
+            if seen[x] == 1:
+                dupes.append(x)
+            seen[x] += 1
+
+    return dupes
+
+
 # @transaction.atomic
 def transfer_table(translate_dict, filename, model):
 
@@ -245,10 +273,6 @@ def transfer_table(translate_dict, filename, model):
                 m = model.objects.create(**d)
                 m.save
 
-        # print(d)
-            # print(m.query)
-            # m.save()
-
         except IntegrityError as e:
             print(d)
             print('WARNING: ' + str(e.__cause__))
@@ -280,32 +304,6 @@ def soakdb_query(filename):
     conn.close()
     return results
 
-def distinct_crystals_sqlite(filename):
-    conn=sqlite3.connect(filename)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-
-    # items that would be unique crystal entries
-    c.execute("select CrystalName from mainTable where CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
-              "and CompoundSMILES not like ? and CompoundSMILES NOT LIKE ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
-              "and ProteinName not like ? and ProteinName NOT LIKE ? and ProteinName not NULL and ProteinName !=''", ('None', 'null','None', 'null', 'None', 'null'))
-
-    results = c.fetchall()
-    conn.close()
-    crystal_names = [row['CrystalName'] for row in results]
-
-    seen = {}
-    dupes = []
-
-    for x in crystal_names:
-        if x not in seen:
-            seen[x] = 1
-        else:
-            if seen[x] == 1:
-                dupes.append(x)
-            seen[x] += 1
-
-    return dupes
 
 def specific_crystal(filename, crystal):
     conn = sqlite3.connect(filename)
@@ -314,7 +312,7 @@ def specific_crystal(filename, crystal):
 
     c.execute("select * from mainTable where CrystalName = ?", (crystal,))
 
-    results=c.fetchall()
+    results = c.fetchall()
     return results
 
 
