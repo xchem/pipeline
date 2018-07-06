@@ -237,6 +237,10 @@ def check_db_duplicates(filename):
                            'smiles': [],
                            'target': []}
 
+    table = check_table_sqlite(filename, 'mainTable')
+    if table == 0:
+        return None
+
     # standard soakdb query for all data
     results = soakdb_query(filename)
 
