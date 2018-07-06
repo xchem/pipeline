@@ -184,6 +184,37 @@ def distinct_crystals_sqlite(filename):
     return dupes
 
 
+def specific_crystal(filename, crystal):
+    conn = sqlite3.connect(filename)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("select * from mainTable where CrystalName = ?", (crystal,))
+
+    results = c.fetchall()
+    return results
+
+
+def test_duplicate_method(filename):
+    duplicates = distinct_crystals_sqlite(filename)
+    all_results = [specific_crystal(filename, crystal) for crystal in duplicates]
+    for results in all_results:
+        keys = [row.keys() for row in results]
+        if len(set(tuple(key_list) for key_list in keys)) == 1:
+            key_list = keys[0]
+            holder = []
+            for result in results:
+                tmp = []
+                for key in keys:
+                    tmp.append(result[key])
+                holder.append(tmp)
+            unique = len(set(tuple(lst) for lst in holder))
+
+    print(unique)
+
+
+
+
 # @transaction.atomic
 def transfer_table(translate_dict, filename, model):
 
@@ -302,17 +333,6 @@ def soakdb_query(filename):
 
     results = c.fetchall()
     conn.close()
-    return results
-
-
-def specific_crystal(filename, crystal):
-    conn = sqlite3.connect(filename)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-
-    c.execute("select * from mainTable where CrystalName = ?", (crystal,))
-
-    results = c.fetchall()
     return results
 
 
