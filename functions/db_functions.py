@@ -312,7 +312,7 @@ def specific_crystal(filename, crystal):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("select * from mainTable where CrystalName =,"(crystal,))
+    c.execute("select * from mainTable where CrystalName = ?"(crystal,))
 
     results=c.fetchall()
     return results
