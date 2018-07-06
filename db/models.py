@@ -78,7 +78,7 @@ class Crystal(models.Model):
 
     class Meta:
         db_table = 'crystal'
-        unique_together = ('crystal_name', 'visit')
+        unique_together = ('crystal_name', 'visit', 'compound')
 
 
 class DataProcessing(models.Model):
