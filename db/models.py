@@ -68,7 +68,6 @@ class Crystal(models.Model):
     CHOICES = (
         (PREPROCESSING, 'preprocessing'),
         (PANDDA, 'pandda'),
-        (PROASIS, 'proasis'),
         (REFINEMENT, 'refinement'),
         (COMPCHEM, 'comp_chem'),
         (DEPOSITION, 'deposition')
