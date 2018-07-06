@@ -164,6 +164,7 @@ def transfer_table(translate_dict, filename, model):
 
     # for each row found in soakdb
     for row in results:
+        compound_smiles = row['CompoundSMILES']
         # set up blank dictionary to hold model values
         d = {}
         # get the keys and values of the query
@@ -213,7 +214,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
-                    filename=filename))
+                    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
