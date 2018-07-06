@@ -285,7 +285,7 @@ def distinct_crystals_sqlite(filename):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    # items that would not be unique crystal entries
+    # items that would be unique crystal entries
     c.execute("select distinct CrystalName, ProteinName, CompoundSMILES from mainTable where CrystalName NOT LIKE ? and CrystalName NOT LIKE ? and CrystalName !='' and CrystalName IS NOT NULL "
               "and CompoundSMILES not like ? and CompoundSMILES NOT LIKE ? and CompoundSMILES IS NOT NULL  and CompoundSMILES !='' "
               "and ProteinName not like ? and ProteinName NOT LIKE ? and ProteinName not NULL and ProteinName !=''", ('None', 'null','None', 'null', 'None', 'null'))
@@ -306,6 +306,16 @@ def distinct_crystals_sqlite(filename):
             seen[x] += 1
 
     return dupes
+
+def specific_crystal(filename, crystal):
+    conn = sqlite3.connect(filename)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("select * from mainTable where CrystalName =,"(crystal,))
+
+    results=c.fetchall()
+    return results
 
 
 def check_table_sqlite(filename, tablename):
