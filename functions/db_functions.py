@@ -216,7 +216,7 @@ def test_duplicate_method(filename):
 
             if unique == len(results):
                 for result in results:
-                    print(datetime.datetime.strptime(result['LastUpdated'], '%Y-%m-%d %H:%M'))
+                    print(datetime.datetime.strftime(result['LastUpdated'], '%Y%m%d%H%M'))
                 print('/n')
 
 
