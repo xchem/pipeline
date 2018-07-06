@@ -204,8 +204,10 @@ def test_duplicate_method(filename):
             key_list = keys[0]
             holder = []
             for result in results:
+                print(result)
                 tmp = []
                 for key in keys:
+                    print(key)
                     tmp.append(result[key])
                 holder.append(tmp)
             unique = len(set(tuple(lst) for lst in holder))
