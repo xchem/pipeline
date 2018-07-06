@@ -165,6 +165,9 @@ def transfer_table(translate_dict, filename, model):
     # for each row found in soakdb
     for row in results:
         compound_smiles = row['CompoundSMILES']
+        crystal_name = row['CrystalName']
+        target = row['ProteinName']
+
         # set up blank dictionary to hold model values
         d = {}
         # get the keys and values of the query
@@ -237,9 +240,31 @@ def transfer_table(translate_dict, filename, model):
                     continue
 
         # write out the row to the relevant model (table)
-        with transaction.atomic():
-            m = model.objects.create(**d)
-            m.save
+        try:
+            with transaction.atomic():
+                m = model.objects.create(**d)
+                m.save
+
+        # print(d)
+            # print(m.query)
+            # m.save()
+
+        except IntegrityError as e:
+            print(d)
+            print('WARNING: ' + str(e.__cause__))
+            print(model_fields)
+            crys_from_db = models.Crystal.objects.get(crystal_name=crystal_name, visit=models.SoakdbFiles.objects.get(
+                filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
+            if crys_from_db.target == target:
+                print('Crystal duplicated!')
+                continue
+        # uncomment to debug
+        # except ValueError as e:
+        #     print(d)
+        #     print('WARNING: ' + str(e.__cause__))
+        #     print(e)
+        #     print(model_fields)
+        #     continue
 
 
 def soakdb_query(filename):
