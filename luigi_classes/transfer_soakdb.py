@@ -301,76 +301,84 @@ class CheckFileUpload(luigi.Task):
         pass
 
     def run(self):
+        out_err_file = str('logs/' + str(self.filename.split('/')[3]) + '_' + str(self.filename.split('/')[4]) +
+                           '_' + str(self.filename.split('/')[4]) + '_' +
+                           str(misc_functions.get_mod_date(self.filename)) + '.txt')
+
         results = db_functions.soakdb_query(self.filename)
 
-        print('Number of rows from file = ' + str(len(results)))
+        try:
+            print('Number of rows from file = ' + str(len(results)))
 
-        if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
-            status = True
-        else:
-            status = False
+            if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
+                status = True
+            else:
+                status = False
 
-        print('Checking same number of rows in test_xchem: ' + str(status))
-        if not status:
-            raise Exception('FAIL: no of entries in test_xchem = ' + str(
-                len(Crystal.objects.filter(visit__filename=self.filename))))
+            print('Checking same number of rows in test_xchem: ' + str(status))
+            if not status:
+                raise Exception('FAIL: no of entries in test_xchem = ' + str(
+                    len(Crystal.objects.filter(visit__filename=self.filename))))
 
-        proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
+            proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
 
-        print('Unique targets in soakdb file: ' + str(proteins))
+            print('Unique targets in soakdb file: ' + str(proteins))
 
-        translations = {Lab: db_functions.lab_translations(),
-                        Refinement: db_functions.refinement_translations(),
-                        DataProcessing: db_functions.data_processing_translations(),
-                        Dimple: db_functions.dimple_translations()}
+            translations = {Lab: db_functions.lab_translations(),
+                            Refinement: db_functions.refinement_translations(),
+                            DataProcessing: db_functions.data_processing_translations(),
+                            Dimple: db_functions.dimple_translations()}
 
-        translation = translations[self.model]
+            translation = translations[self.model]
 
-        error_dict = {
-            'crystal': [],
-            'soakdb_field': [],
-            'model_field': [],
-            'soakdb_value': [],
-            'model_value': []
+            error_dict = {
+                'crystal': [],
+                'soakdb_field': [],
+                'model_field': [],
+                'soakdb_value': [],
+                'model_value': []
 
-        }
-        for row in results:
-            lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
-            for key in translation.keys():
-                test_xchem_val = eval(str('lab_object[0].' + key))
-                soakdb_val = row[translation[key]]
-                if key == 'outcome':
-                    pattern = re.compile('-?\d+')
-                    try:
-                        soakdb_val = int(pattern.findall(str(soakdb_val))[0])
-                    except:
+            }
+            for row in results:
+                lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
+                for key in translation.keys():
+                    test_xchem_val = eval(str('lab_object[0].' + key))
+                    soakdb_val = row[translation[key]]
+                    if key == 'outcome':
+                        pattern = re.compile('-?\d+')
+                        try:
+                            soakdb_val = int(pattern.findall(str(soakdb_val))[0])
+                        except:
+                            continue
+                    if translation[key] == 'CrystalName':
+                        test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+                    if translation[key] == 'DimpleReferencePDB' and soakdb_val:
+                        test_xchem_val = (eval(str('lab_object[0].' + key + '.reference_pdb')))
+                    if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
                         continue
-                if translation[key] == 'CrystalName':
-                    test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
-                if translation[key] == 'DimpleReferencePDB' and soakdb_val:
-                    test_xchem_val = (eval(str('lab_object[0].' + key + '.reference_pdb')))
-                if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
-                    continue
-                if isinstance(test_xchem_val, float):
-                    if float(test_xchem_val) == float(soakdb_val):
-                        continue
-                if isinstance(test_xchem_val, int):
-                    if int(soakdb_val) == int(test_xchem_val):
-                        continue
-                if test_xchem_val != soakdb_val:
-                    if soakdb_val in [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?',
-                                      'None\t',
-                                      'Analysis Pending', 'in-situ']:
-                        continue
-                    else:
-                        error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
-                        error_dict['soakdb_field'].append(translation[key])
-                        error_dict['model_field'].append(key)
-                        error_dict['soakdb_value'].append(soakdb_val)
-                        error_dict['model_value'].append(test_xchem_val)
+                    if isinstance(test_xchem_val, float):
+                        if float(test_xchem_val) == float(soakdb_val):
+                            continue
+                    if isinstance(test_xchem_val, int):
+                        if int(soakdb_val) == int(test_xchem_val):
+                            continue
+                    if test_xchem_val != soakdb_val:
+                        if soakdb_val in [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?',
+                                          'None\t',
+                                          'Analysis Pending', 'in-situ']:
+                            continue
+                        else:
+                            error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                            error_dict['soakdb_field'].append(translation[key])
+                            error_dict['model_field'].append(key)
+                            error_dict['soakdb_value'].append(soakdb_val)
+                            error_dict['model_value'].append(test_xchem_val)
 
-        if error_dict['crystal']:
-            raise Exception(error_dict)
+            if error_dict['crystal']:
+                pd.DataFrame.from_dict(error_dict).to_csv(out_err_file)
+        except:
+            with open(out_err_file, 'w') as f:
+                f.write(traceback.format_exc())
 
 class CheckUploadedFiles(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
