@@ -199,7 +199,7 @@ class AddPanddaRun(luigi.Task):
     events_file = luigi.Parameter()
 
     def requires(self):
-        return StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)
+        pass
 
     def complete(self):
         if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
