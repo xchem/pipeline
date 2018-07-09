@@ -20,3 +20,6 @@ class StartPipeline(luigi.Task):
             return [AddPanddaData(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
                     search_path, filepath, sdbfile in list(
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
+
+    def run(self):
+        os.remove(FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path)
