@@ -302,8 +302,10 @@ class CheckFileUpload(luigi.Task):
 
     def run(self):
         out_err_file = str('logs/' + str(self.filename.split('/')[3]) + '_' + str(self.filename.split('/')[4]) +
-                           '_' + str(self.filename.split('/')[4]) + '_' +
+                           '_' + str(self.filename.split('/')[5]) + '_' +
                            str(misc_functions.get_mod_date(self.filename)) + '.txt')
+
+        print(out_err_file)
 
         results = db_functions.soakdb_query(self.filename)
 
@@ -340,7 +342,11 @@ class CheckFileUpload(luigi.Task):
 
             }
             for row in results:
-                lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'])
+                lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'], crystal_name__visit__filename=str(self.filename))
+                if len(lab_object)>1:
+                    raise Exception('Multiple Crystals!')
+                if len(lab_object)==0:
+                    raise Exception('No entry for ' + str(row['CrystalName']))
                 for key in translation.keys():
                     test_xchem_val = eval(str('lab_object[0].' + key))
                     soakdb_val = row[translation[key]]
@@ -351,9 +357,11 @@ class CheckFileUpload(luigi.Task):
                         except:
                             continue
                     if translation[key] == 'CrystalName':
-                        test_xchem_val = eval(str('lab_object[0].' + key + '.crystal_name'))
+                        test_xchem_val = lab_object[0].crystal_name.crystal_name
                     if translation[key] == 'DimpleReferencePDB' and soakdb_val:
-                        test_xchem_val = (eval(str('lab_object[0].' + key + '.reference_pdb')))
+                        test_xchem_val = lab_object[0].reference
+                        if test_xchem_val != None:
+                            test_xchem_val = lab_object[0].reference.reference_pdb
                     if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
                         continue
                     if isinstance(test_xchem_val, float):
@@ -368,7 +376,14 @@ class CheckFileUpload(luigi.Task):
                                           'Analysis Pending', 'in-situ']:
                             continue
                         else:
-                            error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                            # try:
+                            #     error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
+                            # except:
+                            #     if key=='crystal_name':
+                            #         error_dict['crystal'].append(eval(str('lab_object[0].' + key)))
+                            #     else:
+                            #         raise Exception(key)
+                            error_dict['crystal'].append(str(lab_object[0].crystal_name.crystal_name))
                             error_dict['soakdb_field'].append(translation[key])
                             error_dict['model_field'].append(key)
                             error_dict['soakdb_value'].append(soakdb_val)
@@ -376,6 +391,17 @@ class CheckFileUpload(luigi.Task):
 
             if error_dict['crystal']:
                 pd.DataFrame.from_dict(error_dict).to_csv(out_err_file)
+
+        except IndexError:
+            with open(out_err_file, 'w') as f:
+                f.write(traceback.format_exc())
+            with open(out_err_file, 'a') as f:
+                f.write('\n' + str(key))
+        except AttributeError:
+            with open(out_err_file, 'w') as f:
+                f.write(traceback.format_exc())
+            with open(out_err_file, 'a') as f:
+                f.write('\n' + str(lab_object))
         except:
             with open(out_err_file, 'w') as f:
                 f.write(traceback.format_exc())
