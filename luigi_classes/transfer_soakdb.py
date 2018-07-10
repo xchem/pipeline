@@ -79,9 +79,6 @@ class CheckFiles(luigi.Task):
     @transaction.atomic
     def run(self):
         soakdb = SoakdbFiles.objects.all()
-        print('SOAKDB:')
-        for item in soakdb:
-            print(item)
 
         # a list to hold filenames that have been checked
         checked = []
@@ -104,17 +101,19 @@ class CheckFiles(luigi.Task):
             filename_clean = filename.rstrip('\n')
             # find the relevant entry in the soakdbfiles table
 
-            soakdb_query = list(SoakdbFiles.objects.select_for_update().filter(filename=filename_clean))
+            soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
 
             print(len(soakdb_query))
 
             # raise an exception if the file is not in the soakdb table
             if len(soakdb_query) == 0:
+                print('LEN=0')
                 out, err, prop = db_functions.pop_soakdb(filename_clean)
                 db_functions.pop_proposals(prop)
 
             # only one entry should exist per file
             if len(soakdb_query) == 1:
+                print('LEN=1')
                 # get the filename back from the query
                 data_file = soakdb_query[0].filename
                 # add the file to the list of those that have been checked
@@ -135,10 +134,10 @@ class CheckFiles(luigi.Task):
                     update_status.status = 1
                     update_status.save()
 
-                else:
-                    update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
-                    update_status.status = 0
-                    update_status.save()
+            # else:
+            #     update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
+            #     update_status.status = 0
+            #     update_status.save()
 
             # if there is more than one entry, raise an exception (should never happen - filename field is unique)
             if len(soakdb_query) > 1:
@@ -303,7 +302,8 @@ class CheckFileUpload(luigi.Task):
     def run(self):
         out_err_file = str('logs/' + str(self.filename.split('/')[3]) + '_' + str(self.filename.split('/')[4]) +
                            '_' + str(self.filename.split('/')[5]) + '_' +
-                           str(misc_functions.get_mod_date(self.filename)) + '.txt')
+                           str(misc_functions.get_mod_date(self.filename)) +
+                           str(self.model).replace("<class '", '').replace("'>", '') + '.txt')
 
         print(out_err_file)
 
@@ -393,10 +393,13 @@ class CheckFileUpload(luigi.Task):
                 pd.DataFrame.from_dict(error_dict).to_csv(out_err_file)
 
         except IndexError:
-            with open(out_err_file, 'w') as f:
-                f.write(traceback.format_exc())
-            with open(out_err_file, 'a') as f:
-                f.write('\n' + str(key))
+            if 'No item with that key' in traceback.format_exc():
+                pass
+            else:
+                with open(out_err_file, 'w') as f:
+                    f.write(traceback.format_exc())
+                with open(out_err_file, 'a') as f:
+                    f.write('\n' + str(key))
         except AttributeError:
             with open(out_err_file, 'w') as f:
                 f.write(traceback.format_exc())
