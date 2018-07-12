@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing
+from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent
 
 
 class TargetSerializer(serializers.ModelSerializer):
@@ -89,3 +90,135 @@ class DataProcessingSerializer(serializers.ModelSerializer):
         )
 
 
+class DimpleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Dimple
+        fields = (
+            "crystal_name",
+            "r_free",
+            "res_high",
+            "reference",
+        )
+
+
+class LabSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Lab
+        fields = (
+            "cryo_frac",
+            "cryo_status",
+            "cryo_stock_frac",
+            "cryo_transfer_vol",
+            "crystal_name",
+            "data_collection_visit",
+            "expr_conc",
+            "harvest_status",
+            "library_name",
+            "library_plate",
+            "mounting_result",
+            "mounting_time",
+            "soak_status",
+            "soak_time",
+            "soak_vol",
+            "solv_frac",
+            "stock_conc",
+            "visit",
+
+        )
+
+
+class RefinementSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Refinement
+        fields = (
+            "bound_conf",
+            "cif",
+            "cif_prog",
+            "cif_status",
+            "crystal_name",
+            "lig_bound_conf",
+            "lig_cc",
+            "lig_confidence",
+            "matrix_weight",
+            "molprobity_score",
+            "mtz_free",
+            "mtz_latest",
+            "outcome",
+            "pdb_latest",
+            "r_free",
+            "ramachandran_favoured",
+            "ramachandran_outliers",
+            "rcryst",
+            "refinement_path",
+            "res",
+            "rmsd_angles",
+            "rmsd_bonds",
+            "spacegroup",
+        )
+
+
+class PanddaAnalysisSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PanddaAnalysis
+        fields = (
+            "pandda_dir",
+        )
+
+
+class PanddaRunSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PanddaRun
+        fields = (
+            "input_dir",
+            "pandda_analysis",
+            "pandda_log",
+            "pandda_version",
+            "sites_file",
+            "events_file",
+        )
+
+
+class PanddaSiteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PanddaSite
+        fields = (
+            "pandda_run",
+            "site",
+            "site_aligned_centroid_x",
+            "site_aligned_centroid_y",
+            "site_aligned_centroid_z",
+            "site_native_centroid_x",
+            "site_native_centroid_y",
+            "site_native_centroid_z",
+        )
+
+
+class PanddaEventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PanddaEvent
+        fields = (
+            "crystal",
+            "site",
+            "pandda_run",
+            "event",
+            "event_centroid_x",
+            "event_centroid_y",
+            "event_centroid_z",
+            "event_dist_from_site_centroid",
+            "lig_centroid_x",
+            "lig_centroid_y",
+            "lig_centroid_z",
+            "lig_dist_event",
+            "lig_id",
+            "pandda_event_map_native",
+            "pandda_model_pdb",
+            "pandda_input_mtz",
+            "pandda_input_pdb",
+        )
