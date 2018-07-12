@@ -6,7 +6,7 @@ import db.views as db_views
 
 router = DefaultRouter()
 # Register the basic data
-router.register(r"target", db_views.TargetView)
+router.register(r'target', db_views.TargetView)
 
 urlpatterns = [
     url(r"^", include(router.urls)),
