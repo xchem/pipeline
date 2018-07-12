@@ -5,7 +5,8 @@ from .models import Target
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
-    queryset = Target.objects.all()
+    queryset = Target.objects.filter()
     serializer_class = TargetSerializer
     filter_fields = ('target_name')
 
+class CompoundView(viewsets.ReadOnlyModelViewSet)
