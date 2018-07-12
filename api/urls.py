@@ -23,6 +23,6 @@ router.register(r'pandda_event', PanddaEventView)
 
 
 urlpatterns = [
-    url(r"^$", include(router.urls)),
+    url(r"^", include(router.urls)),
     url(r"^auth$", drf_views.obtain_auth_token, name="auth"),
 ]
