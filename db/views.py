@@ -7,7 +7,7 @@ from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProc
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
-    queryset = Target.objects.filter()
+    queryset = Target.objects.all()
     serializer_class = TargetSerializer
     filter_fields = (
         "target_name",
@@ -15,7 +15,7 @@ class TargetView(viewsets.ReadOnlyModelViewSet):
 
 
 class CompoundsView(viewsets.ReadOnlyModelViewSet):
-    queryset = Compounds.objects.filter()
+    queryset = Compounds.objects.all()
     serializer_class = CompoundsSerializer
     filter_fields = (
         "smiles",
@@ -23,7 +23,7 @@ class CompoundsView(viewsets.ReadOnlyModelViewSet):
 
 
 class ReferenceView(viewsets.ReadOnlyModelViewSet):
-    queryset = Reference.objects.filter()
+    queryset = Reference.objects.all()
     serializer_class = ReferenceSerializer
     filter_fields = (
         "reference_pdb",
@@ -31,7 +31,7 @@ class ReferenceView(viewsets.ReadOnlyModelViewSet):
 
 
 class SoakdbFilesView(viewsets.ReadOnlyModelViewSet):
-    queryset = SoakdbFiles.objects.filter()
+    queryset = SoakdbFiles.objects.all()
     serializer_class = SoakdbFilesSerializer
     filter_fields = (
         "filename",
@@ -41,7 +41,7 @@ class SoakdbFilesView(viewsets.ReadOnlyModelViewSet):
 
 
 class CrystalView(viewsets.ReadOnlyModelViewSet):
-    queryset = Crystal.objects.filter()
+    queryset = Crystal.objects.all()
     serializer_class = CrystalSerializer
     filter_fields = (
         "crystal_name",
@@ -54,7 +54,7 @@ class CrystalView(viewsets.ReadOnlyModelViewSet):
 
 
 class DataProcessingView(viewsets.ReadOnlyModelViewSet):
-    queryset = DataProcessing.objects.filter()
+    queryset = DataProcessing.objects.all()
     serializer_class = DataProcessingSerializer
     filter_fields = (
         "crystal_name__crystal_name",
@@ -67,7 +67,7 @@ class DataProcessingView(viewsets.ReadOnlyModelViewSet):
 
 
 class DimpleView(viewsets.ReadOnlyModelViewSet):
-    queryset = Dimple.objects.filter()
+    queryset = Dimple.objects.all()
     serializer_class = DimpleSerializer
     filter_fields = (
         "crystal_name__crystal_name",
@@ -81,7 +81,7 @@ class DimpleView(viewsets.ReadOnlyModelViewSet):
 
 
 class LabView(viewsets.ReadOnlyModelViewSet):
-    queryset = Lab.objects.filter()
+    queryset = Lab.objects.all()
     serializer_class = LabSerializer
     filter_fields = (
         "crystal_name__crystal_name",
@@ -97,7 +97,7 @@ class LabView(viewsets.ReadOnlyModelViewSet):
 
 
 class RefinementView(viewsets.ReadOnlyModelViewSet):
-    queryset = Refinement.objects.filter()
+    queryset = Refinement.objects.all()
     serializer_class = RefinementSerializer
     filter_fields = (
         "crystal_name__crystal_name",
@@ -111,7 +111,7 @@ class RefinementView(viewsets.ReadOnlyModelViewSet):
 
 
 class PanddaAnalysisView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaAnalysis.objects.filter()
+    queryset = PanddaAnalysis.objects.all()
     serializer_class = PanddaAnalysisSerializer
     filter_fields = (
         "pandda_dir",
@@ -119,7 +119,7 @@ class PanddaAnalysisView(viewsets.ReadOnlyModelViewSet):
 
 
 class PanddaRunView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaRun.objects.filter()
+    queryset = PanddaRun.objects.all()
     serializer_class = PanddaRunSerializer
     filter_fields = (
         "input_dir",
@@ -132,7 +132,7 @@ class PanddaRunView(viewsets.ReadOnlyModelViewSet):
 
 
 class PanddaSiteView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaSite.objects.filter()
+    queryset = PanddaSite.objects.all()
     serializer_class = PanddaSiteSerializer
     filter_fields = (
         "pandda_run__pandda_analysis__pandda_dir",
@@ -145,7 +145,7 @@ class PanddaSiteView(viewsets.ReadOnlyModelViewSet):
 
 
 class PanddaEventView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaEvent.objects.filter()
+    queryset = PanddaEvent.objects.all()
     serializer_class = PanddaEventSerializer
     filter_fields = (
         "crystal__crystal_name",
