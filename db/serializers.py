@@ -6,4 +6,4 @@ class TargetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Target
-        fields = ("target_name")
+        fields = ("target_name",)
