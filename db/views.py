@@ -14,7 +14,7 @@ class TargetView(viewsets.ReadOnlyModelViewSet):
     )
 
 
-class CompoundView(viewsets.ReadOnlyModelViewSet):
+class CompoundsView(viewsets.ReadOnlyModelViewSet):
     queryset = Compounds.objects.filter()
     serializer_class = CompoundsSerializer
     filter_fields = (
