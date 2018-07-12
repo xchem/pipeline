@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import *
+from .models import Target
 
 
 class TargetSerializer(serializers.ModelSerializer):
