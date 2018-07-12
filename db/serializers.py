@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import *
+from .models import Target
 
 
 class TargetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Target
-        fields = ("target_name")
+        fields = ("target_name",)

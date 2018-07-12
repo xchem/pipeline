@@ -342,11 +342,17 @@ class CheckFileUpload(luigi.Task):
 
             }
             for row in results:
-                lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'], crystal_name__visit__filename=str(self.filename))
+                lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'],
+                                                       crystal_name__visit__filename=str(self.filename),
+                                                       crystal_name__compound__smiles=row['CompoundSMILES'])
                 if len(lab_object)>1:
                     raise Exception('Multiple Crystals!')
                 if len(lab_object)==0:
-                    raise Exception('No entry for ' + str(row['CrystalName']))
+                    if self.model==Dimple and not row['DimplePathToPDB'] and not row['DimplePathToMTZ']:
+                        pass
+                    else:
+                        raise Exception('No entry for ' + str(row['CrystalName'] + ' ' + row['DimplePathToPDB'] + ' '
+                                                              + row['DimplePathToMTZ']))
                 for key in translation.keys():
                     test_xchem_val = eval(str('lab_object[0].' + key))
                     soakdb_val = row[translation[key]]
