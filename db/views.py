@@ -7,5 +7,5 @@ from .models import Target
 class TargetView(viewsets.ReadOnlyModelViewSet):
     queryset = Target.objects.all()
     serializer_class = TargetSerializer
-    filter_fields = ('target_name')
+    filter_fields = ('target_name',)
 
