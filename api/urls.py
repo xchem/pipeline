@@ -7,8 +7,8 @@ from db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, 
 
 router = DefaultRouter()
 # Register the basic data
-router.register(r'target', TargetView)
-router.register(r'compound', CompoundsView)
+router.register(r"target", TargetView)
+router.register(r"compound", CompoundsView)
 router.register(r'reference', ReferenceView)
 router.register(r'soakdb', SoakdbFilesView)
 router.register(r'crystal', CrystalView)
