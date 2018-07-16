@@ -2,6 +2,7 @@ from db.models import Target
 
 from django.http import HttpResponse
 from django.template import loader
+from rest_framework.views import APIView
 
 def targets(request):
     targets = Target.objects.all()
@@ -10,3 +11,7 @@ def targets(request):
         'targets': targets,
     }
     return HttpResponse(template.render(context, request))
+
+class GetGraph(APIView):
+
+    def get(self, request, format=None):
