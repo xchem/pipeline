@@ -94,7 +94,6 @@ class AddPanddaEvents(luigi.Task):
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.events.done'))
 
-    @transaction.atomic
     def run(self):
 
         events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
@@ -291,7 +290,7 @@ class AddPanddaData(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.search_path, 'transfer_pandda_data.done'))
 
     def requires(self):
-        
+
         os.remove(self.output().path)
 
         if not os.path.isfile(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,

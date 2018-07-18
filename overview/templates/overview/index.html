@@ -7,19 +7,17 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
-  </head>
-  <body>
-
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- highcharts, jQuery, Popper.js, Bootstrap JS -->
+    <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+    <title>Targets overview</title>
+  </head>
+  <body>
 
     <div class="content container">
         {% block content %}
@@ -39,39 +37,23 @@
     <script type="text/javascript">
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
+          $.ajax({
+              url: $("#chart").attr("data-url"),
+              dataType: 'json',
+              success: function (data) {
+                Highcharts.chart("container", data);
+              }
+            });
         });
     </script>
             <div class="row">
-
-                <div id="chart" style="width:1400px;height:800px;"></div>
-
+                <div id="chart" data-url=""></div>
             </div>
         {% endblock %}
     </div>
 
     <script>
-        var data=[{
-            values: [19, 26, 55],
-            labels: ['Residential', 'Non-Residential', 'Utility'],
-            type: 'pie'
-        }];
 
-        Plotly.newPlot('chart', data);
-    </script>
-    <script>
-        {% block jquery %}
-        var target = $("#selected");
-        $.ajax({
-            method: "GET",
-            url: "/api/crystal",
-            data: {
-                target__target_name: target
-            },
-            success: function(data){
-                console.log(data)
-            },
-        });
-        {% endblock %}
     </script>
 
 
