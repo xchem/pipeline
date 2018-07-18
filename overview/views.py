@@ -37,6 +37,7 @@ def get_graph(request):
     count_5 = len(refinement_5)
 
     data = {'values': [count_1, count_2, count_3, count_4, count_5],
-            'labels': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready']}
+            'labels': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready'],
+            'type': 'pie'}
 
     return JsonResponse(data)

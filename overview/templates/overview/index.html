@@ -42,6 +42,13 @@
     <script type="text/javascript">
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
+          $.ajax({
+              url: '/targets/graph/',
+              data: {'target_name': $(this).text()},
+              success: function (data) {
+                Plotly.update("chart", data);
+              }
+            });
         });
     </script>
 
