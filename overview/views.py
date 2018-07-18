@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 
 def targets(request):
-    targets = Target.objects.all()
+    targets = Target.objects.all().order_by('target_name')
     template = loader.get_template('overview/index.html')
     context = {
         'targets': targets,
