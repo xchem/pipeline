@@ -47,7 +47,7 @@
                 url: '/targets/graph/',
                 data: {'target_name': req},
                 type: 'POST',
-                dataType: JSON,
+                dataType: 'json',
                 success: function (data) {
                     Plotly.update("chart", data);
                     console.log('update')
