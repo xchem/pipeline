@@ -24,7 +24,7 @@ def get_graph(request):
     crystals = Crystal.objects.filter(target__target_name=submission)
 
     total_crystals = len(crystals)
-    
+
     refinement_1 = Refinement.objects.filter(crystal_name__in=crystals, outcome=1)
     count_1 = len(refinement_1)
     refinement_2 = Refinement.objects.filter(crystal_name__in=crystals, outcome=2)
@@ -36,8 +36,7 @@ def get_graph(request):
     refinement_5 = Refinement.objects.filter(crystal_name__in=crystals, outcome=5)
     count_5 = len(refinement_5)
 
-    data = {'number': total_crystals, 'target':str(submission), 'refinement_1': count_1,
-            'refinement_2': count_2, 'refinement_3': count_3, 'refinement_4': count_4,
-            'refinement_5': count_5}
+    data = {'values': [count_1, count_2, count_3, count_4, count_5],
+            'labels': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready']}
 
     return JsonResponse(data)
