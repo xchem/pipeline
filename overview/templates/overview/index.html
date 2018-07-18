@@ -45,7 +45,7 @@
           var req = $(this).text()
             $.ajax({
                 url: '/overview/targets/graph/',
-                data: {'target_name': req, 'csrfmiddlewaretoken': '{% csrf_token %}'},
+                data: {'target_name': req, 'csrfmiddlewaretoken': "{% csrf_token %}"},
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
