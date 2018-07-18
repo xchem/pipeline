@@ -79,7 +79,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    Plotly.newPlot('chart', data);
+                    Plotly.newPlot('chart', data.data);
                     console.log('update')
                 }
             });
