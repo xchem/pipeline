@@ -20,11 +20,24 @@ def get_graph(request):
     filter_fields = ('target_name',)
 
     submission = request.GET.get('target_name', '')
+
     crystals = Crystal.objects.filter(target__target_name=submission)
+
     total_crystals = len(crystals)
+    
     refinement_1 = Refinement.objects.filter(crystal_name__in=crystals, outcome=1)
     count_1 = len(refinement_1)
+    refinement_2 = Refinement.objects.filter(crystal_name__in=crystals, outcome=2)
+    count_2 = len(refinement_2)
+    refinement_3 = Refinement.objects.filter(crystal_name__in=crystals, outcome=3)
+    count_3 = len(refinement_3)
+    refinement_4 = Refinement.objects.filter(crystal_name__in=crystals, outcome=4)
+    count_4 = len(refinement_4)
+    refinement_5 = Refinement.objects.filter(crystal_name__in=crystals, outcome=5)
+    count_5 = len(refinement_5)
 
-    data = {'number': total_crystals, 'target':str(submission), 'refinement_1': count_1}
+    data = {'number': total_crystals, 'target':str(submission), 'refinement_1': count_1,
+            'refinement_2': count_2, 'refinement_3': count_3, 'refinement_4': count_4,
+            'refinement_5': count_5}
 
     return JsonResponse(data)
