@@ -45,6 +45,8 @@
             $.ajax({
                 url: '/targets/graph/',
                 data: {'target_name': $(this).text()},
+                type: 'POST',
+                dataType: JSON,
                 success: function (data) {
                     Plotly.update("chart", data);
                     console.log('update')
