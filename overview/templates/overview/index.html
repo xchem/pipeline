@@ -76,7 +76,7 @@
             $.ajax({
                 url: '/overview/targets/graph/',
                 data: {'target_name': req},
-                type: 'POST',
+                type: 'GET',
                 dataType: 'json',
                 success: function (data) {
                     Plotly.newPlot('chart', data);
