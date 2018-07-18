@@ -19,8 +19,8 @@ def get_graph(request):
     queryset = Target.objects.filter()
     filter_fields = ('target_name',)
 
-    # submission = request.query_params.get('submission', None)
-    # crystals = Crystal.objects.filter(target__target_name=submission)
-    # data = {'number': len(crystals)}
+    submission = request.GET.get('target_name', '')
+    crystals = Crystal.objects.filter(target__target_name=submission)
+    data = {'number': len(crystals)}
 
-    return JsonResponse(request)
+    return JsonResponse(submission)
