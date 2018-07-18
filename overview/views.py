@@ -21,6 +21,6 @@ def get_graph(request):
 
     submission = request.GET.get('target_name', '')
     crystals = Crystal.objects.filter(target__target_name=submission)
-    data = {'number': len(crystals)}
+    data = {'number': len(crystals), 'target':str(submission)}
 
-    return JsonResponse(submission)
+    return JsonResponse(data)
