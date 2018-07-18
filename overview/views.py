@@ -22,4 +22,4 @@ def get_graph(request):
     crystals = Crystal.objects.filter(target__target_name=target)
     data = {'number': len(crystals)}
 
-    return HttpResponse(data)
+    return JsonResponse(data)
