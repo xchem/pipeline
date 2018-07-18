@@ -44,7 +44,7 @@
           $('#selected').text($(this).text());
           var req = $(this).text()
             $.ajax({
-                url: '/targets/graph/',
+                url: '/overview/targets/graph/',
                 data: {'target_name': req},
                 type: 'POST',
                 dataType: 'json',
