@@ -42,9 +42,10 @@
     <script type="text/javascript">
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
+          var req = $(this).text()
             $.ajax({
                 url: '/targets/graph/',
-                data: {'target_name': [$(this).text()]},
+                data: {'target_name': req},
                 type: 'POST',
                 dataType: JSON,
                 success: function (data) {
