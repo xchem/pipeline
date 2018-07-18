@@ -79,7 +79,7 @@
                 type: 'POST',
                 dataType: 'json',
                 success: function (data) {
-                    Plotly.newPlot("chart", data);
+                    Plotly.newPlot('chart', data);
                     console.log('update')
                 }
             });
@@ -90,9 +90,9 @@
 
     <script>
         var data = [{
-            values: [],
-            labels: [],
-            type: 'pie'
+            'values': [0,0,0,0,0],
+            'labels': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready'],
+            'type': 'pie',
         }];
 
         var layout = {
