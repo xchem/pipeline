@@ -14,6 +14,7 @@ def targets(request):
     }
     return HttpResponse(template.render(context, request))
 
+
 def get_graph(request):
     queryset = Target.objects.filter()
     filter_fields = ('target_name',)

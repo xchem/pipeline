@@ -34,7 +34,7 @@
                 </ul>
             </div>
             <div class="row">
-                <div id="chart" data-url="{% url 'get_chart' target_name='VIM2' %}"></div>
+                <div id="chart"></div>
             </div>
 
         {% endblock %}
@@ -43,7 +43,7 @@
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
           $.ajax({
-              url: $("#chart").attr("data-url"),
+              url: $("#chart").setData(),
               dataType: 'json',
               success: function (data) {
                 Highcharts.chart("container", data);
