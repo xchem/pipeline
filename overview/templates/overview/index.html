@@ -42,8 +42,6 @@
     <script type="text/javascript">
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
-        });
-        $(".dropdown-menu li").click(function() {
             $.ajax({
                 url: '/targets/graph/',
                 data: {'target_name': $(this).text()},
