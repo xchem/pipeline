@@ -417,7 +417,7 @@ class CheckFileUpload(luigi.Task):
                 f.write(traceback.format_exc())
 
 class CheckUploadedFiles(luigi.Task):
-    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    date = luigi.DateParameter(default=datetime.date.today())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
