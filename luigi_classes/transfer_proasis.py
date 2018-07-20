@@ -36,7 +36,7 @@ class InitDBEntries(luigi.Task):
                 break
 
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
-            proasis_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal=obj.crystal_name,
+            proasis_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
                                                       pdb_file=obj.bound_conf, modification_date=mod_date,
                                                       mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
             proasis_entry.save()
