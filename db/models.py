@@ -210,7 +210,7 @@ class ProasisHits(models.Model):
 
     class Meta:
         db_table = 'proasis_hits'
-        unique_together = ('refinement', 'crystal')
+        unique_together = ('refinement', 'crystal_name')
 
 
 class LigandEdstats(models.Model):
