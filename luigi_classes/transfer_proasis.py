@@ -54,7 +54,7 @@ class InitDBEntries(luigi.Task):
             print(dimple.count())
             if dimple.count()==1:
                 if dimple[0].reference and dimple[0].reference.reference_pdb:
-                    proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
+                    proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
 
         print(fail_count)
 
