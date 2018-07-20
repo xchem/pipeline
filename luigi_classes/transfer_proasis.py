@@ -50,9 +50,9 @@ class InitDBEntries(luigi.Task):
                                                       mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
 
             try:
-                dimple = Dimple.objects.get(crystal_name=obj.crystal_name)
-                if dimple.reference:
-                    if dimple.reference.reference_pdb:
+                dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
+                if dimple.count==1:
+                    if dimple[0].reference and dimple[0].reference.reference_pdb:
                         proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
 
             except:
