@@ -32,17 +32,18 @@ class InitDBEntries(luigi.Task):
 
             mtz = db_functions.check_file_status('refine.mtz', bound_conf)
             if not mtz[0]:
+                fail_count += 1
                 continue
 
             two_fofc = db_functions.check_file_status('2fofc.map', bound_conf)
             if not two_fofc[0]:
+                fail_count += 1
                 continue
 
             fofc = db_functions.check_file_status('fofc.map', bound_conf)
             if not fofc[0]:
+                fail_count += 1
                 continue
-
-
 
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
             proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
@@ -53,6 +54,8 @@ class InitDBEntries(luigi.Task):
             if dimple.count==1:
                 if dimple[0].reference and dimple[0].reference.reference_pdb:
                     proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
+
+        print(fail_count)
 
 
 
