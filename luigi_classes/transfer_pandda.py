@@ -290,8 +290,8 @@ class AddPanddaData(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.search_path, 'transfer_pandda_data.done'))
 
     def requires(self):
-
-        os.remove(self.output().path)
+        if os.path.isfile(self.output().path):
+            os.remove(self.output().path)
 
         if not os.path.isfile(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
                               sdbfile=self.sdbfile).output().path):
