@@ -18,6 +18,7 @@ class InitDBEntries(luigi.Task):
 
     def run(self):
         refinement = Refinement.objects.filter(outcome__gte=3)
+        print(len(refinement))
         for obj in refinement:
             if obj.bound_conf !='':
                 bound_conf = obj.bound_conf
