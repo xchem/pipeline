@@ -198,14 +198,19 @@ class Refinement(models.Model):
 
 
 class ProasisHits(models.Model):
-    bound_pdb = models.ForeignKey(Refinement, to_field='bound_conf', on_delete=models.CASCADE, unique=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
+    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    pdb_file = models.TextField(blank=False, null=False)
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
     modification_date = models.TextField(blank=True, null=True)
     strucid = models.TextField(blank=True, null=True)
     ligand_list = models.IntegerField(blank=True, null=True)
+    mtz = models.TextField(blank=False, null=False)
+    two_fofc = models.TextField(blank=False, null=False)
+    fofc = models.TextField(blank=False, null=False)
 
     class Meta:
         db_table = 'proasis_hits'
+        unique_together = ('refinement', 'crystal')
 
 
 class LigandEdstats(models.Model):

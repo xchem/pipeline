@@ -437,6 +437,23 @@ def pop_proposals(proposal_number):
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
+
+def check_file_status(filename, bound_pdb):
+
+    pdb_file_name = str(bound_pdb).split('/')[-1]
+
+    if 'Refine' in str(bound_pdb).replace(pdb_file_name, ''):
+        remove_string = str(str(bound_pdb).split('/')[-2] + '/' + pdb_file_name)
+        map_directory = str(bound_pdb).replace(remove_string, '')
+    else:
+        map_directory = str(bound_pdb).replace(pdb_file_name, '')
+
+    if os.path.isfile(str(map_directory + filename)):
+        return True, str(map_directory + filename)
+    else:
+        return False, ''
+
+
 # def query_and_list(query, proposals_list, proposal_dict, strucid_list):
 #     conn, c = connectDB()
 #     c.execute(query)
@@ -543,29 +560,4 @@ def pop_proposals(proposal_number):
 #
 #     return lig_list
 #
-# def check_file_status(filetype, filename, bound_pdb):
-#     conn, c = connectDB()
-#
-#     pdb_file_name = str(bound_pdb).split('/')[-1]
-#
-#     if 'Refine' in str(bound_pdb).replace(pdb_file_name, ''):
-#         remove_string = str(str(bound_pdb).split('/')[-2] + '/' + pdb_file_name)
-#         map_directory = str(bound_pdb).replace(remove_string, '')
-#     else:
-#         map_directory = str(bound_pdb).replace(pdb_file_name, '')
-#
-#     exists = column_exists('proasis_hits', str('exists_' + filetype))
-#
-#     if not exists:
-#         execute_string = str("ALTER TABLE proasis_hits ADD COLUMN exists_" + filetype + " text;")
-#         c.execute(execute_string)
-#         conn.commit()
-#
-#     execute_string = str("UPDATE proasis_hits SET exists_" + filetype + "=1 where bound_conf like %s")
-#     if os.path.isfile(str(map_directory + filename)):
-#         c.execute(execute_string, (bound_pdb,))
-#         conn.commit()
-#     else:
-#         c.execute(execute_string.replace('1','0'), (bound_pdb,))
-#         conn.commit()
-#
+

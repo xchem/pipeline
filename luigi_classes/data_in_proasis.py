@@ -12,8 +12,6 @@ from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import functions.db_functions as db_functions
 import functions.misc_functions as misc_functions
 import functions.proasis_api_funcs as proasis_api_funcs
-from luigi_classes.batch_classes import StartHitTransfers, StartLeadTransfers
-from luigi_classes.database_operations import FindSoakDBFiles
 
 
 class LeadTransfer(luigi.Task):
@@ -165,10 +163,6 @@ class LeadTransfer(luigi.Task):
 
             with self.output().open('wb') as f:
                 f.write('')
-        # except:
-        #     exc_type, exc_value, exc_traceback = sys.exc_info()
-        #     traceback_message = traceback.format_exc()
-        #     raise Exception('Failed to transfer hit: ' + repr(traceback_message))
 
 
 class AddProject(luigi.Task):
@@ -197,6 +191,7 @@ class AddProject(luigi.Task):
         except:
             with self.output().open('w') as f:
                 f.write('FAIL')
+
 
 class FindLigands(luigi.Task):
     bound_conf = luigi.Parameter()
@@ -398,22 +393,6 @@ class CheckFilesForUpload(luigi.Task):
             f.write('')
 
 
-class CleanUpHits(luigi.Task):
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join('logs', 'cleanup.done'))
-
-    def requires(self):
-        pdb = []
-        date = []
-        conn, c = db_functions.connectDB()
-        c.execute("select bound_conf, modification_date from proasis_hits WHERE bound_conf !='' OR modification_date !=''")
-        rows = c.fetchall()
-        for row in rows:
-            pdb.append(str(row[0]))
-            date.append(str(row[1]))
-        return[CheckFilesForUpload(bound_pdb=bound_pdb, mod_date=mod_date) for (bound_pdb, mod_date) in zip(pdb,date)]
-
 
 class HitTransfer(luigi.Task):
     # bound state pdb file from refinement
@@ -463,23 +442,6 @@ class HitTransfer(luigi.Task):
         current_visit = str(self.bound_pdb).split('/')[4]
         title = str(self.crystal)
 
-        # try:
-        #     for row in rows:
-        #         old_strucid = str(row[0])
-        #         old_bound_conf = str(row[1])
-        #
-        #         # determine if the old entry is from the same visit or not
-        #         old_visit = old_bound_conf.split('/')[4]
-        #
-        #         # case where visit is same, but filename is not
-        #         if old_visit == current_visit:
-        #             proasis_api_funcs.delete_structure(old_strucid)
-        #             c.execute('DELETE FROM proasis_hits WHERE bound_conf like %s', (old_bound_conf,))
-        #             conn.commit()
-        # except:
-        #     pass
-
-        # create the submission string for proasis
         if len(self.ligands) == 1:
             lig_string = str(proasis_api_funcs.get_lig_strings(self.ligands)[0])
             print('submission string:\n')
