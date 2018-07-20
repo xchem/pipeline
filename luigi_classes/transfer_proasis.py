@@ -31,7 +31,7 @@ class InitDBEntries(luigi.Task):
             two_fofc = db_functions.check_file_status('2fofc.map', bound_conf)
             if not two_fofc[0]:
                 break
-            fofc = db_functions.check_file_status('fofc.map', self.bound_pdb)
+            fofc = db_functions.check_file_status('fofc.map', bound_conf)
             if not fofc[0]:
                 break
 
