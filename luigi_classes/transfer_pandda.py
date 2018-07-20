@@ -10,6 +10,7 @@ from django.db import transaction
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 import setup_django
 
+
 class FindPanddaLogs(luigi.Task):
     search_path = luigi.Parameter()
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
@@ -23,8 +24,8 @@ class FindPanddaLogs(luigi.Task):
 
     def run(self):
         print('RUNNING')
-        if os.path.isfile(self.output().path.replace(str(self.date_time), str(int(str(self.date_time))-1))):
-            os.remove(self.output().path.replace(str(self.date_time), str(int(str(self.date_time))-1)))
+        if os.path.isfile(self.output().path.replace(str(self.date_time), str(int(str(self.date_time)) - 1))):
+            os.remove(self.output().path.replace(str(self.date_time), str(int(str(self.date_time)) - 1)))
         log_files = pandda_functions.find_log_files(self.search_path)
         with self.output().open('w') as f:
             f.write(log_files)
@@ -58,19 +59,19 @@ class AddPanddaSites(luigi.Task):
 
             print('Adding pandda site: ' + str(site))
 
-            pandda_site = PanddaSite.objects.select_for_update().get_or_create(pandda_run=run, site=site,
-                                                                               site_aligned_centroid_x=aligned_centroid[
-                                                                                   0],
-                                                                               site_aligned_centroid_y=aligned_centroid[
-                                                                                   1],
-                                                                               site_aligned_centroid_z=aligned_centroid[
-                                                                                   2],
-                                                                               site_native_centroid_x=native_centroid[
-                                                                                   0],
-                                                                               site_native_centroid_y=native_centroid[
-                                                                                   1],
-                                                                               site_native_centroid_z=native_centroid[
-                                                                                   2])[0]
+            pandda_site = PanddaSite.objects.get_or_create(pandda_run=run, site=site,
+                                                           site_aligned_centroid_x=aligned_centroid[
+                                                               0],
+                                                           site_aligned_centroid_y=aligned_centroid[
+                                                               1],
+                                                           site_aligned_centroid_z=aligned_centroid[
+                                                               2],
+                                                           site_native_centroid_x=native_centroid[
+                                                               0],
+                                                           site_native_centroid_y=native_centroid[
+                                                               1],
+                                                           site_native_centroid_z=native_centroid[
+                                                               2])[0]
             pandda_site.save()
 
         with self.output().open('w') as f:
@@ -87,10 +88,12 @@ class AddPanddaEvents(luigi.Task):
     sdbfile = luigi.Parameter()
 
     def requires(self):
-        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
+        return AddPanddaRun(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
+                            pver=self.pver,
                             sites_file=self.sites_file, events_file=self.events_file), \
-               AddPanddaSites(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir, pver=self.pver,
-                            sites_file=self.sites_file, events_file=self.events_file, soakdb_filename=self.sdbfile)
+               AddPanddaSites(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
+                              pver=self.pver,
+                              sites_file=self.sites_file, events_file=self.events_file, soakdb_filename=self.sdbfile)
 
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.events.done'))
@@ -104,8 +107,8 @@ class AddPanddaEvents(luigi.Task):
         for i in range(0, len(events_frame['dtag'])):
             event_site = (events_frame['site_idx'][i])
 
-            run = PanddaRun.objects.select_for_update().get(pandda_log=self.log_file)
-            site = PanddaSite.objects.select_for_update().get_or_create(site=int(event_site), pandda_run=run)[0]
+            run = PanddaRun.objects.get(pandda_log=self.log_file)
+            site = PanddaSite.objects.get_or_create(site=int(event_site), pandda_run=run)[0]
 
             input_directory = run.input_dir
 
@@ -136,11 +139,11 @@ class AddPanddaEvents(luigi.Task):
                         )
 
                     crystal = Crystal.objects.get_or_create(crystal_name=events_frame['dtag'][i],
-                                                                                file=SoakdbFiles.objects.get_or_create(
-                                                                                    filename=self.sdbfile)[0]
-                                                                                )[0]
+                                                            file=SoakdbFiles.objects.get_or_create(
+                                                                filename=self.sdbfile)[0]
+                                                            )[0]
 
-                    pandda_event = PanddaEvent.objects.select_for_update().get_or_create(
+                    pandda_event = PanddaEvent.objects.get_or_create(
                         crystal=crystal,
                         site=site,
                         pandda_run=run,
@@ -173,7 +176,7 @@ class AddPanddaEvents(luigi.Task):
                     print(exc)
             else:
                 with open(error_file, 'a') as f:
-                    f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) +' SITE: ' + str(event_site) +
+                    f.write('CRYSTAL: ' + str(events_frame['dtag'][i]) + ' SITE: ' + str(event_site) +
                             ' EVENT: ' + str(events_frame['event_idx'][i]) + '\n')
                     print('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]))
                     f.write('FILES NOT FOUND FOR EVENT: ' + str(events_frame['event_idx'][i]) + '\n')
@@ -183,7 +186,7 @@ class AddPanddaEvents(luigi.Task):
                     f.write(str([map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path])
                             + '\n')
                     print(exists_array)
-                    f.write(str(exists_array)+ '\n')
+                    f.write(str(exists_array) + '\n')
                     f.write('\n\n')
 
         with self.output().open('w') as f:
@@ -214,11 +217,11 @@ class AddPanddaRun(luigi.Task):
     def run(self):
         print('ADDING PANDDA RUN...')
         pandda_run = \
-        PanddaRun.objects.select_for_update().get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
-                                                            pandda_analysis=PanddaAnalysis.objects.get_or_create(
-                                                                pandda_dir=self.output_dir)[0],
-                                                            pandda_version=self.pver, sites_file=self.sites_file,
-                                                            events_file=self.events_file)[0]
+            PanddaRun.objects.get_or_create(pandda_log=self.log_file, input_dir=self.input_dir,
+                                            pandda_analysis=PanddaAnalysis.objects.get_or_create(
+                                                pandda_dir=self.output_dir)[0],
+                                            pandda_version=self.pver, sites_file=self.sites_file,
+                                            events_file=self.events_file)[0]
         pandda_run.save()
 
         with self.output().open('w') as f:
@@ -295,20 +298,21 @@ class AddPanddaData(luigi.Task):
             os.remove(self.output().path)
 
         if not os.path.isfile(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
-                              sdbfile=self.sdbfile).output().path):
+                                             sdbfile=self.sdbfile).output().path):
             return FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
                                   sdbfile=self.sdbfile)
         else:
-            frame = pd.DataFrame.from_csv(FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
-                              sdbfile=self.sdbfile).output().path)
+            frame = pd.DataFrame.from_csv(
+                FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
+                               sdbfile=self.sdbfile).output().path)
 
-            return[AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
-                                   sites_file=sites_file, events_file=events_file, sdbfile=sdbfile) for
-                   log_file, pver, input_dir, output_dir, sites_file, events_file, sdbfile in
-                   list(zip(
-                       frame['log_file'], frame['pver'], frame['input_dir'], frame['output_dir'], frame['sites_file'],
-                       frame['events_file'], frame['sdbfile']
-                   ))]
+            return [AddPanddaEvents(log_file=log_file, pver=pver, input_dir=input_dir, output_dir=output_dir,
+                                    sites_file=sites_file, events_file=events_file, sdbfile=sdbfile) for
+                    log_file, pver, input_dir, output_dir, sites_file, events_file, sdbfile in
+                    list(zip(
+                        frame['log_file'], frame['pver'], frame['input_dir'], frame['output_dir'], frame['sites_file'],
+                        frame['events_file'], frame['sdbfile']
+                    ))]
 
     def run(self):
         with self.output().open('w') as f:
@@ -353,7 +357,7 @@ class FindSearchPaths(luigi.Task):
 
                 to_exclude.append(path)
 
-        out_dict = {'search_path':[], 'soak_db_filepath':[], 'sdbfile':[]}
+        out_dict = {'search_path': [], 'soak_db_filepath': [], 'sdbfile': []}
 
         for path, sdbfile in zipped:
             print(path)
