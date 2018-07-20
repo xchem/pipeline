@@ -1,8 +1,9 @@
 import luigi
-import .transfer_soakdb
+import luigi_classes.transfer_soakdb
 import datetime
 from db.models import Crystal, Refinement, ProasisHits
 from functions import misc_functions, db_functions
+import setup_django
 
 
 class InitDBEntries(luigi.Task):
