@@ -10,6 +10,7 @@ import pandas as pd
 import traceback
 from functions import misc_functions
 from django.db import transaction
+from functions import db_functions
 
 
 def transfer_file(data_file):
@@ -428,7 +429,9 @@ class CheckUploadedFiles(luigi.Task):
             zipped = []
             for filename in soakdb_files:
                 for model in models:
-                    zipped.append(tuple([filename, model]))
+                    maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
+                    if maint_exists == 1:
+                        zipped.append(tuple([filename, model]))
 
             return [CheckFileUpload(filename=filename, model=model) for (filename, model) in zipped]
 
