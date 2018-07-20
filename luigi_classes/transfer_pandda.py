@@ -139,7 +139,7 @@ class AddPanddaEvents(luigi.Task):
                         )
 
                     crystal = Crystal.objects.get_or_create(crystal_name=events_frame['dtag'][i],
-                                                            file=SoakdbFiles.objects.get_or_create(
+                                                            visit=SoakdbFiles.objects.get_or_create(
                                                                 filename=self.sdbfile)[0]
                                                             )[0]
 
