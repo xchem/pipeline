@@ -1,10 +1,10 @@
 import luigi
 import luigi_classes.transfer_soakdb as transfer_soakdb
 import datetime
-from db.models import Crystal, Refinement, ProasisHits, ProasisLeads, Dimple
+import subprocess
+from db.models import Crystal, Refinement, ProasisHits, ProasisLeads, Dimple, Target
 from functions import misc_functions, db_functions
 import setup_django
-import traceback
 
 
 class InitDBEntries(luigi.Task):
@@ -60,6 +60,49 @@ class InitDBEntries(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
+class AddProject(luigi.Task):
+    protein_name = luigi.Parameter()
+    date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        return InitDBEntries(date=self.date, soak_db_filepath=self.soak_db_filepath)
+
+    def output(self):
+        self.protein_name = str(self.protein_name).upper()
+        return luigi.LocalTarget(str('logs/proasis/' + str(self.protein_name) + '.added'))
+
+    def run(self):
+        self.protein_name = str(self.protein_name).upper()
+        add_project = str(
+            '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
+        process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
+            raise Exception(err)
+        if len(out) > 1:
+            with self.output().open('w') as f:
+                f.write(str(out))
+                print(out)
+
+
+class AddProjects(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+
+    def requires(self):
+        proteins = Target.objects.all()
+        return [AddProject(protein_name=protein.target_name, date=self.date, soak_db_filepath=self.soak_db_filepath)
+                for protein in proteins]
+
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/proasis_projects_%Y%m%d%H.txt'))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class CopyFiles(luigi.Task):
