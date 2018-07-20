@@ -30,17 +30,17 @@ class TestFindLogs(unittest.TestCase):
         shutil.rmtree(cls.working_dir)
         os.chdir(cls.top_dir)
         # delete rows created in soakdb table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
-        # # delete rows created in proposals table
-        proposal_rows = Proposals.objects.all()
-        proposal_rows.delete()
-        # # delete rows created in crystals table
-        crystal_rows = Crystal.objects.all()
-        crystal_rows.delete()
-        # delete pandda runs
-        pandda_runs = PanddaRun.objects.all()
-        pandda_runs.delete()
+        # soakdb_rows = SoakdbFiles.objects.all()
+        # soakdb_rows.delete()
+        # # # delete rows created in proposals table
+        # proposal_rows = Proposals.objects.all()
+        # proposal_rows.delete()
+        # # # delete rows created in crystals table
+        # crystal_rows = Crystal.objects.all()
+        # crystal_rows.delete()
+        # # delete pandda runs
+        # pandda_runs = PanddaRun.objects.all()
+        # pandda_runs.delete()
 
     def test_find_pandda_logs(self):
         find_logs = run_luigi_worker(FindPanddaLogs(
