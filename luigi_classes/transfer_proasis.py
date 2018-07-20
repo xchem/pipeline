@@ -25,10 +25,10 @@ class InitDBEntries(luigi.Task):
                 bound_conf = obj.pdb_latest
             else:
                 break
-            mtz = db_functions.check_file_status('refine.mtz', self.bound_pdb)
+            mtz = db_functions.check_file_status('refine.mtz', bound_conf)
             if not mtz[0]:
                 break
-            two_fofc = db_functions.check_file_status('2fofc.map', self.bound_pdb)
+            two_fofc = db_functions.check_file_status('2fofc.map', bound_conf)
             if not two_fofc[0]:
                 break
             fofc = db_functions.check_file_status('fofc.map', self.bound_pdb)
@@ -39,6 +39,7 @@ class InitDBEntries(luigi.Task):
             proasis_entry = ProasisHits.get_or_create(refinement=obj, crystal=obj.crystal_name,
                                                       pdb_file=obj.bound_conf, modification_date=mod_date,
                                                       mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
+            proasis_entry.save()
 
 
 
