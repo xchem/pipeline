@@ -204,11 +204,11 @@ class AddPanddaRun(luigi.Task):
     def requires(self):
         pass
 
-    def complete(self):
-        if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
-            return True
-        else:
-            return False
+    # def complete(self):
+    #     if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
+    #         return True
+    #     else:
+    #         return False
 
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.run.done'))
