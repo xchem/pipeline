@@ -435,5 +435,10 @@ class CheckUploadedFiles(luigi.Task):
 
             return [CheckFileUpload(filename=filename, model=model) for (filename, model) in zipped]
 
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/soakDBfiles/soakDB_checked_%Y%m%d.txt'))
 
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
 
