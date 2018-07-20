@@ -1,5 +1,5 @@
 import luigi
-import transfer_soakdb
+import .transfer_soakdb
 import datetime
 from db.models import Crystal, Refinement, ProasisHits
 from functions import misc_functions, db_functions
