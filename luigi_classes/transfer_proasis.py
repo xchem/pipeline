@@ -49,18 +49,11 @@ class InitDBEntries(luigi.Task):
                                                       pdb_file=obj.bound_conf, modification_date=mod_date,
                                                       mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
 
-            try:
-                dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
-                if dimple.count==1:
-                    if dimple[0].reference and dimple[0].reference.reference_pdb:
-                        proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
+            dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
+            if dimple.count==1:
+                if dimple[0].reference and dimple[0].reference.reference_pdb:
+                    proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
 
-            except:
-                print(traceback.format_exc())
-                print(dimple.reference)
-
-
-        print(fail_count)
 
 
 class CopyFiles(luigi.Task):
