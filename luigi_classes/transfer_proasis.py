@@ -15,7 +15,7 @@ class InitDBEntries(luigi.Task):
         return transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/proasis_db_%Y%m%d%H.txt'))
 
     def run(self):
         fail_count = 0
@@ -56,6 +56,9 @@ class InitDBEntries(luigi.Task):
                     proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
 
         print(fail_count)
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 
