@@ -165,32 +165,32 @@ class LeadTransfer(luigi.Task):
                 f.write('')
 
 
-class AddProject(luigi.Task):
-    protein_name = luigi.Parameter()
-
-    def output(self):
-        self.protein_name = str(self.protein_name).upper()
-        return luigi.LocalTarget(str('logs/projects/' + str(self.protein_name) + '.added'))
-
-    def run(self):
-        try:
-            self.protein_name = str(self.protein_name).upper()
-            add_project = str(
-                '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
-            process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
-            out, err = process.communicate()
-            out = out.decode('ascii')
-            if err:
-                err = err.decode('ascii')
-            if len(out) > 1:
-                with self.output().open('w') as f:
-                    f.write(str(out))
-            else:
-                with self.output().open('w') as f:
-                    f.write(str(err))
-        except:
-            with self.output().open('w') as f:
-                f.write('FAIL')
+# class AddProject(luigi.Task):
+#     protein_name = luigi.Parameter()
+#
+#     def output(self):
+#         self.protein_name = str(self.protein_name).upper()
+#         return luigi.LocalTarget(str('logs/projects/' + str(self.protein_name) + '.added'))
+#
+#     def run(self):
+#         try:
+#             self.protein_name = str(self.protein_name).upper()
+#             add_project = str(
+#                 '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
+#             process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
+#             out, err = process.communicate()
+#             out = out.decode('ascii')
+#             if err:
+#                 err = err.decode('ascii')
+#             if len(out) > 1:
+#                 with self.output().open('w') as f:
+#                     f.write(str(out))
+#             else:
+#                 with self.output().open('w') as f:
+#                     f.write(str(err))
+#         except:
+#             with self.output().open('w') as f:
+#                 f.write('FAIL')
 
 
 class FindLigands(luigi.Task):

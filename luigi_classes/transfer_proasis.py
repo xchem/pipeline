@@ -60,6 +60,7 @@ class InitDBEntries(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
+
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
     date = luigi.DateParameter(default=datetime.date.today())
