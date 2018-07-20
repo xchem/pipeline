@@ -118,18 +118,6 @@ class CopyFiles(luigi.Task):
         pass
 
 
-class AddProject(luigi.Task):
-
-    def requires(self):
-        pass
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
 class UploadLead(luigi.Task):
 
     def requires(self):
