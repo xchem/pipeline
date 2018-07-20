@@ -4,6 +4,7 @@ import datetime
 from db.models import Crystal, Refinement, ProasisHits, ProasisLeads, Dimple
 from functions import misc_functions, db_functions
 import setup_django
+import traceback
 
 
 class InitDBEntries(luigi.Task):
@@ -41,13 +42,21 @@ class InitDBEntries(luigi.Task):
             if not fofc[0]:
                 continue
 
-            dimple = Dimple.objects.get(crystal_name=obj.crystal_name)
+
 
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
             proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
                                                       pdb_file=obj.bound_conf, modification_date=mod_date,
                                                       mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
-            proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
+
+            try:
+                dimple = Dimple.objects.get(crystal_name=obj.crystal_name)
+
+                proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple.reference)
+
+            except:
+                print(traceback.format_exc())
+
 
         print(fail_count)
 
