@@ -23,17 +23,21 @@ class InitDBEntries(luigi.Task):
             if obj.bound_conf !='':
                 bound_conf = obj.bound_conf
             elif obj.pdb_latest != '':
+                print(obj.crystal_name)
                 bound_conf = obj.pdb_latest
             else:
                 break
             mtz = db_functions.check_file_status('refine.mtz', bound_conf)
             if not mtz[0]:
+                print('no mtz')
                 break
             two_fofc = db_functions.check_file_status('2fofc.map', bound_conf)
             if not two_fofc[0]:
+                print('no 2_fofc')
                 break
             fofc = db_functions.check_file_status('fofc.map', bound_conf)
             if not fofc[0]:
+                print('no fofc')
                 break
 
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
