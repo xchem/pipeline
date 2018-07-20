@@ -299,7 +299,7 @@ class CheckFileUpload(luigi.Task):
 
     def output(self):
         mod_date = misc_functions.get_mod_date(self.filename)
-        return luigi.LocalTarget(str(self.filename + '.' + mod_date + '.checked')
+        return luigi.LocalTarget(str(self.filename + '.' + mod_date + '.checked'))
 
     def run(self):
         out_err_file = str('logs/' + str(self.filename.split('/')[3]) + '_' + str(self.filename.split('/')[4]) +
