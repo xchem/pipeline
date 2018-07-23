@@ -118,7 +118,7 @@ class AddLead(luigi.Task):
         pass
 
     def run(self):
-        pass
+        leads = ProasisLeads.objects.filter()
 
 class UploadLeads(luigi.Task):
 
