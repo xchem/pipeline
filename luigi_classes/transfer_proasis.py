@@ -119,6 +119,7 @@ class AddLead(luigi.Task):
 
     def run(self):
         leads = ProasisLeads.objects.filter()
+        list_out = []
         for lead in leads:
             dimple = Dimple.objects.filter(reference=lead.reference_pdb)
             crystals = [dimp.crystal_name for dimp in dimple]
@@ -127,9 +128,10 @@ class AddLead(luigi.Task):
             for crys in lead_crystals:
                 events = PanddaEvent.objects.filter(crystal=crys.crystal_name)
                 sites = list(set([(event.site, event.crystal.crystal_name) for event in events]))
+
                 for site in sites:
                     site = site + (lead.reference_pdb.reference_pdb,)
-                    print(site)
+                    list_out.append(site)
 
 class UploadLeads(luigi.Task):
 
