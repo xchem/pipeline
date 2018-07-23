@@ -4,7 +4,7 @@ import datetime
 import subprocess
 from db.models import *
 from functions import misc_functions, db_functions
-from Bio.PDB import NeighborSearch, PDBParser, Atom, Residues
+from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import setup_django
 
 
