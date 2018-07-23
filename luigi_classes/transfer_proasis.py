@@ -127,7 +127,7 @@ class AddLead(luigi.Task):
 class UploadLeads(luigi.Task):
 
     def requires(self):
-        leads = ProasisLeads.objects.filter()
+        leads = ProasisLeads.objects.filter(strucid=None)
         out_dict = {'reference': [], 'sites': [], 'targets': []}
         for lead in leads:
             targets = []
@@ -151,7 +151,9 @@ class UploadLeads(luigi.Task):
                         out_dict['reference'].append(lead.reference_pdb.reference_pdb)
                         out_dict['sites'].append(list(set(site_list)))
 
-        run_zip = zip(out_dict['reference'],out_dict['sites'],out_dict['targets'])
+        run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
+        
+        return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
         pass
