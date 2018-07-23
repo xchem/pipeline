@@ -124,7 +124,7 @@ class AddLead(luigi.Task):
     def run(self):
         for centroid in self.site_centroids:
             # print('next centroid')
-            structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
+            structure = PDBParser(PERMISSIVE=0).get_structure(str(self.target).upper(), str(self.reference_structure))
 
             # initial distance for nearest neighbor (NN) search is 20A
             neighbor_distance = 20
