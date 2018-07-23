@@ -46,15 +46,16 @@ class InitDBEntries(luigi.Task):
                 continue
 
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
-            proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
-                                                      pdb_file=obj.bound_conf, modification_date=mod_date,
-                                                      mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
+            if mod_date:
+                proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
+                                                          pdb_file=obj.bound_conf, modification_date=mod_date,
+                                                          mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
 
-            dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
-            print(dimple.count())
-            if dimple.count()==1:
-                if dimple[0].reference and dimple[0].reference.reference_pdb:
-                    proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
+                dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
+                print(dimple.count())
+                if dimple.count()==1:
+                    if dimple[0].reference and dimple[0].reference.reference_pdb:
+                        proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
 
         print(fail_count)
 
