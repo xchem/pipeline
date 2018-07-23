@@ -110,6 +110,9 @@ class AddProjects(luigi.Task):
 class AddLead(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    site_centroids = luigi.Parameter()
+    reference_structure = luigi.Parameter()
+    target = luigi.Parameter()
 
     def requires(self):
         return AddProjects(date=self.date, soak_db_filepath=self.soak_db_filepath)
@@ -143,9 +146,12 @@ class UploadLeads(luigi.Task):
                         site_list.append(site)
 
                 if site_list:
-                    out_dict['reference'].append(lead.reference_pdb.reference_pdb)
-                    out_dict['sites'].append(list(set(site_list)))
-                    out_dict['targets'].append(targets)
+                    if len(targets)==1:
+                        out_dict['targets'].append(targets[0])
+                        out_dict['reference'].append(lead.reference_pdb.reference_pdb)
+                        out_dict['sites'].append(list(set(site_list)))
+
+        run_zip = zip(out_dict['reference'],out_dict['sites'],out_dict['targets'])
 
     def output(self):
         pass
