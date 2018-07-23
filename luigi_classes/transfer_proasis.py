@@ -128,7 +128,7 @@ class AddLead(luigi.Task):
             structure = PDBParser(PERMISSIVE=0).get_structure(str(self.target).upper(), str(self.reference_structure))
 
             # initial distance for nearest neighbor (NN) search is 20A
-            neighbor_distance = 20
+            neighbor_distance = 5
 
             centroid_coordinates = list(centroid)
 
@@ -192,7 +192,7 @@ class AddLead(luigi.Task):
 
         submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.target).upper() + ' -t ' +
                                 str(self.target).upper() + '_lead -d admin -f ' + str(self.reference_structure) + ' -l '
-                                + str(lig1) +  ' ' + full_res_string + "-x XRAY -n")
+                                + str(lig1) +  ' ' + full_res_string + " -x XRAY -n")
         print(submit_to_proasis)
         # process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
         # out, err = process.communicate()
