@@ -4,6 +4,7 @@ import datetime
 import subprocess
 from db.models import *
 from functions import misc_functions, db_functions
+from Bio.PDB import NeighborSearch, PDBParser, Atom, Residues
 import setup_django
 
 
@@ -121,7 +122,74 @@ class AddLead(luigi.Task):
         pass
 
     def run(self):
-        pass
+        for centroid in self.site_centroids:
+            # print('next centroid')
+            structure = PDBParser(PERMISSIVE=0).get_structure(str(self.name), str(self.reference_structure))
+
+            # initial distance for nearest neighbor (NN) search is 20A
+            neighbor_distance = 20
+
+            centroid_coordinates = list(centroid)
+
+            # define centroid as an atom object for NN search
+            centroid_atom = Atom.Atom('CEN', centroid_coordinates, 0, 0, 0, 0, 9999, 'C')
+            atoms = list(structure.get_atoms())
+            center = np.array(centroid_atom.get_coord())
+            ns = NeighborSearch(atoms)
+
+            # calculate NN list
+            neighbors = ns.search(center, neighbor_distance)
+            res_list = []
+
+            # for each atom in the NN list
+            for neighbor in neighbors:
+                try:
+                    # get the residue that the neighbor belongs to
+                    parent = Atom.Atom.get_parent(neighbor)
+                    # if the residue is not a water etc. (amino acids have blank)
+                    if parent.get_id()[0] == ' ':
+                        # get the chain that the residue belongs to
+                        chain = Residue.Residue.get_parent(parent)
+                        # if statements for fussy proasis formatting
+                    if len(str(parent.get_id()[1])) == 3:
+                        space = ' '
+                    if len(str(parent.get_id()[1])) == 2:
+                        space = '  '
+                    if 'HOH' not in str(parent.get_resname()):
+                        res = (
+                                str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                        res_list.append(res)
+
+                except:
+                    continue
+
+        res_list = (list(set(res_list)))
+        print(res_list)
+        lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
+                   + str(res_list[2]) + " ' ")
+        print(lig1)
+
+        # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
+        alt_lig_option = " -o '"
+        res_string = ""
+        full_res_string = ''
+        count = 0
+
+        for i in range(3, len(res_list)):
+            count += 1
+
+        multiple = int(round(count / 3) * 3)
+        count = 0
+        for i in range(3, multiple):
+            if count == 0:
+                res_string += alt_lig_option
+            if count <= 1:
+                res_string += str(res_list[i] + ' ,')
+                count += 1
+            elif count == 2:
+                res_string += str(res_list[i] + " '")
+                full_res_string.join(res_string)
+                count = 0
 
 
 class UploadLeads(luigi.Task):
@@ -152,7 +220,7 @@ class UploadLeads(luigi.Task):
                         out_dict['sites'].append(list(set(site_list)))
 
         run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
-        
+
         return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
