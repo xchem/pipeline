@@ -191,6 +191,44 @@ class AddLead(luigi.Task):
                 full_res_string.join(res_string)
                 count = 0
 
+        submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.target).upper() + ' -t ' +
+                                str(self.target).upper() + '_lead -d admin -f ' + str(self.reference_structure) + ' -l '
+                                + str(lig1) +  ' ' + full_res_string + "-x XRAY -n")
+        print(submit_to_proasis)
+        # process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
+        # out, err = process.communicate()
+        # out = out.decode('ascii')
+        # if err:
+        #     err = err.decode('ascii')
+        # print(out)
+        # if err:
+        #     raise Exception('There was a problem submitting this lead: ' + str(err))
+        #
+        # strucidstr = misc_functions.get_id_string(out)
+        #
+        # if len(strucidstr) == '':
+        #     raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
+        #
+        # add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
+        # process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
+        # out, err = process.communicate()
+        # out = out.decode('ascii')
+        # if err:
+        #     err = err.decode('ascii')
+        # print(out)
+        # if err:
+        #     raise Exception('There was a problem submitting this lead: ' + str(err))
+        #
+        # conn, c = db_functions.connectDB()
+        #
+        # c.execute(
+        #     'UPDATE proasis_leads SET strucid = %s WHERE reference_pdb = %s and pandda_path = %s',
+        #     (strucidstr, self.reference_structure, self.pandda_directory))
+        #
+        # conn.commit()
+        #
+        # with self.output().open('wb') as f:
+        #     f.write('')
 
 class UploadLeads(luigi.Task):
 
