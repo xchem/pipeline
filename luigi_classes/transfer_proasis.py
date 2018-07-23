@@ -165,10 +165,8 @@ class AddLead(luigi.Task):
                     continue
 
         res_list = (list(set(res_list)))
-        print(res_list)
         lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
                    + str(res_list[2]) + " ' ")
-        print(lig1)
 
         # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
         alt_lig_option = " -o '"
