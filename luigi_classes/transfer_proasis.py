@@ -187,7 +187,7 @@ class AddLead(luigi.Task):
                 count += 1
             elif count == 2:
                 res_string += str(res_list[i] + " '")
-                full_res_string.join(res_string)
+                full_res_string = full_res_string + res_string
                 count = 0
 
         submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.target).upper() + ' -t ' +
