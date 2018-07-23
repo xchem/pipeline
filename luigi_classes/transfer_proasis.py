@@ -2,7 +2,7 @@ import luigi
 import luigi_classes.transfer_soakdb as transfer_soakdb
 import datetime
 import subprocess
-from db.models import Crystal, Refinement, ProasisHits, ProasisLeads, Dimple, Target
+from db.models import *
 from functions import misc_functions, db_functions
 import setup_django
 
@@ -119,6 +119,17 @@ class AddLead(luigi.Task):
 
     def run(self):
         leads = ProasisLeads.objects.filter()
+        for lead in leads:
+            dimple = Dimple.objects.filter(reference=lead.reference_pdb)
+            crystals = [dimp.crystal_name for dimp in dimple]
+            lead_crystals = ProasisHits.objects.filter(crystal_name__in=crystals)
+
+            for crys in lead_crystals:
+                events = PanddaEvent.objects.filter(crystal=crys.crystal_name)
+                sites = list(set([(event.site, event.crystal.crystal_name) for event in events]))
+                for site in sites:
+                    site = site + (lead.reference_pdb.reference_pdb,)
+                    print(site)
 
 class UploadLeads(luigi.Task):
 
