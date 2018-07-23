@@ -118,8 +118,14 @@ class AddLead(luigi.Task):
         pass
 
     def run(self):
+        pass
+
+
+class UploadLeads(luigi.Task):
+
+    def requires(self):
         leads = ProasisLeads.objects.filter()
-        out_dict = {'reference':[], 'sites':[], 'targets':[]}
+        out_dict = {'reference': [], 'sites': [], 'targets': []}
         for lead in leads:
             targets = []
             dimple = Dimple.objects.filter(reference=lead.reference_pdb)
@@ -129,22 +135,17 @@ class AddLead(luigi.Task):
             site_list = []
             for crys in lead_crystals:
                 events = PanddaEvent.objects.filter(crystal=crys.crystal_name)
-                sites = list(set([(event.site.site_aligned_centroid_x, event.site.site_aligned_centroid_y,
-                                   event.site.site_aligned_centroid_z) for event in events]))
+                sites = list(set([(round(event.site.site_native_centroid_x, 2),
+                                   round(event.site.site_native_centroid_y, 2),
+                                   round(event.site.site_native_centroid_z, 2)) for event in events]))
                 if events and sites:
                     for site in sites:
                         site_list.append(site)
 
                 if site_list:
                     out_dict['reference'].append(lead.reference_pdb.reference_pdb)
-                    out_dict['sites'].append(site_list)
+                    out_dict['sites'].append(list(set(site_list)))
                     out_dict['targets'].append(targets)
-
-
-class UploadLeads(luigi.Task):
-
-    def requires(self):
-        pass
 
     def output(self):
         pass
