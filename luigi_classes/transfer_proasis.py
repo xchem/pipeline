@@ -208,29 +208,33 @@ class AddLead(luigi.Task):
         if err:
             raise Exception('There was a problem submitting this lead: ' + str(err))
 
+        # find strucid from submission output
         strucidstr = misc_functions.get_id_string(out)
 
+        # if no strucid in output, raise an exception and print error
         if len(strucidstr) == '':
             raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
 
+        # add the new structure as a lead
         add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.target).upper() +
                        ' -s ' + str(strucidstr))
 
         process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
         out, err = process.communicate()
         out = out.decode('ascii')
+
+        # report any errors
         if err:
             err = err.decode('ascii')
         print(out)
         if err:
             raise Exception('There was a problem submitting this lead: ' + str(err))
 
+        # update lead object strucid field
         lead = ProasisLeads.objects.get(reference_pdb=Reference.objects.get(reference_pdb=self.reference_structure))
         lead.strucid = strucidstr
         lead.save()
 
-        with self.output().open('wb') as f:
-            f.write('')
 
 class UploadLeads(luigi.Task):
 
@@ -287,3 +291,16 @@ class UploadHit(luigi.Task):
 
     def run(self):
         pass
+
+
+class UploadHits(luigi.Task):
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+    
