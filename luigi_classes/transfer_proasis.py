@@ -2,8 +2,10 @@ import luigi
 import luigi_classes.transfer_soakdb as transfer_soakdb
 import datetime
 import subprocess
+import os
+import re
 from db.models import *
-from functions import misc_functions, db_functions
+from functions import misc_functions, db_functions, proasis_api_funcs
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import numpy as np
 import setup_django
@@ -282,6 +284,12 @@ class UploadLeads(luigi.Task):
 
 
 class UploadHit(luigi.Task):
+    bound_pdb = luigi.Parameter()
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal = luigi.Parameter()
+    target = luigi.Parameter()
+    smiles = luigi.Parameter()
+    mod_date = luigi.Parameter()
 
     def requires(self):
         pass
@@ -290,13 +298,132 @@ class UploadHit(luigi.Task):
         pass
 
     def run(self):
-        pass
+        self.protein_name = str(self.protein_name).upper()
+
+        proasis_crystal_directory = os.path.join(self.hit_directory, self.protein_name, self.crystal)
+
+        pdb_file_name = str(self.bound_pdb).split('/')[-1]
+        proasis_bound_pdb = os.path.join(proasis_crystal_directory, pdb_file_name)
+
+        current_visit = str(self.bound_pdb).split('/')[4]
+        title = str(self.crystal)
+
+        try:
+            pdb_file = open(self.bound_conf, 'r')
+            ligand_list = []
+            for line in pdb_file:
+                if "LIG" in line:
+                    try:
+                        lig_string = re.search(r"LIG.......", line).group()
+                        ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
+                    except:
+                        continue
+        except:
+            ligand_list = None
+
+        if ligand_list:
+            unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
+        else:
+            raise Exception('No ligands found in file!')
+
+        proasis_hit = ProasisHits.objects.get(
+            crystal_name=Crystal.objects.filter(
+                crystal_name=self.crystal,
+                visit=current_visit,
+                target=Target.objects.get(target_name=self.target)))
+
+        proasis_hit.ligands_list = unique_ligands
+        proasis_hit.save()
+
+        if len(unique_ligands) == 1:
+            lig_string = str(proasis_api_funcs.get_lig_strings(self.ligands)[0])
+            print('submission string:\n')
+            submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
+                                    str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
+                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
+                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
+
+            # submit the structure to proasis
+            strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
+
+
+        # same as above, but for structures containing more than one ligand
+        elif len(unique_ligands) > 1:
+            ligands_list = proasis_api_funcs.get_lig_strings(self.ligands)
+            print(ligands_list)
+            lig1 = ligands_list[0]
+            lign = " -o '"
+            for i in range(1, len(ligands_list) - 1):
+                lign += str(ligands_list[i] + ',')
+            lign += str(ligands_list[len(ligands_list) - 1] + "'")
+
+            submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
+                                    str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
+                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
+                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
+            print(submit_to_proasis)
+
+            strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
+
+        elif len(self.ligands) == 0:
+            raise Exception('No ligands were found!')
+
+        if strucid != '':
+
+            out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c',
+                                                          filename=str(proasis_hit.two_fofc),
+                                                          strucid=strucid, title=str(self.crystal + '_2fofc'))
+
+            print(out)
+            if err:
+                raise Exception(out)
+
+            out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
+                                                          filename=str(proasis_hit.fofc),
+                                                          strucid=strucid, title=str(self.crystal + '_fofc'))
+
+            print(out)
+            if err:
+                raise Exception(out)
+
+            out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
+                                                          filename=str(proasis_hit.mtz),
+                                                          strucid=strucid, title=str(self.crystal + '_mtz'))
+
+            print(out)
+
+            if err:
+                raise Exception(out)
+
+        else:
+            raise Exception('proasis failed to upload structure: ' + out)
+
+        # add strucid to database
+        proasis_hit.strucid = strucid
+        proasis_hit.save()
+
+        # print('Updating master DB')
+        # conn, c = db_functions.connectDB()
+        # c.execute("UPDATE proasis_hits SET strucid=%s where bound_conf=%s and modification_date=%s",
+        #           (str(strucid), str(self.bound_pdb), str(self.mod_date)))
+        #
+        # conn.commit()
+        # print(c.query)
+        # print(c.statusmessage)
+
+        # if 'UPDATE 0' in c.statusmessage:
+        #     proasis_api_funcs.delete_structure(strucid)
+        #     raise Exception('db was not updated! structure removed from proasis!')
+        #
+        # with self.output().open('wb') as f:
+        #     f.write('')
 
 
 class UploadHits(luigi.Task):
 
     def requires(self):
-        pass
+        hits = ProasisHits.objects.filter(strucid=None)
+
 
     def output(self):
         pass
