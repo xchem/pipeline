@@ -128,7 +128,7 @@ class AddLead(luigi.Task):
             structure = PDBParser(PERMISSIVE=0).get_structure(str(self.target).upper(), str(self.reference_structure))
 
             # initial distance for nearest neighbor (NN) search is 20A
-            neighbor_distance = 5
+            neighbor_distance = 10
 
             centroid_coordinates = list(centroid)
 
