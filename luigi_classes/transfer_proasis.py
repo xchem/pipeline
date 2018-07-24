@@ -375,7 +375,17 @@ class GenerateSdf(luigi.Task):
                              hit_directory=self.hit_directory)
 
     def run(self):
-        pass
+
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+        target_name = str(crystal.target.target_name).upper()
+        crystal_name = crystal.crystal_name
+        smiles = crystal.compound.smiles
+
+        # set directory for files to be copied to and create if neccessary
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+
+        misc_functions.create_sd_file(crystal_name, smiles,
+                                      str(os.path.join(proasis_crystal_directory, str(crystal_name + '.sdf'))))
 
 
 class UploadHit(luigi.Task):
