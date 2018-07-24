@@ -313,6 +313,8 @@ class CopyInputFiles(luigi.Task):
         # copy all files over to input directory in proasis directories
         files = [proasis_hit.two_fofc, proasis_hit.fofc, proasis_hit.mtz, proasis_hit.pdb_file]
         for f in files:
+            print(f)
+            print(proasis_crystal_directory)
             shutil.copy(f, proasis_crystal_directory)
 
         # establish new file paths
