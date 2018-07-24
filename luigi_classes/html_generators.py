@@ -1,7 +1,6 @@
 import luigi
 import functions.data_analysis_functions as daf
 import datetime
-from luigi_classes import database_operations
 from luigi_classes import ligand_analysis
 
 

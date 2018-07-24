@@ -303,4 +303,4 @@ class UploadHits(luigi.Task):
 
     def run(self):
         pass
-    
+

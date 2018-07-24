@@ -1,9 +1,6 @@
-import os
 import luigi
 import functions.db_functions as db_functions
-import functions.misc_functions as misc_functions
-from luigi_classes import database_operations
-from luigi_classes import data_in_proasis
+from luigi_classes.archive import data_in_proasis, database_operations
 from luigi_classes.data_out_proasis import *
 import functions.docking_functions as dock
 
@@ -61,7 +58,8 @@ class StartLigandSearches(luigi.Task):
         for row in rows:
             conf_list.append(str(row[0]))
             print((str(row[0])))
-        return database_operations.FindProjects(), database_operations.CheckFiles(), [data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
+        return database_operations.FindProjects(), database_operations.CheckFiles(), [
+            data_in_proasis.FindLigands(bound_conf=conf) for conf in conf_list]
 
     def output(self):
         return luigi.LocalTarget('logs/ligand_search.done')
@@ -113,10 +111,11 @@ class StartHitTransfers(luigi.Task):
 
         try:
             run_list = self.get_list()
-            return database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
-                                protein_name=protein_name, smiles=smiles_string,
-                                mod_date=modification_string, ligands=ligand_list) for
-                    (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
+            return database_operations.FindProjects(), database_operations.CheckFiles(), StartLigandSearches(), [
+                data_in_proasis.HitTransfer(bound_pdb=pdb, crystal=crystal_name,
+                                            protein_name=protein_name, smiles=smiles_string,
+                                            mod_date=modification_string, ligands=ligand_list) for
+                (pdb, crystal_name, protein_name, smiles_string, modification_string, ligand_list) in run_list], database_operations.FindProjects()
         except:
             return data_in_proasis.CleanUpHits()
 

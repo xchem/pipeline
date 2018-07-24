@@ -1,9 +1,9 @@
 import luigi
-from luigi_classes import data_in_proasis
+from luigi_classes.archive import data_in_proasis
 from functions import data_analysis_functions as daf
 from functions import db_functions as dbf
 import pandas
-import os
+
 
 class EdstatsScores(luigi.Task):
     strucid = luigi.Parameter()
