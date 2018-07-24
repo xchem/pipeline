@@ -257,6 +257,7 @@ class UploadLeads(luigi.Task):
                         out_dict['sites'].append(list(set(site_list)))
 
         run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
+        print(run_zip)
 
         return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
