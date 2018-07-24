@@ -374,18 +374,19 @@ class GenerateSdf(luigi.Task):
         return GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                              hit_directory=self.hit_directory)
 
-    def run(self):
-
+    def output(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
         target_name = str(crystal.target.target_name).upper()
         crystal_name = crystal.crystal_name
-        smiles = crystal.compound.smiles
-
-        # set directory for files to be copied to and create if neccessary
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
 
-        misc_functions.create_sd_file(crystal_name, smiles,
-                                      str(os.path.join(proasis_crystal_directory, str(crystal_name + '.sdf'))))
+        return luigi.LocalTarget(os.path.join(proasis_crystal_directory, str(crystal_name + '.sdf')))
+
+    def run(self):
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+        crystal_name = crystal.crystal_name
+        smiles = crystal.compound.smiles
+        misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
 
 
 class UploadHit(luigi.Task):
