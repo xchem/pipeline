@@ -306,6 +306,7 @@ class CopyInputFiles(luigi.Task):
 
         # set directory for files to be copied to and create if neccessary
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+        print(proasis_crystal_directory)
         if not os.path.isdir(proasis_crystal_directory):
             os.makedirs(proasis_crystal_directory)
 
