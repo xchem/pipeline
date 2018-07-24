@@ -190,46 +190,51 @@ class AddLead(luigi.Task):
                 full_res_string = full_res_string + res_string
                 count = 0
 
+        # string to submit structure as lead
         submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.target).upper() + ' -t ' +
                                 str(self.target).upper() + '_lead -d admin -f ' + str(self.reference_structure) + ' -l '
                                 + str(lig1) +  ' ' + full_res_string + " -x XRAY -n")
+
+        # for debug
         print(submit_to_proasis)
-        # process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
-        # out, err = process.communicate()
-        # out = out.decode('ascii')
-        # if err:
-        #     err = err.decode('ascii')
-        # print(out)
-        # if err:
-        #     raise Exception('There was a problem submitting this lead: ' + str(err))
-        #
-        # strucidstr = misc_functions.get_id_string(out)
-        #
-        # if len(strucidstr) == '':
-        #     raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
-        #
-        # add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.name) + ' -s ' + str(strucidstr))
-        # process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
-        # out, err = process.communicate()
-        # out = out.decode('ascii')
-        # if err:
-        #     err = err.decode('ascii')
-        # print(out)
-        # if err:
-        #     raise Exception('There was a problem submitting this lead: ' + str(err))
-        #
-        # conn, c = db_functions.connectDB()
-        #
-        # c.execute(
-        #     'UPDATE proasis_leads SET strucid = %s WHERE reference_pdb = %s and pandda_path = %s',
-        #     (strucidstr, self.reference_structure, self.pandda_directory))
-        #
-        # conn.commit()
-        #
-        # with self.output().open('wb') as f:
-        #     f.write('')
+
+        # submit and read output - raise exception if neccessary
+        process = subprocess.Popen(submit_to_proasis, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
+        print(out)
+        if err:
+            raise Exception('There was a problem submitting this lead: ' + str(err))
+
+        strucidstr = misc_functions.get_id_string(out)
+
+        if len(strucidstr) == '':
+            raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
+
+        add_lead = str('/usr/local/Proasis2/utils/addnewlead.py -p ' + str(self.target).upper() +
+                       ' -s ' + str(strucidstr))
+
+        process = subprocess.Popen(add_lead, stdout=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
+        print(out)
+        if err:
+            raise Exception('There was a problem submitting this lead: ' + str(err))
+
+        lead = ProasisLeads.objects.get(reference_pdb=Reference.objects.get(reference_pdb=self.reference_structure))
+        lead.strucid = strucidstr
+        lead.save()
+
+        with self.output().open('wb') as f:
+            f.write('')
 
 class UploadLeads(luigi.Task):
+
+    debug = luigi.Parameter(default=False)
 
     def requires(self):
         leads = ProasisLeads.objects.filter(strucid=None)
@@ -259,7 +264,10 @@ class UploadLeads(luigi.Task):
         run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
         print(run_zip)
 
-        return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
+        if self.debug:
+            return AddLead(reference_structure=run_zip[0][0], site_centroids=run_zip[0][1], target=run_zip[0][2])
+        else:
+            return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
         pass
