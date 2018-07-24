@@ -190,6 +190,8 @@ def get_lig_strings(lig_list):
         if len(ligand) == 3:
             strings_list.append(str(
                 "{:>3}".format(ligand[0]) + "{:>2}".format(ligand[1]) + "{:>4}".format(ligand[2]) + ' '))
+        else:
+            raise Exception('ligand list wrong length!')
     return strings_list
 
 

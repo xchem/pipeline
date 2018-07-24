@@ -3,6 +3,7 @@ import luigi_classes.transfer_soakdb as transfer_soakdb
 import datetime
 import subprocess
 import os
+import shutil
 import re
 from db.models import *
 from functions import misc_functions, db_functions, proasis_api_funcs
@@ -26,7 +27,7 @@ class InitDBEntries(luigi.Task):
         refinement = Refinement.objects.filter(outcome__gte=3)
         print(len(refinement))
         for obj in refinement:
-            if obj.bound_conf !='':
+            if obj.bound_conf != '':
                 bound_conf = obj.bound_conf
             elif obj.pdb_latest != '':
                 bound_conf = obj.pdb_latest
@@ -52,12 +53,13 @@ class InitDBEntries(luigi.Task):
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
             if mod_date:
                 proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
-                                                          pdb_file=obj.bound_conf, modification_date=mod_date,
-                                                          mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
+                                                                      pdb_file=obj.bound_conf,
+                                                                      modification_date=mod_date,
+                                                                      mtz=mtz[1], two_fofc=two_fofc[1], fofc=fofc[1])
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 print(dimple.count())
-                if dimple.count()==1:
+                if dimple.count() == 1:
                     if dimple[0].reference and dimple[0].reference.reference_pdb:
                         proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
 
@@ -110,6 +112,7 @@ class AddProjects(luigi.Task):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
+
 
 class AddLead(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
@@ -195,7 +198,7 @@ class AddLead(luigi.Task):
         # string to submit structure as lead
         submit_to_proasis = str('/usr/local/Proasis2/utils/submitStructure.py -p ' + str(self.target).upper() + ' -t ' +
                                 str(self.target).upper() + '_lead -d admin -f ' + str(self.reference_structure) + ' -l '
-                                + str(lig1) +  ' ' + full_res_string + " -x XRAY -n")
+                                + str(lig1) + ' ' + full_res_string + " -x XRAY -n")
 
         # for debug
         print(submit_to_proasis)
@@ -239,7 +242,6 @@ class AddLead(luigi.Task):
 
 
 class UploadLeads(luigi.Task):
-
     debug = luigi.Parameter(default=False)
 
     def requires(self):
@@ -262,7 +264,7 @@ class UploadLeads(luigi.Task):
                         site_list.append(site)
 
                 if site_list:
-                    if len(targets)==1:
+                    if len(targets) == 1:
                         out_dict['targets'].append(targets[0])
                         out_dict['reference'].append(lead.reference_pdb.reference_pdb)
                         out_dict['sites'].append(list(set(site_list)))
@@ -283,13 +285,10 @@ class UploadLeads(luigi.Task):
         pass
 
 
-class UploadHit(luigi.Task):
-    bound_pdb = luigi.Parameter()
+class CopyInputFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    crystal = luigi.Parameter()
-    target = luigi.Parameter()
-    smiles = luigi.Parameter()
-    mod_date = luigi.Parameter()
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
 
     def requires(self):
         pass
@@ -298,18 +297,54 @@ class UploadHit(luigi.Task):
         pass
 
     def run(self):
-        self.protein_name = str(self.protein_name).upper()
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+        # refinement = Refinement.objects.get(pk=self.refinement_id)
 
-        proasis_crystal_directory = os.path.join(self.hit_directory, self.protein_name, self.crystal)
+        # get target and crystal name from crystal object
+        target_name = str(crystal.target.target_name).upper()
+        crystal_name = str(crystal.crystal_name)
 
-        pdb_file_name = str(self.bound_pdb).split('/')[-1]
-        proasis_bound_pdb = os.path.join(proasis_crystal_directory, pdb_file_name)
+        # set directory for files to be copied to and create if neccessary
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+        if not os.path.isdir(proasis_crystal_directory):
+            os.makedirs(proasis_crystal_directory)
 
-        current_visit = str(self.bound_pdb).split('/')[4]
-        title = str(self.crystal)
+        # copy all files over to input directory in proasis directories
+        files = [proasis_hit.two_fofc, proasis_hit.fofc, proasis_hit.mtz, proasis_hit.pdb_file]
+        for f in files:
+            shutil.copy(f, proasis_crystal_directory)
 
+        # establish new file paths
+        pdb = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.pdb_file.split('/')[-1])
+        two_fofc = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
+        fofc = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
+        mtz = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
+
+        proasis_hit.pdb_file = pdb
+        proasis_hit.two_fofc = two_fofc
+        proasis_hit.fofc = fofc
+        proasis_hit.mtz = mtz
+        proasis_hit.save()
+
+
+class GetLigandList(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                              hit_directory=self.hit_directory)
+
+    def run(self):
+
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        pdb = proasis_hit.pdb_file
+
+        # get list of ligands in structure
         try:
-            pdb_file = open(self.bound_conf, 'r')
+            pdb_file = open(pdb, 'r')
             ligand_list = []
             for line in pdb_file:
                 if "LIG" in line:
@@ -326,17 +361,37 @@ class UploadHit(luigi.Task):
         else:
             raise Exception('No ligands found in file!')
 
-        proasis_hit = ProasisHits.objects.get(
-            crystal_name=Crystal.objects.filter(
-                crystal_name=self.crystal,
-                visit=current_visit,
-                target=Target.objects.get(target_name=self.target)))
-
+        # save ligand list to proasis hit object
         proasis_hit.ligands_list = unique_ligands
         proasis_hit.save()
 
+
+class GenerateSdf(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                             hit_directory=self.hit_directory)
+
+    def run(self):
+        pass
+
+
+class UploadHit(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                           hit_directory=self.hit_directory)
+
+    def run(self):
+
         if len(unique_ligands) == 1:
-            lig_string = str(proasis_api_funcs.get_lig_strings(self.ligands)[0])
+            lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0])
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
@@ -349,7 +404,7 @@ class UploadHit(luigi.Task):
 
         # same as above, but for structures containing more than one ligand
         elif len(unique_ligands) > 1:
-            ligands_list = proasis_api_funcs.get_lig_strings(self.ligands)
+            ligands_list = proasis_api_funcs.get_lig_strings(unique_ligands)
             print(ligands_list)
             lig1 = ligands_list[0]
             lign = " -o '"
@@ -424,10 +479,8 @@ class UploadHits(luigi.Task):
     def requires(self):
         hits = ProasisHits.objects.filter(strucid=None)
 
-
     def output(self):
         pass
 
     def run(self):
         pass
-
