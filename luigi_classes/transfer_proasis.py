@@ -265,7 +265,7 @@ class UploadLeads(luigi.Task):
         print(run_zip)
 
         if self.debug:
-            runner = list(run_zip[0])
+            runner = list(run_zip)[0]
             return AddLead(reference_structure=runner[0], site_centroids=runner[1], target=runner[2])
         else:
             return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
