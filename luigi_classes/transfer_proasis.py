@@ -243,9 +243,9 @@ class UploadLeads(luigi.Task):
             site_list = []
             for crys in lead_crystals:
                 events = PanddaEvent.objects.filter(crystal=crys.crystal_name)
-                sites = list(set([(round(event.site.site_aligned_centroid_x, 2),
-                                   round(event.site.site_aligned_centroid_y, 2),
-                                   round(event.site.site_aligned_centroid_z, 2)) for event in events]))
+                sites = list(set([(round(event.site.site_native_centroid_x, 2),
+                                   round(event.site.site_native_centroid_y, 2),
+                                   round(event.site.site_native_centroid_z, 2)) for event in events]))
                 if events and sites:
                     for site in sites:
                         site_list.append(site)
