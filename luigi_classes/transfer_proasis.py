@@ -299,7 +299,6 @@ class CopyInputFiles(luigi.Task):
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         crystal = Crystal.objects.get(pk=self.crystal_id)
-        # refinement = Refinement.objects.get(pk=self.refinement_id)
 
         # get target and crystal name from crystal object
         target_name = str(crystal.target.target_name).upper()
@@ -316,10 +315,10 @@ class CopyInputFiles(luigi.Task):
             shutil.copy(f, proasis_crystal_directory)
 
         # establish new file paths
-        pdb = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.pdb_file.split('/')[-1])
-        two_fofc = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
-        fofc = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
-        mtz = str(proasis_crystal_directory.split('/')[:-1]) + str(proasis_hit.two_fofc.split('/')[-1])
+        pdb = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.pdb_file.split('/')[-1]))
+        two_fofc = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.two_fofc.split('/')[-1]))
+        fofc = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.fofc.split('/')[-1]))
+        mtz = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.mtz.split('/')[-1]))
 
         proasis_hit.pdb_file = pdb
         proasis_hit.two_fofc = two_fofc
