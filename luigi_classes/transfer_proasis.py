@@ -316,10 +316,10 @@ class CopyInputFiles(luigi.Task):
             shutil.copy(f, proasis_crystal_directory)
 
         # establish new file paths
-        pdb = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.pdb_file.split('/')[-1]))
-        two_fofc = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.two_fofc.split('/')[-1]))
-        fofc = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.fofc.split('/')[-1]))
-        mtz = os.path.join(str(proasis_crystal_directory.split('/')[:-1]), str(proasis_hit.mtz.split('/')[-1]))
+        pdb = os.path.join('/'.join(str(proasis_crystal_directory.split('/')[:-1])), str(proasis_hit.pdb_file.split('/')[-1]))
+        two_fofc = os.path.join('/'.join(str(proasis_crystal_directory.split('/')[:-1])), str(proasis_hit.two_fofc.split('/')[-1]))
+        fofc = os.path.join('/'.join(str(proasis_crystal_directory.split('/')[:-1])), str(proasis_hit.fofc.split('/')[-1]))
+        mtz = os.path.join('/'.join(str(proasis_crystal_directory.split('/')[:-1])), str(proasis_hit.mtz.split('/')[-1]))
 
         proasis_hit.pdb_file = pdb
         proasis_hit.two_fofc = two_fofc
