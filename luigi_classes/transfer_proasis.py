@@ -470,14 +470,25 @@ class UploadHit(luigi.Task):
                            hit_directory=self.hit_directory)
 
     def run(self):
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+        target_name = str(crystal.target.target_name).upper()
+        crystal_name = crystal.crystal_name
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+
+        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+
+        unique_ligands = proasis_hit.ligands_list
+        proasis_bound_pdb = proasis_hit.pdb_file
+
 
         if len(unique_ligands) == 1:
             lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0])
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
-                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
-                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
+                                    str(os.path.join(proasis_crystal_directory, str(crystal_name) + '.sdf')) +
+                                    " -p " + str(target_name) + " -t " + str(crystal_name) + " -x XRAY -N")
 
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
@@ -495,64 +506,47 @@ class UploadHit(luigi.Task):
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
-                                    str(os.path.join(proasis_crystal_directory, str(self.crystal) + '.sdf')) +
-                                    " -p " + str(self.protein_name) + " -t " + title + " -x XRAY -N")
+                                    str(os.path.join(proasis_crystal_directory, str(crystal_name) + '.sdf')) +
+                                    " -p " + str(target_name) + " -t " + crystal_name + " -x XRAY -N")
             print(submit_to_proasis)
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
-
-        elif len(self.ligands) == 0:
-            raise Exception('No ligands were found!')
-
-        if strucid != '':
-
-            out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c',
-                                                          filename=str(proasis_hit.two_fofc),
-                                                          strucid=strucid, title=str(self.crystal + '_2fofc'))
-
-            print(out)
-            if err:
-                raise Exception(out)
-
-            out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
-                                                          filename=str(proasis_hit.fofc),
-                                                          strucid=strucid, title=str(self.crystal + '_fofc'))
-
-            print(out)
-            if err:
-                raise Exception(out)
-
-            out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
-                                                          filename=str(proasis_hit.mtz),
-                                                          strucid=strucid, title=str(self.crystal + '_mtz'))
-
-            print(out)
-
-            if err:
-                raise Exception(out)
-
-        else:
-            raise Exception('proasis failed to upload structure: ' + out)
 
         # add strucid to database
         proasis_hit.strucid = strucid
         proasis_hit.save()
 
-        # print('Updating master DB')
-        # conn, c = db_functions.connectDB()
-        # c.execute("UPDATE proasis_hits SET strucid=%s where bound_conf=%s and modification_date=%s",
-        #           (str(strucid), str(self.bound_pdb), str(self.mod_date)))
-        #
-        # conn.commit()
-        # print(c.query)
-        # print(c.statusmessage)
 
-        # if 'UPDATE 0' in c.statusmessage:
-        #     proasis_api_funcs.delete_structure(strucid)
-        #     raise Exception('db was not updated! structure removed from proasis!')
-        #
-        # with self.output().open('wb') as f:
-        #     f.write('')
+class AddFiles(luigi.Task):
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+
+        out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c',
+                                                      filename=str(proasis_hit.two_fofc),
+                                                      strucid=strucid, title=str(self.crystal + '_2fofc'))
+
+        print(out)
+        if err:
+            raise Exception(out)
+
+        out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
+                                                      filename=str(proasis_hit.fofc),
+                                                      strucid=strucid, title=str(self.crystal + '_fofc'))
+
+        print(out)
+        if err:
+            raise Exception(out)
+
+        out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
+                                                      filename=str(proasis_hit.mtz),
+                                                      strucid=strucid, title=str(self.crystal + '_mtz'))
+
 
 
 class UploadHits(luigi.Task):
