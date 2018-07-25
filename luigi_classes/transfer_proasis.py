@@ -518,9 +518,12 @@ class UploadHit(luigi.Task):
 
 
 class AddFiles(luigi.Task):
-
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+    
     def requires(self):
-        pass
+        return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
         pass
