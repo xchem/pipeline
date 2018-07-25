@@ -284,6 +284,16 @@ class UploadLeads(luigi.Task):
     def run(self):
         pass
 
+class CopyFile(luigi.Task):
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
 
 class CopyInputFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
@@ -311,7 +321,7 @@ class CopyInputFiles(luigi.Task):
             os.makedirs(proasis_crystal_directory)
 
         # copy all files over to input directory in proasis directories
-        files = [proasis_hit.two_fofc, proasis_hit.fofc, proasis_hit.mtz, proasis_hit.pdb_file]
+        files = [str(proasis_hit.two_fofc), str(proasis_hit.fofc), str(proasis_hit), str(proasis_hit)]
         for f in files:
             print(f)
             print(proasis_crystal_directory)
