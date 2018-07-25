@@ -455,6 +455,9 @@ class GenerateSdf(luigi.Task):
         crystal_name = crystal.crystal_name
         smiles = crystal.compound.smiles
         misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
+        proasis_hit = ProasisHits.objects.get(crystal=crystal, refinment=Refinement.objects.get(pk=self.refinement_id))
+        proasis_hit.sdf = self.output().path
+        proasis_hit.save()
 
 
 class UploadHit(luigi.Task):

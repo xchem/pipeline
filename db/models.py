@@ -207,6 +207,7 @@ class ProasisHits(models.Model):
     mtz = models.TextField(blank=False, null=False)
     two_fofc = models.TextField(blank=False, null=False)
     fofc = models.TextField(blank=False, null=False)
+    sdf = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'proasis_hits'
