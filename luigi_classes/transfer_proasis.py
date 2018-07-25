@@ -284,29 +284,6 @@ class UploadLeads(luigi.Task):
     def run(self):
         pass
 
-class GetPanddaMaps(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    crystal_id = luigi.Parameter()
-    refinement_id = luigi.Parameter()
-
-    def requires(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal = Crystal.objects.get(pk=self.crystal_id)
-
-        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
-
-        for event in pandda_events:
-            entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
-                                                        event_map_native=event.pandda_event_map_native,
-                                                        model_pdb=event.pandda_model_pdb)
-
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
 
 class CopyFile(luigi.Task):
     proasis_hit = luigi.Parameter()
@@ -339,16 +316,16 @@ class CopyFile(luigi.Task):
 
         shutil.copy(self.filename, proasis_crystal_directory)
 
-        if self.update_field=='pdb':
+        if self.update_field == 'pdb':
             self.proasis_hit.pdb_file = self.output().path
             self.proasis_hit.pdb_file.save()
-        if self.update_field=='two_fofc':
+        if self.update_field == 'two_fofc':
             self.proasis_hit.two_fofc = self.output().path
             self.proasis_hit.two_fofc.save()
-        if self.update_field=='fofc':
+        if self.update_field == 'fofc':
             self.proasis_hit.fofc = self.output().path
             self.proasis_hit.fofc.save()
-        if self.update_field=='mtz':
+        if self.update_field == 'mtz':
             self.proasis_hit.mtz = self.output().path
             self.proasis_hit.mtz.save()
 
@@ -365,7 +342,7 @@ class CopyInputFiles(luigi.Task):
         return CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='pdb',
                         file=str(proasis_hit.pdb_file)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='two_fofc',
-                        file=str(proasis_hit.two_fofc)),\
+                        file=str(proasis_hit.two_fofc)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='mtz',
                         file=str(proasis_hit.mtz)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='fofc',
@@ -380,13 +357,50 @@ class CopyInputFiles(luigi.Task):
             f.write('')
 
 
-class GetLigandList(luigi.Task):
+class GetPanddaMaps(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
 
     def requires(self):
         return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                              hit_directory=self.hit_directory)
+
+    def output(self):
+        pass
+
+    def run(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+
+        target_name = str(crystal.target.target_name).upper()
+        crystal_name = str(crystal.crystal_name)
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+        filepath = os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))
+
+        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
+
+        for event in pandda_events:
+            shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
+            shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
+
+            entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
+                                                        event_map_native=os.path.join(proasis_crystal_directory,
+                                                                                      str(str(
+                                                                                          event.pandda_event_map_native).split(
+                                                                                          '/')[-1])),
+                                                        model_pdb=os.path.join(proasis_crystal_directory,
+                                                                               str(str(event.pandda_model_pdb).split(
+                                                                                   '/')[-1])))
+
+
+class GetLigandList(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                               hit_directory=self.hit_directory)
 
     def run(self):
