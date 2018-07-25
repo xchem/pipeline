@@ -303,7 +303,7 @@ class GetPanddaMaps(luigi.Task):
         pass
 
     def run(self):
-
+        pass
 
 
 class CopyFile(luigi.Task):
