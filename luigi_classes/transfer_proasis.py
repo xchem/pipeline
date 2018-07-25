@@ -284,16 +284,71 @@ class UploadLeads(luigi.Task):
     def run(self):
         pass
 
-class CopyFile(luigi.Task):
+class GetPanddaMaps(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
 
     def requires(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+
+        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
+
+        for event in pandda_events:
+
 
     def output(self):
         pass
 
     def run(self):
+
+
+
+class CopyFile(luigi.Task):
+    proasis_hit = luigi.Parameter()
+    crystal = luigi.parameter()
+    update_field = luigi.Parameter()
+    filename = luigi.Parameter()
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+
+    def requires(self):
         pass
+
+    def output(self):
+        target_name = str(self.crystal.target.target_name).upper()
+        crystal_name = str(self.crystal.crystal_name)
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+        filepath = os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))
+        return luigi.LocalTarget(filepath)
+
+    def run(self):
+
+        # get target and crystal name from crystal object
+        target_name = str(self.crystal.target.target_name).upper()
+        crystal_name = str(self.crystal.crystal_name)
+
+        # set directory for files to be copied to and create if necessary
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+        print(proasis_crystal_directory)
+        if not os.path.isdir(proasis_crystal_directory):
+            os.makedirs(proasis_crystal_directory)
+
+        shutil.copy(self.filename, proasis_crystal_directory)
+
+        if self.update_field=='pdb':
+            self.proasis_hit.pdb_file = self.output().path
+            self.proasis_hit.pdb_file.save()
+        if self.update_field=='two_fofc':
+            self.proasis_hit.two_fofc = self.output().path
+            self.proasis_hit.two_fofc.save()
+        if self.update_field=='fofc':
+            self.proasis_hit.fofc = self.output().path
+            self.proasis_hit.fofc.save()
+        if self.update_field=='mtz':
+            self.proasis_hit.mtz = self.output().path
+            self.proasis_hit.mtz.save()
+
 
 class CopyInputFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
@@ -301,43 +356,25 @@ class CopyInputFiles(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        pass
-
-    def output(self):
-        pass
-
-    def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
-        # get target and crystal name from crystal object
-        target_name = str(crystal.target.target_name).upper()
-        crystal_name = str(crystal.crystal_name)
+        return CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='pdb',
+                        file=str(proasis_hit.pdb_file)), \
+               CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='two_fofc',
+                        file=str(proasis_hit.two_fofc)),\
+               CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='mtz',
+                        file=str(proasis_hit.mtz)), \
+               CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='fofc',
+                        file=str(proasis_hit.fofc))
 
-        # set directory for files to be copied to and create if neccessary
-        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
-        print(proasis_crystal_directory)
-        if not os.path.isdir(proasis_crystal_directory):
-            os.makedirs(proasis_crystal_directory)
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        return luigi.LocalTarget(str(proasis_hit.pdb_file) + '.proasis.in')
 
-        # copy all files over to input directory in proasis directories
-        files = [str(proasis_hit.two_fofc), str(proasis_hit.fofc), str(proasis_hit), str(proasis_hit)]
-        for f in files:
-            print(f)
-            print(proasis_crystal_directory)
-            shutil.copy(f, proasis_crystal_directory)
-
-        # establish new file paths
-        pdb = os.path.join(proasis_crystal_directory, str(proasis_hit.pdb_file.split('/')[-1]))
-        two_fofc = os.path.join(proasis_crystal_directory, str(proasis_hit.two_fofc.split('/')[-1]))
-        fofc = os.path.join(proasis_crystal_directory, str(proasis_hit.fofc.split('/')[-1]))
-        mtz = os.path.join(proasis_crystal_directory, str(proasis_hit.mtz.split('/')[-1]))
-
-        proasis_hit.pdb_file = pdb
-        proasis_hit.two_fofc = two_fofc
-        proasis_hit.fofc = fofc
-        proasis_hit.mtz = mtz
-        proasis_hit.save()
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class GetLigandList(luigi.Task):
