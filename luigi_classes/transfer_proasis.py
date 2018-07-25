@@ -521,7 +521,7 @@ class AddFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
-    
+
     def requires(self):
         return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
@@ -530,25 +530,33 @@ class AddFiles(luigi.Task):
 
     def run(self):
 
+        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+
+        proasis_pandda = ProasisPandda.objects.filter(hit=proasis_hit)
+
+        strucid = proasis_hit.strucid
+
         out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c',
                                                       filename=str(proasis_hit.two_fofc),
-                                                      strucid=strucid, title=str(self.crystal + '_2fofc'))
-
-        print(out)
-        if err:
-            raise Exception(out)
+                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                                                 + '_2fofc'))
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
                                                       filename=str(proasis_hit.fofc),
-                                                      strucid=strucid, title=str(self.crystal + '_fofc'))
-
-        print(out)
-        if err:
-            raise Exception(out)
+                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                                                 + '_fofc'))
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
                                                       filename=str(proasis_hit.mtz),
-                                                      strucid=strucid, title=str(self.crystal + '_mtz'))
+                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                                                 + '_mtz'))
+
+        for entry in proasis_pandda:
+            out, err = proasis_api_funcs.add_proasis_file(file_type='', filename=str(entry.event_map_native),
+                                                          strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                                                     + '_event_' +
+                                                                                     str(entry.event.event)))
 
 
 
