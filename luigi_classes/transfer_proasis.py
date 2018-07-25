@@ -296,7 +296,9 @@ class GetPanddaMaps(luigi.Task):
         pandda_events = PanddaEvent.objects.filter(crystal=crystal)
 
         for event in pandda_events:
-            pass
+            entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
+                                                        event_map_native=event.pandda_event_map_native,
+                                                        model_pdb=event.pandda_model_pdb)
 
 
     def output(self):
