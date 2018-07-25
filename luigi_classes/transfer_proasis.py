@@ -296,6 +296,7 @@ class GetPanddaMaps(luigi.Task):
         pandda_events = PanddaEvent.objects.filter(crystal=crystal)
 
         for event in pandda_events:
+            pass
 
 
     def output(self):

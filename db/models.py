@@ -312,7 +312,7 @@ class PanddaEvent(models.Model):
         unique_together = ('site', 'event', 'crystal', 'pandda_run')
 
 
-class ProasisPandda(models.model):
+class ProasisPandda(models.Model):
     hit = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
     event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
     event_map_native = models.TextField(blank=False, null=False)
@@ -321,4 +321,3 @@ class ProasisPandda(models.model):
     class Meta:
         db_table = 'proasis_pandda'
         unique_together = ('hit', 'event')
-        
