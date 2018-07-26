@@ -318,7 +318,7 @@ class CopyFile(luigi.Task):
 
         if self.update_field == 'pdb':
             self.proasis_hit.pdb_file = self.output().path
-            self.proasis_hit..save()
+            self.proasis_hit.save()
         if self.update_field == 'two_fofc':
             self.proasis_hit.two_fofc = self.output().path
             self.proasis_hit.save()
