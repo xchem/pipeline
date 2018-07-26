@@ -391,8 +391,7 @@ class GetPanddaMaps(luigi.Task):
                                                         model_pdb=os.path.join(proasis_crystal_directory,
                                                                                str(str(event.pandda_model_pdb).split(
                                                                                    '/')[-1])))
-            entry.save()
-
+            entry[0].save()
 
 class GetLigandList(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
