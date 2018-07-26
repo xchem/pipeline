@@ -367,7 +367,12 @@ class GetPanddaMaps(luigi.Task):
                               hit_directory=self.hit_directory)
 
     def output(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+        mod_date = str(proasis_hit.modification_date)
+        crystal_name = str(proasis_hit.crystal_name.crystal_name)
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.pandda')))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -393,6 +398,9 @@ class GetPanddaMaps(luigi.Task):
                                                                                    '/')[-1])))
             entry[0].save()
 
+        with self.output().open('w') as f:
+            f.write('')
+
 class GetLigandList(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -401,6 +409,14 @@ class GetLigandList(luigi.Task):
     def requires(self):
         return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                               hit_directory=self.hit_directory)
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+        mod_date = str(proasis_hit.modification_date)
+        crystal_name = str(proasis_hit.crystal_name.crystal_name)
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.ligands')))
 
     def run(self):
 
@@ -429,6 +445,9 @@ class GetLigandList(luigi.Task):
         # save ligand list to proasis hit object
         proasis_hit.ligands_list = unique_ligands
         proasis_hit.save()
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class GenerateSdf(luigi.Task):
