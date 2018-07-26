@@ -443,7 +443,7 @@ class GetLigandList(luigi.Task):
             raise Exception('No ligands found in file!')
 
         # save ligand list to proasis hit object
-        proasis_hit.ligands_list = unique_ligands
+        proasis_hit.ligand_list = unique_ligands
         proasis_hit.save()
 
         with self.output().open('w') as f:
@@ -503,7 +503,7 @@ class UploadHit(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
 
-        unique_ligands = proasis_hit.ligands_list
+        unique_ligands = proasis_hit.ligand_list
         proasis_bound_pdb = proasis_hit.pdb_file
 
 
@@ -615,7 +615,7 @@ class UploadHits(luigi.Task):
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
 
-        return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
 
 
     def output(self):
