@@ -186,7 +186,6 @@ def add_proasis_file(file_type, filename, strucid, title):
 
 def get_lig_strings(lig_list):
     strings_list = []
-    lig_list = eval(lig_list)
     for ligand in lig_list:
         if len(ligand) == 3:
             strings_list.append(str(
