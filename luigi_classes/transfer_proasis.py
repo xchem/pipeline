@@ -287,7 +287,7 @@ class UploadLeads(luigi.Task):
 
 class CopyFile(luigi.Task):
     proasis_hit = luigi.Parameter()
-    crystal = luigi.parameter()
+    crystal = luigi.Parameter()
     update_field = luigi.Parameter()
     filename = luigi.Parameter()
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
@@ -607,4 +607,4 @@ class UploadHits(luigi.Task):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
-            
+
