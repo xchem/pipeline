@@ -376,7 +376,6 @@ class GetPanddaMaps(luigi.Task):
         target_name = str(crystal.target.target_name).upper()
         crystal_name = str(crystal.crystal_name)
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
-        filepath = os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))
 
         pandda_events = PanddaEvent.objects.filter(crystal=crystal)
 
