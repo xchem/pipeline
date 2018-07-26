@@ -318,16 +318,16 @@ class CopyFile(luigi.Task):
 
         if self.update_field == 'pdb':
             self.proasis_hit.pdb_file = self.output().path
-            self.proasis_hit.pdb_file.save()
+            self.proasis_hit..save()
         if self.update_field == 'two_fofc':
             self.proasis_hit.two_fofc = self.output().path
-            self.proasis_hit.two_fofc.save()
+            self.proasis_hit.save()
         if self.update_field == 'fofc':
             self.proasis_hit.fofc = self.output().path
-            self.proasis_hit.fofc.save()
+            self.proasis_hit.save()
         if self.update_field == 'mtz':
             self.proasis_hit.mtz = self.output().path
-            self.proasis_hit.mtz.save()
+            self.proasis_hit.save()
 
 
 class CopyInputFiles(luigi.Task):
