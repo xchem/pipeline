@@ -584,15 +584,25 @@ class AddFiles(luigi.Task):
                                                       strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_2fofc'))
 
+        if err:
+            raise Exception(err)
+        print(out)
+
         out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
                                                       filename=str(proasis_hit.fofc),
                                                       strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_fofc'))
+        if err:
+            raise Exception(err)
+        print(out)
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
                                                       filename=str(proasis_hit.mtz),
                                                       strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_mtz'))
+        if err:
+            raise Exception(err)
+        print(out)
 
         # TODO: Add this back in at some point. Skip for now as no option for native maps
         # for entry in proasis_pandda:
