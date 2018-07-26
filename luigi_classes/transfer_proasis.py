@@ -443,7 +443,7 @@ class GetLigandList(luigi.Task):
             raise Exception('No ligands found in file!')
 
         # save ligand list to proasis hit object
-        proasis_hit.ligand_list = unique_ligands
+        proasis_hit.ligand_list = str(unique_ligands)
         proasis_hit.save()
 
         with self.output().open('w') as f:
