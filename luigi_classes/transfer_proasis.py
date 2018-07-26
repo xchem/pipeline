@@ -615,7 +615,7 @@ class UploadHits(luigi.Task):
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
 
-        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+        return [UploadHit(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
 
 
     def output(self):
