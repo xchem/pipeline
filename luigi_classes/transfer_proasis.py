@@ -340,13 +340,13 @@ class CopyInputFiles(luigi.Task):
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
         return CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='pdb',
-                        file=str(proasis_hit.pdb_file)), \
+                        filename=str(proasis_hit.pdb_file)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='two_fofc',
-                        file=str(proasis_hit.two_fofc)), \
+                        filename=str(proasis_hit.two_fofc)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='mtz',
-                        file=str(proasis_hit.mtz)), \
+                        filename=str(proasis_hit.mtz)), \
                CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='fofc',
-                        file=str(proasis_hit.fofc))
+                        filename=str(proasis_hit.fofc))
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
