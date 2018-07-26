@@ -520,6 +520,7 @@ class UploadHit(luigi.Task):
 
             if err:
                 print(err)
+            print(out)
 
 
         # same as above, but for structures containing more than one ligand
@@ -542,13 +543,15 @@ class UploadHit(luigi.Task):
 
             if err:
                 print(err)
+            print(out)
 
         # add strucid to database
         proasis_hit.strucid = strucid
         proasis_hit.save()
 
-        with self.output().open('w') as f:
-            f.write('')
+        if not err:
+            with self.output().open('w') as f:
+                f.write('')
 
 
 class AddFiles(luigi.Task):
