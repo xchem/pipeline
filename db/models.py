@@ -203,7 +203,7 @@ class ProasisHits(models.Model):
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
     modification_date = models.TextField(blank=True, null=True)
     strucid = models.TextField(blank=True, null=True)
-    ligand_list = models.IntegerField(blank=True, null=True)
+    ligand_list = models.TextField(blank=True, null=True)
     mtz = models.TextField(blank=False, null=False)
     two_fofc = models.TextField(blank=False, null=False)
     fofc = models.TextField(blank=False, null=False)
