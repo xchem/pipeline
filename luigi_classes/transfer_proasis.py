@@ -514,7 +514,7 @@ class UploadHit(luigi.Task):
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
                                     str(os.path.join(proasis_crystal_directory, str(crystal_name) + '.sdf')) +
                                     " -p " + str(target_name) + " -t " + str(crystal_name) + " -x XRAY -N")
-
+            print(submit_to_proasis)
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
