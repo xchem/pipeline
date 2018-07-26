@@ -455,7 +455,7 @@ class GenerateSdf(luigi.Task):
         crystal_name = crystal.crystal_name
         smiles = crystal.compound.smiles
         misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
-        proasis_hit = ProasisHits.objects.get(crystal=crystal, refinment=Refinement.objects.get(pk=self.refinement_id))
+        proasis_hit = ProasisHits.objects.get(crystal_name=crystal, refinment=Refinement.objects.get(pk=self.refinement_id))
         proasis_hit.sdf = self.output().path
         proasis_hit.save()
 
@@ -470,7 +470,7 @@ class UploadHit(luigi.Task):
                            hit_directory=self.hit_directory)
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
@@ -483,7 +483,7 @@ class UploadHit(luigi.Task):
         crystal_name = crystal.crystal_name
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
 
-        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
 
         unique_ligands = proasis_hit.ligands_list
@@ -543,7 +543,7 @@ class AddFiles(luigi.Task):
         return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
@@ -552,7 +552,7 @@ class AddFiles(luigi.Task):
 
     def run(self):
 
-        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
 
         proasis_pandda = ProasisPandda.objects.filter(hit=proasis_hit)
