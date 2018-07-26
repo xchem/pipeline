@@ -469,6 +469,14 @@ class UploadHit(luigi.Task):
         return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                            hit_directory=self.hit_directory)
 
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+        mod_date = str(proasis_hit.modification_date)
+        crystal_name = str(proasis_hit.crystal.crystal_name)
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.structure')))
+
     def run(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
         target_name = str(crystal.target.target_name).upper()
@@ -493,6 +501,9 @@ class UploadHit(luigi.Task):
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
+            if err:
+                print(err)
+
 
         # same as above, but for structures containing more than one ligand
         elif len(unique_ligands) > 1:
@@ -512,9 +523,15 @@ class UploadHit(luigi.Task):
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
+            if err:
+                print(err)
+
         # add strucid to database
         proasis_hit.strucid = strucid
         proasis_hit.save()
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class AddFiles(luigi.Task):
@@ -526,7 +543,12 @@ class AddFiles(luigi.Task):
         return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+        mod_date = str(proasis_hit.modification_date)
+        crystal_name = str(proasis_hit.crystal.crystal_name)
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.files')))
 
     def run(self):
 
@@ -552,21 +574,37 @@ class AddFiles(luigi.Task):
                                                       strucid=strucid, title=str(proasis_hit.crystal.crystal_name
                                                                                  + '_mtz'))
 
-        for entry in proasis_pandda:
-            out, err = proasis_api_funcs.add_proasis_file(file_type='', filename=str(entry.event_map_native),
-                                                          strucid=strucid, title=str(proasis_hit.crystal.crystal_name
-                                                                                     + '_event_' +
-                                                                                     str(entry.event.event)))
+        # TODO: Add this back in at some point. Skip for now as no option for native maps
+        # for entry in proasis_pandda:
+        #     out, err = proasis_api_funcs.add_proasis_file(file_type='', filename=str(entry.event_map_native),
+        #                                                   strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+        #                                                                              + '_event_' +
+        #                                                                              str(entry.event.event)))
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 
 class UploadHits(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
         hits = ProasisHits.objects.filter(strucid=None)
+        c_id = []
+        r_id = []
+        for hit in hits:
+            c_id.append(hit.crystal_name_id)
+            r_id.append(hit.refinement_id)
+
+        return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_hits_%Y%m%d%H.txt'))
 
     def run(self):
-        pass
+        with self.output().open('w') as f:
+            f.write('')
+            

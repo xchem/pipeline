@@ -327,7 +327,7 @@ class FindSearchPaths(luigi.Task):
         return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(str('logs/search_paths_' + str(self.date_time) + '.csv'))
+        return luigi.LocalTarget(str('logs/search_paths/search_paths_' + str(self.date_time) + '.csv'))
 
     def run(self):
         with self.input().open('r') as f:
