@@ -473,7 +473,7 @@ class UploadHit(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
         mod_date = str(proasis_hit.modification_date)
-        crystal_name = str(proasis_hit.crystal.crystal_name)
+        crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
         return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.structure')))
 
@@ -546,7 +546,7 @@ class AddFiles(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
         mod_date = str(proasis_hit.modification_date)
-        crystal_name = str(proasis_hit.crystal.crystal_name)
+        crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
         return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.files')))
 
@@ -561,17 +561,17 @@ class AddFiles(luigi.Task):
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='2fofc_c',
                                                       filename=str(proasis_hit.two_fofc),
-                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                      strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_2fofc'))
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='fofc_c',
                                                       filename=str(proasis_hit.fofc),
-                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                      strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_fofc'))
 
         out, err = proasis_api_funcs.add_proasis_file(file_type='mtz',
                                                       filename=str(proasis_hit.mtz),
-                                                      strucid=strucid, title=str(proasis_hit.crystal.crystal_name
+                                                      strucid=strucid, title=str(proasis_hit.crystal_name.crystal_name
                                                                                  + '_mtz'))
 
         # TODO: Add this back in at some point. Skip for now as no option for native maps
