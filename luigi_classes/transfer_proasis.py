@@ -431,6 +431,7 @@ class GetPanddaMaps(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
+
 class GetLigandList(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -550,7 +551,7 @@ class UploadHit(luigi.Task):
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
             if err:
-                print(err)
+                raise Exception(err)
             print(out)
 
 
@@ -573,7 +574,7 @@ class UploadHit(luigi.Task):
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
             if err:
-                print(err)
+                raise Exception(err)
             print(out)
 
         # add strucid to database
