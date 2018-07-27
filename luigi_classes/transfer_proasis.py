@@ -56,13 +56,28 @@ class InitDBEntries(luigi.Task):
             if mod_date:
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
                     entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
-                    if entry.modification_date < mod_date or not entry.strucid:
+                    if entry.modification_date < mod_date:
+                        if entry.strucid:
+                            proasis_api_funcs.delete_structure(entry.strucid)
+                            entry.strucid=None
+                            entry.save()
+                            if '/dls/science/groups/proasis/LabXChem/' in entry.pdb_file:
+                                os.remove(entry.pdb_file)
+                            if '/dls/science/groups/proasis/LabXChem/' in entry.mtz:
+                                os.remove(entry.mtz)
+                            if '/dls/science/groups/proasis/LabXChem/' in entry.two_fofc:
+                                os.remove(entry.two_fofc)
+                            if '/dls/science/groups/proasis/LabXChem/' in entry.fofc:
+                                os.remove(entry.fofc)
+
                         entry.pdb_file = bound_conf
                         entry.modification_date = mod_date
                         entry.mtz = mtz[1]
                         entry.two_fofc = two_fofc[1]
                         entry.fofc = fofc[1]
                         entry.save()
+
+
 
                 else:
                     proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
