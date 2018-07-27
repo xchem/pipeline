@@ -27,10 +27,10 @@ class InitDBEntries(luigi.Task):
         refinement = Refinement.objects.filter(outcome__gte=3)
         print(len(refinement))
         for obj in refinement:
-            if obj.bound_conf != '':
+            if obj.bound_conf:
                 if os.path.isfile(obj.bound_conf):
                     bound_conf = obj.bound_conf
-            elif obj.pdb_latest != '':
+            elif obj.pdb_latest:
                 if os.path.isfile(obj.pdb_latest):
                     bound_conf = obj.pdb_latest
             else:
@@ -63,7 +63,7 @@ class InitDBEntries(luigi.Task):
                         entry.two_fofc = two_fofc[1]
                         entry.fofc = fofc[1]
                         entry.save()
-                        
+
                 else:
                     proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
                                                                           pdb_file=bound_conf,
