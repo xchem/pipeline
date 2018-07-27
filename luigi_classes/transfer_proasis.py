@@ -15,6 +15,7 @@ import setup_django
 class InitDBEntries(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
         return transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
@@ -56,18 +57,18 @@ class InitDBEntries(luigi.Task):
             if mod_date:
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
                     entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
-                    if entry.modification_date < mod_date:
+                    if entry.modification_date < mod_date or not entry.strucid:
                         if entry.strucid:
                             proasis_api_funcs.delete_structure(entry.strucid)
                             entry.strucid=None
                             entry.save()
-                            if '/dls/science/groups/proasis/LabXChem/' in entry.pdb_file:
+                            if self.hit_directory in entry.pdb_file:
                                 os.remove(entry.pdb_file)
-                            if '/dls/science/groups/proasis/LabXChem/' in entry.mtz:
+                            if self.hit_directory in entry.mtz:
                                 os.remove(entry.mtz)
-                            if '/dls/science/groups/proasis/LabXChem/' in entry.two_fofc:
+                            if self.hit_directory in entry.two_fofc:
                                 os.remove(entry.two_fofc)
-                            if '/dls/science/groups/proasis/LabXChem/' in entry.fofc:
+                            if self.hit_directory in entry.fofc:
                                 os.remove(entry.fofc)
 
                         entry.pdb_file = bound_conf
