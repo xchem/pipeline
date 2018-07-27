@@ -440,7 +440,8 @@ class GetLigandList(luigi.Task):
         if ligand_list:
             unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
         else:
-            raise Exception('No ligands found in file!')
+            print('Deleting entry with no LIGANDS!')
+            proasis_hit.delete()
 
         # save ligand list to proasis hit object
         proasis_hit.ligand_list = str(unique_ligands)
@@ -637,4 +638,19 @@ class UploadHits(luigi.Task):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
+
+
+class CheckLigands(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+
+    def requires(self):
+        hits = ProasisHits.objects.filter(strucid=None)
+        c_id = []
+        r_id = []
+        for hit in hits:
+            c_id.append(hit.crystal_name_id)
+            r_id.append(hit.refinement_id)
+
+        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
 
