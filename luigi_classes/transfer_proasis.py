@@ -482,13 +482,14 @@ class GetLigandList(luigi.Task):
 
         if ligand_list:
             unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
+            # save ligand list to proasis hit object
+            proasis_hit.ligand_list = str(unique_ligands)
+            proasis_hit.save()
         else:
             print('Deleting entry with no LIGANDS!')
             proasis_hit.delete()
 
-        # save ligand list to proasis hit object
-        proasis_hit.ligand_list = str(unique_ligands)
-        proasis_hit.save()
+
 
         with self.output().open('w') as f:
             f.write('')
