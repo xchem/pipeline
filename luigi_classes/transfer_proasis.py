@@ -29,6 +29,12 @@ class InitDBEntries(luigi.Task):
         refinement = Refinement.objects.filter(outcome__gte=3)
         print(len(refinement))
         for obj in refinement:
+            bound_conf = ''
+            files = []
+            mtz=''
+            two_fofc=''
+            fofc=''
+            mod_date=''
             if obj.bound_conf:
                 if os.path.isfile(obj.bound_conf):
                     bound_conf = obj.bound_conf
@@ -60,7 +66,7 @@ class InitDBEntries(luigi.Task):
                 fail_count += 1
                 continue
 
-            mod_date = misc_functions.get_mod_date(obj.bound_conf)
+            mod_date = misc_functions.get_mod_date(bound_conf)
             if mod_date:
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
                     entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
@@ -84,8 +90,6 @@ class InitDBEntries(luigi.Task):
                         entry.two_fofc = two_fofc[1]
                         entry.fofc = fofc[1]
                         entry.save()
-
-
 
                 else:
                     proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
