@@ -5,6 +5,7 @@ import subprocess
 import os
 import shutil
 import re
+import glob
 from db.models import *
 from functions import misc_functions, db_functions, proasis_api_funcs
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
@@ -33,7 +34,13 @@ class InitDBEntries(luigi.Task):
                     bound_conf = obj.bound_conf
             elif obj.pdb_latest:
                 if os.path.isfile(obj.pdb_latest):
-                    bound_conf = obj.pdb_latest
+                    if 'Refine' in obj.pdb_latest:
+                        search_path= '/'.join(obj.pdb_latest.split('/')[:-1])
+                        files = glob.glob(str(search_path + '/refine*bound*.pdb'))
+                        if len(files) == 1:
+                            bound_conf = files[0]
+                    else:
+                        bound_conf = obj.pdb_latest
             else:
                 fail_count += 1
                 continue
