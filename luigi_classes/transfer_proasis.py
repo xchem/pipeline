@@ -55,7 +55,7 @@ class InitDBEntries(luigi.Task):
             mod_date = misc_functions.get_mod_date(obj.bound_conf)
             if mod_date:
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
-                    entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
+                    entry = ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name)
                     if entry.modification_date < mod_date or not entry.strucid:
                         entry.update(pdb_file=bound_conf, modification_date=mod_date, mtz=mtz[1],
                                      two_fofc=two_fofc[1], fofc=fofc[1])
