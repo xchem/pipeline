@@ -28,9 +28,11 @@ class InitDBEntries(luigi.Task):
         print(len(refinement))
         for obj in refinement:
             if obj.bound_conf != '':
-                bound_conf = obj.bound_conf
+                if os.path.isfile(obj.bound_conf):
+                    bound_conf = obj.bound_conf
             elif obj.pdb_latest != '':
-                bound_conf = obj.pdb_latest
+                if os.path.isfile(obj.pdb_latest):
+                    bound_conf = obj.pdb_latest
             else:
                 fail_count += 1
                 continue
