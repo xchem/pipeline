@@ -449,8 +449,9 @@ class GetLigandList(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                              hit_directory=self.hit_directory)
+        return InitDBEntries()
+            # GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            #                   hit_directory=self.hit_directory)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
@@ -499,8 +500,11 @@ class GenerateSdf(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+        return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                              hit_directory=self.hit_directory)
+
+            # GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            #                  hit_directory=self.hit_directory)
 
     def output(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
@@ -695,4 +699,7 @@ class CheckLigands(luigi.Task):
             r_id.append(hit.refinement_id)
 
         return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+
+    def run(self):
+        return UploadHits(date=self.date, hit_directory=self.hit_directory)
 
