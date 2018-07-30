@@ -25,7 +25,7 @@ class StartPipeline(luigi.WrapperTask):
         yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
-        yield CheckLigands(date=self.date, hit_directory=self.hit_directory)
+        # yield CheckLigands(date=self.date, hit_directory=self.hit_directory)
         yield UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):

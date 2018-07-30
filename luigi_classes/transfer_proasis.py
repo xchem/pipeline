@@ -97,6 +97,27 @@ class InitDBEntries(luigi.Task):
                                                                           modification_date=mod_date,
                                                                           mtz=mtz[1], two_fofc=two_fofc[1],
                                                                           fofc=fofc[1])
+                try:
+                    pdb_file = open(bound_conf, 'r')
+                    ligand_list = []
+                    for line in pdb_file:
+                        if "LIG" in line:
+                            try:
+                                lig_string = re.search(r"LIG.......", line).group()
+                                ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
+                            except:
+                                continue
+                except:
+                    ligand_list = None
+
+                if ligand_list:
+                    unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
+                    # save ligand list to proasis hit object
+                    proasis_hit_entry[0].ligand_list = str(unique_ligands)
+                    proasis_hit_entry[0].save()
+                else:
+                    print('Deleting entry with no LIGANDS!')
+                    proasis_hit_entry[0].delete()
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 print(dimple.count())
