@@ -569,7 +569,7 @@ class UploadHit(luigi.Task):
 
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
-
+        print('LIGANDS: ' + str(proasis_hit.ligand_list))
         unique_ligands = eval(proasis_hit.ligand_list)
         proasis_bound_pdb = proasis_hit.pdb_file
 
