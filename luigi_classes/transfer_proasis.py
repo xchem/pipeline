@@ -199,9 +199,9 @@ class AddLead(luigi.Task):
                         chain = Residue.Residue.get_parent(parent)
                         # if statements for fussy proasis formatting
 
-                    if len(str(parent.get_id()[1])) == 3:
+                    if len(str(parent.get_id()[1])) >= 3:
                         space = ' '
-                    if len(str(parent.get_id()[1])) == 2:
+                    if len(str(parent.get_id()[1])) <= 2:
                         space = '  '
                     if 'HOH' not in str(parent.get_resname()):
                         res = (
