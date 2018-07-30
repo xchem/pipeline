@@ -123,10 +123,12 @@ class InitDBEntries(luigi.Task):
                     proasis_hit.save()
                 else:
                     print('Deleting entry with no LIGANDS!')
-                    proasis_hit.delete()
+                    try:
+                        proasis_hit.delete()
+                    except:
+                        print(proasis_hit.pdb_file)
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
-                print(dimple.count())
                 if dimple.count() == 1:
                     if dimple[0].reference and dimple[0].reference.reference_pdb:
                         if os.path.isfile(dimple[0].reference.reference_pdb):
