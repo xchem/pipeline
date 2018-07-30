@@ -213,14 +213,14 @@ class AddLead(luigi.Task):
 
         res_list = (list(set(res_list)))
         colon = ' :'
-        if len(str(res_list[0]))==4:
+        if len(str(res_list[0]))>=4:
             colon = ':'
         lig1 = str("'" + str(res_list[0]) + colon)
-        if len(str(res_list[1]))==4:
+        if len(str(res_list[1]))>=4:
             colon = ':'
         lig1 += str(str(res_list[1]) + colon)
         close = " ' "
-        if len(str(res_list[2]))==4:
+        if len(str(res_list[2]))>=4:
             close = "' "
         lig1 += str(str(res_list[2]) + close)
 
