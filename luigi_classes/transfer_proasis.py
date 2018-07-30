@@ -31,17 +31,17 @@ class InitDBEntries(luigi.Task):
         for obj in refinement:
             bound_conf = ''
             files = []
-            mtz=''
-            two_fofc=''
-            fofc=''
-            mod_date=''
+            mtz = ''
+            two_fofc = ''
+            fofc = ''
+            mod_date = ''
             if obj.bound_conf:
                 if os.path.isfile(obj.bound_conf):
                     bound_conf = obj.bound_conf
             elif obj.pdb_latest:
                 if os.path.isfile(obj.pdb_latest):
                     if 'Refine' in obj.pdb_latest:
-                        search_path= '/'.join(obj.pdb_latest.split('/')[:-1])
+                        search_path = '/'.join(obj.pdb_latest.split('/')[:-1])
                         files = glob.glob(str(search_path + '/refine*bound*.pdb'))
                         if len(files) == 1:
                             bound_conf = files[0]
@@ -73,7 +73,7 @@ class InitDBEntries(luigi.Task):
                     if entry.modification_date < mod_date or not entry.strucid:
                         if entry.strucid:
                             proasis_api_funcs.delete_structure(entry.strucid)
-                            entry.strucid=None
+                            entry.strucid = None
                             entry.save()
                             if self.hit_directory in entry.pdb_file:
                                 os.remove(entry.pdb_file)
@@ -102,7 +102,13 @@ class InitDBEntries(luigi.Task):
                 print(dimple.count())
                 if dimple.count() == 1:
                     if dimple[0].reference and dimple[0].reference.reference_pdb:
-                        proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
+                        if os.path.isfile(dimple[0].reference.reference_pdb):
+                            proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
+                        else:
+                            if ProasisLeads.objects.filter(reference_pdb=dimple[0].reference).exists() and len(
+                                    ProasisLeads.objects.filter(reference_pdb=dimple[0].reference)) == 1:
+                                proasis_lead_entry = ProasisLeads.objects.get(reference_pdb=dimple[0].reference)
+                                proasis_lead_entry.delete()
 
         print(fail_count)
 
@@ -213,14 +219,14 @@ class AddLead(luigi.Task):
 
         res_list = (list(set(res_list)))
         colon = ' :'
-        if len(str(res_list[0]))>=4:
+        if len(str(res_list[0])) >= 4:
             colon = ':'
         lig1 = str("'" + str(res_list[0]) + colon)
-        if len(str(res_list[1]))>=4:
+        if len(str(res_list[1])) >= 4:
             colon = ':'
         lig1 += str(str(res_list[1]) + colon)
         close = " ' "
-        if len(str(res_list[2]))>=4:
+        if len(str(res_list[2])) >= 4:
             close = "' "
         lig1 += str(str(res_list[2]) + close)
 
@@ -422,8 +428,8 @@ class GetLigandList(luigi.Task):
 
     def requires(self):
         return InitDBEntries()
-            # GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-            #                   hit_directory=self.hit_directory)
+        # GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+        #                   hit_directory=self.hit_directory)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
@@ -460,8 +466,6 @@ class GetLigandList(luigi.Task):
         else:
             print('Deleting entry with no LIGANDS!')
             proasis_hit.delete()
-
-
 
         with self.output().open('w') as f:
             f.write('')
@@ -523,8 +527,8 @@ class GenerateSdf(luigi.Task):
         return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                              hit_directory=self.hit_directory)
 
-            # GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-            #                  hit_directory=self.hit_directory)
+        # GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+        #                  hit_directory=self.hit_directory)
 
     def output(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
@@ -544,7 +548,8 @@ class GenerateSdf(luigi.Task):
         # crystal_name = crystal.crystal_name
         smiles = crystal.compound.smiles
         misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
-        proasis_hit = ProasisHits.objects.get(crystal_name=crystal, refinement=Refinement.objects.get(pk=self.refinement_id))
+        proasis_hit = ProasisHits.objects.get(crystal_name=crystal,
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
         proasis_hit.sdf = self.output().path
         proasis_hit.save()
 
@@ -577,7 +582,6 @@ class UploadHit(luigi.Task):
         print('LIGANDS: ' + str(proasis_hit.ligand_list))
         unique_ligands = eval(proasis_hit.ligand_list)
         proasis_bound_pdb = proasis_hit.pdb_file
-
 
         if len(unique_ligands) == 1:
             lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0])
@@ -687,7 +691,6 @@ class AddFiles(luigi.Task):
             f.write('')
 
 
-
 class UploadHits(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
@@ -701,7 +704,6 @@ class UploadHits(luigi.Task):
             r_id.append(hit.refinement_id)
 
         return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
-
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_hits_%Y%m%d%H.txt'))
@@ -726,13 +728,9 @@ class CheckLigands(luigi.Task):
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
 
-        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in
+                zip(c_id, r_id)]
 
     def run(self):
         with self.output().open('w') as f:
             f.write('')
-
-
-
-
-
