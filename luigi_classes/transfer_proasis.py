@@ -123,7 +123,7 @@ class InitDBEntries(luigi.Task):
                     proasis_hit.save()
                 else:
                     print('Deleting entry with no LIGANDS!')
-                    proasis_hit[0].delete()
+                    proasis_hit.delete()
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 print(dimple.count())
