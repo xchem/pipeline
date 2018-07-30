@@ -1,11 +1,8 @@
 import setup_django
 import luigi
-import os
-import pandas as pd
 import datetime
 from luigi_classes.transfer_pandda import TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, CheckLigands, UploadHits
-
 
 
 class StartPipeline(luigi.WrapperTask):
