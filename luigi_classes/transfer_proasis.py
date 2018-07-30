@@ -442,56 +442,6 @@ class CopyInputFiles(luigi.Task):
             f.write('')
 
 
-class GetLigandList(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    crystal_id = luigi.Parameter()
-    refinement_id = luigi.Parameter()
-
-    def requires(self):
-        return InitDBEntries()
-        # GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-        #                   hit_directory=self.hit_directory)
-
-    def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
-        mod_date = str(proasis_hit.modification_date)
-        crystal_name = str(proasis_hit.crystal_name.crystal_name)
-
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.ligands')))
-
-    def run(self):
-
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        pdb = proasis_hit.pdb_file
-
-        # get list of ligands in structure
-        try:
-            pdb_file = open(pdb, 'r')
-            ligand_list = []
-            for line in pdb_file:
-                if "LIG" in line:
-                    try:
-                        lig_string = re.search(r"LIG.......", line).group()
-                        ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
-                    except:
-                        continue
-        except:
-            ligand_list = None
-
-        if ligand_list:
-            unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
-            # save ligand list to proasis hit object
-            proasis_hit.ligand_list = str(unique_ligands)
-            proasis_hit.save()
-        else:
-            print('Deleting entry with no LIGANDS!')
-            proasis_hit.delete()
-
-        with self.output().open('w') as f:
-            f.write('')
-
-
 class GetPanddaMaps(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -733,25 +683,3 @@ class UploadHits(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
-
-class CheckLigands(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-
-    def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_ligands_%Y%m%d%H.txt'))
-
-    def requires(self):
-        hits = ProasisHits.objects.filter(strucid=None)
-        c_id = []
-        r_id = []
-        for hit in hits:
-            c_id.append(hit.crystal_name_id)
-            r_id.append(hit.refinement_id)
-
-        return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in
-                zip(c_id, r_id)]
-
-    def run(self):
-        with self.output().open('w') as f:
-            f.write('')
