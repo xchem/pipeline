@@ -35,6 +35,8 @@ class InitDBEntries(luigi.Task):
             two_fofc = ''
             fofc = ''
             mod_date = ''
+            proasis_hit_entry=''
+            entry=''
             if obj.bound_conf:
                 if os.path.isfile(obj.bound_conf):
                     bound_conf = obj.bound_conf
