@@ -11,6 +11,7 @@ import traceback
 from functions import misc_functions
 from django.db import transaction
 from functions import db_functions
+from functions import proasis_api_funcs
 
 
 def transfer_file(data_file):
@@ -230,6 +231,16 @@ class TransferChangedDataFile(luigi.Task):
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
         if maint_exists == 1:
             soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+
+            crystals = Crystal.objects.filter(visit=soakdb_query)
+
+            for crystal in crystals:
+                proasis_hits = ProasisHits.objects.filter(crystal_name=crystal)
+                if proasis_hits:
+                    for hit in proasis_hits:
+                        if hit.strucid:
+                            proasis_api_funcs.delete_structure(hit.strucid)
+
             soakdb_query.delete()
 
             out, err, proposal = db_functions.pop_soakdb(self.data_file)
