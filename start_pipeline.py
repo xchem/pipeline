@@ -2,7 +2,7 @@ import setup_django
 import luigi
 import datetime
 from luigi_classes.transfer_pandda import TransferPandda
-from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, CheckLigands, UploadHits
+from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, UploadHits
 import os
 
 
