@@ -378,3 +378,26 @@ class FindSearchPaths(luigi.Task):
             raise Exception('Multiple soakdb files were found in the following paths, and these will not'
                             ' be included in data upload, as it is impossible to link data back to the correct'
                             ' soakdbfiles when there are multiple per project:\n' + ', '.join(to_exclude))
+
+
+class TransferPandda(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+    def requires(self):
+        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path
+        print(in_file)
+        if not os.path.isfile(in_file):
+            return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
+        else:
+            frame = pd.DataFrame.from_csv(in_file)
+            return [AddPanddaData(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
+                    search_path, filepath, sdbfile in list(
+                    zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
+
+    def output(self):
+        return luigi.LocalTarget(str('logs/search_paths/search_paths_' + str(self.date_time) + '_transferred.txt'))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')

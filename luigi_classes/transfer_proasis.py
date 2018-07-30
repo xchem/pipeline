@@ -198,6 +198,8 @@ class AddLead(luigi.Task):
                         # get the chain that the residue belongs to
                         chain = Residue.Residue.get_parent(parent)
                         # if statements for fussy proasis formatting
+                    if len(str(parent.get_id()[1])) == 4:
+                        space = ''
                     if len(str(parent.get_id()[1])) == 3:
                         space = ' '
                     if len(str(parent.get_id()[1])) == 2:
@@ -250,15 +252,12 @@ class AddLead(luigi.Task):
         out = out.decode('ascii')
         if err:
             err = err.decode('ascii')
-        print(out)
-        if err:
-            raise Exception('There was a problem submitting this lead: ' + str(err))
 
         # find strucid from submission output
         strucidstr = misc_functions.get_id_string(out)
 
         # if no strucid in output, raise an exception and print error
-        if len(strucidstr) == '':
+        if len(strucidstr) == 0:
             raise Exception('No strucid was detected: ' + str(out) + ' ; ' + str(err))
 
         # add the new structure as a lead
@@ -714,19 +713,6 @@ class CheckLigands(luigi.Task):
             f.write('')
 
 
-class StartProasis(luigi.WrapperTask):
-    date = luigi.DateParameter(default=datetime.date.today())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    def requires(self):
-        yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
-        yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
-        yield CheckLigands(date=self.date, hit_directory=self.hit_directory)
-        yield UploadHits(date=self.date, hit_directory=self.hit_directory)
 
-    def output(self):
-        pass
-
-    def run(self):
-        pass
 
 
