@@ -78,6 +78,26 @@ def delete_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
                 delete_structure(strucid)
             delete_project(project_name)
 
+def count_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
+    count=0
+    all_projects_url = 'http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/projects/'
+
+    json_string_projects = get_json(all_projects_url)
+    dict_projects = dict_from_string(json_string_projects)
+
+    all_projects = dict_projects['ALLPROJECTS']
+
+    for project in all_projects:
+        project_name = str(project['project'])
+        print(project_name)
+        if project_name in exception_list:
+            continue
+        else:
+            strucids = get_strucids_from_project(str(project_name))
+            count+=len(strucids)
+
+    return count
+
 def get_struc_mtz(strucid, out_dir):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
     json_string = get_json(url)
