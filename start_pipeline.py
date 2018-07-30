@@ -3,6 +3,7 @@ import luigi
 import datetime
 from luigi_classes.transfer_pandda import TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, CheckLigands, UploadHits
+import os
 
 
 class StartPipeline(luigi.WrapperTask):
@@ -22,4 +23,8 @@ class StartPipeline(luigi.WrapperTask):
         pass
 
     def run(self):
-        pass
+        os.remove(TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path)
+        os.remove(InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path)
+        os.remove(UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path)
+        os.remove(CheckLigands(date=self.date, hit_directory=self.hit_directory).output().path)
+        os.remove(UploadHits(date=self.date, hit_directory=self.hit_directory).output().path)
