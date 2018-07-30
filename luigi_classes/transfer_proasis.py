@@ -105,8 +105,8 @@ class InitDBEntries(luigi.Task):
                         if os.path.isfile(dimple[0].reference.reference_pdb):
                             proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
                         else:
-                            if ProasisLeads.objects.filter(reference_pdb=dimple[0].reference).exists() and len(
-                                    ProasisLeads.objects.filter(reference_pdb=dimple[0].reference)) == 1:
+                            if ProasisLeads.objects.filter(reference_pdb=dimple[0].reference).exists():
+                                print('removing...')
                                 proasis_lead_entry = ProasisLeads.objects.get(reference_pdb=dimple[0].reference)
                                 proasis_lead_entry.delete()
 
