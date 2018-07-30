@@ -543,7 +543,7 @@ class GenerateSdf(luigi.Task):
         target_name = str(crystal.target.target_name).upper()
         crystal_name = crystal.crystal_name
         if not os.path.isdir(os.path.join(self.hit_directory, target_name, crystal_name, 'input/')):
-            os.mkdirs(os.path.join(self.hit_directory, target_name, crystal_name, 'input/'))
+            os.makedirs(os.path.join(self.hit_directory, target_name, crystal_name, 'input/'))
         # crystal = Crystal.objects.get(pk=self.crystal_id)
         # crystal_name = crystal.crystal_name
         smiles = crystal.compound.smiles
