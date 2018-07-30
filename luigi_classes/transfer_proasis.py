@@ -68,6 +68,25 @@ class InitDBEntries(luigi.Task):
                 fail_count += 1
                 continue
 
+            if bound_conf:
+                try:
+                    pdb_file = open(bound_conf, 'r')
+                    ligand_list = []
+                    for line in pdb_file:
+                        if "LIG" in line:
+                            try:
+                                lig_string = re.search(r"LIG.......", line).group()
+                                ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
+                            except:
+                                continue
+                except:
+                    ligand_list = None
+
+            if not ligand_list:
+                continue
+
+            unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
+
             mod_date = misc_functions.get_mod_date(bound_conf)
             if mod_date:
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
@@ -91,6 +110,7 @@ class InitDBEntries(luigi.Task):
                         entry.mtz = mtz[1]
                         entry.two_fofc = two_fofc[1]
                         entry.fofc = fofc[1]
+                        entry.ligand_list = unique_ligands
                         entry.save()
 
                 else:
@@ -98,37 +118,7 @@ class InitDBEntries(luigi.Task):
                                                                           pdb_file=bound_conf,
                                                                           modification_date=mod_date,
                                                                           mtz=mtz[1], two_fofc=two_fofc[1],
-                                                                          fofc=fofc[1])
-                try:
-                    pdb_file = open(bound_conf, 'r')
-                    ligand_list = []
-                    for line in pdb_file:
-                        if "LIG" in line:
-                            try:
-                                lig_string = re.search(r"LIG.......", line).group()
-                                ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
-                            except:
-                                continue
-                except:
-                    ligand_list = None
-
-                if ligand_list:
-                    if entry:
-                        proasis_hit = entry
-                    if proasis_hit_entry:
-                        proasis_hit = proasis_hit_entry[0]
-                    proasis_hit.save()
-                    unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
-                    # save ligand list to proasis hit object
-                    proasis_hit.ligand_list = str(unique_ligands)
-                    proasis_hit.save()
-                else:
-                    print('Deleting entry with no LIGANDS!')
-                    try:
-                        proasis_hit.save()
-                        proasis_hit.delete()
-                    except:
-                        print(proasis_hit.pdb_file)
+                                                                          fofc=fofc[1], ligand_list=unique_ligands)
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 if dimple.count() == 1:
