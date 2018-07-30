@@ -284,6 +284,8 @@ class AddLead(luigi.Task):
 
 class UploadLeads(luigi.Task):
     debug = luigi.Parameter(default=False)
+    date = luigi.DateParameter(default=datetime.date.today())
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
         leads = ProasisLeads.objects.filter(strucid=None)
@@ -320,10 +322,11 @@ class UploadLeads(luigi.Task):
             return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
-        pass
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_leads_%Y%m%d%H.txt'))
 
     def run(self):
-        pass
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class CopyFile(luigi.Task):
@@ -398,53 +401,6 @@ class CopyInputFiles(luigi.Task):
             f.write('')
 
 
-class GetPanddaMaps(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    crystal_id = luigi.Parameter()
-    refinement_id = luigi.Parameter()
-
-    def requires(self):
-        return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                              hit_directory=self.hit_directory)
-
-    def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
-        mod_date = str(proasis_hit.modification_date)
-        crystal_name = str(proasis_hit.crystal_name.crystal_name)
-
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.pandda')))
-
-    def run(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal = Crystal.objects.get(pk=self.crystal_id)
-
-        target_name = str(crystal.target.target_name).upper()
-        crystal_name = str(crystal.crystal_name)
-        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
-
-        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
-
-        for event in pandda_events:
-            if not os.path.isdir(proasis_crystal_directory):
-                os.makedirs(proasis_crystal_directory)
-            shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
-            shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
-
-            entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
-                                                        event_map_native=os.path.join(proasis_crystal_directory,
-                                                                                      str(str(
-                                                                                          event.pandda_event_map_native).split(
-                                                                                          '/')[-1])),
-                                                        model_pdb=os.path.join(proasis_crystal_directory,
-                                                                               str(str(event.pandda_model_pdb).split(
-                                                                                   '/')[-1])))
-            entry[0].save()
-
-        with self.output().open('w') as f:
-            f.write('')
-
-
 class GetLigandList(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -492,6 +448,53 @@ class GetLigandList(luigi.Task):
             proasis_hit.delete()
 
 
+
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class GetPanddaMaps(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                              hit_directory=self.hit_directory)
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
+                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+        mod_date = str(proasis_hit.modification_date)
+        crystal_name = str(proasis_hit.crystal_name.crystal_name)
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.pandda')))
+
+    def run(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal = Crystal.objects.get(pk=self.crystal_id)
+
+        target_name = str(crystal.target.target_name).upper()
+        crystal_name = str(crystal.crystal_name)
+        proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
+
+        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
+
+        for event in pandda_events:
+            if not os.path.isdir(proasis_crystal_directory):
+                os.makedirs(proasis_crystal_directory)
+            shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
+            shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
+
+            entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
+                                                        event_map_native=os.path.join(proasis_crystal_directory,
+                                                                                      str(str(
+                                                                                          event.pandda_event_map_native).split(
+                                                                                          '/')[-1])),
+                                                        model_pdb=os.path.join(proasis_crystal_directory,
+                                                                               str(str(event.pandda_model_pdb).split(
+                                                                                   '/')[-1])))
+            entry[0].save()
 
         with self.output().open('w') as f:
             f.write('')
@@ -693,6 +696,9 @@ class CheckLigands(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_ligands_%Y%m%d%H.txt'))
+
     def requires(self):
         hits = ProasisHits.objects.filter(strucid=None)
         c_id = []
@@ -702,4 +708,24 @@ class CheckLigands(luigi.Task):
             r_id.append(hit.refinement_id)
 
         return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class StartProasis(luigi.WrapperTask):
+
+    def requires(self):
+        yield InitDBEntries()
+        yield UploadLeads()
+        yield CheckLigands()
+        yield UploadHits()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
 
