@@ -240,13 +240,13 @@ class AddLead(luigi.Task):
             if count == 0:
                 res_string += alt_lig_option
             if count <= 1:
-                if len(str(res_list[i])) == 10:
+                if len(str(res_list[i])) >= 10:
                     res_string += str(res_list[i] + ' ,')
                 else:
                     res_string += str(res_list[i] + ' ,')
                 count += 1
             elif count == 2:
-                if len(str(res_list[i])) == 10:
+                if len(str(res_list[i])) >= 10:
                     res_string += str(res_list[i] + "'")
                 else:
                     res_string += str(res_list[i] + " '")
