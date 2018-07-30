@@ -117,6 +117,7 @@ class InitDBEntries(luigi.Task):
                         proasis_hit = entry
                     if proasis_hit_entry:
                         proasis_hit = proasis_hit_entry[0]
+                    proasis_hit.save()
                     unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
                     # save ligand list to proasis hit object
                     proasis_hit.ligand_list = str(unique_ligands)
