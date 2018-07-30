@@ -533,8 +533,7 @@ class UploadHit(luigi.Task):
     def requires(self):
         return AddFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                         hit_directory=self.hit_directory)
-            # GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                           hit_directory=self.hit_directory)
+            # GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
