@@ -413,6 +413,7 @@ class CopyFile(luigi.Task):
         if self.update_field == 'mtz':
             self.proasis_hit.mtz = self.output().path
             self.proasis_hit.save()
+        print(self.proasis_hit.pdb_file)
 
 
 class CopyInputFiles(luigi.Task):
@@ -531,9 +532,7 @@ class UploadHit(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return AddFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                        hit_directory=self.hit_directory)
-            # GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
+        return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
@@ -608,7 +607,7 @@ class AddFiles(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
+        return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
@@ -675,7 +674,7 @@ class UploadHits(luigi.Task):
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
 
-        return [UploadHit(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+        return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_hits_%Y%m%d%H.txt'))
