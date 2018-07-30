@@ -125,6 +125,7 @@ class InitDBEntries(luigi.Task):
                 else:
                     print('Deleting entry with no LIGANDS!')
                     try:
+                        proasis_hit.save()
                         proasis_hit.delete()
                     except:
                         print(proasis_hit.pdb_file)
