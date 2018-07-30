@@ -426,6 +426,8 @@ class GetPanddaMaps(luigi.Task):
         pandda_events = PanddaEvent.objects.filter(crystal=crystal)
 
         for event in pandda_events:
+            if not os.path.isdir(proasis_crystal_directory):
+                os.makedirs(proasis_crystal_directory)
             shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
             shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
 
@@ -700,7 +702,4 @@ class CheckLigands(luigi.Task):
             r_id.append(hit.refinement_id)
 
         return [GetLigandList(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
-
-    def run(self):
-        return UploadHits(date=self.date, hit_directory=self.hit_directory)
 
