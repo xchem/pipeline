@@ -111,13 +111,17 @@ class InitDBEntries(luigi.Task):
                     ligand_list = None
 
                 if ligand_list:
+                    if entry:
+                        proasis_hit = entry
+                    if proasis_hit_entry:
+                        proasis_hit = proasis_hit_entry[0]
                     unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
                     # save ligand list to proasis hit object
-                    proasis_hit_entry[0].ligand_list = str(unique_ligands)
-                    proasis_hit_entry[0].save()
+                    proasis_hit.ligand_list = str(unique_ligands)
+                    proasis_hit.save()
                 else:
                     print('Deleting entry with no LIGANDS!')
-                    proasis_hit_entry[0].delete()
+                    proasis_hit[0].delete()
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 print(dimple.count())
