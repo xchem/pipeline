@@ -12,6 +12,7 @@ from functions import misc_functions
 from django.db import transaction
 from functions import db_functions
 from functions import proasis_api_funcs
+from transfer_proasis import UploadHit
 
 
 def transfer_file(data_file):
@@ -217,6 +218,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 class TransferChangedDataFile(luigi.Task):
     data_file = luigi.Parameter()
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
         return CheckFiles(soak_db_filepath=self.data_file)
@@ -235,10 +237,15 @@ class TransferChangedDataFile(luigi.Task):
             crystals = Crystal.objects.filter(visit=soakdb_query)
 
             for crystal in crystals:
+                refinement = Refinement.objects.get(crystal_name=crystal)
                 proasis_hits = ProasisHits.objects.filter(crystal_name=crystal)
+
                 if proasis_hits:
                     for hit in proasis_hits:
                         if hit.strucid:
+                            os.remove(UploadHit(
+                                hit_directory=self.hit_directory, crystal_id=crystal.pk,
+                                refinement_id=refinement.pk).output().path)
                             proasis_api_funcs.delete_structure(hit.strucid)
 
             soakdb_query.delete()
