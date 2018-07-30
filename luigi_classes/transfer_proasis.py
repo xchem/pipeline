@@ -236,6 +236,7 @@ class AddLead(luigi.Task):
         multiple = int(round(count / 3) * 3)
         count = 0
         for i in range(3, multiple):
+            print(len(str(res_list[i])))
             if count == 0:
                 res_string += alt_lig_option
             if count <= 1:
