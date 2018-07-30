@@ -715,12 +715,13 @@ class CheckLigands(luigi.Task):
 
 
 class StartProasis(luigi.WrapperTask):
-
+    date = luigi.DateParameter(default=datetime.date.today())
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     def requires(self):
-        yield InitDBEntries()
-        yield UploadLeads()
-        yield CheckLigands()
-        yield UploadHits()
+        yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
+        yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
+        yield CheckLigands(date=self.date, hit_directory=self.hit_directory)
+        yield UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
         pass
