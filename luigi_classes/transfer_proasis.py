@@ -535,6 +535,8 @@ class GenerateSdf(luigi.Task):
         return luigi.LocalTarget(os.path.join(proasis_crystal_directory, str(crystal_name + '.sdf')))
 
     def run(self):
+        if not os.path.isdir(os.path.join(self.hit_directory, target_name, crystal_name, 'input/')):
+            os.mkdirs(os.path.join(self.hit_directory, target_name, crystal_name, 'input/'))
         crystal = Crystal.objects.get(pk=self.crystal_id)
         crystal_name = crystal.crystal_name
         smiles = crystal.compound.smiles
