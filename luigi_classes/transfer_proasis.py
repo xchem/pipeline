@@ -198,8 +198,7 @@ class AddLead(luigi.Task):
                         # get the chain that the residue belongs to
                         chain = Residue.Residue.get_parent(parent)
                         # if statements for fussy proasis formatting
-                    if len(str(parent.get_id()[1])) == 4:
-                        space = ''
+
                     if len(str(parent.get_id()[1])) == 3:
                         space = ' '
                     if len(str(parent.get_id()[1])) == 2:
@@ -213,8 +212,17 @@ class AddLead(luigi.Task):
                     continue
 
         res_list = (list(set(res_list)))
-        lig1 = str("'" + str(res_list[0]) + ' :' + str(res_list[1]) + ' :'
-                   + str(res_list[2]) + " ' ")
+        colon = ' :'
+        if len(str(res_list[0]))==4:
+            colon = ':'
+        lig1 = str("'" + str(res_list[0]) + colon)
+        if len(str(res_list[1]))==4:
+            colon = ':'
+        lig1 += str(str(res_list[1]) + colon)
+        close = " ' "
+        if len(str(res_list[2]))==4:
+            close = "' "
+        lig1 += str(str(res_list[2]) + close)
 
         # some faff to get rid of waters and add remaining ligands in multiples of 3 - proasis is fussy
         alt_lig_option = " -o '"
@@ -231,10 +239,16 @@ class AddLead(luigi.Task):
             if count == 0:
                 res_string += alt_lig_option
             if count <= 1:
-                res_string += str(res_list[i] + ' ,')
+                if len(str(res_list[i])) == 9:
+                    res_string += str(res_list[i] + ' ,')
+                else:
+                    res_string += str(res_list[i] + ' ,')
                 count += 1
             elif count == 2:
-                res_string += str(res_list[i] + " '")
+                if len(str(res_list[i])) == 9:
+                    res_string += str(res_list[i] + "'")
+                else:
+                    res_string += str(res_list[i] + " '")
                 full_res_string = full_res_string + res_string
                 count = 0
 
