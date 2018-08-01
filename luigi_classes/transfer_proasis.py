@@ -239,6 +239,7 @@ class AddLead(luigi.Task):
                     continue
 
         res_list = (list(set(res_list)))
+        print(res_list)
         colon = ' :'
         if len(str(res_list[0])) >= 4:
             colon = ':'
