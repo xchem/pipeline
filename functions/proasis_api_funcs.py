@@ -87,6 +87,8 @@ def count_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
 
     all_projects = dict_projects['ALLPROJECTS']
 
+    ids=[]
+
     for project in all_projects:
         project_name = str(project['project'])
         print(project_name)
@@ -94,9 +96,11 @@ def count_all_inhouse(exception_list=['Zitzmann', 'Ali', 'CMGC_Kinases']):
             continue
         else:
             strucids = get_strucids_from_project(str(project_name))
+            for struc in strucids:
+                ids.append(struc)
             count+=len(strucids)
 
-    return count
+    return ids, count
 
 def get_struc_mtz(strucid, out_dir):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
