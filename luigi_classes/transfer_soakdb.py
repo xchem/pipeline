@@ -13,7 +13,7 @@ from functions import misc_functions
 from django.db import transaction
 from functions import db_functions
 from functions import proasis_api_funcs
-from transfer_proasis import UploadHit
+from .transfer_proasis import UploadHit
 
 
 def transfer_file(data_file):
