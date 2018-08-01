@@ -13,7 +13,7 @@ from functions import misc_functions
 from django.db import transaction
 from functions import db_functions
 from functions import proasis_api_funcs
-from transfer_proasis import UploadHit
+from . import transfer_proasis
 
 
 def transfer_file(data_file):
@@ -247,7 +247,7 @@ class TransferChangedDataFile(luigi.Task):
 
                 if proasis_hit:
                     if proasis_hit.strucid:
-                        os.remove(UploadHit(
+                        os.remove(transfer_proasis.UploadHit(
                             hit_directory=self.hit_directory, crystal_id=crystal.pk,
                             refinement_id=refinement.pk).output().path)
                         proasis_api_funcs.delete_structure(proasis_hit.strucid)
