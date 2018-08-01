@@ -188,7 +188,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
     # output is just a log file
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/transfer_logs/fedids_%Y%m%d.txt'))
+        return luigi.LocalTarget(self.date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt'))
 
     # transfers data to a central postgres db
     def run(self):
@@ -284,7 +284,8 @@ class TransferNewDataFile(luigi.Task):
 
 
 class StartTransfers(luigi.Task):
-    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    date = luigi.DateParameter(default=datetime.date.today())
+    # date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def get_file_list(self, status_code):
@@ -306,7 +307,7 @@ class StartTransfers(luigi.Task):
                    for datafile in changed_list]
 
     def output(self):
-        return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
+        return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date.strftime("%Y%m%d%H")) + '.done')
 
     def run(self):
         with self.output().open('w') as f:
