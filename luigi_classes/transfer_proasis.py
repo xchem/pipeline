@@ -230,6 +230,8 @@ class AddLead(luigi.Task):
                         space = ' '
                     if len(str(parent.get_id()[1])) <= 2:
                         space = '  '
+                    if len(str(parent.get_id()[1])) == 1:
+                        space = '   '
                     if 'HOH' not in str(parent.get_resname()):
                         res = (
                                 str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
