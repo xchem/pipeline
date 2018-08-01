@@ -186,7 +186,7 @@ class GetInteractionJSON(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return pass
+        pass
             # CreateMolFile(
             # hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
