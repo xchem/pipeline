@@ -1,6 +1,7 @@
 import luigi
 import setup_django
 import os
+import json
 from db.models import *
 from functions import proasis_api_funcs
 import openbabel
@@ -179,25 +180,31 @@ class CreateNoBufAltLocs(luigi.Task):
         pass
 
 
-class CreateMolFiles(luigi.Task):
-
-    def requires(self):
-        return GetSDF()
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
 class GetInteractionJSON(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
 
     def requires(self):
-        pass
+        return pass
+            # CreateMolFile(
+            # hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal_name = proasis_hit.crystal_name.crystal_name
+        target_name = proasis_hit.crystal_name.target.target_name
+        return luigi.LocalTarget(os.path.join(
+            self.hit_directory, target_name, crystal_name, str(crystal_name + '_contacts.json')))
 
     def run(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        strucid = proasis_hit.strucid
+
+        url = str("http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/sc/" + str(strucid) +
+                  "?strucsource=inh&plain=1")
+
+        json_string_scorpion = proasis_api_funcs.get_json(url)
+
+        with open(self.output().path, 'w') as outfile:
+            json.dump(json_string_scorpion, outfile)
