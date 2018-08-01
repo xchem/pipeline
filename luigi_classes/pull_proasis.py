@@ -207,4 +207,4 @@ class GetInteractionJSON(luigi.Task):
         json_string_scorpion = proasis_api_funcs.get_json(url)
 
         with open(self.output().path, 'w') as outfile:
-            json.dump(json_string_scorpion, outfile)
+            json.dump(json_string_scorpion, outfile, ensure_ascii=False)
