@@ -228,7 +228,7 @@ class AddLead(luigi.Task):
 
                     if len(str(parent.get_id()[1])) >= 3:
                         space = ' '
-                    if len(str(parent.get_id()[1])) <= 2:
+                    if len(str(parent.get_id()[1])) == 2:
                         space = '  '
                     if len(str(parent.get_id()[1])) == 1:
                         space = '   '
