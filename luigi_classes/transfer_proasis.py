@@ -1,5 +1,5 @@
 import luigi
-import luigi_classes.transfer_soakdb as transfer_soakdb
+import transfer_soakdb
 import datetime
 import subprocess
 import os
