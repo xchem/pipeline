@@ -16,7 +16,8 @@ class StartPipeline(luigi.WrapperTask):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
-                 UploadHits(date=self.date, hit_directory=self.hit_directory).output().path]
+                 UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+                 os.path.join(os.getcwd(), 'logs/pipe.done')]
         for path in paths:
             try:
                 os.remove(path)
@@ -29,7 +30,8 @@ class StartPipeline(luigi.WrapperTask):
         yield UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
-        pass
+        return luigi.LocalTarget('logs/pipe.done')
 
     def run(self):
-        pass
+        with self.output().open('w') as f:
+            f.write('')
