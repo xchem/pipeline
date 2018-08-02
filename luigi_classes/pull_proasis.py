@@ -27,7 +27,19 @@ class GetCurated(luigi.Task):
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         strucid = proasis_hit.strucid
+        ligands = eval(proasis_hit.ligand_list)
+        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
         curated_pdb = proasis_api_funcs.get_struc_file(strucid, self.output().path, 'curatedpdb')
+
+        for lig in ligand_list:
+            proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
+                                                           crystal=proasis_hit.crystal_name,
+                                                           ligand=lig,
+                                                           root=os.path.join(self.hit_directory,
+                                                                             proasis_hit.crystal_name.target.target_name),
+                                                           start=proasis_hit.crystal_name.crystal_name,
+                                                           curated=str(proasis_hit.crystal_name.crystal_name + '.pdb'))
+            proasis_out[0].save()
 
 
 class CreateApo(luigi.Task):
@@ -55,6 +67,12 @@ class CreateApo(luigi.Task):
             else:
                 with open(self.output().path, 'a') as f:
                     f.write(line)
+
+        out_entries = ProasisOut.objects.filter(proasis=proasis_hit)
+
+        for entry in out_entries:
+            entry.apo = str(self.output().path).split('/')[-1]
+            entry.save()
 
 
 class GetMaps(luigi.Task):

@@ -329,8 +329,9 @@ class ProasisOut(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
     ligand = models.TextField(blank=False, null=False)
-    root = models.TextField(blank=True, null=True) # root directory for all crystals/projects
+    root = models.TextField(blank=True, null=True) # root directory for all crystals in this project (target)
     start = models.TextField(blank=True, null=True) # directory name for this crystal within root
+    curated = models.TextField(blank=True, null=True)
     apo = models.TextField(blank=True, null=True)
     mol = models.TextField(blank=True, null=True)
     mol2 = models.TextField(blank=True, null=True)
