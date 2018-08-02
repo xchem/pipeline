@@ -337,10 +337,10 @@ class ProasisOut(models.Model):
     mol = models.TextField(blank=True, null=True) # done
     mol2 = models.TextField(blank=True, null=True) # done
     h_mol = models.TextField(blank=True, null=True) # done
-    stripped = models.TextField(blank=True, null=True)
+    stripped = models.TextField(blank=True, null=True) # done
     event = models.TextField(blank=True, null=True)
     mtz = models.TextField(blank=True, null=True)
-    contacts = models.TextField(blank=True, null=True)
+    contacts = models.TextField(blank=True, null=True) # done
     acc = models.TextField(blank=True, null=True)
     don = models.TextField(blank=True, null=True)
     lip = models.TextField(blank=True, null=True)

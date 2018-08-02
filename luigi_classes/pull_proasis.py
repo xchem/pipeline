@@ -311,7 +311,7 @@ class CreateStripped(luigi.Task):
 
         proasis_out = ProasisOut.objects.filter(proasis=proasis_hit)
         for o in proasis_out:
-            o.stripped = self.output().path
+            o.stripped = self.output().path.split('/')[-1]
             o.save()
 
 
