@@ -217,42 +217,6 @@ class CreateMolTwoFile(luigi.Task):
             o.save()
 
 
-
-# class CreateHMol(luigi.Task):
-#     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-#     crystal_id = luigi.Parameter()
-#     refinement_id = luigi.Parameter()
-#
-#     def requires(self):
-#         return CreateMolFile(
-#             hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
-#
-#     def output(self):
-#         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-#         crystal_name = proasis_hit.crystal_name.crystal_name
-#         target_name = proasis_hit.crystal_name.target.target_name
-#         return luigi.LocalTarget(os.path.join(
-#             self.hit_directory, target_name, crystal_name, str(crystal_name + '_h.mol')))
-#
-#     def run(self):
-#         mol_file = self.input().path
-#         rd_mol = Chem.MolFromMolFile(mol_file, removeHs=False)
-#         h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
-#         Chem.MolToMolFile(h_rd_mol, self.output().path)
-
-
-class CreateNoBufAltLocs(luigi.Task):
-
-    def requires(self):
-        pass
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
 class GetInteractionJSON(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
