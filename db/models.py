@@ -323,3 +323,31 @@ class ProasisPandda(models.Model):
     class Meta:
         db_table = 'proasis_pandda'
         unique_together = ('crystal', 'hit', 'event')
+
+
+class ProasisOut(models.model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
+    ligand = models.TextField(blank=False, null=False)
+    root = models.TextField(blank=True, null=True) # root directory for all crystals/projects
+    start = models.TextField(blank=True, null=True) # directory name for this crystal within root
+    apo = models.TextField(blank=True, null=True)
+    mol = models.TextField(blank=True, null=True)
+    mol2 = models.TextField(blank=True, null=True)
+    h_mol = models.TextField(blank=True, null=True)
+    stripped = models.TextField(blank=True, null=True)
+    event = models.TextField(blank=True, null=True)
+    mtz = models.TextField(blank=True, null=True)
+    contacts = models.TextField(blank=True, null=True)
+    acc = models.TextField(blank=True, null=True)
+    don = models.TextField(blank=True, null=True)
+    lip = models.TextField(blank=True, null=True)
+    pmap = models.TextField(blank=True, null=True)
+    ppdb = models.TextField(blank=True, null=True)
+    pjson = models.TextField(blank=True, null=True)
+    pmtz = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'proasis_out'
+        unique_together = ('crystal', 'proasis', 'ligand')
+
