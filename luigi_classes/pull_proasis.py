@@ -93,19 +93,23 @@ class GetMaps(luigi.Task):
 
 class GetSDF(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    crystal_id = luigi.Parameter()
-    refinement_id = luigi.Parameter()
+    proasis_out_id = luigi.Parameter()
 
     def requires(self):
-        return CreateApo(
-            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+        pass
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + '.sdf')))
+        proasis_out = ProasisOut.objects.filter(pk=self.proasis_out_id)
+        ligs = [o.ligand for o in proasis_out]
+        root = [o.root for o in proasis_out]
+        start = [o.start for o in proasis_out]
+        return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l + '.sdf')))
+                for (r, s, l) in zip(root, start, ligs)]
+
+        # crystal_name = proasis_hit.crystal_name.crystal_name
+        # target_name = proasis_hit.crystal_name.target.target_name
+        # return luigi.LocalTarget(os.path.join(
+        #     self.hit_directory, target_name, crystal_name, str(crystal_name + '.sdf')))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
