@@ -255,7 +255,7 @@ def get_strucid_json(strucid):
 
 def get_lig_sdf(strucid, ligand):
     url = str(str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/sdf/' + strucid))
-    data = str('''{"username":"uzw12877","password":"uzw12877","ligand":"{}"}''').format(ligand)
+    data = str('{"username":"uzw12877","password":"uzw12877","ligand":"' + ligand + '"}')
     r = requests.get(url, data=data)
     json_string = r.json()
 
