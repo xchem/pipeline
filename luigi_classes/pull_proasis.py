@@ -11,6 +11,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from duck.steps.chunk import remove_prot_buffers_alt_locs
 from . import transfer_proasis
+import datetime
 
 
 class GetCurated(luigi.Task):
@@ -282,6 +283,7 @@ class CreateStripped(luigi.Task):
 
 class GetOutFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    date = luigi.DateParameter(default=datetime.date.today())
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/out/proasis_out_%Y%m%d%H.txt'))

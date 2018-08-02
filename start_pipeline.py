@@ -29,7 +29,7 @@ class StartPipeline(luigi.WrapperTask):
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         yield UploadHits(date=self.date, hit_directory=self.hit_directory)
-        yield GetOutFiles(hit_directory=self.hit_directory)
+        yield GetOutFiles(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
         return luigi.LocalTarget('logs/pipe.done')
