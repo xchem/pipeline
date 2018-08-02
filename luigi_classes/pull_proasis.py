@@ -10,6 +10,7 @@ import openbabel
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from duck.steps.chunk import remove_prot_buffers_alt_locs
+from . import transfer_proasis
 
 
 class GetCurated(luigi.Task):
@@ -18,7 +19,8 @@ class GetCurated(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        pass
+        return transfer_proasis.AddFiles(hit_directory=self.hit_directory, crystal_id=self.crystal_id,
+                                         refinement_id=self.refinement_id)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -100,7 +102,7 @@ class GetSDFS(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        pass
+        return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
         proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
@@ -223,8 +225,7 @@ class GetInteractionJSON(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return CreateMolFile(
-            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+        return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
         proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
@@ -279,3 +280,27 @@ class CreateStripped(luigi.Task):
             o.save()
 
 
+class GetOutFiles(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+
+    def requires(self):
+        proasis_hits = ProasisHits.objects.exclude(strucid=None)
+        crys_ids = []
+        ref_ids = []
+
+        for h in proasis_hits:
+            crys_ids.append(h.crystal_name_id)
+            ref_ids.append(h.refinement_id)
+
+        return [CreateMolTwoFile(hit_directory=self.hit_directory,
+                                 crystal_id=c,
+                                 refinement_id=r)
+                for (c, r) in zip(crys_ids, ref_ids)], \
+               [GetInteractionJSON(hit_directory=self.hit_directory,
+                                   crystal_id=c,
+                                   refinement_id=r)
+                for (c, r) in zip(crys_ids, ref_ids)], \
+               [CreateStripped(hit_directory=self.hit_directory,
+                               crystal_id=c,
+                               refinement_id=r)
+                for (c, r) in zip(crys_ids, ref_ids)]
