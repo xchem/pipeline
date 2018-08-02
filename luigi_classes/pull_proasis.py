@@ -127,27 +127,37 @@ class CreateMolFile(luigi.Task):
     refinement_id = luigi.Parameter()
 
     def requires(self):
-        return GetSDF(
+        return GetSDFS(
             hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + '.mol')))
+        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                                                                refinement_id=self.refinement_id))
+        ligs = [o.ligand for o in proasis_out]
+        root = [o.root for o in proasis_out]
+        start = [o.start for o in proasis_out]
+        return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '.mol')))
+                for (r, s, l) in zip(root, start, ligs)]
 
     def run(self):
-        ligand = self.input().path
+        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                                                                refinement_id=self.refinement_id))
+        for o in proasis_out:
+            lig = o.ligand
+            infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '.sdf'))
+            outfile = infile.replace('sdf', 'mol')
 
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('sdf', 'mol')
+            obConv = openbabel.OBConversion()
+            obConv.SetInAndOutFormats('sdf', 'mol')
 
-        mol = openbabel.OBMol()
+            mol = openbabel.OBMol()
 
-        # read pdb and write mol2
-        obConv.ReadFile(mol, ligand)
-        obConv.WriteFile(mol, self.output().path)
+            # read pdb and write mol2
+            obConv.ReadFile(mol, infile)
+            obConv.WriteFile(mol, outfile)
+
+            o.mol = outfile.split('/')[-1]
+            o.save()
 
 
 class CreateMolTwoFile(luigi.Task):
