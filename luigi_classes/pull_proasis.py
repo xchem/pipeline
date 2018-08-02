@@ -189,9 +189,13 @@ class CreateMolTwoFile(luigi.Task):
 
             rd_mol = Chem.MolFromMolFile(infile, removeHs=False)
             h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
+
             Chem.MolToMolFile(h_rd_mol, outfile.replace('.mol2', '_h.mol'))
             o.h_mol = outfile.replace('.mol2', '_h.mol').split('/')[-1]
             rd_mol = Chem.MolFromMolFile(outfile.replace('.mol2', '_h.mol'), removeHs=False)
+
+            infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '_h.mol'))
+
             net_charge = AllChem.GetFormalCharge(rd_mol)
             command_string = str("ssh uzw12877@nx.diamond.ac.uk; source activate duck; antechamber -i " + infile +
                       " -fi mdl -o " + outfile + " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
