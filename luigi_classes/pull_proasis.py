@@ -2,6 +2,7 @@ import luigi
 import setup_django
 import os
 import json
+import subprocess
 from db.models import *
 from functions import proasis_api_funcs
 import openbabel
@@ -170,19 +171,38 @@ class CreateMolTwoFile(luigi.Task):
             hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + '.mol2')))
+        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                                                                refinement_id=self.refinement_id))
+        ligs = [o.ligand for o in proasis_out]
+        root = [o.root for o in proasis_out]
+        start = [o.start for o in proasis_out]
+        return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '.mol2')))
+                for (r, s, l) in zip(root, start, ligs)]
 
     def run(self):
-        mol_file = self.input().path
-        rd_mol = Chem.MolFromMolFile(mol_file, removeHs=False)
-        net_charge = AllChem.GetFormalCharge(rd_mol)
-        out_file = self.output().path
-        os.system("antechamber -i " + mol_file + " -fi mdl -o " + out_file +
-                  " -fo mol2 -at sybyl  -c bcc -nc "+str(net_charge))
+        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                                                                refinement_id=self.refinement_id))
+        for o in proasis_out:
+            lig = o.ligand
+            infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '.mol'))
+            outfile = infile.replace('mol', 'mol2')
+
+            rd_mol = Chem.MolFromMolFile(infile, removeHs=False)
+            net_charge = AllChem.GetFormalCharge(rd_mol)
+            command_string = str("ssh uzw12877@nx.diamond.ac.uk; source activate duck; antechamber -i " + infile +
+                      " -fi mdl -o " + outfile + " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
+            process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+            out = out.decode('ascii')
+            if err:
+                err = err.decode('ascii')
+
+            print(out)
+            print(err)
+
+            o.mol2 = outfile.split('/')[-1]
+            o.save()
+
 
 
 class CreateHMol(luigi.Task):
