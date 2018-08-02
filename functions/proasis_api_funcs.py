@@ -279,3 +279,31 @@ def get_lig_sdf(strucid, ligand, outfile):
         except:
             outfile = None
     return outfile
+
+
+def get_lig_interactions(strucid, ligand, outfile):
+    url = str(str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/sc/' + strucid + '?plain=1'))
+    data = str('{"username":"uzw12877","password":"uzw12877","ligand":"' + ligand + '"}')
+    r = requests.get(url, data=data)
+    json_string = r.json()
+    file_dict = dict_from_string(json_string)
+    if os.path.isfile(outfile):
+        os.remove(outfile)
+
+    command_string = ('touch ' + outfile)
+    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
+
+    print(out)
+    print(err)
+
+    with open(outfile, 'a') as f:
+        try:
+            for line in file_dict['output']:
+                f.write(line)
+        except:
+            outfile = None
+    return outfile

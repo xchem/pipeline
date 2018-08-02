@@ -278,10 +278,9 @@ class GetInteractionJSON(luigi.Task):
             root = o.root
             start = o.start
             outfile = os.path.join(root, start, str(start + '_' + lig.replace(' ', '') + '_contacts.json'))
-            out = proasis_api_funcs.get_lig_sdf(strucid, lig, outfile)
+            out = proasis_api_funcs.get_lig_interactions(strucid, lig, outfile)
             if out:
                 o.contacts = out.split('/')[-1]
             else:
                 raise Exception('contacts json not produced!')
             o.save()
-            
