@@ -283,6 +283,9 @@ class CreateStripped(luigi.Task):
 class GetOutFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
+    def output(self):
+        return luigi.LocalTarget(self.date.strftime('logs/proasis/out/proasis_out_%Y%m%d%H.txt'))
+
     def requires(self):
         proasis_hits = ProasisHits.objects.exclude(strucid=None)
         crys_ids = []
@@ -304,3 +307,7 @@ class GetOutFiles(luigi.Task):
                                crystal_id=c,
                                refinement_id=r)
                 for (c, r) in zip(crys_ids, ref_ids)]
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
