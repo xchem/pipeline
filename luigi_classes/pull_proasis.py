@@ -177,6 +177,8 @@ class CreateMolTwoFile(luigi.Task):
         root = [o.root for o in proasis_out]
         start = [o.start for o in proasis_out]
         return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '.mol2')))
+                for (r, s, l) in zip(root, start, ligs)], \
+               [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '_h.mol')))
                 for (r, s, l) in zip(root, start, ligs)]
 
     def run(self):
