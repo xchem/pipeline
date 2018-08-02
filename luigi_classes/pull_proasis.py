@@ -52,7 +52,11 @@ class CreateApo(luigi.Task):
             hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
 
     def output(self):
-        pass
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal_name = proasis_hit.crystal_name.crystal_name
+        target_name = proasis_hit.crystal_name.target.target_name
+        return luigi.LocalTarget(os.path.join(
+            self.hit_directory, target_name, crystal_name, str(crystal_name + '_apo.pdb')))
 
     def run(self):
         curated_pdb = self.input().path
