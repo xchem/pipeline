@@ -282,7 +282,7 @@ def get_lig_sdf(strucid, ligand, outfile):
 
 
 def get_lig_interactions(strucid, ligand, outfile):
-    url = str(str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/vc/' + strucid))
+    url = str(str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/sc/' + strucid))
     data = str('{"username":"uzw12877","password":"uzw12877","ligand":"' + ligand + '"}')
     r = requests.get(url, data=data)
     json_string = r.json()
