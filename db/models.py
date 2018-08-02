@@ -326,17 +326,17 @@ class ProasisPandda(models.Model):
 
 
 class ProasisOut(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
-    ligand = models.TextField(blank=False, null=False)
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # done
+    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE) # done
+    ligand = models.TextField(blank=False, null=False) # done
     root = models.TextField(blank=True, null=True) # root directory for all crystals in this project (target)
     start = models.TextField(blank=True, null=True) # directory name for this crystal within root
-    curated = models.TextField(blank=True, null=True)
-    sdf = models.TextField(blank=True, null=True)
-    apo = models.TextField(blank=True, null=True)
-    mol = models.TextField(blank=True, null=True)
-    mol2 = models.TextField(blank=True, null=True)
-    h_mol = models.TextField(blank=True, null=True)
+    curated = models.TextField(blank=True, null=True) # done
+    sdf = models.TextField(blank=True, null=True) # done
+    apo = models.TextField(blank=True, null=True) # done
+    mol = models.TextField(blank=True, null=True) # done
+    mol2 = models.TextField(blank=True, null=True) # done
+    h_mol = models.TextField(blank=True, null=True) # done
     stripped = models.TextField(blank=True, null=True)
     event = models.TextField(blank=True, null=True)
     mtz = models.TextField(blank=True, null=True)

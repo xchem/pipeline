@@ -2,12 +2,14 @@ import luigi
 import setup_django
 import os
 import json
+import shutil
 import subprocess
 from db.models import *
 from functions import proasis_api_funcs
 import openbabel
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from duck.steps.chunk import remove_prot_buffers_alt_locs
 
 
 class GetCurated(luigi.Task):
@@ -284,3 +286,32 @@ class GetInteractionJSON(luigi.Task):
             else:
                 raise Exception('contacts json not produced!')
             o.save()
+
+
+class CreateStripped(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+
+    def requires(self):
+        return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        crystal_name = proasis_hit.crystal_name.crystal_name
+        target_name = proasis_hit.crystal_name.target.target_name
+        return luigi.LocalTarget(os.path.join(
+            self.hit_directory, target_name, crystal_name, str(crystal_name + '_no_buffer_altlocs.pdb')))
+
+    def run(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+
+        tmp_file = remove_prot_buffers_alt_locs(self.input().path)
+        shutil.move(os.path.join(os.getcwd(), tmp_file), self.output().path)
+
+        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit)
+        for o in proasis_out:
+            o.stripped = self.output().path
+            o.save()
+
+
