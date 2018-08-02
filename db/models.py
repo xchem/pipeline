@@ -325,7 +325,7 @@ class ProasisPandda(models.Model):
         unique_together = ('crystal', 'hit', 'event')
 
 
-class ProasisOut(models.model):
+class ProasisOut(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
     ligand = models.TextField(blank=False, null=False)
