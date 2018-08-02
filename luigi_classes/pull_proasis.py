@@ -206,7 +206,7 @@ class CreateMolTwoFile(luigi.Task):
             # print(err)
             #
             # o.mol2 = outfile.split('/')[-1]
-            # o.save()
+            o.save()
 
 
 
