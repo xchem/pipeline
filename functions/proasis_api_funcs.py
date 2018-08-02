@@ -258,5 +258,7 @@ def get_lig_sdf(strucid, ligand):
     data = str('{"username":"uzw12877","password":"uzw12877","ligand":"' + ligand + '"}')
     r = requests.get(url, data=data)
     json_string = r.json()
+    file_dict = dict_from_string(json_string)
+    print(file_dict)
 
     return json_string
