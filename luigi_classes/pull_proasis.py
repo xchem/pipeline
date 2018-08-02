@@ -197,19 +197,19 @@ class CreateMolTwoFile(luigi.Task):
             infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '_h.mol'))
 
             net_charge = AllChem.GetFormalCharge(rd_mol)
-            command_string = str("ssh uzw12877@nx.diamond.ac.uk; source activate duck; antechamber -i " + infile +
-                      " -fi mdl -o " + outfile + " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
+            command_string = str("antechamber -i " + infile + " -fi mdl -o " + outfile +
+                                 " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
             print(command_string)
-            # process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # out, err = process.communicate()
-            # out = out.decode('ascii')
-            # if err:
-            #     err = err.decode('ascii')
-            #
-            # print(out)
-            # print(err)
-            #
-            # o.mol2 = outfile.split('/')[-1]
+            process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+            out = out.decode('ascii')
+            if err:
+                err = err.decode('ascii')
+
+            print(out)
+            print(err)
+
+            o.mol2 = outfile.split('/')[-1]
             o.save()
 
 
