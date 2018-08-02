@@ -253,12 +253,29 @@ def get_strucid_json(strucid):
     return out_dict
 
 
-def get_lig_sdf(strucid, ligand):
+def get_lig_sdf(strucid, ligand, outfile):
     url = str(str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/sdf/' + strucid))
     data = str('{"username":"uzw12877","password":"uzw12877","ligand":"' + ligand + '"}')
     r = requests.get(url, data=data)
     json_string = r.json()
     file_dict = dict_from_string(json_string)
-    print(file_dict)
+    if os.path.isfile(outfile):
+        os.remove(outfile)
 
-    return json_string
+    command_string = ('touch ' + outfile)
+    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+    out = out.decode('ascii')
+    if err:
+        err = err.decode('ascii')
+
+    print(out)
+    print(err)
+
+    with open(outfile, 'a') as f:
+        try:
+            for line in file_dict['output']:
+                f.write(line)
+        except:
+            outfile = None
+    return outfile

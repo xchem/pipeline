@@ -332,6 +332,7 @@ class ProasisOut(models.Model):
     root = models.TextField(blank=True, null=True) # root directory for all crystals in this project (target)
     start = models.TextField(blank=True, null=True) # directory name for this crystal within root
     curated = models.TextField(blank=True, null=True)
+    sdf = models.TextField(blank=True, null=True)
     apo = models.TextField(blank=True, null=True)
     mol = models.TextField(blank=True, null=True)
     mol2 = models.TextField(blank=True, null=True)
