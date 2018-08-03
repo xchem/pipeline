@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import include, url
 from rest_framework_swagger.views import get_swagger_view
+from .swagger_schema import SwaggerSchemaView
 
 schema_view = get_swagger_view(title='Pipeline API')
 
 urlpatterns = [
-    url(r'^$', schema_view),
+    url(r'^$', SwaggerSchemaView.as_view()),
     url(r"^admin/", admin.site.urls),
     url(r"^api/", include("api.urls")),
     url(r"^overview/", include("overview.urls"))
