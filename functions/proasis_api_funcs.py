@@ -231,8 +231,8 @@ def get_struc_file(strucid, outfile, type):
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
     out = out.decode('ascii')
-    # if err:
-    #     err = err.decode('ascii')
+    if err:
+        err = err.decode('ascii')
 
     print(out)
 
