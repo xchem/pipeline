@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import include, url
 from rest_framework_swagger.views import get_swagger_view
-from .swagger_schema import SwaggerSchemaView
+from swagger_schema import SwaggerSchemaView
 
 schema_view = get_swagger_view(title='Pipeline API')
 
