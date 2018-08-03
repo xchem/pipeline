@@ -44,7 +44,22 @@ class ReferenceView(viewsets.ReadOnlyModelViewSet):
 
 
 class SoakdbFilesView(viewsets.ReadOnlyModelViewSet):
-
+    """
+    description: This API deletes/uninstalls a device.
+    parameters:
+      - name: name
+        type: string
+        required: true
+        location: form
+      - name: bloodgroup
+        type: string
+        required: true
+        location: form
+      - name: birthmark
+        type: string
+        required: true
+        location: form
+    """
     queryset = SoakdbFiles.objects.filter()
     serializer_class = SoakdbFilesSerializer
     filter_fields = (
