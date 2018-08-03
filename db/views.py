@@ -7,11 +7,13 @@ from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProc
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
-    """Target: target names
+    """
+    Target: target names
     Filters:
         - target_name
     Returns:
-        - target_name"""
+        - target_name
+    """
     queryset = Target.objects.filter()
     serializer_class = TargetSerializer
     filter_fields = (
@@ -20,7 +22,9 @@ class TargetView(viewsets.ReadOnlyModelViewSet):
 
 
 class CompoundsView(viewsets.ReadOnlyModelViewSet):
-    """Compounds: smiles strings for compounds"""
+    """
+    Compounds: smiles strings for compounds
+    """
     queryset = Compounds.objects.filter()
     serializer_class = CompoundsSerializer
     filter_fields = (
@@ -29,7 +33,9 @@ class CompoundsView(viewsets.ReadOnlyModelViewSet):
 
 
 class ReferenceView(viewsets.ReadOnlyModelViewSet):
-    """Reference: reference pdb files"""
+    """
+    Reference: reference pdb files
+    """
     queryset = Reference.objects.filter()
     serializer_class = ReferenceSerializer
     filter_fields = (
