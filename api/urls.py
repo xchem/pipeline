@@ -4,7 +4,7 @@ from rest_framework.authtoken import views as drf_views
 from db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, CrystalView, DataProcessingView, \
     DimpleView, LabView, RefinementView, PanddaAnalysisView, PanddaRunView, PanddaSiteView, PanddaEventView, \
     ProasisOutView
-from rest_framework_swagger.views import get_swagger_view
+# from rest_framework_swagger.views import get_swagger_view
 
 
 router = DefaultRouter()
@@ -24,10 +24,10 @@ router.register(r'pandda_site', PanddaSiteView)
 router.register(r'pandda_event', PanddaEventView)
 router.register(r'proasis_out', ProasisOutView)
 
-schema_view = get_swagger_view(title='Pipeline API')
+# schema_view = get_swagger_view(title='Pipeline API')
 
 urlpatterns = [
     url(r"^", include(router.urls)),
-    url(r'^$', schema_view),
+    # url(r'^$', schema_view),
     url(r"^auth$", drf_views.obtain_auth_token, name="auth"),
 ]
