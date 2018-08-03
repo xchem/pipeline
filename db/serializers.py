@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
 
 
 class TargetSerializer(serializers.ModelSerializer):
@@ -221,4 +221,34 @@ class PanddaEventSerializer(serializers.ModelSerializer):
             "pandda_model_pdb",
             "pandda_input_mtz",
             "pandda_input_pdb",
+        )
+
+
+class ProasisOutSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProasisOut
+        fields = (
+            "crystal",
+            "proasis",
+            "ligand",
+            "root",
+            "start",
+            "curated",
+            "sdf",
+            "apo",
+            "mol",
+            "mol2",
+            "h_mol",
+            "stripped",
+            "event",
+            "mtz",
+            "contacts",
+            "acc",
+            "don",
+            "lip",
+            "pmap",
+            "ppdb",
+            "pjson",
+            "pmtz",
         )

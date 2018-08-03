@@ -2,7 +2,8 @@ from django.conf.urls import include, url
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views as drf_views
 from db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, CrystalView, DataProcessingView, \
-    DimpleView, LabView, RefinementView, PanddaAnalysisView, PanddaRunView, PanddaSiteView, PanddaEventView
+    DimpleView, LabView, RefinementView, PanddaAnalysisView, PanddaRunView, PanddaSiteView, PanddaEventView, \
+    ProasisOutView
 
 
 router = DefaultRouter()
@@ -20,6 +21,7 @@ router.register(r'pandda_analysis', PanddaAnalysisView)
 router.register(r'pandda_run', PanddaRunView)
 router.register(r'pandda_site', PanddaSiteView)
 router.register(r'pandda_event', PanddaEventView)
+router.register(r'proasis_out', ProasisOutView)
 
 
 urlpatterns = [

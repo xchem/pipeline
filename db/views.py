@@ -1,9 +1,9 @@
 from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSerializer, SoakdbFilesSerializer, \
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
-    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer
+    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer
 from rest_framework import viewsets
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
@@ -166,4 +166,33 @@ class PanddaEventView(viewsets.ReadOnlyModelViewSet):
         "pandda_model_pdb",
         "pandda_input_mtz",
         "pandda_input_pdb",
+    )
+
+
+class ProasisOutView(viewsets.ReadOnlyModelViewSet):
+    queryset = ProasisOut.objects.filter()
+    serializer_class = ProasisOutSerializer
+    filter_fields = (
+        "crystal__crystal_name",
+        "crystal__target__target_name",
+        "crystal__compound__smiles",
+        "crystal__visit__filename",
+        "crystal__visit__proposal__proposal",
+        "crystal__visit__visit",
+        "proasis__strucid",
+        "proasis__crystal_name__crystal_name",
+        "proasis__crystal_name__target__target_name",
+        "proasis__crystal_name__compound__smiles",
+        "proasis__crystal_name__visit__filename",
+        "proasis__crystal_name__visit__proposal__proposal",
+        "proasis__crystal_name__visit__visit",
+        "refinement__crystal_name__crystal_name",
+        "refinement__crystal_name__target__target_name",
+        "refinement__crystal_name__compound__smiles",
+        "refinement__crystal_name__visit__filename",
+        "refinement__crystal_name__visit__proposal__proposal",
+        "refinement__crystal_name__visit__visit",
+        "refinement__outcome",
+        "root",
+        'start',
     )
