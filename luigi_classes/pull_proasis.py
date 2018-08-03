@@ -267,7 +267,7 @@ class CreateStripped(luigi.Task):
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name
         return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + '_no_buffer_altlocs.pdb')))
+            self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + '_no_buffer_altlocs.pdb')))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
