@@ -696,7 +696,7 @@ class WriteBlackLists(luigi.Task):
         return luigi.LocalTarget('logs/blacklists.done')
 
     def run(self):
-        proposal_dict = {'proposal':[], 'strucids':[]}
+        proposal_dict = {'proposal':[], 'strucids':[], 'fedids':[]}
         fedids = []
         all_strucids = []
         for proposal in Proposals.objects.all():
