@@ -248,9 +248,12 @@ class TransferChangedDataFile(luigi.Task):
                 if ProasisHits.objects.filter(crystal_name=crystal).exists():
                     proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
                     if proasis_hit.strucid:
-                        os.remove(transfer_proasis.UploadHit(
-                            hit_directory=self.hit_directory, crystal_id=crystal.pk,
-                            refinement_id=refinement.pk).output().path)
+                        if os.path.isfile(transfer_proasis.UploadHit(
+                                hit_directory=self.hit_directory, crystal_id=crystal.pk,
+                                refinement_id=refinement.pk).output().path):
+                            os.remove(transfer_proasis.UploadHit(
+                                hit_directory=self.hit_directory, crystal_id=crystal.pk,
+                                refinement_id=refinement.pk).output().path)
                         proasis_api_funcs.delete_structure(proasis_hit.strucid)
                         shutil.rmtree(os.path.join(proasis_crystal_directory))
 
