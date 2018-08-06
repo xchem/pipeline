@@ -5,6 +5,7 @@ import setup_django
 import subprocess
 import datetime
 import shutil
+import glob
 from functions import db_functions, misc_functions, pandda_functions
 from db.models import *
 import pandas as pd
@@ -247,16 +248,12 @@ class TransferChangedDataFile(luigi.Task):
 
                 if ProasisHits.objects.filter(crystal_name=crystal).exists():
                     proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
-                    if proasis_hit.strucid:
-                        if os.path.isfile(transfer_proasis.UploadHit(
-                                hit_directory=self.hit_directory, crystal_id=crystal.pk,
-                                refinement_id=refinement.pk).output().path):
-                            os.remove(transfer_proasis.UploadHit(
-                                hit_directory=self.hit_directory, crystal_id=crystal.pk,
-                                refinement_id=refinement.pk).output().path)
-                        proasis_api_funcs.delete_structure(proasis_hit.strucid)
-                        if os.path.isdir(proasis_crystal_directory):
-                            shutil.rmtree(os.path.join(proasis_crystal_directory))
+                    for path in glob.glob(os.path.join(os.getcwd(), 'logs/proasis/hits',
+                                                       str(proasis_hit.crystal_name.crystal_name +
+                                                           '_' + proasis_hit.modifivation_date + '*'))):
+                        os.remove(path)
+                    if os.path.isdir(proasis_crystal_directory):
+                        shutil.rmtree(os.path.join(proasis_crystal_directory))
 
             soakdb_query.delete()
 
