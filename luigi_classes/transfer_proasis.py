@@ -6,6 +6,7 @@ import os
 import shutil
 import re
 import glob
+import csv
 from db.models import *
 from functions import misc_functions, db_functions, proasis_api_funcs
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
@@ -684,5 +685,57 @@ class UploadHits(luigi.Task):
 
     def run(self):
         with self.output().open('w') as f:
+            f.write('')
+
+
+class WriteBlackLists(luigi.Task):
+    def requires(self):
+        return UploadHits()
+
+    def output(self):
+        return luigi.LocalTarget('logs/blacklists.done')
+
+    def run(self):
+        proposal_dict = {'proposal':[], 'strucids':[]}
+        fedids = []
+        all_strucids = []
+        for proposal in Proposals.objects.all():
+
+            feds = proposal.fedids
+            for f in feds:
+                for fed in f.split(','):
+                    tmp_fed = []
+                    tmp_fed.append(fed)
+                    fedids.append(fed)
+            strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal)]
+            all_strucids.extend(strucids)
+
+            proposal_dict['proposal'].append(proposal)
+            proposal_dict['fedids'].append(tmp_fed)
+            proposal_dict['strucids'].append(strucids)
+
+
+        directory_path = '/usr/local/Proasis2/Data/BLACKLIST'
+        fedid_list = list(set(fedids))
+        for fedid in fedid_list:
+            strucid_not_allowed = []
+            for i in range(0, len(proposal_dict['fedids'])):
+                if fedid not in proposal_dict['fedids'][i]:
+                    for strucid in proposal_dict['strucids'][i]:
+                        strucid_not_allowed.append(strucid)
+
+            out_file = str(directory_path + '/' + fedid + '.dat')
+            with open(out_file, 'wb') as writefile:
+                wr = csv.writer(writefile)
+                wr.writerow(strucid_not_allowed)
+
+        with open('/usr/local/Proasis2/Data/BLACKLIST/other_user.dat', 'w') as f:
+            wr = csv.writer(f)
+            wr.writerow(all_strucids)
+
+        with open(str(directory_path + '/uzw12877.dat'),'w') as f:
+            f.write('')
+
+        with self.output().open('wb') as f:
             f.write('')
 

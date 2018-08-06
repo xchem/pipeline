@@ -454,84 +454,85 @@ def check_file_status(filename, bound_pdb):
         return False, ''
 
 
-# def query_and_list(query, proposals_list, proposal_dict, strucid_list):
-#     conn, c = connectDB()
-#     c.execute(query)
-#     rows = c.fetchall()
-#     for row in rows:
-#         try:
-#             proposal = str(row[0]).split('/')[5].split('-')[0]
-#         except:
-#             continue
-#         if proposal not in proposals_list:
-#             proposals_list.append(proposal)
-#             proposal_dict.update({proposal: []})
-#         else:
-#             proposal_dict[proposal].append(str(row[1]))
-#
-#         strucid_list.append(str(row[1]))
-#
-#     conn.close()
-#
-#     return proposals_list, proposal_dict, strucid_list
-#
-# def get_strucid_list():
-#
-#     proposals_list = []
-#     strucid_list = []
-#     proposal_dict = {}
-#
-#     proposals_list, proposal_dict, strucid_list = query_and_list('SELECT bound_conf, strucid FROM proasis_hits',
-#                                                                  proposals_list, proposal_dict, strucid_list)
-#
-#     proposals_list, proposal_dict, strucid_list = query_and_list('SELECT reference_pdb, strucid FROM proasis_leads',
-#                                                                  proposals_list, proposal_dict, strucid_list)
-#
-#     strucids = list(set(strucid_list))
-#
-#     return proposal_dict, strucids
-#
-#
-# def get_fedid_list():
-#     master_list = []
-#     conn, c = connectDB()
-#     c.execute('select fedids from proposals')
-#     rows = c.fetchall()
-#     for row in rows:
-#         if len(row[0]) > 1:
-#             fedid_list = str(row[0]).split(',')
-#             for item in fedid_list:
-#                 master_list.append(item)
-#
-#     final_list = list(set(master_list))
-#     conn.close()
-#     return final_list
-#
-# def create_blacklist(fedid, proposal_dict, dir_path):
-#     search_string=str('%' + fedid + '%')
-#     proposal_list = []
-#     all_proposals = list(set(list(proposal_dict.keys())))
-#     strucid_list = []
-#     conn, c = connectDB()
-#     c.execute('select proposal from proposals where fedids like %s', (search_string,))
-#     rows = c.fetchall()
-#     for row in rows:
-#         proposal_list.append(str(row[0]))
-#     for proposal in proposal_list:
-#         if proposal in all_proposals:
-#             all_proposals.remove(proposal)
-#     for proposal in all_proposals:
-#         try:
-#             temp_vals = proposal_dict[proposal]
-#         except:
-#             continue
-#         for item in temp_vals:
-#             strucid_list.append(item)
-#
-#     blacklist_file = str(dir_path + '/' + fedid + '.dat')
-#     with open(blacklist_file, 'wb') as writefile:
-#         wr = csv.writer(writefile)
-#         wr.writerow(strucid_list)
+def query_and_list(query, proposals_list, proposal_dict, strucid_list):
+    conn, c = connectDB()
+    c.execute(query)
+    rows = c.fetchall()
+    for row in rows:
+        try:
+            proposal = str(row[0]).split('/')[5].split('-')[0]
+        except:
+            continue
+        if proposal not in proposals_list:
+            proposals_list.append(proposal)
+            proposal_dict.update({proposal: []})
+        else:
+            proposal_dict[proposal].append(str(row[1]))
+
+        strucid_list.append(str(row[1]))
+
+    conn.close()
+
+    return proposals_list, proposal_dict, strucid_list
+
+def get_strucid_list():
+
+    proposals_list = []
+    strucid_list = []
+    proposal_dict = {}
+
+    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT bound_conf, strucid FROM proasis_hits',
+                                                                 proposals_list, proposal_dict, strucid_list)
+
+    proposals_list, proposal_dict, strucid_list = query_and_list('SELECT reference_pdb, strucid FROM proasis_leads',
+                                                                 proposals_list, proposal_dict, strucid_list)
+
+    strucids = list(set(strucid_list))
+
+    return proposal_dict, strucids
+
+
+def get_fedid_list():
+    master_list = []
+    conn, c = connectDB()
+    c.execute('select fedids from proposals')
+    rows = c.fetchall()
+    for row in rows:
+        if len(row[0]) > 1:
+            fedid_list = str(row[0]).split(',')
+            for item in fedid_list:
+                master_list.append(item)
+
+    final_list = list(set(master_list))
+    conn.close()
+    return final_list
+
+
+def create_blacklist(fedid, proposal_dict, dir_path):
+    search_string=str('%' + fedid + '%')
+    proposal_list = []
+    all_proposals = list(set(list(proposal_dict.keys())))
+    strucid_list = []
+    conn, c = connectDB()
+    c.execute('select proposal from proposals where fedids like %s', (search_string,))
+    rows = c.fetchall()
+    for row in rows:
+        proposal_list.append(str(row[0]))
+    for proposal in proposal_list:
+        if proposal in all_proposals:
+            all_proposals.remove(proposal)
+    for proposal in all_proposals:
+        try:
+            temp_vals = proposal_dict[proposal]
+        except:
+            continue
+        for item in temp_vals:
+            strucid_list.append(item)
+
+    blacklist_file = str(dir_path + '/' + fedid + '.dat')
+    with open(blacklist_file, 'wb') as writefile:
+        wr = csv.writer(writefile)
+        wr.writerow(strucid_list)
 #
 # def get_pandda_ligand(datafile, pandda_path, crystal):
 #     conn = sqlite3.connect(datafile)
