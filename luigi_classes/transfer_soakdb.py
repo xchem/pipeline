@@ -255,7 +255,8 @@ class TransferChangedDataFile(luigi.Task):
                                 hit_directory=self.hit_directory, crystal_id=crystal.pk,
                                 refinement_id=refinement.pk).output().path)
                         proasis_api_funcs.delete_structure(proasis_hit.strucid)
-                        shutil.rmtree(os.path.join(proasis_crystal_directory))
+                        if os.path.isdir(proasis_crystal_directory):
+                            shutil.rmtree(os.path.join(proasis_crystal_directory))
 
             soakdb_query.delete()
 
