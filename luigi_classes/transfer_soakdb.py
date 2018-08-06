@@ -239,13 +239,14 @@ class TransferChangedDataFile(luigi.Task):
 
             for crystal in crystals:
                 refinement = Refinement.objects.get(crystal_name=crystal)
-                proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
+
 
                 target_name = str(crystal.target.target_name).upper()
                 crystal_name = str(crystal.crystal_name)
                 proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name)
 
-                if proasis_hit:
+                if ProasisHits.objects.filter(crystal_name=crystal).exists():
+                    proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
                     if proasis_hit.strucid:
                         os.remove(transfer_proasis.UploadHit(
                             hit_directory=self.hit_directory, crystal_id=crystal.pk,
