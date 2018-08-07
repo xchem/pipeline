@@ -713,11 +713,13 @@ class WriteBlackLists(luigi.Task):
                                        [hit.strucid for hit in ProasisHits.objects.filter(
                                            crystal_name__visit__proposal=proposal)]))
 
-                all_strucids.extend(strucids)
+                if strucids:
 
-                proposal_dict['proposal'].append(proposal.proposal)
-                proposal_dict['fedids'].append(list(set(fd)))
-                proposal_dict['strucids'].append(strucids)
+                    all_strucids.extend(strucids)
+
+                    proposal_dict['proposal'].append(proposal.proposal)
+                    proposal_dict['fedids'].append(list(set(fd)))
+                    proposal_dict['strucids'].append(strucids)
 
         print(proposal_dict)
 
