@@ -709,7 +709,7 @@ class WriteBlackLists(luigi.Task):
                     print(fed)
                     fd.append(fed)
                     fedids.append(fed)
-                strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal)]
+                strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal.proposal)]
                 all_strucids.extend(strucids)
 
                 proposal_dict['proposal'].append(proposal.proposal)
