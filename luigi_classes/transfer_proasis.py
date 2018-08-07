@@ -696,7 +696,6 @@ class WriteBlackLists(luigi.Task):
         return UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
-        os.remove('logs/blacklists.done')
         return luigi.LocalTarget('logs/blacklists.done')
 
     def run(self):

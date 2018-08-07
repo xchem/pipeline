@@ -18,6 +18,7 @@ class StartPipeline(luigi.WrapperTask):
                  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+                 WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
                  os.path.join(os.getcwd(), 'logs/pipe.done')]
         for path in paths:
             try:
