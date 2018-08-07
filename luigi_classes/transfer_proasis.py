@@ -689,10 +689,14 @@ class UploadHits(luigi.Task):
 
 
 class WriteBlackLists(luigi.Task):
+    date = luigi.DateParameter(default=datetime.date.today())
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+
     def requires(self):
-        return UploadHits()
+        return UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
+        os.remove('logs/blacklists.done')
         return luigi.LocalTarget('logs/blacklists.done')
 
     def run(self):
