@@ -708,7 +708,11 @@ class WriteBlackLists(luigi.Task):
                     print(fed)
                     fd.append(fed)
                     fedids.append(fed)
-                strucids = [hit.strucid for hit in ProasisHits.objects.filter(crystal_name__visit__proposal=proposal)]
+
+                strucids = list(filter(None,
+                                       [hit.strucid for hit in ProasisHits.objects.filter(
+                                           crystal_name__visit__proposal=proposal)]))
+
                 all_strucids.extend(strucids)
 
                 proposal_dict['proposal'].append(proposal.proposal)
