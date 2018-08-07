@@ -734,7 +734,7 @@ class WriteBlackLists(luigi.Task):
             if strucid_not_allowed:
                 print(strucid_not_allowed)
                 out_file = str(directory_path + '/' + fedid + '.dat')
-                with open(out_file, 'wb') as writefile:
+                with open(out_file, 'w') as writefile:
                     wr = csv.writer(writefile)
                     wr.writerow(strucid_not_allowed)
 
