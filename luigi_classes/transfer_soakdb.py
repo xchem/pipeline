@@ -250,7 +250,7 @@ class TransferChangedDataFile(luigi.Task):
                     proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
                     for path in glob.glob(os.path.join(os.getcwd(), 'logs/proasis/hits',
                                                        str(proasis_hit.crystal_name.crystal_name +
-                                                           '_' + proasis_hit.modifivation_date + '*'))):
+                                                           '_' + proasis_hit.modification_date + '*'))):
                         os.remove(path)
                     if os.path.isdir(proasis_crystal_directory):
                         shutil.rmtree(os.path.join(proasis_crystal_directory))
