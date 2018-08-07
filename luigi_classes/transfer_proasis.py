@@ -704,13 +704,11 @@ class WriteBlackLists(luigi.Task):
             feds = proposal.fedids
             print(feds)
             if feds:
-                print(feds)
-                fd = []
-                for f in feds:
-                    for fed in f.split(','):
-                        print(fed)
-                        fd.append(fed)
-                        fedids.append(fed)
+                fd=[]
+                for fed in str(feds).split(','):
+                    print(fed)
+                    fd.append(fed)
+                    fedids.append(fed)
                 strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal)]
                 all_strucids.extend(strucids)
 
