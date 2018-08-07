@@ -703,18 +703,19 @@ class WriteBlackLists(luigi.Task):
 
             feds = proposal.fedids
             if feds:
+                fd = []
                 for f in feds:
                     for fed in f.split(','):
-                        tmp_fed = []
-                        tmp_fed.append(fed)
+                        fd.append(fed)
                         fedids.append(fed)
                 strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal)]
                 all_strucids.extend(strucids)
 
                 proposal_dict['proposal'].append(proposal)
-                proposal_dict['fedids'].append(tmp_fed)
+                proposal_dict['fedids'].append(list(set(fd)))
                 proposal_dict['strucids'].append(strucids)
 
+        print(proposal_dict)
 
         directory_path = '/usr/local/Proasis2/Data/BLACKLIST'
         fedid_list = list(set(fedids))
