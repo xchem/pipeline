@@ -702,16 +702,19 @@ class WriteBlackLists(luigi.Task):
         for proposal in Proposals.objects.all():
 
             feds = proposal.fedids
+            print(feds)
             if feds:
+                print(feds)
                 fd = []
                 for f in feds:
                     for fed in f.split(','):
+                        print(fed)
                         fd.append(fed)
                         fedids.append(fed)
                 strucids = [hit.strucid for hit in ProasisHits.objects.filter(pdb_file__contains=proposal)]
                 all_strucids.extend(strucids)
 
-                proposal_dict['proposal'].append(proposal)
+                proposal_dict['proposal'].append(proposal.proposal)
                 proposal_dict['fedids'].append(list(set(fd)))
                 proposal_dict['strucids'].append(strucids)
 
