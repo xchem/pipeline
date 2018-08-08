@@ -100,10 +100,12 @@ class CheckJobOutput(luigi.Task):
 class WriteCondaEnvJob(luigi.Task):
     job_directory = luigi.Parameter()
     job_filename = luigi.Parameter()
-    job_name = luigi.Parameter()
-    job_executable = luigi.Parameter()
-    job_options = luigi.Parameter()
 
+    anaconda_path = luigi.Parameter()
+    additional_commands = luigi.Parameter()
+    python_script = luigi.Parameter()
+    parameters = luigi.Parameter()
+    
     def requires(self):
         pass
 
@@ -112,6 +114,22 @@ class WriteCondaEnvJob(luigi.Task):
 
     def run(self):
         os.chdir(self.job_directory)
+        job_string = '''
+                #!/bin/bash
+                export PATH=%s
+                %s
+                conda activate %s
+                cd %s
+                python %s %s
+                ''' % (self.anaconda_path,
+                       self.additional_commands,
+                       self.conda_environment,
+                       self.job_directory,
+                       self.python_script,
+                       self.parameters)
+
+        with self.output().open('w') as f:
+            f.write(job_string)
 
 
 
