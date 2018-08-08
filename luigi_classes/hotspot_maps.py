@@ -43,3 +43,4 @@ class WriteHotJob(luigi.Task):
 
         with self.output().open('w') as f:
             f.write(job_string)
+
