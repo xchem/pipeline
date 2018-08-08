@@ -1,6 +1,6 @@
 import luigi
 import subprocess
-iport os
+import os
 from functions import cluster_functions
 import setup_django
 
@@ -95,6 +95,24 @@ class CheckJobOutput(luigi.Task):
                 f.write('')
         else:
             raise Exception('Job output not found!')
+
+
+class WriteCondaEnvJob(luigi.Task):
+    job_directory = luigi.Parameter()
+    job_filename = luigi.Parameter()
+    job_name = luigi.Parameter()
+    job_executable = luigi.Parameter()
+    job_options = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.job_directory, self.job_filename))
+
+    def run(self):
+        os.chdir(self.job_directory)
+
 
 
 
