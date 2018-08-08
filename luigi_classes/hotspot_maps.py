@@ -1,11 +1,17 @@
 import luigi
 import os
+from . import cluster_submission
 import setup_django
+from db.models import ProasisHits
+
 
 class WriteHotJob(luigi.Task):
+    # defaults need defining in settings
     site_id = luigi.Parameter()
     confirmation_code = luigi.Parameter()
     email = luigi.Parameter()
+
+    # from proasis out
     apo_pdb = luigi.Parameter()
     directory = luigi.Parameter()
     anaconda_path = luigi.Parameter()
@@ -43,4 +49,11 @@ class WriteHotJob(luigi.Task):
 
         with self.output().open('w') as f:
             f.write(job_string)
+
+
+class WriteRunCheckHot(luigi.Task):
+
+    def requires(self):
+        hits = ProasisHits.objects.exclude(strucid=None)
+
 

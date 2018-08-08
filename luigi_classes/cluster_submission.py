@@ -1,5 +1,6 @@
 import luigi
 import subprocess
+iport os
 from functions import cluster_functions
 import setup_django
 
@@ -47,5 +48,53 @@ class SubmitJob(luigi.Task):
             print(err)
             print('\n')
 
-        with self.output().open('w') as f:
-            f.write('')
+        job_number = out.split(' ')[2]
+
+        with self.output().open('wb') as f:
+            f.write(job_number)
+
+
+class WriteJob(luigi.Task):
+    job_directory = luigi.Parameter()
+    job_filename = luigi.Parameter()
+    job_name = luigi.Parameter()
+    job_executable = luigi.Parameter()
+    job_options = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.job_directory, self.job_filename))
+
+    def run(self):
+        os.chdir(self.job_directory)
+        job_script = '''#!/bin/bash
+cd %s
+touch %s.running
+%s %s > %s.log
+rm %s.running
+touch %s.done
+''' % (self.job_directory, self.job_name, self.job_executable, self.job_options,
+       self.job_name, self.job_name, self.job_name)
+
+        with self.output().open('wb') as f:
+            f.write(job_script)
+
+
+class CheckJobOutput(luigi.Task):
+    job_directory = luigi.Parameter()
+    job_output_file = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.job_directory, str(self.job_output_file + '.done')))
+
+    def run(self):
+        if os.path.isfile(os.path.join(self.job_directory, self.job_output_file)):
+            with self.output().open('wb') as f:
+                f.write('')
+        else:
+            raise Exception('Job output not found!')
+
+
+
