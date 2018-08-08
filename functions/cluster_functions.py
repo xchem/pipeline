@@ -20,14 +20,12 @@ def submit_job(job_directory, job_script, remote_sub_command):
     out, err = submission.communicate()
 
     out = out.decode('ascii')
-    print('\n')
-    print(out)
-    print('\n')
+
     if err:
         err = err.decode('ascii')
-        print('\n')
-        print(err)
-        print('\n')
+
+
+    return out, err
 
 
 def check_cluster(remote_sub_command, max_jobs):

@@ -15,7 +15,7 @@ class SubmitJob(luigi.Task):
         pass
 
     def output(self):
-        return luigi.LocalTarget(str(self.job_script + '.running'))
+        return luigi.LocalTarget(str(self.job_script + '.submitted'))
 
     def run(self):
 
@@ -23,35 +23,11 @@ class SubmitJob(luigi.Task):
         if not ok_to_submit:
             raise Exception('Too many jobs running on the cluster. Will try again later!')
 
-        submission_string = ' '.join([
-            self.remote_sub_command,
-            '"',
-            'cd',
-            self.job_directory,
-            '; module load global/cluster >>/dev/null 2>&1; qsub -q medium.q',
-            self.job_script,
-            '"'
-        ])
-
-        print(submission_string)
-
-        submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = submission.communicate()
-
-        out = out.decode('ascii')
-        print('\n')
-        print(out)
-        print('\n')
-        if err:
-            err = err.decode('ascii')
-            print('\n')
-            print(err)
-            print('\n')
-
-        job_number = out.split(' ')[2]
+        out, err = cluster_functions.submit_job(job_directory=self.job_directory, job_script=self.job_script,
+                                                remote_sub_command=self.remote_sub_command)
 
         with self.output().open('wb') as f:
-            f.write(job_number)
+            f.write('')
 
 
 class WriteJob(luigi.Task):
@@ -105,7 +81,7 @@ class WriteCondaEnvJob(luigi.Task):
     additional_commands = luigi.Parameter()
     python_script = luigi.Parameter()
     parameters = luigi.Parameter()
-    
+
     def requires(self):
         pass
 
