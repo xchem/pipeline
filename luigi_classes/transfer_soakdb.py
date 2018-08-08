@@ -255,6 +255,11 @@ class TransferChangedDataFile(luigi.Task):
                     if os.path.isdir(proasis_crystal_directory):
                         shutil.rmtree(os.path.join(proasis_crystal_directory))
 
+                    if ProasisOut.objects.filter(proasis=proasis_hit).exists:
+                        for object in ProasisOut.objects.filter(proasis=proasis_hit):
+                            object.delete()
+                    proasis_hit.delete()
+
             soakdb_query.delete()
 
             out, err, proposal = db_functions.pop_soakdb(self.data_file)
