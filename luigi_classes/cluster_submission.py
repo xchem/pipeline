@@ -26,6 +26,11 @@ class SubmitJob(luigi.Task):
         out, err = cluster_functions.submit_job(job_directory=self.job_directory, job_script=self.job_script,
                                                 remote_sub_command=self.remote_sub_command)
 
+        if err:
+            raise Exception(err)
+
+        print(out)
+
         with self.output().open('wb') as f:
             f.write('')
 
@@ -76,7 +81,6 @@ class CheckJobOutput(luigi.Task):
 class WriteCondaEnvJob(luigi.Task):
     job_directory = luigi.Parameter()
     job_filename = luigi.Parameter()
-
     anaconda_path = luigi.Parameter()
     additional_commands = luigi.Parameter()
     python_script = luigi.Parameter()
@@ -96,13 +100,19 @@ class WriteCondaEnvJob(luigi.Task):
                 %s
                 conda activate %s
                 cd %s
+                touch %s.running
                 python %s %s
+                rm %s.running
+                touch %s.done
                 ''' % (self.anaconda_path,
                        self.additional_commands,
                        self.conda_environment,
                        self.job_directory,
+                       str(self.output().path),
                        self.python_script,
-                       self.parameters)
+                       self.parameters,
+                       str(self.output().path),
+                       str(self.output().path))
 
         with self.output().open('w') as f:
             f.write(job_string)
