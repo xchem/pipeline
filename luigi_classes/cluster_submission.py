@@ -35,6 +35,7 @@ class SubmitJob(luigi.Task):
         with self.output().open('wb') as f:
             f.write('')
 
+
 # standard job
 class WriteJob(luigi.Task):
     job_directory = luigi.Parameter()

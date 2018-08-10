@@ -14,7 +14,7 @@ class WriteHotJob(luigi.Task):
     # from proasis out
     apo_pdb = luigi.Parameter()
     directory = luigi.Parameter()
-    anaconda_path = luigi.Parameter(defult='/dls/science/groups/i04-1/software/anaconda/bin:$PATH')
+    anaconda_path = luigi.Parameter(default='/dls/science/groups/i04-1/software/anaconda/bin:$PATH')
     ccdc_settings = luigi.Parameter(default='/dls/science/groups/i04-1/software/mihaela/DiamondHotspots/ccdc_settings.sh')
     conda_environment = luigi.Parameter(default='hotspots')
     hotspot_script = luigi.Parameter(default='/dls/science/groups/i04-1/software/fragalysis/hotspots/hotspots.py')
