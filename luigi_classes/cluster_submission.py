@@ -16,7 +16,7 @@ class SubmitJob(luigi.Task):
         pass
 
     def output(self):
-        return luigi.LocalTarget(str(self.job_script + '.submitted'))
+        return luigi.LocalTarget(os.path.join(self.job_directory, str(self.job_script + '.submitted')))
 
     def run(self):
 
