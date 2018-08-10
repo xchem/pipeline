@@ -38,7 +38,8 @@ class WriteHotJob(luigi.Task):
                                                    anaconda_path=self.anaconda_path,
                                                    additional_commands=additional_line,
                                                    python_script=self.hotspot_script,
-                                                   parameters=os.path.join(self.directory, self.apo_pdb))
+                                                   parameters=os.path.join(self.directory, self.apo_pdb),
+                                                   conda_environment=self.conda_environment)
 
 
 class WriteRunCheckHot(luigi.Task):

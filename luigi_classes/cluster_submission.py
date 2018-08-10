@@ -88,6 +88,7 @@ class WriteCondaEnvJob(luigi.Task):
     additional_commands = luigi.Parameter()
     python_script = luigi.Parameter()
     parameters = luigi.Parameter()
+    conda_environment = luigi.Parameter()
 
     def requires(self):
         pass
