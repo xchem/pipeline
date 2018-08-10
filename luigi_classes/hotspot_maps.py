@@ -2,58 +2,57 @@ import luigi
 import os
 from . import cluster_submission
 import setup_django
-from db.models import ProasisHits
+from db.models import *
 
 
 class WriteHotJob(luigi.Task):
     # defaults need defining in settings
-    site_id = luigi.Parameter()
-    confirmation_code = luigi.Parameter()
-    email = luigi.Parameter()
+    site_id = luigi.Parameter(default='2035')
+    confirmation_code = luigi.Parameter(default='4DFB42')
+    email = luigi.Parameter(default='rachael.skyner@dimond.ac.uk')
 
     # from proasis out
     apo_pdb = luigi.Parameter()
     directory = luigi.Parameter()
-    anaconda_path = luigi.Parameter()
-    ccdc_settings = luigi.Parameter()
-    conda_environment = luigi.Parameter()
-    hotspot_script = luigi.Parameter()
-    ccdc_location_batch = luigi.Parameter()
-
-    def requires(self):
-        pass
+    anaconda_path = luigi.Parameter(defult='/dls/science/groups/i04-1/software/anaconda/bin:$PATH')
+    ccdc_settings = luigi.Parameter(default='/dls/science/groups/i04-1/software/mihaela/DiamondHotspots/ccdc_settings.sh')
+    conda_environment = luigi.Parameter(default='hotspots')
+    hotspot_script = luigi.Parameter(default='/dls/science/groups/i04-1/software/fragalysis/hotspots/hotspots.py')
+    ccdc_location_batch = luigi.Parameter(default='/dls_sw/apps/ccdc/CSD_2017/bin/batch_register')
 
     def output(self):
         return luigi.LocalTarget(os.path.join(self.directory, self.apo_pdb.replace('.pdb', '_hotspots.sh')))
 
-    def run(self):
+    def requires(self):
+        additional_line = '''%s -current_machine -site_id %s -conf_code %s -email %s -auto_accept_licence''' \
+                          % (
+                              self.ccdc_location_batch,
+                              self.site_id,
+                              self.confirmation_code,
+                              self.email,
+                          )
 
-        job_string = '''
-        #!/bin/bash
-        export PATH=%s
-        source %s
-        %s -current_machine -site_id %s -conf_code %s -email %s -auto_accept_licence
-        conda activate %s
-        cd %s
-        python %s %s
-        ''' % (self.anaconda_path,
-               self.ccdc_settings,
-               self.ccdc_location_batch,
-               self.site_id,
-               self.confirmation_code,
-               self.email,
-               self.conda_environment,
-               self.directory,
-               self.hotspot_script,
-               os.path.join(self.directory, self.apo_pdb))
-
-        with self.output().open('w') as f:
-            f.write(job_string)
+        return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,
+                                                   job_filename=os.path.join(
+                                                       self.directory, self.apo_pdb.replace('.pdb', '_hotspots.sh')),
+                                                   anaconda_path=self.anaconda_path,
+                                                   additional_commands=additional_line,
+                                                   python_script=self.hotspot_script,
+                                                   parameters=os.path.join(self.directory, self.apo_pdb))
 
 
 class WriteRunCheckHot(luigi.Task):
 
     def requires(self):
-        hits = ProasisHits.objects.exclude(strucid=None)
+        out = ProasisOut.objects.exclude(apo=None)
+        apo_pdb = []
+        directory = []
+        for o in out:
+            apo_pdb.append(o.apo)
+            directory.append(os.path.join(o.root, o.start))
+
+        return [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
+
+
 
 

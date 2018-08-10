@@ -5,6 +5,7 @@ from functions import cluster_functions
 import setup_django
 
 
+# task to submit any job to the cluster
 class SubmitJob(luigi.Task):
     remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@nx.diamond.ac.uk')
     job_directory = luigi.Parameter()
@@ -34,7 +35,7 @@ class SubmitJob(luigi.Task):
         with self.output().open('wb') as f:
             f.write('')
 
-
+# standard job
 class WriteJob(luigi.Task):
     job_directory = luigi.Parameter()
     job_filename = luigi.Parameter()
@@ -78,6 +79,7 @@ class CheckJobOutput(luigi.Task):
             raise Exception('Job output not found!')
 
 
+# Task for writing jobs that include loading a conda environment and running a python script
 class WriteCondaEnvJob(luigi.Task):
     job_directory = luigi.Parameter()
     job_filename = luigi.Parameter()
