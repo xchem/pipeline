@@ -24,12 +24,15 @@ class WriteHotJob(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.directory, self.apo_pdb.replace('.pdb', '_hotspots.sh')))
 
     def requires(self):
-        additional_line = '''%s -current_machine -site_id %s -conf_code %s -email %s -auto_accept_licence''' \
+        additional_line = '''%s -current_machine -licence_dir $PWD -site_id %s -conf_code %s -email %s -auto_accept_licence
+source %s
+export CCDC_CSD_LICENCE_FILE=$PWD/csd_licence.dat''' \
                           % (
                               self.ccdc_location_batch,
                               self.site_id,
                               self.confirmation_code,
                               self.email,
+                              self.ccdc_settings
                           )
 
         return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,

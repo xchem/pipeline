@@ -101,16 +101,16 @@ class WriteCondaEnvJob(luigi.Task):
         # order of job check becomes: check for job_script.done, check for job on cluster then re-run if neither present
         job_string = '''#!/bin/bash
 export PATH=%s
+cd %s
 %s
 conda activate %s
-cd %s
 touch %s.running
 python %s %s
 rm %s.running
 touch %s.done''' % (self.anaconda_path,
+                    self.job_directory,
                        self.additional_commands,
                        self.conda_environment,
-                       self.job_directory,
                        str(self.output().path),
                        self.python_script,
                        self.parameters,
