@@ -137,8 +137,6 @@ class CheckJob(luigi.Task):
     emails = luigi.Parameter(default=['rachael.skyner@diamond.ac.uk',
                                       'anthony.richard.bradley@gmail.com',
                                       'richard.gilliams@diamond.ac.uk'])
-    send_email = luigi.Parameter(default=False)
-    message_text = luigi.Parameter(default='')
 
     def requires(self):
         pass
@@ -149,18 +147,18 @@ class CheckJob(luigi.Task):
 
     def run(self):
 
-        def check_files():
+        def check_files(output_files, directory):
             files_exist = []
-            for f in self.output_files:
-                if os.path.isfile(os.path.join(self.directory, f)):
+            for f in output_files:
+                if os.path.isfile(os.path.join(directory, f)):
                     files_exist.append(1)
                 else:
                     files_exist.append(0)
             return files_exist
 
-        if 0 in check_files():
+        if 0 in check_files(self.output_files, self.directory):
             time.sleep(5)
-            if 0 in check_files():
+            if 0 in check_files(self.output_files, self.directory):
                 queue_jobs = []
                 job = os.path.join(self.directory, self.job_file)
                 output = glob.glob(str(job + '.o*'))
