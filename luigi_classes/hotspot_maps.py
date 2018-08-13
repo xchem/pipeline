@@ -26,7 +26,8 @@ class WriteHotJob(luigi.Task):
     def requires(self):
         additional_line = '''%s -current_machine -licence_dir $PWD -site_id %s -conf_code %s -email %s -auto_accept_licence
 source %s
-export CCDC_CSD_LICENCE_FILE=$PWD/csd_licence.dat''' \
+export CCDC_CSD_LICENCE_FILE=$PWD/csd_licence.dat
+sleep 5s''' \
                           % (
                               self.ccdc_location_batch,
                               self.site_id,
