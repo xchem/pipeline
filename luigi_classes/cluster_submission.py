@@ -143,7 +143,7 @@ class CheckJob(luigi.Task):
 
     def output(self):
         # a text version of the email sent is saved
-        return luigi.LocalTarget(os.path.join(self.directory, self.job_file, '.message'))
+        return luigi.LocalTarget(os.path.join(self.directory, str(self.job_file + '.message')))
 
     def run(self):
 
