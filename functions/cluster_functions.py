@@ -31,8 +31,12 @@ def submit_job(job_directory, job_script, remote_sub_command):
 def check_cluster(remote_sub_command, max_jobs):
     submit = True
     command = ' '.join([
-        remote_sub_command, "'", 'module load global/cluster >>/dev/null 2>&1; qstat -u uzw12877 | wc -l', "'"])
-    print(remote_sub_command)
+        remote_sub_command,
+        '"',
+        'module load global/cluster >>/dev/null 2>&1; qstat -u uzw12877 | wc -l',
+        '"'
+    ])
+    print(command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
     out = out.decode('ascii')
