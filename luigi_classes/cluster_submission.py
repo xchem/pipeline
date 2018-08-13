@@ -31,8 +31,8 @@ class SubmitJob(luigi.Task):
         out, err = cluster_functions.submit_job(job_directory=self.job_directory, job_script=self.job_script,
                                                 remote_sub_command=self.remote_sub_command)
 
-        if err:
-            raise Exception(err)
+        # if err:
+        #     raise Exception(err)
 
         print(out)
 
