@@ -136,7 +136,7 @@ class CheckJob(luigi.Task):
     # a list of people to email when a job has finished
     emails = luigi.Parameter(default=['rachael.skyner@diamond.ac.uk',
                                       'anthony.richard.bradley@gmail.com',
-                                      'richard.gilliams@diamond.ac.uk'])
+                                      'richard.gillams@diamond.ac.uk'])
 
     def requires(self):
         pass
@@ -217,7 +217,7 @@ job outputs: %s
 
 Thanks, 
 FragBack xoxo
-''' % (self.directory, self.job_file, ','.join([o for o in self.output_files]))
+''' % (self.directory, self.job_file, ', '.join([o for o in self.output_files]))
 
             # write the message to a txt file
             with open(self.output().path, 'w') as m:
