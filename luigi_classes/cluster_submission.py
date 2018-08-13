@@ -205,7 +205,7 @@ class CheckJob(luigi.Task):
                     raise Exception('.mat file not found for ' + str(
                         self.name) + '... something went wrong in ranker or job is still running')
 
-        if 0 not in check_files():
+        if 0 not in check_files(self.output_files, self.directory):
             # message text for the email
             message_text = r'''This is an automated message from the FragBack Pipeline.
 A cluster job submitted by the pipeline has completed (the expected output files are present). 
