@@ -228,7 +228,7 @@ FragBack xoxo
             msg = MIMEText(fp.read())
             fp.close()
             # set email subject, to, from
-            msg['Subject'] = str('Ranker: ' + self.name + ' has been ranked!')
+            msg['Subject'] = str('FragBack: %s') % self.job_file
             msg['From'] = 'fragback-pipe'
             msg['To'] = ','.join(self.emails)
             # use localhost as email server
