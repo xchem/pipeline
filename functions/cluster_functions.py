@@ -39,7 +39,7 @@ def check_cluster(remote_sub_command, max_jobs):
     print(command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
-    out = out.decode('ascii')
+    out = int(out.decode('ascii').split()[-1])
     if err:
         err = err.decode('ascii')
     print(out)
