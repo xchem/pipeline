@@ -193,7 +193,8 @@ class CheckJob(luigi.Task):
                                                             remote_sub_command=self.remote_sub_command)
 
                     if err:
-                        raise Exception(err)
+                        if 'Connection to' not in err:
+                            raise Exception(err)
 
                     print(out)
 
