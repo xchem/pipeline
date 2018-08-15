@@ -203,8 +203,8 @@ class CheckJob(luigi.Task):
                         'resubmitted. Will check again later!')
 
                 if not queue_jobs:
-                    raise Exception('.mat file not found for ' + str(
-                        self.name) + '... something went wrong in ranker or job is still running')
+                    raise Exception('output files not found for ' + str(
+                        self.job_file) + '... something went wrong or job is still running')
 
         if 0 not in check_files(self.output_files, self.directory):
             # message text for the email
