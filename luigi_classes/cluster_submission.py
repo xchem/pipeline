@@ -135,7 +135,6 @@ class CheckJob(luigi.Task):
     # extension = luigi.Parameter(default='')
     # a list of people to email when a job has finished
     emails = luigi.Parameter(default=['rachael.skyner@diamond.ac.uk',
-                                      'anthony.richard.bradley@gmail.com',
                                       'richard.gillams@diamond.ac.uk'])
 
     def requires(self):
