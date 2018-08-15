@@ -4,6 +4,7 @@ import datetime
 from luigi_classes.transfer_pandda import TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits
 from luigi_classes.pull_proasis import GetOutFiles
+from luigi_classes.hotspot_maps import WriteRunCheckHot
 import os
 
 
@@ -31,6 +32,7 @@ class StartPipeline(luigi.WrapperTask):
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
         yield GetOutFiles(date=self.date, hit_directory=self.hit_directory)
+        yield WriteRunCheckHot()
 
     def output(self):
         return luigi.LocalTarget('logs/pipe.done')
