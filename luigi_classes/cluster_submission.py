@@ -11,7 +11,7 @@ import setup_django
 
 # task to submit any job to the cluster
 class SubmitJob(luigi.Task):
-    remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
+    remote_sub_command = luigi.Parameter(default='ssh -tt uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
     job_directory = luigi.Parameter()
     job_script = luigi.Parameter()
     max_jobs = luigi.Parameter(default='100')
@@ -126,7 +126,7 @@ touch %s.done''' % (self.anaconda_path,
 
 
 class CheckJob(luigi.Task):
-    remote_sub_command = luigi.Parameter(default='ssh -t uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
+    remote_sub_command = luigi.Parameter(default='ssh -tt uzw12877@cs04r-sc-serv-38.diamond.ac.uk')
     max_jobs = luigi.Parameter(default='100')
     output_files = luigi.Parameter()
     job_file = luigi.Parameter()
