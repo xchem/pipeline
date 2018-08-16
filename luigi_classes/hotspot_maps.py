@@ -49,7 +49,7 @@ sleep 5s''' \
                                                    additional_commands_2=additional_line_2)
 
 
-class WriteRunCheckHot(luigi.Task):
+class WriteRunCheckHot(luigi.WrapperTask):
 
     def requires(self):
         out = ProasisOut.objects.exclude(apo=None)
