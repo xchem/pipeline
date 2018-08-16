@@ -62,12 +62,12 @@ class WriteRunCheckHot(luigi.WrapperTask):
 
         w_output_paths = [WriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
 
-        return [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)], \
-               [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
-                                             job_script=j.split('/')[-1]) for j in w_output_paths], \
-               [cluster_submission.CheckJob(
-                   output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.tar.gz'),
-                                 j.replace('_apo_hotspots.sh', '_donor.ccp4.tar.gz'),
-                                 j.replace('_apo_hotspots.sh', '_apolar.ccp4.tar.gz')],
-                   job_file=j.split('/')[-1],
-                   directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]
+        yield [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
+        yield [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
+                                            job_script=j.split('/')[-1]) for j in w_output_paths]
+        yield [cluster_submission.CheckJob(
+            output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.tar.gz'),
+                          j.replace('_apo_hotspots.sh', '_donor.ccp4.tar.gz'),
+                          j.replace('_apo_hotspots.sh', '_apolar.ccp4.tar.gz')],
+            job_file=j.split('/')[-1],
+            directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]
