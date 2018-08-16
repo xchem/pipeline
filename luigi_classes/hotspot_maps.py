@@ -36,7 +36,7 @@ sleep 5s''' \
                               self.ccdc_settings
                           )
         additional_line_2 = "find . -name '*.ccp4' -print0 | " \
-                            "while IFS= read -r -d $'\0' file; do tar -czvf $file.tar.gz $file --remove-files; done"
+                            "while IFS= read -r -d $'\\0' file; do tar -czvf $file.tar.gz $file --remove-files; done"
 
         return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,
                                                    job_filename=os.path.join(
@@ -62,7 +62,7 @@ class WriteRunCheckHot(luigi.Task):
 
         w_output_paths = [WriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
 
-        return [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)], \
+        return [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
                # [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
                #                               job_script=j.split('/')[-1]) for j in w_output_paths], \
                # [cluster_submission.CheckJob(
