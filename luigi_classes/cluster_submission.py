@@ -90,6 +90,7 @@ class WriteCondaEnvJob(luigi.Task):
     job_filename = luigi.Parameter()
     anaconda_path = luigi.Parameter()
     additional_commands = luigi.Parameter()
+    additional_commands_2 = luigi.Parameter()
     python_script = luigi.Parameter()
     parameters = luigi.Parameter()
     conda_environment = luigi.Parameter()
@@ -111,7 +112,8 @@ conda activate %s
 touch %s.running
 python %s %s
 rm %s.running
-touch %s.done''' % (self.anaconda_path,
+touch %s.done
+%s''' % (self.anaconda_path,
                     self.job_directory,
                        self.additional_commands,
                        self.conda_environment,
@@ -119,7 +121,8 @@ touch %s.done''' % (self.anaconda_path,
                        self.python_script,
                        self.parameters,
                        str(self.output().path),
-                       str(self.output().path))
+                       str(self.output().path),
+        self.additional_commands_2)
 
         with self.output().open('w') as f:
             f.write(job_string)

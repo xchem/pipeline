@@ -35,6 +35,8 @@ sleep 5s''' \
                               self.email,
                               self.ccdc_settings
                           )
+        additional_line_2 = "find . -name '*.ccp4' -print0 | " \
+                            "while IFS= read -r -d $'\0' file; do tar -czvf $file.tar.gz $file --remove-files; done"
 
         return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,
                                                    job_filename=os.path.join(
@@ -43,7 +45,8 @@ sleep 5s''' \
                                                    additional_commands=additional_line,
                                                    python_script=self.hotspot_script,
                                                    parameters=os.path.join(self.directory, self.apo_pdb),
-                                                   conda_environment=self.conda_environment)
+                                                   conda_environment=self.conda_environment,
+                                                   additional_commands_2=additional_line_2)
 
 
 class WriteRunCheckHot(luigi.Task):
@@ -63,8 +66,8 @@ class WriteRunCheckHot(luigi.Task):
                [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
                                              job_script=j.split('/')[-1]) for j in w_output_paths], \
                [cluster_submission.CheckJob(
-                   output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4'),
-                                 j.replace('_apo_hotspots.sh', '_donor.ccp4'),
-                                 j.replace('_apo_hotspots.sh', '_apolar.ccp4')],
+                   output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.tar.gz'),
+                                 j.replace('_apo_hotspots.sh', '_donor.ccp4.tar.gz'),
+                                 j.replace('_apo_hotspots.sh', '_apolar.ccp4.tar.gz')],
                    job_file=j.split('/')[-1],
                    directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]
