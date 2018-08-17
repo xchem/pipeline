@@ -765,7 +765,8 @@ class UpdateField(luigi.Task):
     def output(self):
         crystal = self.model.crystal
         return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal.crystal_name + '_' +
-                                                                       crystal.modification_date + '.' + self.field)))
+                                                                       crystal.visit.modification_date +
+                                                                       '.' + self.field)))
 
     def run(self):
         setattr(self.model, self.field, self.value)
