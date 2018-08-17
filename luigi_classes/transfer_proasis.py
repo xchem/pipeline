@@ -751,6 +751,38 @@ class WriteBlackLists(luigi.Task):
         with open(str(directory_path + '/uzw12877.dat'),'w') as f:
             f.write('')
 
+        with self.output().open('w') as f:
+            f.write('')
+
+class UpdateField(luigi.Task):
+    model = luigi.Parameter()
+    field = luigi.Parameter()
+    value = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        crystal = Crystal.objects.get(crystal_name=self.model.crystal)
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal.crystal_name + '_' +
+                                                                       crystal.modification_date + '.' + self.field)))
+
+    def run(self):
+        setattr(self.model, self.field, self.value)
+        self.model.save()
         with self.output().open('wb') as f:
             f.write('')
+
+
+class UpdateOtherFields(luigi.Task):
+    def requires(self):
+        for p in ProasisPandda.objects.exclude(event_map_native__contains='.tar.gz'):
+            p_out = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
+            for o in p_out:
+                yield UpdateField(model=o, field='event', value='/'.join(
+                    p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/')))
+            # p_out.event = '/'.join(p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/'))
+            # p_out.save()
+
+
 
