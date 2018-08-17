@@ -785,9 +785,9 @@ class UpdateOtherFields(luigi.Task):
         for o in ProasisOut.objects.all():
             for f in glob.glob(os.path.join(o.root, o.start, '*.ccp4.tar.gz')):
                 if 'donor' in f:
-                    yield UpdateField(model=o, field='donor', value=f.split('/')[-1])
+                    yield UpdateField(model=o, field='don', value=f.split('/')[-1])
                 if 'acceptor' in f:
-                    yield UpdateField(model=o, field='acceptor', value=f.split('/')[-1])
+                    yield UpdateField(model=o, field='acc', value=f.split('/')[-1])
                 if 'apolar' in f:
                     yield UpdateField(model=o, field='lip', value=f.split('/')[-1])
 
