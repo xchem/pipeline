@@ -771,6 +771,8 @@ class UpdateField(luigi.Task):
     def run(self):
         setattr(self.model, self.field, self.value)
         self.model.save()
+        if getattr(self.model, self.field) != self.value:
+            raise Exception('val not written, will try again!')
         with self.output().open('wb') as f:
             f.write('')
 
