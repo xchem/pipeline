@@ -482,15 +482,15 @@ class GetPanddaMaps(luigi.Task):
                          (proasis_crystal_directory,
                           event.pandda_event_map_native.split('/')[-1],
                           event.pandda_event_map_native.split('/')[-1])
-            
+
             os.system(tar_string)
             shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
 
             entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal)
             entry[0].event_map_native = os.path.join(proasis_crystal_directory,
-                                                     str(str(event.pandda_event_map_native).split('/')[-1]))
+                                                     str(str(event.pandda_event_map_native).split('/')[-1] + '.tar.gz'))
             entry[0].model_pdb = os.path.join(proasis_crystal_directory,
-                                              str(str(event.pandda_model_pdb).split('/')[-1] + '.tar.gz'))
+                                              str(str(event.pandda_model_pdb).split('/')[-1]))
             entry[0].save()
 
         with self.output().open('w') as f:
