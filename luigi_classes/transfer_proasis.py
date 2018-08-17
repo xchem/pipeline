@@ -478,6 +478,11 @@ class GetPanddaMaps(luigi.Task):
             if not os.path.isdir(proasis_crystal_directory):
                 os.makedirs(proasis_crystal_directory)
             shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
+            tar_string = '''tar -czvf %s.tar.gz %s''' % (
+                str(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native))),
+                str(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native)))
+            )
+            os.system(tar_string)
             shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
 
             entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal,
@@ -487,7 +492,7 @@ class GetPanddaMaps(luigi.Task):
                                                                                           '/')[-1])),
                                                         model_pdb=os.path.join(proasis_crystal_directory,
                                                                                str(str(event.pandda_model_pdb).split(
-                                                                                   '/')[-1])))
+                                                                                   '/')[-1] + '.tar.gz')))
             entry[0].save()
 
         with self.output().open('w') as f:
