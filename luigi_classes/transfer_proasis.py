@@ -780,7 +780,7 @@ class UpdateOtherFields(luigi.Task):
             o = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
             # for o in p_out:
             yield UpdateField(model=o, field='event', value='/'.join(
-                p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/')))
+                p.event_map_native.replace(os.path.join(o.root, o.start), '').split('/')))
             # p_out.event = '/'.join(p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/'))
             # p_out.save()
 
