@@ -780,11 +780,16 @@ class UpdateOtherFields(luigi.Task):
         for p in ProasisPandda.objects.exclude(event_map_native__contains='.tar.gz'):
             if ProasisOut.objects.filter(crystal=p.crystal, ligand=p.event.lig_id).exists():
                 o = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
-            # for o in p_out:
                 yield UpdateField(model=o, field='event', value=str(str('/'.join(
-                    p.event_map_native.replace(os.path.join(o.root, o.start), '').split('/')) + '.tar.gz')))
-            # p_out.event = '/'.join(p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/'))
-            # p_out.save()
+                    p.event_map_native.replace(str(os.path.join(o.root, o.start) + '/'), '').split('/')) + '.tar.gz')))
+        for o in ProasisOut.objects.all():
+            for f in glob.glob(os.path.join(o.root, o.start, '*.ccp4.tar.gz')):
+                if 'donor' in f:
+                    yield UpdateField(model=o, field='donor', value=f.split('/')[-1])
+                if 'acceptor' in f:
+                    yield UpdateField(model=o, field='acceptor', value=f.split('/')[-1])
+                if 'apolar' in f:
+                    yield UpdateField(model=o, field='lip', value=f.split('/')[-1])
 
 
 
