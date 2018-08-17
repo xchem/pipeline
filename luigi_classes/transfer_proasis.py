@@ -782,6 +782,8 @@ class UpdateOtherFields(luigi.Task):
                 o = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
                 yield UpdateField(model=o, field='event', value=str(str('/'.join(
                     p.event_map_native.replace(str(os.path.join(o.root, o.start) + '/'), '').split('/')) + '.tar.gz')))
+                mtz_file = o.proasis.mtz.replace(str(os.path.join(o.root, o.start) + '/'), '')
+                yield UpdateField(model=o, field='mtz', value=mtz_file)
         for o in ProasisOut.objects.all():
             for f in glob.glob(os.path.join(o.root, o.start, '*.ccp4.tar.gz')):
                 if 'donor' in f:
