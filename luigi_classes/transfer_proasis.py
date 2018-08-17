@@ -777,7 +777,7 @@ class UpdateField(luigi.Task):
 class UpdateOtherFields(luigi.Task):
     def requires(self):
         for p in ProasisPandda.objects.exclude(event_map_native__contains='.tar.gz'):
-            if ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id).exists():
+            if ProasisOut.objects.filter(crystal=p.crystal, ligand=p.event.lig_id).exists():
                 o = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
             # for o in p_out:
                 yield UpdateField(model=o, field='event', value='/'.join(
