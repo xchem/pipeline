@@ -765,7 +765,7 @@ class UpdateField(luigi.Task):
     def output(self):
         crystal = self.model.crystal
         return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal.crystal_name + '_' +
-                                                                       crystal.visit.modification_date +
+                                                                       str(crystal.visit.modification_date) +
                                                                        '.' + self.field)))
 
     def run(self):
@@ -782,7 +782,7 @@ class UpdateOtherFields(luigi.Task):
                 o = ProasisOut.objects.get(crystal=p.crystal, ligand=p.event.lig_id)
             # for o in p_out:
                 yield UpdateField(model=o, field='event', value=str(str('/'.join(
-                    p.event_map_native.replace(os.path.join(o.root, o.start), '').split('/')[-1]) + '.tar.gz')))
+                    p.event_map_native.replace(os.path.join(o.root, o.start), '').split('/')) + '.tar.gz')))
             # p_out.event = '/'.join(p.event_map_native.replace(os.path.join(p.root, p.start), '').split('/'))
             # p_out.save()
 
