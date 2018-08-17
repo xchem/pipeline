@@ -478,7 +478,7 @@ class GetPanddaMaps(luigi.Task):
             if not os.path.isdir(proasis_crystal_directory):
                 os.makedirs(proasis_crystal_directory)
             shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
-            tar_string = '''cd %s; tar -czvf %s.tar.gz %s''' % (proasis_crystal_directory,
+            tar_string = '''cd %s; tar -czvf %s.tar.gz %s --remove-files''' % (proasis_crystal_directory,
                                                                 event.pandda_event_map_native.split('/')[-1],
                                                                 event.pandda_event_map_native.split('/')[-1])
             os.system(tar_string)
