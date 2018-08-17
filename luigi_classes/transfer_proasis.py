@@ -472,7 +472,7 @@ class GetPanddaMaps(luigi.Task):
         crystal_name = str(crystal.crystal_name)
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
 
-        pandda_events = PanddaEvent.objects.filter(crystal=crystal)
+        pandda_events = PanddaEvent.objects.filter(crystal=crystal).distinct('pandda_event_map_native')
 
         for event in pandda_events:
             if not os.path.isdir(proasis_crystal_directory):
