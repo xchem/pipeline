@@ -562,7 +562,7 @@ class UploadHit(luigi.Task):
         proasis_bound_pdb = proasis_hit.pdb_file
 
         if len(unique_ligands) == 1:
-            lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0])
+            lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0][1:])
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
@@ -581,10 +581,10 @@ class UploadHit(luigi.Task):
         elif len(unique_ligands) > 1:
             ligands_list = proasis_api_funcs.get_lig_strings(unique_ligands)
             print(ligands_list)
-            lig1 = ligands_list[0]
+            lig1 = ligands_list[0][1:]
             lign = " -o '"
             for i in range(1, len(ligands_list) - 1):
-                lign += str(ligands_list[i] + ',')
+                lign += str(ligands_list[i][1:] + ',')
             lign += str(ligands_list[len(ligands_list) - 1] + "'")
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
