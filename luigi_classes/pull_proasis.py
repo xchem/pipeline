@@ -81,28 +81,40 @@ class CreateApo(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name.upper()
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + '_apo.pdb')))
+        ligands = eval(proasis_hit.ligand_list)
+        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
+
+        return [luigi.LocalTarget(os.path.join(
+            self.hit_directory, target_name, crystal_name, str(crystal_name + str(i)), str(crystal_name + '_apo_' + str(i) + '.pdb')))
+            for i in range(1, len(ligand_list))]
 
     def run(self):
         curated_pdb = self.input().path
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         ligand_list = eval(proasis_hit.ligand_list)
         ligand_list = proasis_api_funcs.get_lig_strings(ligand_list)
+        crystal_name = proasis_hit.crystal_name.crystal_name
+        target_name = proasis_hit.crystal_name.target.target_name.upper()
 
         pdb_file = open(curated_pdb, 'r')
-        for line in pdb_file:
-            if any(lig in line for lig in ligand_list):
-                continue
-            else:
-                with open(self.output().path, 'a') as f:
-                    f.write(line)
+        ligid = 0
+        for l in ligand_list:
+            ligid += 1
+            for line in pdb_file:
+                if any(lig in line for lig in ligand_list):
+                    continue
+                else:
+                    with open(os.path.join(self.hit_directory, target_name,
+                                           crystal_name, str(crystal_name + str(ligid)),
+                                           str(crystal_name + '_apo_' + str(ligid) + '.pdb')), 'a') as f:
+                        f.write(line)
 
-        out_entries = ProasisOut.objects.filter(proasis=proasis_hit)
+            out_entry = ProasisOut.objects.filter(proasis=proasis_hit)
 
-        for entry in out_entries:
-            entry.apo = str(self.output().path).split('/')[-1]
-            entry.save()
+            out_entry.apo = str(os.path.join(self.hit_directory, target_name,
+                                             crystal_name, str(crystal_name +
+                                                               '_apo_' + str(ligid) + '.pdb'))).split('/')[-1]
+            out_entry.save()
 
 
 class GetMaps(luigi.Task):
