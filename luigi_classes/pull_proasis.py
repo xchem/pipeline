@@ -62,13 +62,7 @@ class GetCurated(luigi.Task):
                                                            start=str(proasis_hit.crystal_name.crystal_name + '/' +
                                                                      proasis_hit.crystal_name.crystal_name + '_' +
                                                                      ligid),
-                                                           curated=curated_pdb.replace(os.path.join(self.hit_directory,
-                                                                                                    proasis_hit.crystal_name.target.target_name.upper(),
-                                                                                                    str(
-                                                                                                        proasis_hit.crystal_name.crystal_name + '/' +
-                                                                                                        proasis_hit.crystal_name.crystal_name + '_' +
-                                                                                                        ligid),
-                                                                                                    '').split('/')[-1])
+                                                           curated=curated_pdb.split('/')[-1]
                                                            )
             proasis_out[0].save()
 
@@ -116,9 +110,7 @@ class CreateApo(luigi.Task):
 
             out_entry = ProasisOut.objects.filter(proasis=proasis_hit, ligid=ligid)
 
-            out_entry.apo = os.path.join(self.hit_directory, target_name,
-                                             crystal_name, str(crystal_name + str(ligid)),
-                                             str(crystal_name +'_apo_' + str(ligid) + '.pdb')).split('/')[-1]
+            out_entry.apo = str(crystal_name + '_apo_' + str(ligid) + '.pdb')
             out_entry.save()
 
 
