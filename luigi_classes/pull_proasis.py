@@ -59,11 +59,16 @@ class GetCurated(luigi.Task):
                                                            ligid=ligid,
                                                            root=os.path.join(self.hit_directory,
                                                                              proasis_hit.crystal_name.target.target_name.upper()),
-                                                           start=proasis_hit.crystal_name.crystal_name,
-                                                           curated='/'.join(curated_pdb.replace(os.path.join(
-                                                               self.hit_directory,
-                                                               proasis_hit.crystal_name.target.target_name.upper(),
-                                                               proasis_hit.crystal_name.crystal_name, ), '').split('/'))
+                                                           start=str(proasis_hit.crystal_name.crystal_name + '/' +
+                                                                     proasis_hit.crystal_name.crystal_name + '_' +
+                                                                     ligid),
+                                                           curated=curated_pdb.replace(os.path.join(self.hit_directory,
+                                                                                                    proasis_hit.crystal_name.target.target_name.upper(),
+                                                                                                    str(
+                                                                                                        proasis_hit.crystal_name.crystal_name + '/' +
+                                                                                                        proasis_hit.crystal_name.crystal_name + '_' +
+                                                                                                        ligid),
+                                                                                                    '').split('/')[-1])
                                                            )
             proasis_out[0].save()
 
@@ -109,11 +114,11 @@ class CreateApo(luigi.Task):
                                            str(crystal_name + '_apo_' + str(ligid) + '.pdb')), 'a') as f:
                         f.write(line)
 
-            out_entry = ProasisOut.objects.filter(proasis=proasis_hit)
+            out_entry = ProasisOut.objects.filter(proasis=proasis_hit, ligid=ligid)
 
-            out_entry.apo = '/'.join(str(os.path.join(self.hit_directory, target_name,
+            out_entry.apo = os.path.join(self.hit_directory, target_name,
                                              crystal_name, str(crystal_name + str(ligid)),
-                                             str(crystal_name +'_apo_' + str(ligid) + '.pdb'))).split('/')[-2:])
+                                             str(crystal_name +'_apo_' + str(ligid) + '.pdb')).split('/')[-1]
             out_entry.save()
 
 
@@ -311,7 +316,7 @@ class CreateStripped(luigi.Task):
         tmp_file = remove_prot_buffers_alt_locs(self.input().path)
         shutil.move(os.path.join(os.getcwd(), tmp_file), self.output().path)
 
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit)
+        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit, ligid=ligid)
         for o in proasis_out:
             o.stripped = self.output().path.split('/')[-1]
             o.save()
