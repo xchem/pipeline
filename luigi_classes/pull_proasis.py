@@ -36,11 +36,13 @@ class GetCurated(luigi.Task):
         ligands = eval(proasis_hit.ligand_list)
         ligand_list = proasis_api_funcs.get_lig_strings(ligands)
         curated_pdb = proasis_api_funcs.get_struc_file(strucid, self.output().path, 'curatedpdb')
-
+        ligid = 0
         for lig in ligand_list:
+            ligid+=1
             proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
                                                            crystal=proasis_hit.crystal_name,
                                                            ligand=lig,
+                                                           ligid=ligid,
                                                            root=os.path.join(self.hit_directory,
                                                                              proasis_hit.crystal_name.target.target_name.upper()),
                                                            start=proasis_hit.crystal_name.crystal_name,
@@ -289,7 +291,7 @@ class GetOutFiles(luigi.Task):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/out/proasis_out_%Y%m%d%H.txt'))
 
     def requires(self):
-        proasis_hits = ProasisHits.objects.exclude(strucid=None)
+        proasis_hits = ProasisHits.objects.exclude(strucid=None).exclude(strucid='')
         crys_ids = []
         ref_ids = []
 
