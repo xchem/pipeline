@@ -76,7 +76,7 @@ class InitDBEntries(luigi.Task):
                     for line in pdb_file:
                         if "LIG" in line:
                             try:
-                                lig_string = re.search(r"LIG.......", line).group()
+                                lig_string = re.search(r".LIG.......", line).group()
                                 ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
                             except:
                                 continue
