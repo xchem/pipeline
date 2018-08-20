@@ -44,13 +44,14 @@ class GetCurated(luigi.Task):
 
         ligid = 0
         for lig in ligand_list:
-            ligid+=1
+            ligid += 1
 
             curated_pdb = proasis_api_funcs.get_struc_file(strucid,
                                                            os.path.join(
                                                                self.hit_directory, target_name.upper(), crystal_name,
-                                                               str(crystal_name + str('_' + str(ligid) + '.pdb'))),
-                                                                   'curatedpdb')
+                                                               str(ligid), str(crystal_name +
+                                                                               str('_' + str(ligid) + '.pdb'))),
+                                                           'curatedpdb')
 
             proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
                                                            crystal=proasis_hit.crystal_name,
