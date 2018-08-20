@@ -31,7 +31,7 @@ class GetCurated(luigi.Task):
         ligand_list = proasis_api_funcs.get_lig_strings(ligands)
 
         return [luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + str('_'+ str(i) + '.pdb')))
+            self.hit_directory, target_name.upper(), str(crystal_name + '_' + str(i)), str(crystal_name + str('_'+ str(i) + '.pdb')))
                                   for i in range(1, len(ligand_list)+1))]
 
     def run(self):
@@ -48,9 +48,10 @@ class GetCurated(luigi.Task):
 
             curated_pdb = proasis_api_funcs.get_struc_file(strucid,
                                                            os.path.join(
-                                                               self.hit_directory, target_name.upper(), crystal_name,
-                                                               str(ligid), str(crystal_name +
-                                                                               str('_' + str(ligid) + '.pdb'))),
+                                                               self.hit_directory, target_name.upper(), str(crystal_name +
+                                                                                                        '_' +
+                                                                                                        str(ligid)),
+                                                               str(crystal_name + str('_' + str(ligid) + '.pdb'))),
                                                            'curatedpdb')
 
             proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
@@ -104,7 +105,7 @@ class CreateApo(luigi.Task):
                     continue
                 else:
                     with open(os.path.join(self.hit_directory, target_name,
-                                           crystal_name, str(crystal_name + str(ligid)),
+                                           crystal_name, str(crystal_name + '_' + str(ligid)),
                                            str(crystal_name + '_apo_' + str(ligid) + '.pdb')), 'a') as f:
                         f.write(line)
 
