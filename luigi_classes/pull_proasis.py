@@ -111,9 +111,9 @@ class CreateApo(luigi.Task):
 
             out_entry = ProasisOut.objects.filter(proasis=proasis_hit)
 
-            out_entry.apo = str(os.path.join(self.hit_directory, target_name,
-                                             crystal_name, str(crystal_name +
-                                                               '_apo_' + str(ligid) + '.pdb'))).split('/')[-1]
+            out_entry.apo = '/'.join(str(os.path.join(self.hit_directory, target_name,
+                                             crystal_name, str(crystal_name + str(ligid)),
+                                             str(crystal_name +'_apo_' + str(ligid) + '.pdb'))).split('/')[-2:])
             out_entry.save()
 
 
