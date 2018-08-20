@@ -128,6 +128,7 @@ class GetMaps(luigi.Task):
     def run(self):
         pass
 
+
 ## TODO: wait to see if altconfs works - proasis
 class GetSDFS(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
@@ -157,6 +158,7 @@ class GetSDFS(luigi.Task):
 
             o.sdf = sdf.split('/')[-1]
             o.save()
+
 
 ## TODO: wait to see if altconfs works - proasis
 class CreateMolFile(luigi.Task):
@@ -196,6 +198,7 @@ class CreateMolFile(luigi.Task):
 
             o.mol = outfile.split('/')[-1]
             o.save()
+
 
 ## TODO: wait to see if altconfs works - proasis
 class CreateMolTwoFile(luigi.Task):
@@ -250,6 +253,7 @@ class CreateMolTwoFile(luigi.Task):
             print(err)
             o.mol2 = outfile.split('/')[-1]
             o.save()
+
 
 ## TODO: wait to see if altconfs works - proasis
 class GetInteractionJSON(luigi.Task):
