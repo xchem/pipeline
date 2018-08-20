@@ -27,18 +27,31 @@ class GetCurated(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + '.pdb')))
+        ligands = eval(proasis_hit.ligand_list)
+        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
+
+        return [luigi.LocalTarget(os.path.join(
+            self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + str('_'+ str(i) + '.pdb')))
+                                  for i in range(1, len(ligand_list)))]
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
         strucid = proasis_hit.strucid
         ligands = eval(proasis_hit.ligand_list)
         ligand_list = proasis_api_funcs.get_lig_strings(ligands)
-        curated_pdb = proasis_api_funcs.get_struc_file(strucid, self.output().path, 'curatedpdb')
+        crystal_name = proasis_hit.crystal_name.crystal_name
+        target_name = proasis_hit.crystal_name.target.target_name
+
         ligid = 0
         for lig in ligand_list:
             ligid+=1
+
+            curated_pdb = proasis_api_funcs.get_struc_file(strucid,
+                                                           os.path.join(
+                                                               self.hit_directory, target_name.upper(), crystal_name,
+                                                               str(crystal_name + str('_' + str(ligid) + '.pdb'))),
+                                                                   'curatedpdb')
+
             proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
                                                            crystal=proasis_hit.crystal_name,
                                                            ligand=lig,
@@ -46,7 +59,11 @@ class GetCurated(luigi.Task):
                                                            root=os.path.join(self.hit_directory,
                                                                              proasis_hit.crystal_name.target.target_name.upper()),
                                                            start=proasis_hit.crystal_name.crystal_name,
-                                                           curated=str(proasis_hit.crystal_name.crystal_name + '.pdb'))
+                                                           curated='/'.join(curated_pdb.replace(os.path.join(
+                                                               self.hit_directory,
+                                                               proasis_hit.crystal_name.target.target_name.upper(),
+                                                               proasis_hit.crystal_name.crystal_name, ), '').split('/'))
+                                                           )
             proasis_out[0].save()
 
 
