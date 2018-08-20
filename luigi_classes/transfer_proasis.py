@@ -403,7 +403,7 @@ class CopyFile(luigi.Task):
         if not os.path.isdir(proasis_crystal_directory):
             os.makedirs(proasis_crystal_directory)
 
-        shutil.copy(self.filename, proasis_crystal_directory)
+        os.symlink(self.filename, os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
 
         if self.update_field == 'pdb':
             self.proasis_hit.pdb_file = self.output().path
