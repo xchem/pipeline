@@ -32,7 +32,7 @@ class GetCurated(luigi.Task):
 
         return [luigi.LocalTarget(os.path.join(
             self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + str('_'+ str(i) + '.pdb')))
-                                  for i in range(1, len(ligand_list)))]
+                                  for i in range(1, len(ligand_list)+1))]
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -86,7 +86,7 @@ class CreateApo(luigi.Task):
 
         return [luigi.LocalTarget(os.path.join(
             self.hit_directory, target_name, crystal_name, str(crystal_name + str(i)), str(crystal_name + '_apo_' + str(i) + '.pdb')))
-            for i in range(1, len(ligand_list))]
+            for i in range(1, len(ligand_list)+1)]
 
     def run(self):
         curated_pdb = self.input().path
