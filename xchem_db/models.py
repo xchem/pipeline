@@ -32,6 +32,7 @@ class Reference(models.Model):
 
 
 class Proposals(models.Model):
+    # TODO - can we refactor this for title
     proposal = models.TextField(blank=False, null=False, unique=True)
     fedids = models.TextField(blank=True, null=True)
 
