@@ -1,8 +1,8 @@
 =====
-XChem_db
+XChemDB
 =====
 
-XChem_db is a simple Django app to get a RESTFul API of XChem data.
+This is a simple Django app to get a RESTFul API of XChem data.
 
 Detailed documentation is in the "docs" directory.
 
