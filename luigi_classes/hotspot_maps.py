@@ -2,7 +2,7 @@ import luigi
 import os
 from . import cluster_submission
 import setup_django
-from db.models import *
+from xchem_db.models import *
 
 
 class WriteHotJob(luigi.Task):

@@ -1,4 +1,4 @@
-from db.models import Target, Crystal, Refinement
+from xchem_db.models import Target, Crystal, Refinement
 
 from django.http import HttpResponse, JsonResponse
 from django.template import loader

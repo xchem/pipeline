@@ -6,7 +6,7 @@ import setup_django
 from test_functions import run_luigi_worker
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import FindPanddaLogs, AddPanddaRun, AddPanddaSites
-from db.models import *
+from xchem_db.models import *
 
 class TestFindLogs(unittest.TestCase):
     # filepath where test data is

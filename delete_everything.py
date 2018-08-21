@@ -1,5 +1,5 @@
 import setup_django
-from db.models import *
+from xchem_db.models import *
 import os
 import glob
 import pandas as pd

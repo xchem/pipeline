@@ -7,7 +7,7 @@ import shutil
 import re
 import glob
 import csv
-from db.models import *
+from xchem_db.models import *
 from functions import misc_functions, db_functions, proasis_api_funcs
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import numpy as np

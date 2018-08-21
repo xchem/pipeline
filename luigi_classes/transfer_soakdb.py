@@ -7,7 +7,7 @@ import datetime
 import shutil
 import glob
 from functions import db_functions, misc_functions, pandda_functions
-from db.models import *
+from xchem_db.models import *
 import pandas as pd
 import traceback
 from functions import misc_functions
