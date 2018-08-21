@@ -19,7 +19,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version="0.0.1-alpha-2",
+    version="0.0.1-alpha-3",
     description="Library for XChem Django database",
     long_description=long_description,
     # The project's main homepage.
@@ -40,7 +40,7 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
         # Pick your license as you wish (should match "license" above)
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache 2.0",
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 2",
