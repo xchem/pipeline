@@ -27,9 +27,11 @@ class InitDBEntries(luigi.Task):
 
     def run(self):
         fail_count = 0
+        # select anything 'in refinement' (3) or above
         refinement = Refinement.objects.filter(outcome__gte=3)
-        print(len(refinement))
+        # set up info for each entry that matches the filter
         for obj in refinement:
+            # set up blank fields for entries in proasis hits table
             bound_conf = ''
             files = []
             mtz = ''
@@ -38,37 +40,40 @@ class InitDBEntries(luigi.Task):
             mod_date = ''
             proasis_hit_entry=''
             entry=''
+            confs = []
+            ligand_list = []
+
+            # if there is a pdb file named in the bound_conf field, use it as the upload structure for proasis
             if obj.bound_conf:
                 if os.path.isfile(obj.bound_conf):
                     bound_conf = obj.bound_conf
+            # otherwise, use the most recent pdb file (according to soakdb)
             elif obj.pdb_latest:
                 if os.path.isfile(obj.pdb_latest):
+                    # if this is from a refinement folder, find the bound-state pdb file, rather than the ensemble
                     if 'Refine' in obj.pdb_latest:
                         search_path = '/'.join(obj.pdb_latest.split('/')[:-1])
                         files = glob.glob(str(search_path + '/refine*bound*.pdb'))
                         if len(files) == 1:
                             bound_conf = files[0]
                     else:
+                        # if can't find bound state, just use the latest pdb file
                         bound_conf = obj.pdb_latest
             else:
+                # no pdb = no proasis upload (same for mtz, two_fofc and fofc)
+                # TODO: Turn this into a function instead of repeating file check
                 fail_count += 1
                 continue
 
             mtz = db_functions.check_file_status('refine.mtz', bound_conf)
-            if not mtz[0]:
-                fail_count += 1
-                continue
-
             two_fofc = db_functions.check_file_status('2fofc.map', bound_conf)
-            if not two_fofc[0]:
-                fail_count += 1
-                continue
-
             fofc = db_functions.check_file_status('fofc.map', bound_conf)
-            if not fofc[0]:
+
+            if not mtz[0] or not two_fofc[0] or not fofc[0]:
                 fail_count += 1
                 continue
 
+            # if a suitable pdb file is found, then search for ligands
             if bound_conf:
                 try:
                     pdb_file = open(bound_conf, 'r')
@@ -76,50 +81,119 @@ class InitDBEntries(luigi.Task):
                     for line in pdb_file:
                         if "LIG" in line:
                             try:
+                                # ligands identified by 'LIG', with preceeding '.' for alt conf letter
                                 lig_string = re.search(r".LIG.......", line).group()
-                                ligand_list.append(list(filter(bool, list(lig_string.split(' ')))))
+                                # just use lig string instead of separating into list items (to handle altconfs)
+                                # TODO: This has changed from a list of 'LIG','RES','ATM' to string. Check usage
+                                ligand_list.append(lig_string)
                             except:
                                 continue
+                # if no ligands are found in the pdb file, no upload to proasis (checked that no strucs. had alternative
+                # labels in them)
                 except:
                     ligand_list = None
 
             if not ligand_list:
                 continue
 
-            unique_ligands = [list(x) for x in set(tuple(x) for x in ligand_list)]
+            # get a unique list of ligands
+            unique_ligands = list(set(ligand_list))
+            # remove the first letter (alt conf) from unique ligands
+            lig_no_conf = [l[1:] for l in unique_ligands]
 
+            for l in lig_no_conf:
+                # check whether there are more than 1 entries for any of the lig strings without alt conf
+                if lig_no_conf.count(l) > 1:
+                    # this is an alt conf situation - add the alt confs to the conf list
+                    confs.extend([lig for lig in unique_ligands if l in lig])
+
+            # get the date the pdb file was modified
             mod_date = misc_functions.get_mod_date(bound_conf)
+
             if mod_date:
+                # if there's already an entry for that structure
                 if ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name).exists():
-                    entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
-                    if entry.modification_date < mod_date or not entry.strucid:
-                        if entry.strucid:
-                            proasis_api_funcs.delete_structure(entry.strucid)
-                            entry.strucid = None
+                    # if there are no alternate conformations
+                    if not confs:
+                        # get the relevant entry
+                        entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
+                        # if the pdb file is older than the current one, or it has not been uploaded to proasis
+                        if entry.modification_date < mod_date or not entry.strucid:
+                            # delete structure and remove files to remove from proasis is strucid exists
+                            if entry.strucid:
+                                proasis_api_funcs.delete_structure(entry.strucid)
+                                entry.strucid = None
+                                entry.save()
+                                if self.hit_directory in entry.pdb_file:
+                                    os.remove(entry.pdb_file)
+                                if self.hit_directory in entry.mtz:
+                                    os.remove(entry.mtz)
+                                if self.hit_directory in entry.two_fofc:
+                                    os.remove(entry.two_fofc)
+                                if self.hit_directory in entry.fofc:
+                                    os.remove(entry.fofc)
+                            # otherwise, just update the relevant fields
+                            entry.pdb_file = bound_conf
+                            entry.modification_date = mod_date
+                            entry.mtz = mtz[1]
+                            entry.two_fofc = two_fofc[1]
+                            entry.fofc = fofc[1]
+                            entry.ligand_list = unique_ligands
                             entry.save()
-                            if self.hit_directory in entry.pdb_file:
-                                os.remove(entry.pdb_file)
-                            if self.hit_directory in entry.mtz:
-                                os.remove(entry.mtz)
-                            if self.hit_directory in entry.two_fofc:
-                                os.remove(entry.two_fofc)
-                            if self.hit_directory in entry.fofc:
-                                os.remove(entry.fofc)
+                    # if there ARE alternate conformations
+                    else:
+                        # for each conformation
+                        for conf in confs:
+                            # do the same as above, but setting the altconf field too
+                            # TODO: functionalise to add altconfs and not repeat method
+                            entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name, altconf=conf)
+                            if entry.modification_date < mod_date or not entry.strucid:
+                                if entry.strucid:
+                                    proasis_api_funcs.delete_structure(entry.strucid)
+                                    entry.strucid = None
+                                    entry.save()
+                                    if self.hit_directory in entry.pdb_file:
+                                        os.remove(entry.pdb_file)
+                                    if self.hit_directory in entry.mtz:
+                                        os.remove(entry.mtz)
+                                    if self.hit_directory in entry.two_fofc:
+                                        os.remove(entry.two_fofc)
+                                    if self.hit_directory in entry.fofc:
+                                        os.remove(entry.fofc)
 
-                        entry.pdb_file = bound_conf
-                        entry.modification_date = mod_date
-                        entry.mtz = mtz[1]
-                        entry.two_fofc = two_fofc[1]
-                        entry.fofc = fofc[1]
-                        entry.ligand_list = unique_ligands
-                        entry.save()
+                                entry.pdb_file = bound_conf
+                                entry.modification_date = mod_date
+                                entry.mtz = mtz[1]
+                                entry.two_fofc = two_fofc[1]
+                                entry.fofc = fofc[1]
+                                entry.ligand_list = unique_ligands
+                                entry.altconf = conf
+                                entry.save()
 
+                # if there's not already an entry for that structure
                 else:
-                    proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
-                                                                          pdb_file=bound_conf,
-                                                                          modification_date=mod_date,
-                                                                          mtz=mtz[1], two_fofc=two_fofc[1],
-                                                                          fofc=fofc[1], ligand_list=unique_ligands)
+                    # if no altconfs
+                    if not confs:
+                        # create entry without an altconf
+                        proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
+                                                                              pdb_file=bound_conf,
+                                                                              modification_date=mod_date,
+                                                                              mtz=mtz[1], two_fofc=two_fofc[1],
+                                                                              fofc=fofc[1], ligand_list=unique_ligands)
+                    # if altconfs
+                    if confs:
+                        for conf in confs:
+                            # create an entry for each altconf
+                            # TODO: The pdb file will need to be edited later to pull out other altconfs of the same lig
+
+                            proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj,
+                                                                                  crystal_name=obj.crystal_name,
+                                                                                  pdb_file=bound_conf,
+                                                                                  modification_date=mod_date,
+                                                                                  mtz=mtz[1], two_fofc=two_fofc[1],
+                                                                                  fofc=fofc[1],
+                                                                                  ligand_list=unique_ligands,
+                                                                                  altconf=conf)
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 if dimple.count() == 1:
@@ -579,6 +653,11 @@ class UploadHit(luigi.Task):
 
         # same as above, but for structures containing more than one ligand
         elif len(unique_ligands) > 1:
+
+            for l in unique_ligands:
+                if l[0] !=' ':
+                    pass
+
             ligands_list = proasis_api_funcs.get_lig_strings(unique_ligands)
             print(ligands_list)
             lig1 = ligands_list[0][1:]

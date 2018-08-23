@@ -241,7 +241,6 @@ class TransferChangedDataFile(luigi.Task):
             for crystal in crystals:
                 refinement = Refinement.objects.get(crystal_name=crystal)
 
-
                 target_name = str(crystal.target.target_name).upper()
                 crystal_name = str(crystal.crystal_name)
                 proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name)
