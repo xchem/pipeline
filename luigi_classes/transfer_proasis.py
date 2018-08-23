@@ -84,7 +84,7 @@ class InitDBEntries(luigi.Task):
                                 # ligands identified by 'LIG', with preceeding '.' for alt conf letter
                                 lig_string = re.search(r".LIG.......", line).group()
                                 # just use lig string instead of separating into list items (to handle altconfs)
-                                # TODO: This has changed from a list of 'LIG','RES','ATM' to string. Check usage
+                                # TODO: This has changed from a list of ['LIG','RES','ID'] to string. Check usage
                                 ligand_list.append(lig_string)
                             except:
                                 continue
@@ -175,7 +175,8 @@ class InitDBEntries(luigi.Task):
                     # if no altconfs
                     if not confs:
                         # create entry without an altconf
-                        proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj, crystal_name=obj.crystal_name,
+                        proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj,
+                                                                              crystal_name=obj.crystal_name,
                                                                               pdb_file=bound_conf,
                                                                               modification_date=mod_date,
                                                                               mtz=mtz[1], two_fofc=two_fofc[1],
