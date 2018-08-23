@@ -3,7 +3,7 @@ import os
 import shutil
 import unittest
 import setup_django
-from db.models import *
+from xchem_db.models import *
 from functions import db_functions
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
     TransferNewDataFile, TransferChangedDataFile

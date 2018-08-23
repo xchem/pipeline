@@ -4,7 +4,7 @@ import sqlite3
 import subprocess
 import re
 import setup_django
-from db import models
+from xchem_db import models
 from functions import misc_functions
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist

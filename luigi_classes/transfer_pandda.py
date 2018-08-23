@@ -3,7 +3,7 @@ import os
 import setup_django
 import datetime
 from functions import pandda_functions
-from db.models import *
+from xchem_db.models import *
 import pandas as pd
 import traceback
 from django.db import transaction

@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views as drf_views
-from db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, CrystalView, DataProcessingView, \
+from xchem_db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, CrystalView, DataProcessingView, \
     DimpleView, LabView, RefinementView, PanddaAnalysisView, PanddaRunView, PanddaSiteView, PanddaEventView, \
     ProasisOutView
 # from rest_framework_swagger.views import get_swagger_view

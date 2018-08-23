@@ -4,7 +4,7 @@ import os
 import json
 import shutil
 import subprocess
-from db.models import *
+from xchem_db.models import *
 from functions import proasis_api_funcs
 import openbabel
 from rdkit import Chem
