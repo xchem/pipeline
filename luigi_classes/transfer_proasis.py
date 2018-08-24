@@ -667,6 +667,10 @@ class UploadHit(luigi.Task):
                 altconf_pdb_file = str(proasis_crystal_directory + proasis_bound_pdb.split('/')[-1].replace(
                     '.pdb', str('_' + self.altconf.replace(' ', '') + '.pdb')))
 
+                # remove if exists so not appending to existing file
+                if os.path.isfile(altconf_pdb_file):
+                    os.remove(altconf_pdb_file)
+
                 # remove the current altconf from the ligands list
                 ligands = [lig for lig in unique_ligands if lig != self.altconf]
 
