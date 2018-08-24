@@ -658,7 +658,8 @@ class UploadHit(luigi.Task):
         # if there's only one ligand in the ligand list, then easy upload
         if len(unique_ligands) == 1:
             lig_string = str(unique_ligands[0][1:])
-            print('submission string:\n')
+
+            # see /usr/local/Proasis2/utils/submitStructure.py for explanation
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
                                     str(os.path.join(proasis_crystal_directory, str(crystal_name) + '.sdf')) +
@@ -671,9 +672,8 @@ class UploadHit(luigi.Task):
                 raise Exception(err)
             print(out)
 
-
         # same as above, but for structures containing more than one ligand
-        elif len(unique_ligands) > 1:
+        elif len(unique_ligands) > 1 and not self.altconf:
 
             for l in unique_ligands:
                 if l[0] !=' ':
@@ -698,6 +698,10 @@ class UploadHit(luigi.Task):
             if err:
                 raise Exception(err)
             print(out)
+
+
+        elif self.altconf:
+            pass
 
         # add strucid to database
         proasis_hit.strucid = strucid
