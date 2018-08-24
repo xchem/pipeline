@@ -612,7 +612,7 @@ class UploadHit(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
-    altconf = luigi.Parameter()
+    altconf = luigi.Parameter(default=None)
 
     def requires(self):
         return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -664,7 +664,7 @@ class UploadHit(luigi.Task):
             # if there's an alternate conformation
             if self.altconf:
                 # set name for altconf pdb file
-                altconf_pdb_file = str(proasis_crystal_directory + proasis_bound_pdb.replace(
+                altconf_pdb_file = str(proasis_crystal_directory + proasis_bound_pdb.split('/')[-1].replace(
                     '.pdb', str('_' + self.altconf.replace(' ', '') + '.pdb')))
 
                 # remove the current altconf from the ligands list
