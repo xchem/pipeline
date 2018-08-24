@@ -269,7 +269,7 @@ class AddLead(luigi.Task):
         return AddProjects(date=self.date, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str(self.reference_structure + '_lead.proasis'))
 
     def run(self):
         for centroid in self.site_centroids:
@@ -457,7 +457,7 @@ class CopyFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
-        pass
+        return UploadLeads()
 
     def output(self):
         target_name = str(self.crystal.target.target_name).upper()
@@ -699,8 +699,8 @@ class UploadHit(luigi.Task):
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
-            if err:
-                raise Exception(err)
+            if 'strucid' not in out:
+                raise Exception(out)
             print(out)
 
         # same as above, but for structures containing more than one ligand
@@ -719,8 +719,8 @@ class UploadHit(luigi.Task):
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
-            if err:
-                raise Exception(err)
+            if 'strucid' not in out:
+                raise Exception(out)
             print(out)
 
         # add strucid to database
