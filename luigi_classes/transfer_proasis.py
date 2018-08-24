@@ -800,7 +800,7 @@ class UploadHits(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
-        hits = ProasisHits.objects.filter(strucid=None)
+        hits = ProasisHits.objects.filter(strucid__in=[None, ''])
         c_id = []
         r_id = []
         a = []
