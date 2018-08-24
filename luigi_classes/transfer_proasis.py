@@ -576,6 +576,7 @@ class GenerateSdf(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -612,6 +613,7 @@ class UploadHit(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
@@ -692,6 +694,7 @@ class AddFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
@@ -757,11 +760,15 @@ class UploadHits(luigi.Task):
         hits = ProasisHits.objects.filter(strucid=None)
         c_id = []
         r_id = []
+        a = []
+        
         for hit in hits:
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
+            a.append(hit.altconf)
 
-        return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory) for (c, r) in zip(c_id, r_id)]
+        return [AddFiles(crystal_id=c, refinement_id=r, hit_directory=self.hit_directory, altconf=alt) for
+                (c, r, alt) in zip(c_id, r_id, a)]
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_hits_%Y%m%d%H.txt'))
