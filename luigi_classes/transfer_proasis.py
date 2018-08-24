@@ -576,14 +576,10 @@ class GenerateSdf(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
-    altconf = luigi.Parameter()
 
     def requires(self):
         return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
                              hit_directory=self.hit_directory)
-
-        # GetLigandList(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-        #                  hit_directory=self.hit_directory)
 
     def output(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
@@ -594,13 +590,16 @@ class GenerateSdf(luigi.Task):
         return luigi.LocalTarget(os.path.join(proasis_crystal_directory, str(crystal_name + '.sdf')))
 
     def run(self):
+        # get crystal name and target name from ids provided
         crystal = Crystal.objects.get(pk=self.crystal_id)
         target_name = str(crystal.target.target_name).upper()
         crystal_name = crystal.crystal_name
+
+        # if the input dirs for the current crystal don't exist, make them
         if not os.path.isdir(os.path.join(self.hit_directory, target_name, crystal_name, 'input/')):
             os.makedirs(os.path.join(self.hit_directory, target_name, crystal_name, 'input/'))
-        # crystal = Crystal.objects.get(pk=self.crystal_id)
-        # crystal_name = crystal.crystal_name
+
+        # take the smiles string for the ligand and create an sdfile (this is the same for altconfs)
         smiles = crystal.compound.smiles
         misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
         proasis_hit = ProasisHits.objects.get(crystal_name=crystal,
@@ -616,30 +615,49 @@ class UploadHit(luigi.Task):
     altconf = luigi.Parameter()
 
     def requires(self):
-        return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
+        return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+                           hit_directory=self.hit_directory)
 
     def output(self):
+        # get the proasis hit entry
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
+
+        # get the modification date and crystal name for output file name
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.structure')))
+        # if there's an alternate conformation involved, add an extension to identify it
+        if self.altconf:
+            alt_ext = '_' + str(self.altconf).replace(' ', '')
+        else:
+            alt_ext = ''
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+                                                                       '.structure')))
 
     def run(self):
+        # get crystal and target name from provided ids
         crystal = Crystal.objects.get(pk=self.crystal_id)
         target_name = str(crystal.target.target_name).upper()
         crystal_name = crystal.crystal_name
+
+        # path for input files for proasis
         proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name, 'input/')
 
+        # the proasis_hit entry
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
-        print('LIGANDS: ' + str(proasis_hit.ligand_list))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
+
+        # eval the list saved in the table to reproduce a python list
         unique_ligands = eval(proasis_hit.ligand_list)
         proasis_bound_pdb = proasis_hit.pdb_file
 
+        # if there's only one ligand in the ligand list, then easy upload
         if len(unique_ligands) == 1:
-            lig_string = str(proasis_api_funcs.get_lig_strings(unique_ligands)[0][1:])
+            lig_string = str(unique_ligands[0][1:])
             print('submission string:\n')
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
@@ -697,7 +715,8 @@ class AddFiles(luigi.Task):
     altconf = luigi.Parameter()
 
     def requires(self):
-        return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory)
+        return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory,
+                         altconf=self.altconf)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
@@ -761,7 +780,7 @@ class UploadHits(luigi.Task):
         c_id = []
         r_id = []
         a = []
-        
+
         for hit in hits:
             c_id.append(hit.crystal_name_id)
             r_id.append(hit.refinement_id)
