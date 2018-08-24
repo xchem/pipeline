@@ -697,18 +697,11 @@ class UploadHit(luigi.Task):
 
         # same as above, but for structures containing more than one ligand
         elif len(unique_ligands) > 1 and not self.altconf:
-
-            for l in unique_ligands:
-                if l[0] !=' ':
-                    pass
-
-            ligands_list = proasis_api_funcs.get_lig_strings(unique_ligands)
-            print(ligands_list)
-            lig1 = ligands_list[0][1:]
+            lig1 = unique_ligands[0][1:]
             lign = " -o '"
-            for i in range(1, len(ligands_list) - 1):
-                lign += str(ligands_list[i][1:] + ',')
-            lign += str(ligands_list[len(ligands_list) - 1] + "'")
+            for i in range(1, len(unique_ligands) - 1):
+                lign += str(unique_ligands[i][1:] + ',')
+            lign += str(unique_ligands[len(unique_ligands) - 1] + "'")
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
