@@ -675,6 +675,10 @@ class UploadHit(luigi.Task):
                     if any(lig in line for lig in ligands):
                         continue
                     else:
+                        # get rid of preceeding altconf letter to make sure correct format for proasis
+                        if self.altconf in line:
+                            line = line.replace(self.altconf, str(' ' + self.altconf[1:]))
+
                         with open(altconf_pdb_file, 'a') as f:
                             f.write(line)
 
