@@ -655,15 +655,38 @@ class UploadHit(luigi.Task):
         unique_ligands = eval(proasis_hit.ligand_list)
         proasis_bound_pdb = proasis_hit.pdb_file
 
-        # if there's only one ligand in the ligand list, then easy upload
-        if len(unique_ligands) == 1:
+        # if there's only one ligand in the ligand list, then easy upload; if altconf, is also uploading only one ligand
+        if len(unique_ligands) == 1 or self.altconf:
+            # set lig string and upload title - changed if altconf, remain same if not
             lig_string = str(unique_ligands[0][1:])
+            title = crystal_name
+
+            # if there's an alternate conformation
+            if self.altconf:
+                # set name for altconf pdb file
+                altconf_pdb_file = str(proasis_crystal_directory + proasis_bound_pdb.replace(
+                    '.pdb', str('_' + self.altconf.replace(' ', '') + '.pdb')))
+
+                # remove the current altconf from the ligands list
+                ligands = [lig for lig in unique_ligands if lig != self.altconf]
+
+                # remove ligands that are not the altconf from the bound state pdb and save as new pdb for upload
+                for line in proasis_bound_pdb:
+                    if any(lig in line for lig in ligands):
+                        continue
+                    else:
+                        with open(altconf_pdb_file, 'a') as f:
+                            f.write(line)
+
+                lig_string = self.altconf[1:]
+                proasis_bound_pdb = altconf_pdb_file
+                title = str(crystal_name + '_alt_' + self.altconf.replace(' ', ''))
 
             # see /usr/local/Proasis2/utils/submitStructure.py for explanation
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
                                     str(os.path.join(proasis_crystal_directory, str(crystal_name) + '.sdf')) +
-                                    " -p " + str(target_name) + " -t " + str(crystal_name) + " -x XRAY -N")
+                                    " -p " + str(target_name) + " -t " + str(title) + " -x XRAY -N")
             print(submit_to_proasis)
             # submit the structure to proasis
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
@@ -698,10 +721,6 @@ class UploadHit(luigi.Task):
             if err:
                 raise Exception(err)
             print(out)
-
-
-        elif self.altconf:
-            pass
 
         # add strucid to database
         proasis_hit.strucid = strucid
