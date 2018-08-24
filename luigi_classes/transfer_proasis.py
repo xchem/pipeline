@@ -671,7 +671,7 @@ class UploadHit(luigi.Task):
                 ligands = [lig for lig in unique_ligands if lig != self.altconf]
 
                 # remove ligands that are not the altconf from the bound state pdb and save as new pdb for upload
-                for line in proasis_bound_pdb:
+                for line in open(proasis_bound_pdb, 'r'):
                     if any(lig in line for lig in ligands):
                         continue
                     else:
