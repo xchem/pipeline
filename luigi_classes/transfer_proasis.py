@@ -750,7 +750,9 @@ class AddFiles(luigi.Task):
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
+        
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
