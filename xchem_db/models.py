@@ -354,5 +354,5 @@ class ProasisOut(models.Model):
 
     class Meta:
         db_table = 'proasis_out'
-        unique_together = ('crystal', 'proasis', 'ligand')
+        unique_together = ('crystal', 'proasis', 'ligand', 'ligid')
 

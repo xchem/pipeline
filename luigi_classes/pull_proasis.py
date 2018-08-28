@@ -73,7 +73,7 @@ class GetCurated(luigi.Task):
             proasis_out.start = self.output().path.replace(self.hit_directory, '').replace(str(
                 self.output().path.split('/')[-1]), '')
 
-            proasis_out[0].save()
+            proasis_out.save()
 
 
 class CreateApo(luigi.Task):
