@@ -52,7 +52,7 @@ class GetCurated(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
                                                 crystal=proasis_hit.crystal_name,
                                                 ligand=self.ligand,
                                                 ligid=self.ligid)
@@ -119,7 +119,7 @@ class CreateApo(luigi.Task):
                     with open(self.output().path, 'a') as f:
                         f.write(line)
             # add the apo file name to the proasis out entry
-            out_entry = ProasisOut.objects.filter(proasis=proasis_hit, ligid=self.ligid,
+            out_entry = ProasisOut.objects.get(proasis=proasis_hit, ligid=self.ligid,
                                                   crystal=proasis_hit.crystal_name, ligand=self.ligand)
             out_entry.apo = str(self.output().path.split('/')[-1])
             out_entry.save()
