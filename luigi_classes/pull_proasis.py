@@ -140,7 +140,7 @@ class GetSDFS(luigi.Task):
 
     def requires(self):
         return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                         altconf=self.altconf)
+                         altconf=self.altconf, ligand=self.ligand, ligid=self.ligid)
 
     def output(self):
         # get the specific hit info
@@ -187,7 +187,7 @@ class CreateMolFile(luigi.Task):
     def requires(self):
         return GetSDFS(
             hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-            altconf=self.altconf
+            altconf=self.altconf, ligid=self.ligid, ligand=self.ligand
         )
 
     def output(self):
