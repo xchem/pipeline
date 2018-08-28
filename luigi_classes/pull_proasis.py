@@ -323,23 +323,35 @@ class GetOutFiles(luigi.Task):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/out/proasis_out_%Y%m%d%H.txt'))
 
     def requires(self):
+        # get anything that has been uploaded to proasis
         proasis_hits = ProasisHits.objects.exclude(strucid=None).exclude(strucid='')
+
+        # set up tmp lists to hold values
         crys_ids = []
         ref_ids = []
         ligs = []
         ligids = []
 
+        # for each hit in the list
         for h in proasis_hits:
-
+            # get group of hits - groups of altconfs
             hit_group = ProasisHits.objects.filter(crystal_name=h.crystal_name, refinement=h.refinement)
+            # set ligid to 0 - auto assigned by increments of one for each group
             ligid = 0
 
+            # for each hit in the group (all altconfs)
             for hit in hit_group:
+                # turn ligand list into actual list
                 ligands = eval(hit.ligand_list)
+                
+                # for each lig in that list
                 for ligand in ligands:
+                    # increase ligand id by 1
                     ligid+=1
+                    # get or create the proasis out object before pulling begins
                     proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
                                                                    crystal=hit.crystal_name)
+                    # add data needed for pulling files to tmp lists
                     crys_ids.append(hit.crystal_name_id)
                     ref_ids.append(hit.refinement_id)
                     ligs.append(ligand)
