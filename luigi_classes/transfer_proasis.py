@@ -532,6 +532,7 @@ class GetPanddaMaps(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -539,7 +540,9 @@ class GetPanddaMaps(luigi.Task):
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
+
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
@@ -582,10 +585,11 @@ class GenerateSdf(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return GetPanddaMaps(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                             hit_directory=self.hit_directory)
+                             hit_directory=self.hit_directory, altconf=self.altconf)
 
     def output(self):
         crystal = Crystal.objects.get(pk=self.crystal_id)
@@ -622,7 +626,7 @@ class UploadHit(luigi.Task):
 
     def requires(self):
         return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                           hit_directory=self.hit_directory)
+                           hit_directory=self.hit_directory, altconf=self.altconf)
 
     def output(self):
         # get the proasis hit entry
@@ -752,7 +756,7 @@ class AddFiles(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id),
                                               altconf=self.altconf)
-        
+
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
