@@ -412,16 +412,25 @@ class UploadLeads(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
+        # get all leads that haven't yet been uploaded
         leads = ProasisLeads.objects.filter(strucid=None)
+        # set a dict for holding values for run
         out_dict = {'reference': [], 'sites': [], 'targets': []}
+        # for each lead
         for lead in leads:
             targets = []
+            # get the related dimple info for the reference pdb structure
             dimple = Dimple.objects.filter(reference=lead.reference_pdb)
+            # get all crystals related to the reference
             crystals = [dimp.crystal_name for dimp in dimple]
             lead_crystals = ProasisHits.objects.filter(crystal_name__in=crystals)
+            # get all targets related to those crystals
             targets = list(set([hit.crystal_name.target.target_name for hit in lead_crystals]))
+            # init blank list for sites
             site_list = []
+            # for each crystal related to the reference
             for crys in lead_crystals:
+                # get all relevant pandda events, and find sites (round to 2 d.p)
                 events = PanddaEvent.objects.filter(crystal=crys.crystal_name)
                 sites = list(set([(round(event.site.site_native_centroid_x, 2),
                                    round(event.site.site_native_centroid_y, 2),
@@ -429,7 +438,7 @@ class UploadLeads(luigi.Task):
                 if events and sites:
                     for site in sites:
                         site_list.append(site)
-
+                # if sites have been found, add to dict to add lead structure to proasis
                 if site_list:
                     if len(targets) == 1:
                         out_dict['targets'].append(targets[0])
@@ -437,7 +446,6 @@ class UploadLeads(luigi.Task):
                         out_dict['sites'].append(list(set(site_list)))
 
         run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
-        print(run_zip)
 
         return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
@@ -567,18 +575,20 @@ class GetPanddaMaps(luigi.Task):
         for event in pandda_events:
             if not os.path.isdir(proasis_crystal_directory):
                 os.makedirs(proasis_crystal_directory)
-            shutil.copy(str(event.pandda_event_map_native), proasis_crystal_directory)
-            tar_string = '''export GZIP=-9; cd %s; tar -czvf %s.tar.gz %s --remove-files''' % \
-                         (proasis_crystal_directory,
-                          event.pandda_event_map_native.split('/')[-1],
-                          event.pandda_event_map_native.split('/')[-1])
 
-            os.system(tar_string)
-            shutil.copy(str(event.pandda_model_pdb), proasis_crystal_directory)
+            # symlink pandda event map instead of copying - save space
+            os.symlink(str(event.pandda_event_map_native),
+                       os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1]))
 
+            # symlink pandda model instead of copying - save space
+            os.symlink(str(event.pandda_model_pdb),
+                       os.path.join(proasis_crystal_directory, str(event.pandda_model_pdb).split('/')[-1]))
+
+            # update proasis model fields
             entry = ProasisPandda.objects.get_or_create(hit=proasis_hit, event=event, crystal=crystal)
             entry[0].event_map_native = os.path.join(proasis_crystal_directory,
                                                      str(str(event.pandda_event_map_native).split('/')[-1] + '.tar.gz'))
+
             entry[0].model_pdb = os.path.join(proasis_crystal_directory,
                                               str(str(event.pandda_model_pdb).split('/')[-1]))
             entry[0].save()
