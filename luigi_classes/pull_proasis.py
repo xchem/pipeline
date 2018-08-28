@@ -130,19 +130,6 @@ class CreateApo(luigi.Task):
             out_entry.save()
 
 
-class GetMaps(luigi.Task):
-
-    def requires(self):
-        pass
-
-    def output(self):
-        pass
-
-    def run(self):
-        pass
-
-
-## TODO: wait to see if altconfs works - proasis
 class GetSDFS(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -175,7 +162,6 @@ class GetSDFS(luigi.Task):
             o.save()
 
 
-## TODO: wait to see if altconfs works - proasis
 class CreateMolFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -217,7 +203,6 @@ class CreateMolFile(luigi.Task):
             o.save()
 
 
-## TODO: wait to see if altconfs works - proasis
 class CreateMolTwoFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -274,7 +259,6 @@ class CreateMolTwoFile(luigi.Task):
             o.save()
 
 
-## TODO: wait to see if altconfs works - proasis
 class GetInteractionJSON(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
