@@ -505,6 +505,7 @@ class CopyInputFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -520,7 +521,9 @@ class CopyInputFiles(luigi.Task):
                         filename=str(proasis_hit.fofc))
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
         return luigi.LocalTarget(str(proasis_hit.pdb_file) + '.proasis.in')
 
     def run(self):
@@ -536,7 +539,7 @@ class GetPanddaMaps(luigi.Task):
 
     def requires(self):
         return CopyInputFiles(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
-                              hit_directory=self.hit_directory)
+                              hit_directory=self.hit_directory, altconf=self.altconf)
 
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
