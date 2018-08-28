@@ -246,18 +246,19 @@ class TransferChangedDataFile(luigi.Task):
                 proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name)
 
                 if ProasisHits.objects.filter(crystal_name=crystal).exists():
-                    proasis_hit = ProasisHits.objects.get(crystal_name=crystal)
-                    for path in glob.glob(os.path.join(os.getcwd(), 'logs/proasis/hits',
-                                                       str(proasis_hit.crystal_name.crystal_name +
-                                                           '_' + proasis_hit.modification_date + '*'))):
-                        os.remove(path)
-                    if os.path.isdir(proasis_crystal_directory):
-                        shutil.rmtree(os.path.join(proasis_crystal_directory))
+                    proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
+                    for hit in proasis_hit:
+                        for path in glob.glob(os.path.join(os.getcwd(), 'logs/proasis/hits',
+                                                           str(hit.crystal_name.crystal_name +
+                                                               '_' + hit.modification_date + '*'))):
+                            os.remove(path)
+                        if os.path.isdir(proasis_crystal_directory):
+                            shutil.rmtree(os.path.join(proasis_crystal_directory))
 
-                    if ProasisOut.objects.filter(proasis=proasis_hit).exists:
-                        for object in ProasisOut.objects.filter(proasis=proasis_hit):
-                            object.delete()
-                    proasis_hit.delete()
+                        if ProasisOut.objects.filter(proasis=hit).exists:
+                            for object in ProasisOut.objects.filter(proasis=hit):
+                                object.delete()
+                        hit.delete()
 
             soakdb_query.delete()
 
