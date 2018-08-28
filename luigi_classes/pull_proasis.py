@@ -20,21 +20,25 @@ class GetCurated(luigi.Task):
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
     ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return transfer_proasis.AddFiles(hit_directory=self.hit_directory, crystal_id=self.crystal_id,
-                                         refinement_id=self.refinement_id)
+                                         refinement_id=self.refinement_id, altconf=self.altconf)
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name
-        ligands = eval(proasis_hit.ligand_list)
-        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
 
-        return [luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name.upper(), str(crystal_name + '_' + str(i)), str(crystal_name + str('_'+ str(i) + '.pdb')))
-                                  for i in range(1, len(ligand_list)+1))]
+        return luigi.LocalTarget(os.path.join(
+            self.hit_directory,
+            target_name.upper(),
+            str(crystal_name + '_' + str(self.ligid)),
+            str(crystal_name + str('_' + str(self.ligid) + '.pdb'))
+        ))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -345,6 +349,7 @@ class GetOutFiles(luigi.Task):
         ref_ids = []
         ligs = []
         ligids = []
+        alts = []
 
         # for each hit in the list
         for h in proasis_hits:
@@ -370,25 +375,26 @@ class GetOutFiles(luigi.Task):
                     ref_ids.append(hit.refinement_id)
                     ligs.append(ligand)
                     ligids.append(ligid)
+                    alts.append(hit.altconf)
 
         return [CreateMolTwoFile(hit_directory=self.hit_directory,
                                  crystal_id=c,
                                  refinement_id=r,
                                  ligand=l,
-                                 ligid=lid)
-                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)], \
+                                 ligid=lid, altconf=a)
+                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
                [GetInteractionJSON(hit_directory=self.hit_directory,
                                    crystal_id=c,
                                    refinement_id=r,
                                    ligand=l,
-                                   ligid=lid)
-                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)], \
+                                   ligid=lid, altconf=a)
+                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
                [CreateStripped(hit_directory=self.hit_directory,
                                crystal_id=c,
                                refinement_id=r,
                                ligand=l,
-                               ligid=lid)
-                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)]
+                               ligid=lid, altconf=a)
+                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)]
 
     def run(self):
         with self.output().open('w') as f:
