@@ -736,7 +736,7 @@ class UploadHit(luigi.Task):
             lign = " -o '"
             for i in range(1, len(unique_ligands) - 1):
                 lign += str(unique_ligands[i][1:] + ',')
-            lign += str(unique_ligands[len(unique_ligands) - 1] + "'")
+            lign += str(unique_ligands[len(unique_ligands) - 1][1:] + "'")
 
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig1 + "' " + lign + " -m " +
