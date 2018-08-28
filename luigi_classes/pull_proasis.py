@@ -60,7 +60,7 @@ class GetCurated(luigi.Task):
         strucid = proasis_out.proasis.strucid
         # pull the file from proasis
         curated_pdb = proasis_api_funcs.get_struc_file(strucid, self.output().path, 'curatedpdb')
-        
+
         # if the file is created successfully
         if curated_pdb:
             # change the relevant fields
@@ -78,21 +78,29 @@ class CreateApo(luigi.Task):
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
     ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
         return GetCurated(
-            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        # get the specific hit info
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        # get crystal and target name for output path
         crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name.upper()
-        ligands = eval(proasis_hit.ligand_list)
-        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
+        target_name = proasis_hit.crystal_name.target.target_name
 
-        return [luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name, crystal_name, str(crystal_name + str(i)), str(crystal_name + '_apo_' + str(i) + '.pdb')))
-            for i in range(1, len(ligand_list)+1)]
+        return luigi.LocalTarget(os.path.join(
+            self.hit_directory,                                          # /dls/science/groups/proasis/LabXChem
+            target_name.upper(),                                         # /TARGET
+            'output',                                                    # /output
+            str(crystal_name + '_' + str(self.ligid)),                   # /CRYSTAL_N
+            str(crystal_name + str('_' + str(self.ligid) + '_apo.pdb'))  # /CRYSTAL_N_apo.pdb
+        ))
 
     def run(self):
         curated_pdb = self.input().path
