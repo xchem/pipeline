@@ -326,10 +326,24 @@ class GetOutFiles(luigi.Task):
         proasis_hits = ProasisHits.objects.exclude(strucid=None).exclude(strucid='')
         crys_ids = []
         ref_ids = []
+        ligs = []
+        ligids = []
 
         for h in proasis_hits:
-            crys_ids.append(h.crystal_name_id)
-            ref_ids.append(h.refinement_id)
+
+            hit_group = ProasisHits.objects.filter(crystal_name=h.crystal_name, refinement=h.refinement)
+            ligid = 0
+
+            for hit in hit_group:
+                ligands = eval(hit.ligand_list)
+                for ligand in ligands:
+                    ligid+=1
+                    proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
+                                                                   crystal=hit.crystal_name)
+                    crys_ids.append(hit.crystal_name_id)
+                    ref_ids.append(hit.refinement_id)
+                    ligs.append(ligand)
+                    ligids.append(ligid)
 
         return [CreateMolTwoFile(hit_directory=self.hit_directory,
                                  crystal_id=c,
