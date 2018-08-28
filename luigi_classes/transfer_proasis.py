@@ -552,7 +552,9 @@ class GetPanddaMaps(luigi.Task):
         return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.pandda')))
 
     def run(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
         target_name = str(crystal.target.target_name).upper()
