@@ -103,29 +103,30 @@ class CreateApo(luigi.Task):
         ))
 
     def run(self):
-        curated_pdb = self.input().path
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        ligand_list = eval(proasis_hit.ligand_list)
-        ligand_list = proasis_api_funcs.get_lig_strings(ligand_list)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name.upper()
+        # get the relevant proasis hit object
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        # turn it's ligand list into an actual list
+        ligands = eval(proasis_hit.ligand_list)
 
-        pdb_file = open(curated_pdb, 'r')
-        ligid = 0
+        # remove trailing blank space and altconf letters (not in proasis structure)
+        ligand_list = [l[1:] for l in ligands]
+
+        # open the input apo structure as 'pdb_file'
+        pdb_file = open(self.input().path, 'r')
         for l in ligand_list:
-            ligid += 1
             for line in pdb_file:
+                # if any of the ligands in the ligand list appear in the line, continue
                 if any(lig in line for lig in ligand_list):
                     continue
+                # otherwise, write the line to the apo structure file
                 else:
-                    with open(os.path.join(self.hit_directory, target_name,
-                                           crystal_name, str(crystal_name + '_' + str(ligid)),
-                                           str(crystal_name + '_apo_' + str(ligid) + '.pdb')), 'a') as f:
+                    with open(self.output().path, 'a') as f:
                         f.write(line)
-
-            out_entry = ProasisOut.objects.filter(proasis=proasis_hit, ligid=ligid)
-
-            out_entry.apo = str(crystal_name + '_apo_' + str(ligid) + '.pdb')
+            # add the apo file name to the proasis out entry
+            out_entry = ProasisOut.objects.filter(proasis=proasis_hit, ligid=self.ligid,
+                                                  crystal=proasis_hit.crystal_name)
+            out_entry.apo = str(self.output().path.split('/')[-1])
             out_entry.save()
 
 
