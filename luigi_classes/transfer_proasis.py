@@ -226,7 +226,10 @@ class AddProject(luigi.Task):
         return luigi.LocalTarget(str('logs/proasis/' + str(self.protein_name) + '.added'))
 
     def run(self):
+        # use upper case so proasis can differentiate
         self.protein_name = str(self.protein_name).upper()
+
+        # add project to proasis (see: /usr/local/Proasis2/utils/addnewproject.py)
         add_project = str(
             '/usr/local/Proasis2/utils/addnewproject.py -c admin -q OtherClasses -p ' + str(self.protein_name))
         process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
@@ -276,7 +279,7 @@ class AddLead(luigi.Task):
             # print('next centroid')
             structure = PDBParser(PERMISSIVE=0).get_structure(str(self.target).upper(), str(self.reference_structure))
 
-            # initial distance for nearest neighbor (NN) search is 20A
+            # initial distance for nearest neighbor (NN) search is 10A
             neighbor_distance = 10
 
             centroid_coordinates = list(centroid)
@@ -302,12 +305,14 @@ class AddLead(luigi.Task):
                         chain = Residue.Residue.get_parent(parent)
                         # if statements for fussy proasis formatting
 
+                    # establish string spacing for proasis
                     if len(str(parent.get_id()[1])) >= 3:
                         space = ' '
                     if len(str(parent.get_id()[1])) == 2:
                         space = '  '
                     if len(str(parent.get_id()[1])) == 1:
                         space = '   '
+                    # ignore waters
                     if 'HOH' not in str(parent.get_resname()):
                         res = (
                                 str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
@@ -403,7 +408,6 @@ class AddLead(luigi.Task):
 
 
 class UploadLeads(luigi.Task):
-    debug = luigi.Parameter(default=False)
     date = luigi.DateParameter(default=datetime.date.today())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
@@ -435,11 +439,7 @@ class UploadLeads(luigi.Task):
         run_zip = zip(out_dict['reference'], out_dict['sites'], out_dict['targets'])
         print(run_zip)
 
-        if self.debug:
-            runner = list(run_zip)[0]
-            return AddLead(reference_structure=runner[0], site_centroids=runner[1], target=runner[2])
-        else:
-            return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
+        return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_leads_%Y%m%d%H.txt'))
