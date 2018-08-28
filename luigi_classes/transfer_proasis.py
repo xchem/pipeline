@@ -717,7 +717,7 @@ class UploadHit(luigi.Task):
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
             if 'strucid' not in out:
-                raise Exception(out)
+                raise Exception(str(submit_to_proasis + '\n' + out))
             print(out)
 
         # same as above, but for structures containing more than one ligand
