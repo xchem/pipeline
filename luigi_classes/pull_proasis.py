@@ -204,60 +204,93 @@ class CreateMolFile(luigi.Task):
         proasis_out.save()
 
 
+class CreateHMolFile(luigi.Task):
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
+
+    def requires(self):
+        return CreateMolFile(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_h.mol')
+
+    def run(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+                                                crystal=proasis_hit.crystal_name,
+                                                ligand=self.ligand,
+                                                ligid=self.ligid)
+
+        # lig = o.ligand
+        # infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '.mol'))
+        # outfile = infile.replace('mol', 'mol2')
+
+        rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
+        h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
+
+        Chem.MolToMolFile(h_rd_mol, self.output().path)
+        proasis_out.h_mol = self.output().path
+        proasis_out.save()
+
+
 class CreateMolTwoFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
     ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
-        return CreateMolFile(
-            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+        return CreateHMolFile(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
 
     def output(self):
-        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
-                                                                                refinement_id=self.refinement_id))
-        ligs = [o.ligand for o in proasis_out]
-        root = [o.root for o in proasis_out]
-        start = [o.start for o in proasis_out]
-        return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '.mol2')))
-                for (r, s, l) in zip(root, start, ligs)], \
-               [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '_h.mol')))
-                for (r, s, l) in zip(root, start, ligs)]
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.mol2')
 
     def run(self):
-        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
-                                                                                refinement_id=self.refinement_id))
-        for o in proasis_out:
-            lig = o.ligand
-            infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '.mol'))
-            outfile = infile.replace('mol', 'mol2')
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+                                                crystal=proasis_hit.crystal_name,
+                                                ligand=self.ligand,
+                                                ligid=self.ligid)
 
-            rd_mol = Chem.MolFromMolFile(infile, removeHs=False)
-            h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
+        rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
 
-            Chem.MolToMolFile(h_rd_mol, outfile.replace('.mol2', '_h.mol'))
-            o.h_mol = outfile.replace('.mol2', '_h.mol').split('/')[-1]
-            rd_mol = Chem.MolFromMolFile(outfile.replace('.mol2', '_h.mol'), removeHs=False)
+        net_charge = AllChem.GetFormalCharge(rd_mol)
+        command_string = str("antechamber -i " + self.input().path + " -fi mdl -o " + self.output().path +
+                             " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
+        print(command_string)
+        process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        out = out.decode('ascii')
+        if err:
+            err = err.decode('ascii')
+            raise Exception(err)
 
-            infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '_h.mol'))
-
-            net_charge = AllChem.GetFormalCharge(rd_mol)
-            command_string = str("antechamber -i " + infile + " -fi mdl -o " + outfile +
-                                 " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
-            print(command_string)
-            process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = process.communicate()
-            out = out.decode('ascii')
-            if err:
-                err = err.decode('ascii')
-                raise Exception(err)
-
-            print(out)
-            print(err)
-            o.mol2 = outfile.split('/')[-1]
-            o.save()
+        print(out)
+        print(err)
+        proasis_out.mol2 = self.output().path.split('/')[-1]
+        proasis_out.save()
 
 
 class GetInteractionJSON(luigi.Task):
