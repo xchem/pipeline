@@ -14,6 +14,19 @@ from . import transfer_proasis
 import datetime
 
 
+def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
+    # get crystal and target name for output path
+    crystal_name = proasis_hit.crystal_name.crystal_name
+    target_name = proasis_hit.crystal_name.target.target_name
+
+    return luigi.LocalTarget(os.path.join(
+        hit_directory,                                          # /dls/science/groups/proasis/LabXChem
+        target_name.upper(),                                    # /TARGET
+        'output',                                               # /output
+        str(crystal_name + '_' + str(ligid)),                   # /CRYSTAL_N
+        str(crystal_name + str('_' + str(ligid) + extension))   # /CRYSTAL_N<extension>
+    ))
+
 class GetCurated(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
@@ -31,17 +44,8 @@ class GetCurated(luigi.Task):
         # get the specific hit info
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        # get crystal and target name for output path
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
 
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory,                                         # /dls/science/groups/proasis/LabXChem
-            target_name.upper(),                                        # /TARGET
-            'output',                                                   # /output
-            str(crystal_name + '_' + str(self.ligid)),                  # /CRYSTAL_N
-            str(crystal_name + str('_' + str(self.ligid) + '.pdb'))     # /CRYSTAL_N.pdb
-        ))
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.pdb')
 
     def run(self):
         # get the proasis out object created in the kick off task
@@ -90,17 +94,8 @@ class CreateApo(luigi.Task):
         # get the specific hit info
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        # get crystal and target name for output path
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
 
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory,                                          # /dls/science/groups/proasis/LabXChem
-            target_name.upper(),                                         # /TARGET
-            'output',                                                    # /output
-            str(crystal_name + '_' + str(self.ligid)),                   # /CRYSTAL_N
-            str(crystal_name + str('_' + str(self.ligid) + '_apo.pdb'))  # /CRYSTAL_N_apo.pdb
-        ))
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_apo.pdb')
 
     def run(self):
         # get the relevant proasis hit object
@@ -146,17 +141,8 @@ class GetSDFS(luigi.Task):
         # get the specific hit info
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        # get crystal and target name for output path
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
 
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory,                                          # /dls/science/groups/proasis/LabXChem
-            target_name.upper(),                                         # /TARGET
-            'output',                                                    # /output
-            str(crystal_name + '_' + str(self.ligid)),                   # /CRYSTAL_N
-            str(crystal_name + str('_' + str(self.ligid) + '.sdf'))      # /CRYSTAL_N.sdf
-        ))
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.sdf')
 
     def run(self):
         # get hit and out entries
@@ -194,17 +180,8 @@ class CreateMolFile(luigi.Task):
         # get the specific hit info
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        # get crystal and target name for output path
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
 
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory,                                          # /dls/science/groups/proasis/LabXChem
-            target_name.upper(),                                         # /TARGET
-            'output',                                                    # /output
-            str(crystal_name + '_' + str(self.ligid)),                   # /CRYSTAL_N
-            str(crystal_name + str('_' + str(self.ligid) + '.mol'))      # /CRYSTAL_N.mol
-        ))
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.mol')
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
