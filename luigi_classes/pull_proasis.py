@@ -49,13 +49,13 @@ class GetCurated(luigi.Task):
 
     def run(self):
         # get the proasis out object created in the kick off task
-        proasis_out = ProasisOut.objects.get(
-            proasis=ProasisHits.Objects.get(crystal_name_id=self.crystal_id,
-                                            refinement_id=self.refinement_id,
-                                            altconf=self.altconf),
-            ligand=self.ligand,
-            ligid=self.ligid
-        )
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+                                                crystal=proasis_hit.crystal_name,
+                                                ligand=self.ligand,
+                                                ligid=self.ligid)
         # if the output directories don't exist yet, make them
         if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
             os.makedirs('/'.join(self.output().path.split('/')[:-1]))
@@ -187,7 +187,7 @@ class CreateMolFile(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
                                                 crystal=proasis_hit.crystal_name,
                                                 ligand=self.ligand,
                                                 ligid=self.ligid)
@@ -228,19 +228,17 @@ class CreateHMolFile(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
                                                 crystal=proasis_hit.crystal_name,
                                                 ligand=self.ligand,
                                                 ligid=self.ligid)
-
-        # lig = o.ligand
-        # infile = os.path.join(o.root, o.start, str(o.start + '_' + lig.replace(' ', '') + '.mol'))
-        # outfile = infile.replace('mol', 'mol2')
-
+        # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
+        # add hydrogens
         h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
-
+        # save mol with hydrogens
         Chem.MolToMolFile(h_rd_mol, self.output().path)
+        # add h_mol to proasis_out entry
         proasis_out.h_mol = self.output().path
         proasis_out.save()
 
@@ -269,14 +267,15 @@ class CreateMolTwoFile(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit,
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
                                                 crystal=proasis_hit.crystal_name,
                                                 ligand=self.ligand,
                                                 ligid=self.ligid)
-
+        # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
-
+        # get charge from mol file
         net_charge = AllChem.GetFormalCharge(rd_mol)
+        # use antechamber to calculate forcefield, and output a mol2 file
         command_string = str("antechamber -i " + self.input().path + " -fi mdl -o " + self.output().path +
                              " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
         print(command_string)
@@ -289,6 +288,7 @@ class CreateMolTwoFile(luigi.Task):
 
         print(out)
         print(err)
+        # save mol2 file to proasis_out object
         proasis_out.mol2 = self.output().path.split('/')[-1]
         proasis_out.save()
 
@@ -299,34 +299,41 @@ class GetInteractionJSON(luigi.Task):
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
     ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
-        return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+        return CreateApo(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
 
     def output(self):
-        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
-                                                                                refinement_id=self.refinement_id))
-        ligs = [o.ligand for o in proasis_out]
-        root = [o.root for o in proasis_out]
-        start = [o.start for o in proasis_out]
-        return [luigi.LocalTarget(os.path.join(r, s, str(s + '_' + l.replace(' ', '') + '_contacts.json')))
-                for (r, s, l) in zip(root, start, ligs)]
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_contacts.json')
 
     def run(self):
-        proasis_out = ProasisOut.objects.filter(proasis=ProasisHits.objects.get(crystal_name_id=self.crystal_id,
-                                                                                refinement_id=self.refinement_id))
-        for o in proasis_out:
-            lig = o.ligand
-            strucid = o.proasis.strucid
-            root = o.root
-            start = o.start
-            outfile = os.path.join(root, start, str(start + '_' + lig.replace(' ', '') + '_contacts.json'))
-            out = proasis_api_funcs.get_lig_interactions(strucid, lig, outfile)
-            if out:
-                o.contacts = out.split('/')[-1]
-            else:
-                raise Exception('contacts json not produced!')
-            o.save()
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
+        # get the ligand string from proasis out and remove altconf letter or blank space
+        lig = proasis_out.ligand[1:]
+        # get proasis strucid
+        strucid = proasis_out.proasis.strucid
+        # get the interaction json and save to output path
+        out = proasis_api_funcs.get_lig_interactions(strucid, lig, self.output().path)
+        if out:
+            # if successful - add json to proasis_out object
+            proasis_out.contacts = out.split('/')[-1]
+        else:
+            raise Exception('contacts json not produced!')
+        # save proasis out
+        proasis_out.save()
 
 
 class CreateStripped(luigi.Task):
@@ -335,27 +342,35 @@ class CreateStripped(luigi.Task):
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
     ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
 
     def requires(self):
-        return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
+        return CreateApo(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
 
     def output(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
-        return luigi.LocalTarget(os.path.join(
-            self.hit_directory, target_name.upper(), crystal_name, str(crystal_name + '_no_buffer_altlocs.pdb')))
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_no_buffer_altlocs.pdb')
 
     def run(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
+        # remove altconfs and buffers from input and save to a temporary path defined by the function
         tmp_file = remove_prot_buffers_alt_locs(self.input().path)
+        # move the tmp file to the output path
         shutil.move(os.path.join(os.getcwd(), tmp_file), self.output().path)
-
-        proasis_out = ProasisOut.objects.filter(proasis=proasis_hit, ligid=ligid)
-        for o in proasis_out:
-            o.stripped = self.output().path.split('/')[-1]
-            o.save()
+        # save the output file to proasis_out model
+        proasis_out.stripped = self.output().path.split('/')[-1]
+        proasis_out.save()
 
 
 class GetOutFiles(luigi.Task):
