@@ -554,7 +554,7 @@ class GetPanddaMaps(luigi.Task):
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        
+
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
         target_name = str(crystal.target.target_name).upper()
@@ -618,7 +618,8 @@ class GenerateSdf(luigi.Task):
         smiles = crystal.compound.smiles
         misc_functions.create_sd_file(crystal_name, smiles, self.output().path)
         proasis_hit = ProasisHits.objects.get(crystal_name=crystal,
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
         proasis_hit.sdf = self.output().path
         proasis_hit.save()
 
@@ -770,7 +771,8 @@ class AddFiles(luigi.Task):
     def run(self):
 
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
-                                              refinement=Refinement.objects.get(pk=self.refinement_id))
+                                              refinement=Refinement.objects.get(pk=self.refinement_id),
+                                              altconf=self.altconf)
 
         # proasis_pandda = ProasisPandda.objects.filter(hit=proasis_hit)
 
