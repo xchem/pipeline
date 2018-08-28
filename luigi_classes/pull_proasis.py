@@ -18,6 +18,8 @@ class GetCurated(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return transfer_proasis.AddFiles(hit_directory=self.hit_directory, crystal_id=self.crystal_id,
@@ -72,6 +74,8 @@ class CreateApo(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return GetCurated(
@@ -132,6 +136,8 @@ class GetSDFS(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -163,6 +169,8 @@ class CreateMolFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return GetSDFS(
@@ -203,6 +211,8 @@ class CreateMolTwoFile(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return CreateMolFile(
@@ -258,6 +268,8 @@ class GetInteractionJSON(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -292,6 +304,8 @@ class CreateStripped(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
 
     def requires(self):
         return CreateApo(hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id)
@@ -343,7 +357,7 @@ class GetOutFiles(luigi.Task):
             for hit in hit_group:
                 # turn ligand list into actual list
                 ligands = eval(hit.ligand_list)
-                
+
                 # for each lig in that list
                 for ligand in ligands:
                     # increase ligand id by 1
@@ -359,16 +373,22 @@ class GetOutFiles(luigi.Task):
 
         return [CreateMolTwoFile(hit_directory=self.hit_directory,
                                  crystal_id=c,
-                                 refinement_id=r)
-                for (c, r) in zip(crys_ids, ref_ids)], \
+                                 refinement_id=r,
+                                 ligand=l,
+                                 ligid=lid)
+                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)], \
                [GetInteractionJSON(hit_directory=self.hit_directory,
                                    crystal_id=c,
-                                   refinement_id=r)
-                for (c, r) in zip(crys_ids, ref_ids)], \
+                                   refinement_id=r,
+                                   ligand=l,
+                                   ligid=lid)
+                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)], \
                [CreateStripped(hit_directory=self.hit_directory,
                                crystal_id=c,
-                               refinement_id=r)
-                for (c, r) in zip(crys_ids, ref_ids)]
+                               refinement_id=r,
+                               ligand=l,
+                               ligid=lid)
+                for (c, r, l, lid) in zip(crys_ids, ref_ids, ligs, ligids)]
 
     def run(self):
         with self.output().open('w') as f:
