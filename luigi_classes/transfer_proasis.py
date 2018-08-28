@@ -612,7 +612,7 @@ class UploadHit(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
-    altconf = luigi.Parameter(default=None)
+    altconf = luigi.Parameter()
 
     def requires(self):
         return GenerateSdf(crystal_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -736,7 +736,7 @@ class AddFiles(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
-    altconf = luigi.Parameter(default=None)
+    altconf = luigi.Parameter()
 
     def requires(self):
         return UploadHit(crystal_id=self.crystal_id, refinement_id=self.refinement_id, hit_directory=self.hit_directory,
