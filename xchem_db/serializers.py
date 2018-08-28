@@ -232,6 +232,7 @@ class ProasisOutSerializer(serializers.ModelSerializer):
             "crystal",
             "proasis",
             "ligand",
+            "ligid",
             "root",
             "start",
             "curated",
