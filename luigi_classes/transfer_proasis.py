@@ -478,8 +478,14 @@ class CopyFile(luigi.Task):
         if not os.path.isdir(proasis_crystal_directory):
             os.makedirs(proasis_crystal_directory)
 
+        # check if symlink exists, and remove it if it does
+        if os.path.lexists(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))):
+            os.remove(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
+
+        # create symlink in input directory (to save space on copying files)
         os.symlink(self.filename, os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
 
+        # update the relevant field in xchem_db
         if self.update_field == 'pdb':
             self.proasis_hit.pdb_file = self.output().path
             self.proasis_hit.save()
