@@ -508,7 +508,8 @@ class CopyInputFiles(luigi.Task):
     altconf = luigi.Parameter()
 
     def requires(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
         return CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='pdb',
