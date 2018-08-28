@@ -761,7 +761,7 @@ class AddFiles(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name=Crystal.objects.get(pk=self.crystal_id),
                                               refinement=Refinement.objects.get(pk=self.refinement_id))
 
-        proasis_pandda = ProasisPandda.objects.filter(hit=proasis_hit)
+        # proasis_pandda = ProasisPandda.objects.filter(hit=proasis_hit)
 
         strucid = proasis_hit.strucid
 
@@ -806,7 +806,7 @@ class UploadHits(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
-        hits = ProasisHits.objects.filter(strucid__in=[None, ''])
+        hits = ProasisHits.objects.filter(strucid=None)
         c_id = []
         r_id = []
         a = []
