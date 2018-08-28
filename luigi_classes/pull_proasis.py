@@ -29,13 +29,14 @@ class GetCurated(luigi.Task):
     def output(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        
+
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name
 
         return luigi.LocalTarget(os.path.join(
             self.hit_directory,
             target_name.upper(),
+            'output',
             str(crystal_name + '_' + str(self.ligid)),
             str(crystal_name + str('_' + str(self.ligid) + '.pdb'))
         ))
