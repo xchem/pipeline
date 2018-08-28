@@ -23,55 +23,52 @@ class GetCurated(luigi.Task):
     altconf = luigi.Parameter()
 
     def requires(self):
+        # make sure it's actually in proasis first
         return transfer_proasis.AddFiles(hit_directory=self.hit_directory, crystal_id=self.crystal_id,
                                          refinement_id=self.refinement_id, altconf=self.altconf)
 
     def output(self):
+        # get the specific hit info
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-
+        # get crystal and target name for output path
         crystal_name = proasis_hit.crystal_name.crystal_name
         target_name = proasis_hit.crystal_name.target.target_name
 
         return luigi.LocalTarget(os.path.join(
-            self.hit_directory,
-            target_name.upper(),
-            'output',
-            str(crystal_name + '_' + str(self.ligid)),
-            str(crystal_name + str('_' + str(self.ligid) + '.pdb'))
+            self.hit_directory,                                         # /dls/science/groups/proasis/LabXChem
+            target_name.upper(),                                        # /TARGET
+            'output',                                                   # /output
+            str(crystal_name + '_' + str(self.ligid)),                  # /CRYSTAL_N
+            str(crystal_name + str('_' + str(self.ligid) + '.pdb'))     # /CRYSTAL_N.pdb
         ))
 
     def run(self):
-        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id)
-        strucid = proasis_hit.strucid
-        ligands = eval(proasis_hit.ligand_list)
-        ligand_list = proasis_api_funcs.get_lig_strings(ligands)
-        crystal_name = proasis_hit.crystal_name.crystal_name
-        target_name = proasis_hit.crystal_name.target.target_name
+        # get the proasis out object created in the kick off task
+        proasis_out = ProasisOut.objects.get(
+            proasis=ProasisHits.Objects.get(crystal_name_id=self.crystal_id,
+                                            refinement_id=self.refinement_id,
+                                            altconf=self.altconf),
+            ligand=self.ligand,
+            ligid=self.ligid
+        )
+        # if the output directories don't exist yet, make them
+        if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
+            os.makedirs('/'.join(self.output().path.split('/')[:-1]))
 
-        ligid = 0
-        for lig in ligand_list:
-            ligid += 1
+        # find strucid to pull the right file from proasis
+        strucid = proasis_out.proasis.strucid
+        # pull the file from proasis
+        curated_pdb = proasis_api_funcs.get_struc_file(strucid, self.output().path, 'curatedpdb')
+        
+        # if the file is created successfully
+        if curated_pdb:
+            # change the relevant fields
+            proasis_out.curated = str(self.output().path.split('/')[-1])
+            proasis_out.root = self.hit_directory
+            proasis_out.start = self.output().path.replace(self.hit_directory, '').replace(str(
+                self.output().path.split('/')[-1]), '')
 
-            curated_pdb = proasis_api_funcs.get_struc_file(strucid,
-                                                           os.path.join(
-                                                               self.hit_directory, target_name.upper(), str(crystal_name +
-                                                                                                        '_' +
-                                                                                                        str(ligid)),
-                                                               str(crystal_name + str('_' + str(ligid) + '.pdb'))),
-                                                           'curatedpdb')
-
-            proasis_out = ProasisOut.objects.get_or_create(proasis=proasis_hit,
-                                                           crystal=proasis_hit.crystal_name,
-                                                           ligand=lig,
-                                                           ligid=ligid,
-                                                           root=os.path.join(self.hit_directory,
-                                                                             proasis_hit.crystal_name.target.target_name.upper()),
-                                                           start=str(proasis_hit.crystal_name.crystal_name + '/' +
-                                                                     proasis_hit.crystal_name.crystal_name + '_' +
-                                                                     ligid),
-                                                           curated=curated_pdb.split('/')[-1]
-                                                           )
             proasis_out[0].save()
 
 
