@@ -167,7 +167,7 @@ class Lab(models.Model):
 
 
 class Refinement(models.Model):
-    bound_conf = models.TextField(blank=True, null=True, unique=True)
+    bound_conf = models.CharField(max_length=255, blank=True, null=True, unique=True)
     cif = models.TextField(blank=True, null=True)
     cif_prog = models.TextField(blank=True, null=True)
     cif_status = models.TextField(blank=True, null=True)
