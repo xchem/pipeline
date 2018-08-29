@@ -11,6 +11,7 @@ from xchem_db.models import *
 from functions import misc_functions, db_functions, proasis_api_funcs
 from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 import numpy as np
+from itertools import chain
 import setup_django
 
 
@@ -830,7 +831,9 @@ class UploadHits(luigi.Task):
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
-        hits = ProasisHits.objects.filter(strucid=None)
+        hits1 = ProasisHits.objects.filter(strucid=None)
+        hits2 = ProasisHits.objects.filter(strucid='')
+        hits = chain(hits1, hits2)
         c_id = []
         r_id = []
         a = []
