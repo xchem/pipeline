@@ -1,6 +1,7 @@
 import luigi
 import setup_django
 import os
+import glob
 import json
 import shutil
 import subprocess
@@ -28,7 +29,7 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     ))
 
 class GetCurated(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -77,7 +78,7 @@ class GetCurated(luigi.Task):
 
 
 class CreateApo(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -126,7 +127,7 @@ class CreateApo(luigi.Task):
 
 
 class GetSDFS(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -163,7 +164,7 @@ class GetSDFS(luigi.Task):
 
 
 class CreateMolFile(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -205,7 +206,7 @@ class CreateMolFile(luigi.Task):
 
 
 class CreateHMolFile(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -244,7 +245,7 @@ class CreateHMolFile(luigi.Task):
 
 
 class CreateMolTwoFile(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -294,7 +295,7 @@ class CreateMolTwoFile(luigi.Task):
 
 
 class GetInteractionJSON(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -337,7 +338,7 @@ class GetInteractionJSON(luigi.Task):
 
 
 class CreateStripped(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     ligand = luigi.Parameter()
@@ -374,7 +375,7 @@ class CreateStripped(luigi.Task):
 
 
 class GetOutFiles(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter()
     date = luigi.DateParameter(default=datetime.date.today())
 
     def output(self):
@@ -417,19 +418,29 @@ class GetOutFiles(luigi.Task):
                     ligids.append(ligid)
                     alts.append(hit.altconf)
 
-        return [CreateMolTwoFile(hit_directory=self.hit_directory,
+                    proposal = hit.crystal_name.visit.proposal.proposal
+                    visit1 = str(proposal + '-1')
+
+                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
+
+                    paths = glob.glob(glob_string)
+
+                    if len(paths) == 1:
+                        hit_directory = paths[0]
+
+        return [CreateMolTwoFile(hit_directory=hit_directory,
                                  crystal_id=c,
                                  refinement_id=r,
                                  ligand=l,
                                  ligid=lid, altconf=a)
                 for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [GetInteractionJSON(hit_directory=self.hit_directory,
+               [GetInteractionJSON(hit_directory=hit_directory,
                                    crystal_id=c,
                                    refinement_id=r,
                                    ligand=l,
                                    ligid=lid, altconf=a)
                 for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [CreateStripped(hit_directory=self.hit_directory,
+               [CreateStripped(hit_directory=hit_directory,
                                crystal_id=c,
                                refinement_id=r,
                                ligand=l,
