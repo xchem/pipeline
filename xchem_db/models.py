@@ -11,21 +11,20 @@ from django.db import models
 
 
 class Target(models.Model):
-    target_name = models.TextField(blank=False, null=False, unique=True)
-
+    target_name = models.CharField(max_length=255, blank=False, null=False, unique=True)
     class Meta:
         db_table = 'target'
 
 
 class Compounds(models.Model):
-    smiles = models.TextField(blank=True, null=True, unique=True)
+    smiles = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
     class Meta:
         db_table = 'compounds'
 
 
 class Reference(models.Model):
-    reference_pdb = models.TextField(null=True, default='not_assigned', unique=True)
+    reference_pdb = models.CharField(max_length=255, null=True, default='not_assigned', unique=True)
 
     class Meta:
         db_table = 'reference'
@@ -33,7 +32,7 @@ class Reference(models.Model):
 
 class Proposals(models.Model):
     # TODO - can we refactor this for title
-    proposal = models.TextField(blank=False, null=False, unique=True)
+    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -41,7 +40,7 @@ class Proposals(models.Model):
 
 
 class SoakdbFiles(models.Model):
-    filename = models.TextField(blank=False, null=False, unique=True)
+    filename =  models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
     visit = models.TextField(blank=False, null=False)
@@ -52,7 +51,7 @@ class SoakdbFiles(models.Model):
 
 
 class Crystal(models.Model):
-    crystal_name = models.TextField(blank=False, null=False)
+    crystal_name = models.CharField(max_length=255, blank=False, null=False)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
@@ -131,8 +130,8 @@ class DataProcessing(models.Model):
 
 class Dimple(models.Model):
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
-    mtz_path = models.TextField(blank=True, null=True)
-    pdb_path = models.TextField(blank=True, null=True)
+    mtz_path = models.CharField(max_length=255, blank=True, null=True)
+    pdb_path = models.CharField(max_length=255, blank=True, null=True)
     r_free = models.FloatField(blank=True, null=True)
     res_high = models.FloatField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
@@ -168,7 +167,7 @@ class Lab(models.Model):
 
 
 class Refinement(models.Model):
-    bound_conf = models.TextField(blank=True, null=True, unique=True)
+    bound_conf = models.CharField(max_length=255, blank=True, null=True, unique=True)
     cif = models.TextField(blank=True, null=True)
     cif_prog = models.TextField(blank=True, null=True)
     cif_status = models.TextField(blank=True, null=True)
@@ -209,7 +208,7 @@ class ProasisHits(models.Model):
     two_fofc = models.TextField(blank=False, null=False)
     fofc = models.TextField(blank=False, null=False)
     sdf = models.TextField(blank=True, null=True)
-    altconf = models.TextField(blank=True, null=True)
+    altconf = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'proasis_hits'
@@ -230,7 +229,7 @@ class LigandEdstats(models.Model):
     zda = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     zoa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key # changed from crystal
-    ligand = models.TextField(blank=True, null=True)
+    ligand = models.CharField(max_length=255, blank=True, null=True)
     strucid = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
 
     class Meta:
@@ -240,14 +239,14 @@ class LigandEdstats(models.Model):
 
 class ProasisLeads(models.Model):
     reference_pdb = models.ForeignKey(Reference, to_field='reference_pdb', on_delete=models.CASCADE, unique=True)
-    strucid = models.TextField(blank=True, null=True, unique=True)
+    strucid = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
     class Meta:
         db_table = 'proasis_leads'
 
 
 class PanddaAnalysis(models.Model):
-    pandda_dir = models.TextField(unique=True)
+    pandda_dir = models.CharField(max_length=255, unique=True)
 
     class Meta:
         db_table = 'pandda_analysis'
@@ -256,7 +255,7 @@ class PanddaAnalysis(models.Model):
 class PanddaRun(models.Model):
     input_dir = models.TextField(blank=True, null=True)
     pandda_analysis = models.ForeignKey(PanddaAnalysis, on_delete=models.CASCADE)
-    pandda_log = models.TextField(unique=True)
+    pandda_log = models.CharField(max_length=255, unique=True)
     pandda_version = models.TextField(blank=True, null=True)
     sites_file = models.TextField(blank=True, null=True)
     events_file = models.TextField(blank=True, null=True)
@@ -330,7 +329,7 @@ class ProasisPandda(models.Model):
 class ProasisOut(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # done
     proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE) # done
-    ligand = models.TextField(blank=False, null=False) # done
+    ligand = models.CharField(max_length=255,blank=False, null=False) # done
     ligid = models.IntegerField(blank=True, null=True)
     root = models.TextField(blank=True, null=True) # root directory for all crystals in this project (target)
     start = models.TextField(blank=True, null=True) # directory name for this crystal within root
