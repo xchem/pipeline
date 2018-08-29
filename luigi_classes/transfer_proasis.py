@@ -578,10 +578,14 @@ class GetPanddaMaps(luigi.Task):
                 os.makedirs(proasis_crystal_directory)
 
             # symlink pandda event map instead of copying - save space
+            if os.path.lexists(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1])):
+                os.remove(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1]))
             os.symlink(str(event.pandda_event_map_native),
                        os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1]))
 
             # symlink pandda model instead of copying - save space
+            if os.path.lexists(os.path.join(proasis_crystal_directory, str(event.pandda_model_pdb).split('/')[-1])):
+                os.remove(os.path.join(proasis_crystal_directory, str(event.pandda_model_pdb).split('/')[-1]))
             os.symlink(str(event.pandda_model_pdb),
                        os.path.join(proasis_crystal_directory, str(event.pandda_model_pdb).split('/')[-1]))
 
