@@ -954,7 +954,7 @@ class UpdateOtherFields(luigi.Task):
                 mtz_file = o.proasis.mtz.replace(str(os.path.join(o.root, o.start) + '/'), '')
                 yield UpdateField(model=o, field='mtz', value=mtz_file)
         for o in ProasisOut.objects.all():
-            for f in glob.glob(os.path.join(o.root, o.start, '*.ccp4.tar.gz')):
+            for f in glob.glob(os.path.join(o.root, o.start, '*.ccp4.gz')):
                 if 'donor' in f:
                     yield UpdateField(model=o, field='don', value=f.split('/')[-1])
                 if 'acceptor' in f:

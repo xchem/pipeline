@@ -239,7 +239,7 @@ class CreateHMolFile(luigi.Task):
         # save mol with hydrogens
         Chem.MolToMolFile(h_rd_mol, self.output().path)
         # add h_mol to proasis_out entry
-        proasis_out.h_mol = self.output().path
+        proasis_out.h_mol = self.output().path.split('/')[-1]
         proasis_out.save()
 
 

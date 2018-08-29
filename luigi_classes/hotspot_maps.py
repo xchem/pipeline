@@ -36,7 +36,7 @@ sleep 5s''' \
                               self.ccdc_settings
                           )
         additional_line_2 = "find . -name '*.ccp4' -print0 | " \
-                            "while IFS= read -r -d $'\\0' file; do tar -czvf $file.tar.gz $file --remove-files; done"
+                            "while IFS= read -r -d $'\\0' file; do gzip $file; done"
 
         return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,
                                                    job_filename=os.path.join(
@@ -47,6 +47,7 @@ sleep 5s''' \
                                                    parameters=os.path.join(self.directory, self.apo_pdb),
                                                    conda_environment=self.conda_environment,
                                                    additional_commands_2=additional_line_2)
+
 
 
 class WriteRunCheckHot(luigi.WrapperTask):
