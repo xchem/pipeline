@@ -1,7 +1,7 @@
 import luigi
 import functions.db_functions as db_functions
 from luigi_classes.archive import data_in_proasis, database_operations
-from luigi_classes.data_out_proasis import *
+from luigi_classes.archive.data_out_proasis import *
 import functions.docking_functions as dock
 
 

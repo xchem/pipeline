@@ -54,7 +54,7 @@ class InitDBEntries(luigi.Task):
                     # if this is from a refinement folder, find the bound-state pdb file, rather than the ensemble
                     if 'Refine' in obj.pdb_latest:
                         search_path = '/'.join(obj.pdb_latest.split('/')[:-1])
-                        files = glob.glob(str(search_path + '/refine*bound*.pdb'))
+                        files = glob.glob(str(search_path + '/refine*split.bound*.pdb'))
                         if len(files) == 1:
                             bound_conf = files[0]
                     else:
