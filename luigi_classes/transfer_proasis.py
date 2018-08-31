@@ -117,30 +117,31 @@ class InitDBEntries(luigi.Task):
                     # if there are no alternate conformations
                     if not confs:
                         # get the relevant entry
-                        entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name)
-                        # if the pdb file is older than the current one, or it has not been uploaded to proasis
-                        if entry.modification_date < mod_date or not entry.strucid:
-                            # delete structure and remove files to remove from proasis is strucid exists
-                            if entry.strucid:
-                                proasis_api_funcs.delete_structure(entry.strucid)
-                                entry.strucid = None
+                        entries = ProasisHits.objects.filter(refinement=obj, crystal_name=obj.crystal_name)
+                        for entry in entries:
+                            # if the pdb file is older than the current one, or it has not been uploaded to proasis
+                            if entry.modification_date < mod_date or not entry.strucid:
+                                # delete structure and remove files to remove from proasis is strucid exists
+                                if entry.strucid:
+                                    proasis_api_funcs.delete_structure(entry.strucid)
+                                    entry.strucid = None
+                                    entry.save()
+                                    if self.hit_directory in entry.pdb_file:
+                                        os.remove(entry.pdb_file)
+                                    if self.hit_directory in entry.mtz:
+                                        os.remove(entry.mtz)
+                                    if self.hit_directory in entry.two_fofc:
+                                        os.remove(entry.two_fofc)
+                                    if self.hit_directory in entry.fofc:
+                                        os.remove(entry.fofc)
+                                # otherwise, just update the relevant fields
+                                entry.pdb_file = bound_conf
+                                entry.modification_date = mod_date
+                                entry.mtz = mtz[1]
+                                entry.two_fofc = two_fofc[1]
+                                entry.fofc = fofc[1]
+                                entry.ligand_list = unique_ligands
                                 entry.save()
-                                if self.hit_directory in entry.pdb_file:
-                                    os.remove(entry.pdb_file)
-                                if self.hit_directory in entry.mtz:
-                                    os.remove(entry.mtz)
-                                if self.hit_directory in entry.two_fofc:
-                                    os.remove(entry.two_fofc)
-                                if self.hit_directory in entry.fofc:
-                                    os.remove(entry.fofc)
-                            # otherwise, just update the relevant fields
-                            entry.pdb_file = bound_conf
-                            entry.modification_date = mod_date
-                            entry.mtz = mtz[1]
-                            entry.two_fofc = two_fofc[1]
-                            entry.fofc = fofc[1]
-                            entry.ligand_list = unique_ligands
-                            entry.save()
                     # if there ARE alternate conformations
                     else:
                         # for each conformation
