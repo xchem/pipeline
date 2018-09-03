@@ -375,7 +375,7 @@ class CreateStripped(luigi.Task):
 
 
 class GetOutFiles(luigi.Task):
-    hit_directory = luigi.Parameter()
+    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     date = luigi.DateParameter(default=datetime.date.today())
 
     def output(self):
@@ -428,19 +428,19 @@ class GetOutFiles(luigi.Task):
                     if len(paths) == 1:
                         hit_directory = paths[0]
 
-        return [CreateMolTwoFile(hit_directory=hit_directory,
+        return [CreateMolTwoFile(hit_directory=self.hit_directory,
                                  crystal_id=c,
                                  refinement_id=r,
                                  ligand=l,
                                  ligid=lid, altconf=a)
                 for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [GetInteractionJSON(hit_directory=hit_directory,
+               [GetInteractionJSON(hit_directory=self.hit_directory,
                                    crystal_id=c,
                                    refinement_id=r,
                                    ligand=l,
                                    ligid=lid, altconf=a)
                 for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [CreateStripped(hit_directory=hit_directory,
+               [CreateStripped(hit_directory=self.hit_directory,
                                crystal_id=c,
                                refinement_id=r,
                                ligand=l,
