@@ -421,7 +421,7 @@ class GetOutFiles(luigi.Task):
                     proposal = hit.crystal_name.visit.proposal.proposal
                     visit1 = str(proposal + '-1')
 
-                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
+                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1, 'processing/comp_chem')
 
                     paths = glob.glob(glob_string)
 
