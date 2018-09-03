@@ -418,15 +418,15 @@ class GetOutFiles(luigi.Task):
                     ligids.append(ligid)
                     alts.append(hit.altconf)
 
-                    proposal = hit.crystal_name.visit.proposal.proposal
-                    visit1 = str(proposal + '-1')
-
-                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
-
-                    paths = glob.glob(glob_string)
-
-                    if len(paths) == 1:
-                        hit_directory = paths[0]
+                    # proposal = hit.crystal_name.visit.proposal.proposal
+                    # visit1 = str(proposal + '-1')
+                    #
+                    # glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
+                    #
+                    # paths = glob.glob(glob_string)
+                    #
+                    # if len(paths) == 1:
+                    #     hit_directory = paths[0]
 
         return [CreateMolTwoFile(hit_directory=self.hit_directory,
                                  crystal_id=c,
