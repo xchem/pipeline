@@ -373,8 +373,31 @@ class CreateStripped(luigi.Task):
         proasis_out.save()
 
 
-class CreatePV(luigi.Task):
-    pass
+class CreateProposalFile(luigi.Task):
+    proposals = luigi.Parameter()
+    out_directory = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.out_directory, 'PROPOSAL'))
+
+    def run(self):
+        out_string = '\n'.join(self.proposals)
+        with self.output().open('w') as f:
+            f.write(out_string)
+
+
+class CreateVisitFile(luigi.Task):
+    visits = luigi.Parameter()
+    out_directory = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.out_directory, 'VISIT'))
+
+    def run(self):
+        out_string = '\n'.join(self.visits)
+        with self.output().open('w') as f:
+            f.write(out_string)
+
 
 class CreateProposalVisitFiles(luigi.Task):
     def requires(self):
@@ -402,8 +425,10 @@ class CreateProposalVisitFiles(luigi.Task):
 
         targets = [k for k in out_dict.keys()]
 
-        return [CreatePV(proposals=proposal_dict[target], visits=visit_dict[target],
-                         out_directory=od) for target in targets for od in out_dict[target]]
+        return [CreateProposalFile(proposals=proposal_dict[target], out_directory=od)
+                for target in targets for od in out_dict[target]], \
+               [CreateVisitFile(visits=visit_dict[target], out_directory=od)
+                for target in targets for od in out_dict[target]]
 
 
 class GetOutFiles(luigi.Task):
