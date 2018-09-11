@@ -375,7 +375,7 @@ class CreateStripped(luigi.Task):
 
 
 class GetOutFiles(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    # hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     date = luigi.DateParameter(default=datetime.date.today())
 
     def output(self):
@@ -391,6 +391,7 @@ class GetOutFiles(luigi.Task):
         ligs = []
         ligids = []
         alts = []
+        hit_dirs = []
 
         # for each hit in the list
         for h in proasis_hits:
@@ -418,34 +419,40 @@ class GetOutFiles(luigi.Task):
                     ligids.append(ligid)
                     alts.append(hit.altconf)
 
-                    # proposal = hit.crystal_name.visit.proposal.proposal
-                    # visit1 = str(proposal + '-1')
-                    #
-                    # glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
-                    #
-                    # paths = glob.glob(glob_string)
-                    #
-                    # if len(paths) == 1:
-                    #     hit_directory = paths[0]
+                    proposal = hit.crystal_name.visit.proposal.proposal
+                    visit1 = str(proposal + '-1')
 
-        return [CreateMolTwoFile(hit_directory=self.hit_directory,
+                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
+
+                    paths = glob.glob(glob_string)
+
+                    if len(paths) == 1:
+                        hit_directory = os.path.join(paths[0], 'processing', 'fragalysis')
+                        if not os.path.isdir(hit_directory):
+                            os.makedirs(hit_directory)
+                    else:
+                        hit_directory=''
+
+                    hit_dirs.append(hit_directory)
+
+        return [CreateMolTwoFile(hit_directory=h,
                                  crystal_id=c,
                                  refinement_id=r,
                                  ligand=l,
                                  ligid=lid, altconf=a)
-                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [GetInteractionJSON(hit_directory=self.hit_directory,
+                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)], \
+               [GetInteractionJSON(hit_directory=h,
                                    crystal_id=c,
                                    refinement_id=r,
                                    ligand=l,
                                    ligid=lid, altconf=a)
-                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)], \
-               [CreateStripped(hit_directory=self.hit_directory,
+                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)], \
+               [CreateStripped(hit_directory=h,
                                crystal_id=c,
                                refinement_id=r,
                                ligand=l,
                                ligid=lid, altconf=a)
-                for (c, r, l, lid, a) in zip(crys_ids, ref_ids, ligs, ligids, alts)]
+                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)]
 
     def run(self):
         with self.output().open('w') as f:

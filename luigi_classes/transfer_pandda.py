@@ -9,6 +9,7 @@ import traceback
 from django.db import transaction
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 import setup_django
+from xchem_db.models import PanddaRun
 
 
 class FindPanddaLogs(luigi.Task):

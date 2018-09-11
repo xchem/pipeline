@@ -21,7 +21,7 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reference
-        fields = ("reference_pdb")
+        fields = ("reference_pdb",)
 
 
 class SoakdbFilesSerializer(serializers.ModelSerializer):
