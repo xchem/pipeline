@@ -373,27 +373,37 @@ class CreateStripped(luigi.Task):
         proasis_out.save()
 
 
-# class CreateProposalFiles(luigi.Task):
-#
-#     outs = ProasisOut.objects.all()
-#     for o in outs:
-#
-#         out_path = os.path.join(o.root, o.start)
-#
-#     for d in out_dirs:
-#         visits = []
-#         proposals = []
-#         hits = ProasisOut.objects.filter(start=d)
-#
-#         for h in hits:
-#             proposals.append(h.crystal.visit.proposal.proposal)
-#             visits.append(h.crystal.visit.visit)
-#
-#         proposals = list(set(proposals))
-#         visits = list(set(visits))
-#
-#         out_file_name =
+class CreatePV(luigi.Task):
+    pass
 
+class CreateProposalVisitFiles(luigi.Task):
+    def requires(self):
+        def add_to_dict(dct, value, target):
+            if target not in dct.keys():
+                dct[target] = []
+            dct[target].append(value)
+
+        outs = ProasisOut.objects.all()
+        out_dict = {}
+        proposal_dict = {}
+        visit_dict = {}
+
+        for o in outs:
+            if o.root and o.start:
+                add_to_dict(visit_dict, o.crystal.visit.visit, o.crystal.target.target_name)
+                add_to_dict(proposal_dict, o.crystal.visit.proposal.proposal, o.crystal.target.target_name)
+                add_to_dict(out_dict, os.path.join(o.root, o.start.split('/')[0]), o.crystal.target.target_name)
+
+        dicts = [out_dict, proposal_dict, visit_dict]
+
+        for d in dicts:
+            for k in d.keys():
+                d[k] = list(set(d[k]))
+
+        targets = [k for k in out_dict.keys()]
+
+        return [CreatePV(proposals=proposal_dict[target], visits=visit_dict[target],
+                         out_directory=out_dict[target]) for target in targets]
 
 
 class GetOutFiles(luigi.Task):
