@@ -403,7 +403,7 @@ class CreateProposalVisitFiles(luigi.Task):
         targets = [k for k in out_dict.keys()]
 
         return [CreatePV(proposals=proposal_dict[target], visits=visit_dict[target],
-                         out_directory=out_dict[target]) for target in targets]
+                         out_directory=od) for target in targets for od in out_dict[target]]
 
 
 class GetOutFiles(luigi.Task):
