@@ -23,7 +23,6 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     return luigi.LocalTarget(os.path.join(
         hit_directory,                                          # /dls/science/groups/proasis/LabXChem
         target_name.upper(),                                    # /TARGET
-        'output',                                               # /output
         str(crystal_name + '_' + str(ligid)),                   # /CRYSTAL_N
         str(crystal_name + str('_' + str(ligid) + extension))   # /CRYSTAL_N<extension>
     ))
@@ -71,8 +70,8 @@ class GetCurated(luigi.Task):
             # change the relevant fields
             proasis_out.curated = str(self.output().path.split('/')[-1])
             proasis_out.root = self.hit_directory
-            proasis_out.start = self.output().path.replace(self.hit_directory, '').replace(str(
-                self.output().path.split('/')[-1]), '')
+            proasis_out.start = str(self.output().path.replace(self.hit_directory, '').replace(str(
+                self.output().path.split('/')[-1]), ''))[1:]
 
             proasis_out.save()
 
@@ -372,6 +371,29 @@ class CreateStripped(luigi.Task):
         # save the output file to proasis_out model
         proasis_out.stripped = self.output().path.split('/')[-1]
         proasis_out.save()
+
+
+# class CreateProposalFiles(luigi.Task):
+#
+#     outs = ProasisOut.objects.all()
+#     for o in outs:
+#
+#         out_path = os.path.join(o.root, o.start)
+#
+#     for d in out_dirs:
+#         visits = []
+#         proposals = []
+#         hits = ProasisOut.objects.filter(start=d)
+#
+#         for h in hits:
+#             proposals.append(h.crystal.visit.proposal.proposal)
+#             visits.append(h.crystal.visit.visit)
+#
+#         proposals = list(set(proposals))
+#         visits = list(set(visits))
+#
+#         out_file_name =
+
 
 
 class GetOutFiles(luigi.Task):
