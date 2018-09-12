@@ -1,11 +1,11 @@
-import luigi
 import subprocess
-import os
+
 import datetime
-from functions import db_functions, misc_functions
-from sqlalchemy import create_engine
+import luigi
 import pandas
-import sqlite3
+from sqlalchemy import create_engine
+
+from functions import db_functions, misc_functions
 
 
 class FindSoakDBFiles(luigi.Task):

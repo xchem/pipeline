@@ -1,12 +1,13 @@
-import luigi
-import subprocess
-import os
-import time
 import glob
+import os
 import smtplib
+import subprocess
 from email.mime.text import MIMEText
+
+import luigi
+import time
+
 from functions import cluster_functions
-import setup_django
 
 
 # task to submit any job to the cluster

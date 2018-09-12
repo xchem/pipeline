@@ -1,10 +1,9 @@
 import luigi
+import openbabel
 from rdkit import Chem
 from rdkit.Chem import rdMolTransforms
-import openbabel
 
 from functions.docking_functions import *
-from .cluster_submission import CheckJobOutput
 from .cluster_submission import submit_job
 from .cluster_submission import write_job
 from .prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT

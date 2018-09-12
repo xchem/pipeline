@@ -1,11 +1,10 @@
-from xchem_db.models import *
-from functions import db_functions
-from functions import misc_functions
-from functions import proasis_api_funcs
-import os
 import glob
+import os
 import re
 
+from functions import db_functions
+from functions import misc_functions
+from xchem_db.models import *
 
 fail_count=0
 refinement = Refinement.objects.filter(outcome__gte=3, crystal_name__target__target_name='NUDT5A')

@@ -1,8 +1,9 @@
 import luigi
-from luigi_classes.archive import data_in_proasis
+import pandas
+
 from functions import data_analysis_functions as daf
 from functions import db_functions as dbf
-import pandas
+from luigi_classes.archive import data_in_proasis
 
 
 class EdstatsScores(luigi.Task):

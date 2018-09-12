@@ -1,8 +1,9 @@
 import luigi
+
 import functions.db_functions as db_functions
+import functions.docking_functions as dock
 from luigi_classes.archive import data_in_proasis, database_operations
 from luigi_classes.archive.data_out_proasis import *
-import functions.docking_functions as dock
 
 
 class StartLeadTransfers(luigi.Task):

@@ -1,9 +1,10 @@
+from rest_framework import viewsets
+
+from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
 from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSerializer, SoakdbFilesSerializer, \
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
     PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer
-from rest_framework import viewsets
-from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):

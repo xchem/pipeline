@@ -1,6 +1,7 @@
-import luigi
 import os
 import subprocess
+
+import luigi
 
 
 def run_luigi_worker(task):

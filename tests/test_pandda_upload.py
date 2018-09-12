@@ -1,12 +1,13 @@
-import unittest
 import os
 import shutil
+import unittest
+
 import datetime
-import setup_django
-from test_functions import run_luigi_worker
+
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import FindPanddaLogs, AddPanddaRun, AddPanddaSites
-from xchem_db.models import *
+from test_functions import run_luigi_worker
+
 
 class TestFindLogs(unittest.TestCase):
     # filepath where test data is

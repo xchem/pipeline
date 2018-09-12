@@ -1,9 +1,7 @@
-from xchem_db.models import Target, Crystal, Refinement
-
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
+from xchem_db.models import Target, Crystal, Refinement
 
 
 def targets(request):

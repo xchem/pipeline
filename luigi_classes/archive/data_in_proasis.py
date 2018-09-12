@@ -1,8 +1,8 @@
 import csv
 import os
 import re
-import subprocess
 import shutil
+import subprocess
 
 import luigi
 import numpy as np

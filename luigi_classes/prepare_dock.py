@@ -1,6 +1,6 @@
-import subprocess
 import shutil
-import os
+import subprocess
+
 import luigi
 import openbabel
 from htmd.ui import *

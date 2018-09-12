@@ -1,8 +1,9 @@
-import luigi
 import os
-from . import cluster_submission
-import setup_django
+
+import luigi
+
 from xchem_db.models import *
+from . import cluster_submission
 
 
 class WriteHotJob(luigi.Task):

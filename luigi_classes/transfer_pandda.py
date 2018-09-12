@@ -1,14 +1,14 @@
-import luigi
 import os
-import setup_django
-import datetime
-from functions import pandda_functions
-from xchem_db.models import *
-import pandas as pd
 import traceback
+
+import datetime
+import luigi
+import pandas as pd
 from django.db import transaction
+
+from functions import pandda_functions
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
-import setup_django
+from xchem_db.models import *
 from xchem_db.models import PanddaRun
 
 

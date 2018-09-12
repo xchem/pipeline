@@ -1,10 +1,13 @@
-from functions import proasis_api_funcs as paf
-from functions import db_functions as dbf
 import os
-import pandas as pd
-import plotly.graph_objs as go
-import plotly
 import subprocess
+
+import pandas as pd
+import plotly
+import plotly.graph_objs as go
+
+from functions import db_functions as dbf
+from functions import proasis_api_funcs as paf
+
 
 def run_edstats(strucid):
 

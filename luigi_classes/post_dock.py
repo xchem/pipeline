@@ -1,6 +1,7 @@
+import os
+
 import luigi
-import os, shutil
-from .run_dock import RunAutoDock
+
 import functions.db_functions as dbf
 
 

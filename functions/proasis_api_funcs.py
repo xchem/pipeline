@@ -1,7 +1,11 @@
-import requests
-import os, sys, shutil
+import os
+import shutil
 import subprocess
+
+import requests
+
 from functions import misc_functions
+
 
 def get_json(url):
     # send API request and pull output as json

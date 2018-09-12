@@ -1,20 +1,18 @@
-import luigi
+import glob
 import os
 import re
-import setup_django
-import subprocess
-import datetime
 import shutil
-import glob
-from functions import db_functions, misc_functions, pandda_functions
-from xchem_db.models import *
-import pandas as pd
+import subprocess
 import traceback
-from functions import misc_functions
+
+import datetime
+import luigi
+import pandas as pd
 from django.db import transaction
+
 from functions import db_functions
-from functions import proasis_api_funcs
-from . import transfer_proasis
+from functions import misc_functions
+from xchem_db.models import *
 
 
 def transfer_file(data_file):

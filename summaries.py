@@ -1,10 +1,12 @@
 import os
+from collections import Counter
+
 import datetime
 import luigi
-from functions import proasis_api_funcs as paf
-from functions import db_functions as dbf
 import pandas as pd
-from collections import Counter
+
+from functions import db_functions as dbf
+from functions import proasis_api_funcs as paf
 
 
 def find_proasis_repeats(protein):

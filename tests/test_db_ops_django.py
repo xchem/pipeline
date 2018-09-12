@@ -1,13 +1,13 @@
-import datetime
 import os
 import shutil
 import unittest
-import setup_django
-from xchem_db.models import *
-from functions import db_functions
+
+import datetime
+
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
-    TransferNewDataFile, TransferChangedDataFile
+    TransferNewDataFile
 from test_functions import run_luigi_worker
+from xchem_db.models import *
 
 
 class TestTasks(unittest.TestCase):

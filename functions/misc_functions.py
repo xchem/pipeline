@@ -1,8 +1,12 @@
-import os, datetime
+import datetime
+import os
+import re
+import sys
+from random import randint
+
 from rdkit import Chem
 from rdkit.Chem import AllChem
-import re, sys
-from random import randint
+
 
 def get_id_string(out):
     """

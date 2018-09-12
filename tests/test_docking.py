@@ -2,10 +2,11 @@ import os
 import shutil
 import subprocess
 import unittest
+
 import luigi_classes.prepare_dock
 import luigi_classes.run_dock
-from test_functions import run_luigi_worker
 from test_functions import kill_job
+from test_functions import run_luigi_worker
 
 
 class TestFilePrep(unittest.TestCase):

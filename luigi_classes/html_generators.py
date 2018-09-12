@@ -1,6 +1,7 @@
-import luigi
-import functions.data_analysis_functions as daf
 import datetime
+import luigi
+
+import functions.data_analysis_functions as daf
 from luigi_classes import ligand_analysis
 
 

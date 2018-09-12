@@ -1,8 +1,9 @@
-import setup_django
-from xchem_db.models import *
-import os
 import glob
+import os
+
 import pandas as pd
+
+from xchem_db.models import *
 
 soakdb_rows = SoakdbFiles.objects.all()
 

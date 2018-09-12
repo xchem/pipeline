@@ -1,5 +1,6 @@
-from functions import db_functions as dbf
 import os
+
+from functions import db_functions as dbf
 
 
 def get_comp_chem_ready():

@@ -4,12 +4,15 @@ rowbasedauth.py
 """
 # lives at: /var/www/cgi-bin/proasisapi/v1.4
 
-import sys, os
-#from p3SConstants import dssPyPath
-#if dssPyPath not in sys.path:
-#	sys.path.insert(1, dssPyPath)
+import csv
+import re
 
-import string, time, re, csv
+import os
+import sys
+
+# from p3SConstants import dssPyPath
+# if dssPyPath not in sys.path:
+#	sys.path.insert(1, dssPyPath)
 
 BLACKLISTDIR = "/usr/local/Proasis2/Data/BLACKLIST"
 

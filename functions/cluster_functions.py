@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 
 def submit_job(job_directory, job_script, remote_sub_command):

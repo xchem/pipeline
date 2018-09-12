@@ -1,18 +1,18 @@
-import luigi
-from . import transfer_soakdb
-import datetime
-import subprocess
-import os
-import shutil
-import re
-import glob
 import csv
-from xchem_db.models import *
-from functions import misc_functions, db_functions, proasis_api_funcs
-from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
+import glob
+import os
+import re
+import subprocess
+
+import datetime
+import luigi
 import numpy as np
+from Bio.PDB import NeighborSearch, PDBParser, Atom, Residue
 from itertools import chain
-import setup_django
+
+from functions import misc_functions, db_functions, proasis_api_funcs
+from xchem_db.models import *
+from . import transfer_soakdb
 
 
 class InitDBEntries(luigi.Task):

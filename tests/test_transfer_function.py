@@ -1,9 +1,9 @@
-import unittest
-import setup_django
-from xchem_db.models import *
-from django.db.models import Q
-from functions import db_functions
 import json
+import unittest
+
+from functions import db_functions
+from xchem_db.models import *
+
 
 class TestTasks(unittest.TestCase):
 

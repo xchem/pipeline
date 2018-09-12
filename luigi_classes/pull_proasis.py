@@ -1,18 +1,18 @@
-import luigi
-import setup_django
-import os
 import glob
-import json
+import os
 import shutil
 import subprocess
-from xchem_db.models import *
-from functions import proasis_api_funcs
+
+import datetime
+import luigi
 import openbabel
+from duck.steps.chunk import remove_prot_buffers_alt_locs
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from duck.steps.chunk import remove_prot_buffers_alt_locs
+
+from functions import proasis_api_funcs
+from xchem_db.models import *
 from . import transfer_proasis
-import datetime
 
 
 def get_output_file_name(proasis_hit, ligid, hit_directory, extension):

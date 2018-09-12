@@ -1,6 +1,7 @@
+import pandas as pd
+
 from functions import db_functions as dbf
 from functions import proasis_api_funcs as paf
-import pandas as pd
 
 pd.set_option('display.max_colwidth', -1)
 

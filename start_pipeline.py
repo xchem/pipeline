@@ -1,10 +1,13 @@
-import setup_django
+from setup_django import setup_django
+
+setup_django()
+
+
 import luigi
 import datetime
 from luigi_classes.transfer_pandda import TransferPandda
-from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, UpdateOtherFields
+from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits
 from luigi_classes.pull_proasis import GetOutFiles
-from luigi_classes.hotspot_maps import WriteRunCheckHot
 import os
 
 

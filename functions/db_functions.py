@@ -1,16 +1,17 @@
 import csv
 import os
+import re
 import sqlite3
 import subprocess
-import re
-import setup_django
-from xchem_db import models
-from functions import misc_functions
-from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import transaction
+
 import numpy
 import pandas as pd
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.db import transaction
+
+from functions import misc_functions
+from xchem_db import models
 
 
 # To get all sql queries sent by Django from py shell

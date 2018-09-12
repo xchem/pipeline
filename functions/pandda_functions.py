@@ -1,11 +1,11 @@
-import pandas as pd
-import datetime
-import subprocess
 import os
 import re
-from rdkit.Chem import rdMolTransforms
-from rdkit import Chem
+import subprocess
+
 import numpy as np
+import pandas as pd
+from rdkit import Chem
+from rdkit.Chem import rdMolTransforms
 
 
 def find_log_files(path):
