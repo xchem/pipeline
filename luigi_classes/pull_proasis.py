@@ -378,10 +378,11 @@ class CreateProposalFile(luigi.Task):
     out_directory = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.out_directory, 'PROPOSAL'))
+        return luigi.LocalTarget(os.path.join(self.out_directory, 'PROPOSALS'))
 
     def run(self):
-        out_string = '\n'.join(self.proposals)
+        proposals = [pro[2:] for pro in self.proposals]
+        out_string = ' '.join(proposals)
         with self.output().open('w') as f:
             f.write(out_string)
 
@@ -391,10 +392,11 @@ class CreateVisitFile(luigi.Task):
     out_directory = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.out_directory, 'VISIT'))
+        return luigi.LocalTarget(os.path.join(self.out_directory, 'VISITS'))
 
     def run(self):
-        out_string = '\n'.join(self.visits)
+        visits = [pro[2:] for pro in self.visits]
+        out_string = ' '.join(visits)
         with self.output().open('w') as f:
             f.write(out_string)
 
