@@ -34,7 +34,7 @@ class StartPipeline(luigi.WrapperTask):
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
-        yield GetOutFiles(date=self.date, hit_directory=self.hit_directory)
+        yield GetOutFiles(date=self.date)
         # yield WriteRunCheckHot()
         # yield UpdateOtherFields()
 
