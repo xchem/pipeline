@@ -126,8 +126,9 @@ class InitDBEntries(luigi.Task):
                                 if entry.strucid:
 
                                     proasis_out = ProasisOut.objects.filter(proasis=entry)
-                                    out_dir = os.path.join(proasis_out.root, proasis_out.start)
-                                    shutil.rmtree(out_dir)
+                                    for o in proasis_out:
+                                        out_dir = os.path.join(o.root, o.start)
+                                        shutil.rmtree(out_dir)
 
                                     proasis_api_funcs.delete_structure(entry.strucid)
                                     entry.strucid = None
@@ -160,8 +161,9 @@ class InitDBEntries(luigi.Task):
                             if entry.modification_date < mod_date or not entry.strucid:
                                 if entry.strucid:
                                     proasis_out = ProasisOut.objects.filter(proasis=entry)
-                                    out_dir = os.path.join(proasis_out.root, proasis_out.start)
-                                    shutil.rmtree(out_dir)
+                                    for o in proasis_out:
+                                        out_dir = os.path.join(o.root, o.start)
+                                        shutil.rmtree(out_dir)
 
                                     proasis_api_funcs.delete_structure(entry.strucid)
                                     entry.strucid = None
