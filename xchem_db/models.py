@@ -209,6 +209,7 @@ class ProasisHits(models.Model):
     fofc = models.TextField(blank=False, null=False)
     sdf = models.TextField(blank=True, null=True)
     altconf = models.CharField(max_length=255, blank=True, null=True)
+    added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'proasis_hits'
@@ -350,6 +351,7 @@ class ProasisOut(models.Model):
     ppdb = models.TextField(blank=True, null=True)
     pjson = models.TextField(blank=True, null=True)
     pmtz = models.TextField(blank=True, null=True)
+    added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'proasis_out'

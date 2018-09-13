@@ -3,6 +3,7 @@ import glob
 import os
 import re
 import subprocess
+import shutil
 
 import datetime
 import luigi
@@ -123,9 +124,15 @@ class InitDBEntries(luigi.Task):
                             if entry.modification_date < mod_date or not entry.strucid:
                                 # delete structure and remove files to remove from proasis is strucid exists
                                 if entry.strucid:
+
+                                    proasis_out = ProasisOut.objects.filter(proasis=entry)
+                                    out_dir = os.path.join(proasis_out.root, proasis_out.start)
+                                    shutil.rmtree(out_dir)
+
                                     proasis_api_funcs.delete_structure(entry.strucid)
                                     entry.strucid = None
                                     entry.save()
+
                                     if self.hit_directory in entry.pdb_file:
                                         os.remove(entry.pdb_file)
                                     if self.hit_directory in entry.mtz:
@@ -134,6 +141,7 @@ class InitDBEntries(luigi.Task):
                                         os.remove(entry.two_fofc)
                                     if self.hit_directory in entry.fofc:
                                         os.remove(entry.fofc)
+
                                 # otherwise, just update the relevant fields
                                 entry.pdb_file = bound_conf
                                 entry.modification_date = mod_date
@@ -151,6 +159,10 @@ class InitDBEntries(luigi.Task):
                             entry = ProasisHits.objects.get(refinement=obj, crystal_name=obj.crystal_name, altconf=conf)
                             if entry.modification_date < mod_date or not entry.strucid:
                                 if entry.strucid:
+                                    proasis_out = ProasisOut.objects.filter(proasis=entry)
+                                    out_dir = os.path.join(proasis_out.root, proasis_out.start)
+                                    shutil.rmtree(out_dir)
+
                                     proasis_api_funcs.delete_structure(entry.strucid)
                                     entry.strucid = None
                                     entry.save()
