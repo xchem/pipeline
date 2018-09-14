@@ -21,11 +21,12 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     target_name = proasis_hit.crystal_name.target.target_name
 
     return luigi.LocalTarget(os.path.join(
-        hit_directory,                                          # /dls/science/groups/proasis/LabXChem
-        target_name.upper(),                                    # /TARGET
-        str(crystal_name + '_' + str(ligid)),                   # /CRYSTAL_N
-        str(crystal_name + str('_' + str(ligid) + extension))   # /CRYSTAL_N<extension>
+        hit_directory,  # /dls/science/groups/proasis/LabXChem
+        target_name.upper(),  # /TARGET
+        str(crystal_name + '_' + str(ligid)),  # /CRYSTAL_N
+        str(crystal_name + str('_' + str(ligid) + extension))  # /CRYSTAL_N<extension>
     ))
+
 
 class GetCurated(luigi.Task):
     hit_directory = luigi.Parameter()
@@ -53,9 +54,9 @@ class GetCurated(luigi.Task):
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
         proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                                crystal=proasis_hit.crystal_name,
-                                                ligand=self.ligand,
-                                                ligid=self.ligid)
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
         # if the output directories don't exist yet, make them
         if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
             os.makedirs('/'.join(self.output().path.split('/')[:-1]))
@@ -120,7 +121,7 @@ class CreateApo(luigi.Task):
                         f.write(line)
             # add the apo file name to the proasis out entry
             out_entry = ProasisOut.objects.get(proasis=proasis_hit, ligid=self.ligid,
-                                                  crystal=proasis_hit.crystal_name, ligand=self.ligand)
+                                               crystal=proasis_hit.crystal_name, ligand=self.ligand)
             out_entry.apo = str(self.output().path.split('/')[-1])
             out_entry.save()
 
@@ -149,9 +150,9 @@ class GetSDFS(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
         proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                                ligid=self.ligid,
-                                                ligand=self.ligand,
-                                                crystal=proasis_hit.crystal_name)
+                                             ligid=self.ligid,
+                                             ligand=self.ligand,
+                                             crystal=proasis_hit.crystal_name)
         # get strucid and ligand string
         strucid = proasis_hit.strucid
         lig = proasis_out.ligand[1:]
@@ -188,9 +189,9 @@ class CreateMolFile(luigi.Task):
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
         proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                                crystal=proasis_hit.crystal_name,
-                                                ligand=self.ligand,
-                                                ligid=self.ligid)
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
         # set openbabel to convert from sdf to mol
         obConv = openbabel.OBConversion()
         obConv.SetInAndOutFormats('sdf', 'mol')
@@ -229,9 +230,9 @@ class CreateHMolFile(luigi.Task):
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
         proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                                crystal=proasis_hit.crystal_name,
-                                                ligand=self.ligand,
-                                                ligid=self.ligid)
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
         # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
         # add hydrogens
@@ -268,9 +269,9 @@ class CreateMolTwoFile(luigi.Task):
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
         proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                                crystal=proasis_hit.crystal_name,
-                                                ligand=self.ligand,
-                                                ligid=self.ligid)
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
         # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
         # get charge from mol file
@@ -467,7 +468,7 @@ class GetOutFiles(luigi.Task):
                 # for each lig in that list
                 for ligand in ligands:
                     # increase ligand id by 1
-                    ligid+=1
+                    ligid += 1
                     # get or create the proasis out object before pulling begins
                     proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
                                                                    crystal=hit.crystal_name)
@@ -490,7 +491,7 @@ class GetOutFiles(luigi.Task):
                         if not os.path.isdir(hit_directory):
                             os.makedirs(hit_directory)
                     else:
-                        hit_directory=''
+                        hit_directory = ''
 
                     hit_dirs.append(hit_directory)
 

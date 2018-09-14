@@ -18,9 +18,10 @@ def get_id_string(out):
         strucidstr = strucidstr.replace('strucid=', '')
         strucidstr = strucidstr.replace("'", '')
     except:
-        print((sys.exc_info()))
+        print(sys.exc_info())
         strucidstr = ''
     return strucidstr
+
 
 def get_mod_date(filename):
     try:
@@ -30,9 +31,10 @@ def get_mod_date(filename):
         modification_date = modification_date.replace(':', '')
         modification_date = modification_date.replace(' ', '')
     except:
-        modification_date='None'
+        modification_date = 'None'
 
     return modification_date
+
 
 def create_sd_file(name, smiles, save_directory):
     """
@@ -42,7 +44,7 @@ def create_sd_file(name, smiles, save_directory):
     canon_smiles = Chem.CanonSmiles(smiles)
     mol = Chem.MolFromSmiles(canon_smiles)
     AllChem.Compute2DCoords(mol)
-    print(('Generating sdf file and saving to ' + name + ' directory...\n'))
+    print('Generating sdf file and saving to ' + name + ' directory...\n')
     sd_file = Chem.SDWriter(save_directory)
     sd_file.write(mol)
 

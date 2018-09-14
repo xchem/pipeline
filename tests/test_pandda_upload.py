@@ -74,11 +74,11 @@ class TestFindLogs(unittest.TestCase):
                 self.assertTrue(add_run)
 
                 add_sites = run_luigi_worker(AddPanddaSites(log_file=log_file, pver=pver,
-                                                                          input_dir=input_dir, output_dir=output_dir,
-                                                                          sites_file=sites_file,
-                                                                          events_file=events_file,
-                                                                          soakdb_filename=os.path.join(
-                                                                              self.working_dir,'soakDBDataFile.sqlite'))
+                                                            input_dir=input_dir, output_dir=output_dir,
+                                                            sites_file=sites_file,
+                                                            events_file=events_file,
+                                                            soakdb_filename=os.path.join(
+                                                                self.working_dir, 'soakDBDataFile.sqlite'))
                                              )
 
                 self.assertTrue(add_sites)

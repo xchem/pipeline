@@ -140,7 +140,7 @@ def get_file_names(BDC, crystal, input_dir, output_dir, event):
     pandda_model_path = input_pdb_path.replace(input_pdb_name, pandda_model_name)
 
     exists_array = [os.path.isfile(filepath) for filepath in [map_file_path, input_pdb_path, input_mtz_path,
-                                                                          aligned_pdb_path, pandda_model_path]]
+                                                              aligned_pdb_path, pandda_model_path]]
 
     return map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, pandda_model_path, exists_array
 
@@ -158,7 +158,7 @@ def find_ligands(pandda_model_path):
 
 def find_ligand_site_event(nx, ny, nz, ex, ey, ez, lig_strings, pandda_model_path):
     # nn = native_centroid n, en = event_centroid n
-    event_centroid = [ex,ey,ez]
+    event_centroid = [ex, ey, ez]
     native_centroid = [nx, ny, nz]
     event_displacement = np.linalg.norm([native_centroid, event_centroid])
     lig_distances = []
@@ -184,7 +184,7 @@ def find_ligand_site_event(nx, ny, nz, ex, ey, ez, lig_strings, pandda_model_pat
 
     min_dist = min(lig_distances)
     for j in range(0, len(lig_distances)):
-        if lig_distances[j]==min_dist:
+        if lig_distances[j] == min_dist:
             ind = j
 
     ligand = lig_strings[ind]

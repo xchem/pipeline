@@ -47,7 +47,7 @@ class FindSoakDBFiles(luigi.Task):
     def run(self):
 
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
-        command = str('''find ''' + self.filepath +  ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/tmp/*" -prune -o -path "*BACKUP*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print''')
+        command = str('''find ''' + self.filepath + ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/tmp/*" -prune -o -path "*BACKUP*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print''')
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         print(command)
 
@@ -161,7 +161,6 @@ class CheckFiles(luigi.Task):
                 update_status.status = 0
                 update_status.save()
 
-
         # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
         lab = list(Lab.objects.all())
         if not lab:
@@ -222,7 +221,6 @@ class TransferChangedDataFile(luigi.Task):
 
     def requires(self):
         return CheckFiles(soak_db_filepath=self.data_file)
-
 
     def output(self):
         modification_date = misc_functions.get_mod_date(self.data_file)
@@ -296,7 +294,7 @@ class StartTransfers(luigi.Task):
     def get_file_list(self, status_code):
 
         status_query = SoakdbFiles.objects.filter(status=status_code)
-        datafiles = [object.filename for object in status_query]
+        datafiles = [o.filename for o in status_query]
 
         return datafiles
 
@@ -376,10 +374,10 @@ class CheckFileUpload(luigi.Task):
                 lab_object = self.model.objects.filter(crystal_name__crystal_name=row['CrystalName'],
                                                        crystal_name__visit__filename=str(self.filename),
                                                        crystal_name__compound__smiles=row['CompoundSMILES'])
-                if len(lab_object)>1:
+                if len(lab_object) > 1:
                     raise Exception('Multiple Crystals!')
-                if len(lab_object)==0:
-                    if self.model==Dimple and not row['DimplePathToPDB'] and not row['DimplePathToMTZ']:
+                if len(lab_object) == 0:
+                    if self.model == Dimple and not row['DimplePathToPDB'] and not row['DimplePathToMTZ']:
                         pass
                     else:
                         raise Exception('No entry for ' + str(row['CrystalName'] + ' ' + row['DimplePathToPDB'] + ' '
@@ -397,7 +395,7 @@ class CheckFileUpload(luigi.Task):
                         test_xchem_val = lab_object[0].crystal_name.crystal_name
                     if translation[key] == 'DimpleReferencePDB' and soakdb_val:
                         test_xchem_val = lab_object[0].reference
-                        if test_xchem_val != None:
+                        if test_xchem_val is not None:
                             test_xchem_val = lab_object[0].reference.reference_pdb
                     if soakdb_val == '' or soakdb_val == 'None' or not soakdb_val:
                         continue
@@ -449,6 +447,7 @@ class CheckFileUpload(luigi.Task):
         with self.output().open('w') as f:
             f.write('')
 
+
 class CheckUploadedFiles(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
@@ -458,10 +457,10 @@ class CheckUploadedFiles(luigi.Task):
             return StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)
         else:
             soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
-            models = [Lab, Dimple, DataProcessing, Refinement]
+            m = [Lab, Dimple, DataProcessing, Refinement]
             zipped = []
             for filename in soakdb_files:
-                for model in models:
+                for model in m:
                     maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
                     if maint_exists == 1:
                         zipped.append(tuple([filename, model]))

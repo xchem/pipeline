@@ -16,7 +16,8 @@ class WriteHotJob(luigi.Task):
     apo_pdb = luigi.Parameter()
     directory = luigi.Parameter()
     anaconda_path = luigi.Parameter(default='/dls/science/groups/i04-1/software/anaconda/bin:$PATH')
-    ccdc_settings = luigi.Parameter(default='/dls/science/groups/i04-1/software/mihaela/DiamondHotspots/ccdc_settings.sh')
+    ccdc_settings = luigi.Parameter(default=
+                                    '/dls/science/groups/i04-1/software/mihaela/DiamondHotspots/ccdc_settings.sh')
     conda_environment = luigi.Parameter(default='hotspots')
     hotspot_script = luigi.Parameter(default='/dls/science/groups/i04-1/software/fragalysis/hotspots/hotspots.py')
     ccdc_location_batch = luigi.Parameter(default='/dls_sw/apps/ccdc/CSD_2017/bin/batch_register')
@@ -25,7 +26,7 @@ class WriteHotJob(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.directory, self.apo_pdb.replace('.pdb', '_hotspots.sh')))
 
     def requires(self):
-        additional_line = '''%s -current_machine -licence_dir $PWD -site_id %s -conf_code %s -email %s -auto_accept_licence
+        add_line = '''%s -current_machine -licence_dir $PWD -site_id %s -conf_code %s -email %s -auto_accept_licence
 source %s
 export CCDC_CSD_LICENCE_FILE=$PWD/csd_licence.dat
 sleep 5s''' \
@@ -36,19 +37,18 @@ sleep 5s''' \
                               self.email,
                               self.ccdc_settings
                           )
-        additional_line_2 = "find . -name '*.ccp4' -print0 | " \
-                            "while IFS= read -r -d $'\\0' file; do gzip $file; done"
+        add_line_2 = "find . -name '*.ccp4' -print0 | " \
+                     "while IFS= read -r -d $'\\0' file; do gzip $file; done"
 
         return cluster_submission.WriteCondaEnvJob(job_directory=self.directory,
                                                    job_filename=os.path.join(
                                                        self.directory, self.apo_pdb.replace('.pdb', '_hotspots.sh')),
                                                    anaconda_path=self.anaconda_path,
-                                                   additional_commands=additional_line,
+                                                   additional_commands=add_line,
                                                    python_script=self.hotspot_script,
                                                    parameters=os.path.join(self.directory, self.apo_pdb),
                                                    conda_environment=self.conda_environment,
-                                                   additional_commands_2=additional_line_2)
-
+                                                   additional_commands_2=add_line_2)
 
 
 class WriteRunCheckHot(luigi.WrapperTask):

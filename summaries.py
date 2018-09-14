@@ -16,7 +16,7 @@ def find_proasis_repeats(protein):
 
     counts = dict(Counter(project_titles))
 
-    repeats = {'crystal': [], 'strucids': [], 'bound_confs':[]}
+    repeats = {'crystal': [], 'strucids': [], 'bound_confs': []}
 
     for key in counts.keys():
         if counts[key] > 1:
@@ -148,56 +148,18 @@ class CheckProasisForProtein(luigi.Task):
                 paf.delete_structure(strucid)
                 print('\n')
 
-
-            # good_structures = {'crystal': [], 'bound_state': [], 'mod_date': [], 'strucid': []}
-            # if len(set([len(unique_modification_date), len(unique_bound), len(unique_strucids)])) == 1:
-            #     status_list.append(0)
-            #     good_list.append(crystal)
-            #     for i in range(0, len(unique_bound)):
-            #         good_structures['crystal'].append(crystal)
-            #         good_structures['bound_state'].append(unique_bound[i])
-            #         good_structures['mod_date'].append(unique_modification_date[i])
-            #         good_structures['strucid'].append(unique_strucids[i])
-
-            # for i in range(0, len(good_structures['strucid'])):
-            #     if good_structures['strucid'][i] not in project_strucids:
-            #         print('missing or incorrect strucid in db for '
-            #               + str(good_structures['crystal'][i] + ' (' + str(good_structures['strucid'][i]) + ')'))
-
-        #         for key in file_checks.keys():
-        #             if '0' in file_checks[key]:
-        #                 error_list.append(str('missing ' + str(key) + ' file!'))
-        #
-        #             if 'None' in file_checks[key]:
-        #                 error_list.append(str('None value found for ' + str(key)))
-        #
-        #     elif len(set([len(unique_modification_date), len(unique_bound), len(unique_strucids)])) > 1:
-        #         status_list.append(1)
-        #
-        # error_frame = pd.DataFrame.from_dict(file_checks)
-        # cols = ['crystal', 'bound_state', 'mod_date', 'ligs', 'mtz', 'pdb', '2fofc', 'fofc']
-        # error_frame = error_frame[cols]
-        # error_frame.sort_values(by=['crystal'], inplace=True)
-        #
-        # good_frame = pd.DataFrame.from_dict(good_structures)
-        # cols = ['crystal', 'bound_state', 'mod_date', 'strucid']
-        # good_frame = good_frame[cols]
-        # good_frame.sort_values(by=['crystal'], inplace=True)
-        #
-        #
-
         # clean up repeats
         repeats = find_proasis_repeats(self.protein)
         for i, x in enumerate(repeats['crystal']):
             bound_list = repeats['bound_confs'][i]
             strucids = repeats['strucids'][i]
 
-            if len(bound_list)==len(strucids):
-                if len(list(set(bound_list)))==1:
+            if len(bound_list) == len(strucids):
+                if len(list(set(bound_list))) == 1:
                     print(str('identical uploaded structures: ' + str(strucids)) + ' (' + x + ')')
                     print('removing repeat structures from proasis, and updating database...')
-                    to_delete_strucs=strucids[1:]
-                    to_delete_confs=bound_list[1:]
+                    to_delete_strucs = strucids[1:]
+                    to_delete_confs = bound_list[1:]
 
                     for j in range(0, len(to_delete_strucs)):
                         c.execute('DELETE FROM proasis_hits WHERE strucid=%s and bound_conf=%s', (to_delete_strucs[j],
@@ -217,4 +179,5 @@ class GenProasisSummary(luigi.Task):
         pass
 
     def run(self):
+        pass
 

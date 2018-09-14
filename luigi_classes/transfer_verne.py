@@ -1,3 +1,7 @@
+import datetime
+import os
+import filecmp
+
 import luigi
 from paramiko import SSHClient
 from scp import SCPClient
@@ -17,4 +21,11 @@ class TransferDirectory(luigi.Task):
 
         scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
         scp.close()
+
+
+# timestamp = datetime.datetime.now().strftime('%Y-%m%-dT%H')
+# old_dir = # find previous directory on verne
+# top_l_verne = '/data/fs-data/django_data'
+# upload_to = os.path.join(top_l_verne, str(timestamp))
+# compare files in lists with filecmp and update if necessary
 

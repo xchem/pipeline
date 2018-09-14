@@ -125,7 +125,7 @@ class RunVinaDock(luigi.Task):
         # 5. Check job output
         return [PrepLigand(docking_dir=self.docking_dir, root_dir=self.root_dir,
                            ligand_sdf=self.ligand_pdbqt.replace('_prepared.pdbqt', '.sdf')),
-                PrepProtein(docking_dir=self.docking_dir,root_dir=self.root_dir,
+                PrepProtein(docking_dir=self.docking_dir, root_dir=self.root_dir,
                             protein_pdb=self.receptor_pdbqt.replace('_prepared.pdbqt', '.pdb'))]
 
         # CheckJobOutput(job_directory=os.path.join(self.root_dir, self.docking_dir), job_output_file=out_name)]
@@ -137,8 +137,8 @@ class RunVinaDock(luigi.Task):
         # create an rdkit mol from ligand
         mol = Chem.MolFromMol2File(ligand)
 
-        if mol==None:
-            ## convert to mol with obabel
+        if mol is None:
+            # convert to mol with obabel
             obConv = openbabel.OBConversion()
             obConv.SetInAndOutFormats('mol2', 'mol')
 

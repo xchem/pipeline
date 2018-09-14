@@ -40,6 +40,7 @@ class EdstatsScores(luigi.Task):
         with self.output().open('wb') as f:
             f.write('')
 
+
 class StartEdstatsScores(luigi.Task):
 
     def requires(self):
@@ -47,8 +48,8 @@ class StartEdstatsScores(luigi.Task):
         c.execute("select crystal_name, strucid from proasis_hits where strucid !=''")
         rows = c.fetchall()
 
-        crystal_list=[]
-        strucid_list=[]
+        crystal_list = []
+        strucid_list = []
 
         for row in rows:
             crystal = str(row[0])

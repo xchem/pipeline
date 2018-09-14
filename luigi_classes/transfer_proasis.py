@@ -2,8 +2,8 @@ import csv
 import glob
 import os
 import re
-import subprocess
 import shutil
+import subprocess
 
 import datetime
 import luigi
@@ -40,8 +40,8 @@ class InitDBEntries(luigi.Task):
             two_fofc = ''
             fofc = ''
             mod_date = ''
-            proasis_hit_entry=''
-            entry=''
+            proasis_hit_entry = ''
+            entry = ''
             confs = []
             ligand_list = []
 
@@ -600,7 +600,8 @@ class GetPanddaMaps(luigi.Task):
                 os.makedirs(proasis_crystal_directory)
 
             # symlink pandda event map instead of copying - save space
-            if os.path.lexists(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1])):
+            if os.path.lexists(os.path.join(proasis_crystal_directory,
+                                            str(event.pandda_event_map_native).split('/')[-1])):
                 os.remove(os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1]))
             os.symlink(str(event.pandda_event_map_native),
                        os.path.join(proasis_crystal_directory, str(event.pandda_event_map_native).split('/')[-1]))
@@ -898,14 +899,14 @@ class WriteBlackLists(luigi.Task):
         return luigi.LocalTarget('logs/blacklists.done')
 
     def run(self):
-        proposal_dict = {'proposal':[], 'strucids':[], 'fedids':[]}
+        proposal_dict = {'proposal': [], 'strucids': [], 'fedids': []}
         fedids = []
         all_strucids = []
         for proposal in Proposals.objects.all():
             feds = proposal.fedids
             print(feds)
             if feds:
-                fd=[]
+                fd = []
                 for fed in str(feds).split(','):
                     print(fed)
                     fd.append(fed)
@@ -944,11 +945,12 @@ class WriteBlackLists(luigi.Task):
             wr = csv.writer(f)
             wr.writerow(all_strucids)
 
-        with open(str(directory_path + '/uzw12877.dat'),'w') as f:
+        with open(str(directory_path + '/uzw12877.dat'), 'w') as f:
             f.write('')
 
         with self.output().open('w') as f:
             f.write('')
+
 
 class UpdateField(luigi.Task):
     model = luigi.Parameter()

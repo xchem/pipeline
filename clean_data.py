@@ -88,7 +88,7 @@ for protein in protein_list:
 
 
 
-        if len(set([len(unique_modification_date),len(unique_bound),len(unique_strucids)]))==1:
+        if len({len(unique_modification_date), len(unique_bound), len(unique_strucids)})==1:
             status_list.append(0)
             good_list.append(crystal)
             for i in range(0, len(unique_bound)):
@@ -129,7 +129,7 @@ for protein in protein_list:
 
 
 
-        elif len(set([len(unique_modification_date),len(unique_bound),len(unique_strucids)]))>1:
+        elif len({len(unique_modification_date), len(unique_bound), len(unique_strucids)})>1:
             # print('    ' + crystal)
             # print('    --------------------------------')
             status_list.append(1)

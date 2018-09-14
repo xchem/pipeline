@@ -24,7 +24,6 @@ class SubmitJob(luigi.Task):
         return luigi.LocalTarget(os.path.join(self.job_directory, str(self.job_script + '.submitted')))
 
     def run(self):
-
         ok_to_submit = cluster_functions.check_cluster(self.remote_sub_command, self.max_jobs)
         if not ok_to_submit:
             raise Exception('Too many jobs running on the cluster. Will try again later!')
@@ -110,15 +109,15 @@ python %s %s
 rm %s.running
 touch %s.done
 %s''' % (self.anaconda_path,
-                    self.job_directory,
-                       self.additional_commands,
-                       self.conda_environment,
-                       str(self.output().path),
-                       self.python_script,
-                       self.parameters,
-                       str(self.output().path),
-                       str(self.output().path),
-        self.additional_commands_2)
+         self.job_directory,
+         self.additional_commands,
+         self.conda_environment,
+         str(self.output().path),
+         self.python_script,
+         self.parameters,
+         str(self.output().path),
+         str(self.output().path),
+         self.additional_commands_2)
 
         with self.output().open('w') as f:
             f.write(job_string)

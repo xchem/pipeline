@@ -170,8 +170,6 @@ class AddPanddaEvents(luigi.Task):
                     crystal.status = Crystal.PANDDA
                     crystal.save()
 
-
-
                 except Exception as exc:
                     print(traceback.format_exc())
                     print(exc)

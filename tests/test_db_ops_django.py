@@ -77,10 +77,9 @@ class TestTasks(unittest.TestCase):
             filepath=str(self.working_dir + '*')))
         self.assertTrue(find_file)
         test_new_file = run_luigi_worker(TransferNewDataFile(data_file=self.db_full_path,
-                                                                           soak_db_filepath=str(self.working_dir + '*')
-                                                                           ))
+                                                             soak_db_filepath=str(self.working_dir + '*')
+                                                             ))
         self.assertTrue(test_new_file)
-
 
         # get the status value from soakdb entry for current file
         status = list(SoakdbFiles.objects.values_list('status', flat=True))
@@ -88,7 +87,7 @@ class TestTasks(unittest.TestCase):
         self.assertEqual(int(status[0]), 2)
 
 #         test_changed_file = run_luigi_worker(TransferChangedDataFile(data_file=self.db_full_path,
-#                                                                            soak_db_filepath=str(self.working_dir + '*')
+#                                                                           soak_db_filepath=str(self.working_dir + '*')
 #                                                                                    ))
 #
 #         self.assertTrue(test_changed_file)

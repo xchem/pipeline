@@ -12,6 +12,7 @@ from django.db import models
 
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+
     class Meta:
         db_table = 'target'
 
@@ -40,7 +41,7 @@ class Proposals(models.Model):
 
 
 class SoakdbFiles(models.Model):
-    filename =  models.CharField(max_length=255, blank=False, null=False, unique=True)
+    filename = models.CharField(max_length=255, blank=False, null=False, unique=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
     proposal = models.ForeignKey(Proposals, on_delete=models.CASCADE, unique=False)
     visit = models.TextField(blank=False, null=False)
@@ -87,7 +88,7 @@ class DataProcessing(models.Model):
     completeness_high = models.FloatField(blank=True, null=True)
     completeness_low = models.FloatField(blank=True, null=True)
     completeness_overall = models.FloatField(blank=True, null=True)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True) # changed to foreign key
+    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE, unique=True)  # changed to foreign key
     dimple_mtz_path = models.TextField(blank=True, null=True)
     dimple_pdb_path = models.TextField(blank=True, null=True)
     dimple_status = models.TextField(blank=True, null=True)
@@ -116,7 +117,7 @@ class DataProcessing(models.Model):
     res_high_outer_shell = models.FloatField(blank=True, null=True)
     res_low = models.FloatField(blank=True, null=True)
     res_low_inner_shell = models.FloatField(blank=True, null=True)
-    res_overall = models.TextField(blank=True, null=True) # range
+    res_overall = models.TextField(blank=True, null=True)  # range
     score = models.FloatField(blank=True, null=True)
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
@@ -192,7 +193,6 @@ class Refinement(models.Model):
     spacegroup = models.TextField(blank=True, null=True)
     status = models.TextField(blank=True, null=True)
 
-
     class Meta:
         db_table = 'refinement'
 
@@ -225,8 +225,8 @@ class LigandEdstats(models.Model):
     ra = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     srga = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     zccpa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zd_a = models.FloatField(blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    zd_a_0 = models.FloatField(blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because of name conflict.
+    zd_a = models.FloatField(blank=True, null=True)  # Field name made lowercase.
+    zd_a_0 = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     zda = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     zoa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
     crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key # changed from crystal
@@ -328,22 +328,22 @@ class ProasisPandda(models.Model):
 
 
 class ProasisOut(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # done
-    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE) # done
-    ligand = models.CharField(max_length=255,blank=False, null=False) # done
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # done
+    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)  # done
+    ligand = models.CharField(max_length=255, blank=False, null=False)  # done
     ligid = models.IntegerField(blank=True, null=True)
-    root = models.TextField(blank=True, null=True) # root directory for all crystals in this project (target)
-    start = models.TextField(blank=True, null=True) # directory name for this crystal within root
-    curated = models.TextField(blank=True, null=True) # done
-    sdf = models.TextField(blank=True, null=True) # done
-    apo = models.TextField(blank=True, null=True) # done
-    mol = models.TextField(blank=True, null=True) # done
-    mol2 = models.TextField(blank=True, null=True) # done
-    h_mol = models.TextField(blank=True, null=True) # done
-    stripped = models.TextField(blank=True, null=True) # done
+    root = models.TextField(blank=True, null=True)  # root directory for all crystals in this project (target)
+    start = models.TextField(blank=True, null=True)  # directory name for this crystal within root
+    curated = models.TextField(blank=True, null=True)  # done
+    sdf = models.TextField(blank=True, null=True)  # done
+    apo = models.TextField(blank=True, null=True)  # done
+    mol = models.TextField(blank=True, null=True)  # done
+    mol2 = models.TextField(blank=True, null=True)  # done
+    h_mol = models.TextField(blank=True, null=True)  # done
+    stripped = models.TextField(blank=True, null=True)  # done
     event = models.TextField(blank=True, null=True)
     mtz = models.TextField(blank=True, null=True)
-    contacts = models.TextField(blank=True, null=True) # done
+    contacts = models.TextField(blank=True, null=True)  # done
     acc = models.TextField(blank=True, null=True)
     don = models.TextField(blank=True, null=True)
     lip = models.TextField(blank=True, null=True)

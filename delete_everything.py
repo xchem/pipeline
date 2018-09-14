@@ -23,7 +23,7 @@ search_paths = [path for path in pd.DataFrame.from_csv(latest_file)['search_path
 for path in search_paths:
     if os.path.isfile(os.path.join(path, 'transfer_pandda_data.done')):
         os.remove(os.path.join(path, 'transfer_pandda_data.done'))
-    files_to_check = glob.glob(os.path.join(path,'*201806*'))
+    files_to_check = glob.glob(os.path.join(path, '*201806*'))
     for f in files_to_check:
         if 'txt' in f:
             os.remove(f)

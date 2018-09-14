@@ -13,7 +13,7 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
-print((find_packages(exclude=["contrib", "docs", "tests"])))
+print(find_packages(exclude=["contrib", "docs", "tests"]))
 setup(
     name="xchem-db",
     # Versions should comply with PEP440.  For a discussion on single-sourcing

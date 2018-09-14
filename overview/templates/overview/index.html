@@ -72,7 +72,7 @@
 
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
-          var req = $(this).text()
+          var req = $(this).text();
             $.ajax({
                 url: '/overview/targets/graph/',
                 data: {'target_name': req},

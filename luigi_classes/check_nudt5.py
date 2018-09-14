@@ -6,7 +6,7 @@ from functions import db_functions
 from functions import misc_functions
 from xchem_db.models import *
 
-fail_count=0
+fail_count = 0
 refinement = Refinement.objects.filter(outcome__gte=3, crystal_name__target__target_name='NUDT5A')
 # set up info for each entry that matches the filter
 for obj in refinement:
@@ -17,8 +17,8 @@ for obj in refinement:
     two_fofc = ''
     fofc = ''
     mod_date = ''
-    proasis_hit_entry=''
-    entry=''
+    proasis_hit_entry = ''
+    entry = ''
     confs = []
     ligand_list = []
 

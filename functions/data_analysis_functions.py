@@ -13,7 +13,7 @@ def run_edstats(strucid):
 
     working_directory = os.getcwd()
 
-    print(('running edstats for ' + strucid + '...'))
+    print('running edstats for ' + strucid + '...')
 
     command_string = str('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh')
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -33,9 +33,9 @@ def run_edstats(strucid):
         if pdb_file:
             print('writing temporary edstats output...')
             edstats_name = str('edstats_' + str(strucid) + '.out')
-            command_string = ('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh; '
-                      'edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=' + edstats_name + ' > temp.out'
-                                                                                                          ' > /dev/null 2>&1')
+            command_string = ('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh;'
+                      ' edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=' +
+                              edstats_name + ' > temp.out > /dev/null 2>&1')
             process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
             print(out)
@@ -46,7 +46,7 @@ def run_edstats(strucid):
                 with open(edstats_name, 'r') as f:
                     output = f.read().strip().replace('\r\n', '\n').replace('\r', '\n').splitlines()
             else:
-                output=None
+                output = None
                 raise Exception('No edstats output file found!')
 
             if output:
@@ -69,7 +69,8 @@ def run_edstats(strucid):
 
                     fields = line.split()
                     if len(fields) != num_fields:
-                        raise ValueError("Error Parsing EDSTATS output: Header & Data rows have different numbers of fields")
+                        raise ValueError(
+                            "Error Parsing EDSTATS output: Header & Data rows have different numbers of fields")
 
                     # Get and process the residue information
                     residue, chain, resnum = fields[:3]
@@ -99,8 +100,8 @@ def run_edstats(strucid):
                     # print residue
                     if 'LIG' in residue:
                         outputdata.append([[residue, chain, resnum], fields])
-            #else:
-                #raise Exception('No output found!')
+            # else:
+                # raise Exception('No output found!')
         else:
             try:
                 os.remove(mtz_file)
@@ -140,9 +141,9 @@ def get_project_counts():
         if not 'null' or 'None' or 'test' in str(row[0]):
             protein_list.append(str(row[0]))
     protein_list = list(set(protein_list))
-    counts_dict = {'protein':[], 'mounted':[], 'pandda_hit':[], 'refinement':[], 'comp_chem':[], 'depo':[]}
+    counts_dict = {'protein': [], 'mounted': [], 'pandda_hit': [], 'refinement': [], 'comp_chem': [], 'depo': []}
     for protein in protein_list:
-        if len(protein)<1:
+        if len(protein) < 1:
             continue
         if 'None' in protein:
             continue
@@ -154,7 +155,8 @@ def get_project_counts():
             continue
         counts_dict['protein'].append(protein)
         crystal_list = []
-        c.execute('select crystal_name from lab where protein = %s and mounting_result similar to %s', (str(protein), '(%Mounted%|%OK%)'))
+        c.execute('select crystal_name from lab where protein = %s and mounting_result similar to %s', (
+            str(protein), '(%Mounted%|%OK%)'))
         rows = c.fetchall()
 
         for row in rows:
@@ -164,11 +166,11 @@ def get_project_counts():
 
         hits_list = []
         for crystal in crystal_list:
-            c.execute('select pandda_hit, crystal_name from dimple where crystal_name = %s',(crystal,))
+            c.execute('select pandda_hit, crystal_name from dimple where crystal_name = %s', (crystal,))
             rows2 = c.fetchall()
             for row2 in rows2:
-                if str(row2[0])=='True':
-                    hit+=1
+                if str(row2[0]) == 'True':
+                    hit += 1
                     hits_list.append(str(row2[1]))
 
         hits_list = list(set(hits_list))
@@ -178,7 +180,8 @@ def get_project_counts():
         depo = []
 
         for hit_name in hits_list:
-            c.execute('select outcome, crystal_name from refinement where outcome similar to %s and crystal_name = %s', ('(%3%|%4%|%5%)', hit_name))
+            c.execute('select outcome, crystal_name from refinement where outcome similar to %s and crystal_name = %s',
+                      ('(%3%|%4%|%5%)', hit_name))
             rows3 = c.fetchall()
             for row3 in rows3:
                 if '3' in str(row3[0]):
@@ -272,7 +275,7 @@ def edstats_violin(csv_file, html_root):
         if key in ['index', 'crystal', 'ligand', 'strucid']:
             continue
         fig = draw_violin(df, key)
-        out_name = str(key.replace('+','plus'))
+        out_name = str(key.replace('+', 'plus'))
         out_name = out_name.replace('-', 'minus')
         out_name = out_name + '.html'
         html_out = os.path.join(html_root, out_name)

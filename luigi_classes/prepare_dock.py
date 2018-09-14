@@ -30,7 +30,7 @@ class PrepProtein(luigi.Task):
 
         protein = os.path.join(self.root_dir, self.docking_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdb'))
 
-        ## convert to pdbqt with obabel
+        # convert to pdbqt with obabel
         obConv = openbabel.OBConversion()
         obConv.SetInAndOutFormats('pdb', 'pdbqt')
 
@@ -62,7 +62,7 @@ class PrepLigand(luigi.Task):
 
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf)
 
-        ## convert to pdbqt with obabel
+        # convert to pdbqt with obabel
         obConv = openbabel.OBConversion()
         obConv.SetInAndOutFormats('sdf', 'pdbqt')
 
@@ -145,8 +145,8 @@ class ParamPrepADT(luigi.Task):
 
     def output(self):
         print(os.path.join(self.root_dir, self.docking_dir,
-                                              str(self.ligand_file_name.replace('.pdbqt', '_') +
-                                                  str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
+                           str(self.ligand_file_name.replace('.pdbqt', '_') +
+                               str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
         return luigi.LocalTarget(os.path.join(self.root_dir, self.docking_dir,
                                               str(self.ligand_file_name.replace('.pdbqt', '_') +
                                                   str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
@@ -166,8 +166,8 @@ class ParamPrepADT(luigi.Task):
         print(err)
 
         while not os.path.isfile(os.path.join(self.root_dir, self.docking_dir,
-                                   str(self.ligand_file_name.replace('.pdbqt', '_') +
-                                       str(self.receptor_file_name.replace('.pdbqt', '.dpf'))))):
+                                              str(self.ligand_file_name.replace('.pdbqt', '_') +
+                                                  str(self.receptor_file_name.replace('.pdbqt', '.dpf'))))):
             pass
 
         infile = open(os.path.join(self.root_dir, self.docking_dir,
@@ -186,10 +186,11 @@ class ParamPrepADT(luigi.Task):
                 outfile.write(line)
 
         shutil.move(os.path.join(self.root_dir, self.docking_dir,
-                                    str(self.ligand_file_name.replace('.pdbqt', '_') +
-                                        str(self.receptor_file_name.replace('.pdbqt', '.dpf.tmp')))), os.path.join(self.root_dir, self.docking_dir,
-                                   str(self.ligand_file_name.replace('.pdbqt', '_') +
-                                       str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
+                                 str(self.ligand_file_name.replace('.pdbqt', '_') +
+                                     str(self.receptor_file_name.replace('.pdbqt', '.dpf.tmp')))),
+                    os.path.join(self.root_dir, self.docking_dir,
+                                 str(self.ligand_file_name.replace('.pdbqt', '_') +
+                                     str(self.receptor_file_name.replace('.pdbqt', '.dpf')))))
 
 
 class BatchPrep(luigi.Task):

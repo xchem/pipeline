@@ -2,7 +2,6 @@ import subprocess
 
 
 def submit_job(job_directory, job_script, remote_sub_command):
-
     submission_string = ' '.join([
         remote_sub_command,
         '"',
@@ -22,7 +21,6 @@ def submit_job(job_directory, job_script, remote_sub_command):
 
     if err:
         err = err.decode('ascii')
-
 
     return out, err
 
@@ -51,4 +49,3 @@ def check_cluster(remote_sub_command, max_jobs):
         submit = False
 
     return submit
-
