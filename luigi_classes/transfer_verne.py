@@ -1,7 +1,6 @@
 import luigi
 from paramiko import SSHClient
 from scp import SCPClient
-import os
 
 
 class TransferDirectory(luigi.Task):

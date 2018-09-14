@@ -30,7 +30,7 @@ class InitDBEntries(luigi.Task):
     def run(self):
         fail_count = 0
         # select anything 'in refinement' (3) or above
-        refinement = Refinement.objects.filter(outcome__gte=3)
+        refinement = Refinement.objects.filter(outcome__gte=4)
         # set up info for each entry that matches the filter
         for obj in refinement:
             # set up blank fields for entries in proasis hits table
@@ -502,12 +502,12 @@ class CopyFile(luigi.Task):
         if not os.path.isdir(proasis_crystal_directory):
             os.makedirs(proasis_crystal_directory)
 
-        # check if symlink exists, and remove it if it does
-        if os.path.lexists(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))):
-            os.remove(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
+        # # check if symlink exists, and remove it if it does
+        # if os.path.lexists(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1]))):
+        #     os.remove(os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
 
-        # create symlink in input directory (to save space on copying files)
-        os.symlink(self.filename, os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
+        # copy the file (symlinking effs up output file)
+        shutil.copy(self.filename, os.path.join(proasis_crystal_directory, str(self.filename.split('/')[-1])))
 
         # update the relevant field in xchem_db
         if self.update_field == 'pdb':
@@ -522,7 +522,6 @@ class CopyFile(luigi.Task):
         if self.update_field == 'mtz':
             self.proasis_hit.mtz = self.output().path
             self.proasis_hit.save()
-        print(self.proasis_hit.pdb_file)
 
 
 class CopyInputFiles(luigi.Task):
@@ -534,6 +533,7 @@ class CopyInputFiles(luigi.Task):
     def requires(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
+
         crystal = Crystal.objects.get(pk=self.crystal_id)
 
         return CopyFile(proasis_hit=proasis_hit, crystal=crystal, update_field='pdb',
