@@ -574,7 +574,14 @@ class GetPanddaMaps(luigi.Task):
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.pandda')))
+        # if there's an alternate conformation involved, add an extension to identify it
+        if self.altconf:
+            alt_ext = '_' + str(self.altconf).replace(' ', '')
+        else:
+            alt_ext = ''
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' +
+                                                                       mod_date + alt_ext + '.pandda')))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -797,7 +804,14 @@ class AddFiles(luigi.Task):
         mod_date = str(proasis_hit.modification_date)
         crystal_name = str(proasis_hit.crystal_name.crystal_name)
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + '.files')))
+        # if there's an alternate conformation involved, add an extension to identify it
+        if self.altconf:
+            alt_ext = '_' + str(self.altconf).replace(' ', '')
+        else:
+            alt_ext = ''
+
+        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+                                                                       '.files')))
 
     def run(self):
 
