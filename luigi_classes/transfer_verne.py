@@ -16,6 +16,6 @@ class TransferDirectory(luigi.Task):
         ssh.connect(self.hostname, username=self.username)
         scp = SCPClient(ssh.get_transport())
 
-        for f in os.walk(self.local_directory):
-            scp.put(f, self.remote_directory)
+        scp.put(self.local_directory, recursive=True, self.remote_directory)
+        scp.close()
 
