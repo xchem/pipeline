@@ -286,13 +286,10 @@ class CreateMolTwoFile(luigi.Task):
         if err:
             err = err.decode('ascii')
             # raise Exception(err)
-            print(err)
-            proasis_out.mol2 = None
-            proasis_out.save()
-            with self.output().open('w') as f:
-                f.write('ERROR in antechamber')
+            shutil.rmtree(self.output().path.split('/')[:-1])
+            proasis_out.delete()
+            raise Exception(err)
         else:
-
             print(out)
             print(err)
             # save mol2 file to proasis_out object
@@ -338,7 +335,10 @@ class GetInteractionJSON(luigi.Task):
             # if successful - add json to proasis_out object
             proasis_out.contacts = out.split('/')[-1]
         else:
+            shutil.rmtree(self.output().path.split('/')[:-1])
+            proasis_out.delete()
             raise Exception('contacts json not produced!')
+
         # save proasis out
         proasis_out.save()
 
