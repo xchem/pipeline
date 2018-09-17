@@ -6,7 +6,7 @@ import luigi
 from paramiko import SSHClient
 from scp import SCPClient
 
-from config_classes import VerneConfig
+from .config_classes import VerneConfig
 from xchem_db.models import *
 
 
