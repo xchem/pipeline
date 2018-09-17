@@ -286,7 +286,7 @@ class CreateMolTwoFile(luigi.Task):
         if 'Error' in out:
             err = err.decode('ascii')
             # raise Exception(err)
-            shutil.rmtree(self.output().path.split('/')[:-1])
+            shutil.rmtree('/' + '/'.join(self.output().path.split('/')[:-1]))
             proasis_out.delete()
             raise Exception(err)
         else:
