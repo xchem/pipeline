@@ -4,7 +4,6 @@ import filecmp
 
 import luigi
 from paramiko import SSHClient
-from paramiko
 from scp import SCPClient
 
 from config_classes import VerneConfig
