@@ -19,6 +19,7 @@ class TransferDirectory(luigi.Task):
     hostname = VerneConfig().hostname
     remote_directory = luigi.Parameter()
     local_directory = luigi.Parameter()
+    remote_root = VerneConfig().remote_root
 
     def run(self):
         ssh = SSHClient()
@@ -28,6 +29,13 @@ class TransferDirectory(luigi.Task):
         try:
             sftp.stat(self.remote_directory)
         except FileNotFoundError:
+            f_path = ''
+            for f in self.remote_directory.replace(self.remote_root, '').split('/'):
+                f_path += str('/' + f)
+                try:
+                    sftp.stat(str(self.remote_root + f_path))
+                except FileNotFoundError:
+                    sftp.mkdir(str(self.remote_root + f_path))
             scp = SCPClient(ssh.get_transport())
             scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
             scp.close()
