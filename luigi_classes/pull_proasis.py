@@ -476,33 +476,34 @@ class GetOutFiles(luigi.Task):
                     # increase ligand id by 1
                     ligid += 1
                     # get or create the proasis out object before pulling begins
-                    if ProasisOut.objects.filter(proasis=hit, ligand=ligand, ligid=ligid,
-                                                                   crystal=hit.crystal_name).exists():
+                    # if ProasisOut.objects.filter(proasis=hit, ligand=ligand, ligid=ligid,
+                    #                                                crystal=hit.crystal_name).exists():
 
-                        proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
-                                                                       crystal=hit.crystal_name)
-                        # add data needed for pulling files to tmp lists
-                        crys_ids.append(hit.crystal_name_id)
-                        ref_ids.append(hit.refinement_id)
-                        ligs.append(ligand)
-                        ligids.append(ligid)
-                        alts.append(hit.altconf)
+                    proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
+                                                                   crystal=hit.crystal_name)
 
-                        proposal = hit.crystal_name.visit.proposal.proposal
-                        visit1 = str(proposal + '-1')
+                    # add data needed for pulling files to tmp lists
+                    crys_ids.append(hit.crystal_name_id)
+                    ref_ids.append(hit.refinement_id)
+                    ligs.append(ligand)
+                    ligids.append(ligid)
+                    alts.append(hit.altconf)
 
-                        glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
+                    proposal = hit.crystal_name.visit.proposal.proposal
+                    visit1 = str(proposal + '-1')
 
-                        paths = glob.glob(glob_string)
+                    glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
 
-                        if len(paths) == 1:
-                            hit_directory = os.path.join(paths[0], 'processing', 'fragalysis')
-                            if not os.path.isdir(hit_directory):
-                                os.makedirs(hit_directory)
-                        else:
-                            hit_directory = ''
+                    paths = glob.glob(glob_string)
 
-                        hit_dirs.append(hit_directory)
+                    if len(paths) == 1:
+                        hit_directory = os.path.join(paths[0], 'processing', 'fragalysis')
+                        if not os.path.isdir(hit_directory):
+                            os.makedirs(hit_directory)
+                    else:
+                        hit_directory = ''
+
+                    hit_dirs.append(hit_directory)
 
 
         return [CreateMolTwoFile(hit_directory=h,
