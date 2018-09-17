@@ -37,7 +37,7 @@ class StartPipeline(luigi.WrapperTask):
         yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
         yield GetOutFiles(date=self.date)
         yield CreateProposalVisitFiles()
-        yield WriteRunCheckHot()
+        # yield WriteRunCheckHot()
         # yield UpdateOtherFields()
 
     def output(self):
