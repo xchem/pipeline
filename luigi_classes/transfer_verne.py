@@ -35,7 +35,7 @@ class TransferDirectory(luigi.Task):
 
 class GetTransferDirectories(luigi.Task):
     remote_root = VerneConfig().remote_root
-    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m%-%dT%H'))
+    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
 
     def requires(self):
         proasis_out = ProasisOut.objects.all()
