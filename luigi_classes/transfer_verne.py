@@ -72,7 +72,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        TransferDirectory(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
+        TransferDirectory(
                           local_directory=self.local_directory, remote_directory=self.remote_directory,
                           timestamp=self.timestamp)
 
