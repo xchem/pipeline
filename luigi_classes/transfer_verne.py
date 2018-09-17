@@ -81,6 +81,8 @@ class TransferVisitAndProposalFiles(luigi.Task):
             TransferDirectory(
                               local_directory=self.local_directory, remote_directory=self.remote_directory,
                               timestamp=self.timestamp).output().path.split('/')[:-2])
+            if os.path.isfile(os.path.join(self.out_dir, str('visits_proposals_' + self.timestamp + '.done'))):
+                os.remove(os.path.join(self.out_dir, str('visits_proposals_' + self.timestamp + '.done')))
         return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals_' + self.timestamp + '.done')))
 
     def run(self):
@@ -93,8 +95,8 @@ class TransferVisitAndProposalFiles(luigi.Task):
         for f in visit_proposal_file:
             if os.path.isfile(f):
                 scp = SCPClient(ssh.get_transport())
-                print('/'.join(self.remote_directory.split('/')[:-1]))
-                scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-1]))
+                print('/'.join(self.remote_directory.split('/')[:-2]))
+                scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-2]))
                 scp.close()
             else:
                 break
