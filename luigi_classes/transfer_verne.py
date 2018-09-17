@@ -6,6 +6,10 @@ import luigi
 from paramiko import SSHClient
 from scp import SCPClient
 
+import setup_django
+
+setup_django.setup_django()
+
 from .config_classes import VerneConfig
 from xchem_db.models import *
 
@@ -27,13 +31,6 @@ class TransferDirectory(luigi.Task):
             scp = SCPClient(ssh.get_transport())
             scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
             scp.close()
-
-
-# timestamp = datetime.datetime.now().strftime('%Y-%m%-dT%H')
-# old_dir = # find previous directory on verne
-# top_l_verne = '/data/fs-data/django_data'
-# upload_to = os.path.join(top_l_verne, str(timestamp))
-# compare files in lists with filecmp and update if necessary
 
 
 class GetTransferDirectories(luigi.Task):
