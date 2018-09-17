@@ -78,7 +78,8 @@ class GetTransferDirectories(luigi.Task):
                 transfer_checks.append(p)
         # run a file transfer to verne for each directory
         return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp,
-                                                                '/'.join(p.split('/')[-3:])), local_directory=p)
+                                                                '/'.join(p.split('/')[-3:])), local_directory=p,
+                                  timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
                 for p in transfer_checks]
 
     def run(self):
