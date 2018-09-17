@@ -1,11 +1,12 @@
-import datetime
 import os
 
+import datetime
 import luigi
 from paramiko import SSHClient
 from scp import SCPClient
 
 import setup_django
+
 setup_django.setup_django()
 
 from .config_classes import VerneConfig
@@ -59,6 +60,48 @@ class TransferDirectory(luigi.Task):
             f.write('')
 
 
+class TransferVisitAndProposalFiles(luigi.Task):
+    # hidden parameters in luigi.cfg
+    username = VerneConfig().username
+    hostname = VerneConfig().hostname
+    remote_root = VerneConfig().remote_root
+
+    # normal parameters
+    remote_directory = luigi.Parameter()
+    local_directory = luigi.Parameter()
+    timestamp = luigi.Parameter()
+
+    def requires(self):
+        TransferDirectory(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
+                          local_directory=self.local_directory, remote_directory=self.remote_directory,
+                          timestamp=self.timestamp)
+
+    def output(self):
+        self.out_dir = '/'.join(
+            TransferDirectory(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
+                              local_directory=self.local_directory, remote_directory=self.remote_directory,
+                              timestamp=self.timestamp).output().path.split('/')[:-2])
+        return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals_' + self.timestamp + '.done')))
+
+    def run(self):
+        # create SSH client with paramiko and connect with system host keys
+        ssh = SSHClient()
+        ssh.load_system_host_keys()
+        ssh.connect(self.hostname, username=self.username)
+
+        visit_proposal_file = [os.path.join(self.out_dir, 'VISITS'), os.path.join(self.out_dir, 'PROPOSALS')]
+        for f in visit_proposal_file:
+            if os.path.isfile(f):
+                scp = SCPClient(ssh.get_transport())
+                scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-1]))
+                scp.close()
+            else:
+                break
+
+            with self.output().open('w') as o:
+                o.write('')
+
+
 class GetTransferDirectories(luigi.Task):
     remote_root = VerneConfig().remote_root
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
@@ -80,7 +123,12 @@ class GetTransferDirectories(luigi.Task):
         return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp,
                                                                 '/'.join(p.split('/')[-3:])), local_directory=p,
                                   timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
-                for p in transfer_checks]
+                for p in transfer_checks], [
+                   TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp,
+                                                                               '/'.join(p.split('/')[-3:])),
+                                                 local_directory=p,
+                                                 timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+                   for p in transfer_checks]
 
     def run(self):
         # write local output file to signify all transfers done
