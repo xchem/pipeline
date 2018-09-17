@@ -289,6 +289,8 @@ class CreateMolTwoFile(luigi.Task):
             print(err)
             proasis_out.mol2 = None
             proasis_out.save()
+            with self.output().open('w') as f:
+                f.write('ERROR in antechamber')
         else:
 
             print(out)
