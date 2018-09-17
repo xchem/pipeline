@@ -93,6 +93,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
         for f in visit_proposal_file:
             if os.path.isfile(f):
                 scp = SCPClient(ssh.get_transport())
+                print('/'.join(self.remote_directory.split('/')[:-1]))
                 scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-1]))
                 scp.close()
             else:
