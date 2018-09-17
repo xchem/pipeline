@@ -9,6 +9,7 @@ from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlac
 from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.pull_proasis import CreateProposalVisitFiles
 from luigi_classes.hotspot_maps import WriteRunCheckHot
+from luigi_classes.transfer_verne import GetTransferDirectories
 import os
 
 
@@ -37,6 +38,7 @@ class StartPipeline(luigi.WrapperTask):
         yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
         yield GetOutFiles(date=self.date)
         yield CreateProposalVisitFiles()
+        yield GetTransferDirectories()
         # yield WriteRunCheckHot()
         # yield UpdateOtherFields()
 
