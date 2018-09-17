@@ -283,7 +283,7 @@ class CreateMolTwoFile(luigi.Task):
         process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = process.communicate()
         out = out.decode('ascii')
-        if err:
+        if 'Error' in out:
             err = err.decode('ascii')
             # raise Exception(err)
             shutil.rmtree(self.output().path.split('/')[:-1])
