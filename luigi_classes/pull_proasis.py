@@ -285,7 +285,8 @@ class CreateMolTwoFile(luigi.Task):
         out = out.decode('ascii')
         if err:
             err = err.decode('ascii')
-            raise Exception(err)
+            # raise Exception(err)
+            print(err)
 
         print(out)
         print(err)

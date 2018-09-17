@@ -85,6 +85,3 @@ class GetTransferDirectories(luigi.Task):
         # write local output file to signify all transfers done
         with self.output().open('w') as f:
             f.write('')
-
-
-
