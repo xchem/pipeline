@@ -29,7 +29,7 @@ class TransferDirectory(luigi.Task):
         return GetOutFiles(date=datetime.date.today())
 
     def output(self):
-        return luigi.LocalTarget(str(self.local_directory + '_' + self.timestamp + 'transferred'))
+        return luigi.LocalTarget(str(self.local_directory + '_' + self.timestamp + '.transferred'))
 
     def run(self):
         # create SSH client with paramiko and connect with system host keys
