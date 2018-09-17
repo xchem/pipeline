@@ -5,8 +5,8 @@ import luigi
 from paramiko import SSHClient
 from scp import SCPClient
 
-# import setup_django
-# setup_django.setup_django()
+import setup_django
+setup_django.setup_django()
 
 from .config_classes import VerneConfig
 from xchem_db.models import *
