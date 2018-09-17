@@ -287,12 +287,15 @@ class CreateMolTwoFile(luigi.Task):
             err = err.decode('ascii')
             # raise Exception(err)
             print(err)
+            proasis_out.mol2 = None
+            proasis_out.save()
+        else:
 
-        print(out)
-        print(err)
-        # save mol2 file to proasis_out object
-        proasis_out.mol2 = self.output().path.split('/')[-1]
-        proasis_out.save()
+            print(out)
+            print(err)
+            # save mol2 file to proasis_out object
+            proasis_out.mol2 = self.output().path.split('/')[-1]
+            proasis_out.save()
 
 
 class GetInteractionJSON(luigi.Task):
