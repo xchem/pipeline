@@ -64,7 +64,7 @@ class GetTransferDirectories(luigi.Task):
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
 
     def output(self):
-        return luigi.LocalTarget(str('logs/transfer_verne_' + self.timestamp + '.done')
+        return luigi.LocalTarget(str('logs/transfer_verne_' + self.timestamp + '.done'))
 
     def requires(self):
         # get all output directories in the database
