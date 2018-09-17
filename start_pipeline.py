@@ -37,8 +37,8 @@ class StartPipeline(luigi.WrapperTask):
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
         yield GetOutFiles(date=self.date)
-        yield CreateProposalVisitFiles()
-        yield GetTransferDirectories()
+        # yield CreateProposalVisitFiles()
+        # yield GetTransferDirectories()
         # yield WriteRunCheckHot()
         # yield UpdateOtherFields()
 

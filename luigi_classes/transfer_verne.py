@@ -154,7 +154,7 @@ class GetTransferVisitProposal(luigi.Task):
         # check that the paths exist
         for p in paths:
             if os.path.isdir(p):
-                transfer_checks.append(p)
+                transfer_checks.append(p.split('/')[:-2])
         # run a file transfer to verne for each directory
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp,
                                                                             '/'.join(p.split('/')[-3:])),
