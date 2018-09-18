@@ -11,7 +11,7 @@ from functions import cluster_functions
 
 
 # task to submit any job to the cluster
-class BSubmitJob(luigi.Task):
+class SubmitJob(luigi.Task):
     remote_sub_command = luigi.Parameter(default='ssh -tt uzw12877@nx.diamond.ac.uk')
     job_directory = luigi.Parameter()
     job_script = luigi.Parameter()
@@ -221,7 +221,7 @@ FragBack xoxo
             s.quit()
 
 
-class DRemoveJobFiles(luigi.Task):
+class RemoveJobFiles(luigi.Task):
     output_files = luigi.Parameter()
     job_file = luigi.Parameter()
     directory = luigi.Parameter()
