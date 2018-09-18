@@ -286,8 +286,6 @@ class CreateMolTwoFile(luigi.Task):
         if 'Error' in out:
             err = err.decode('ascii')
             # raise Exception(err)
-            shutil.rmtree('/' + '/'.join(self.output().path.split('/')[:-1]))
-            proasis_out.delete()
             raise Exception(err)
         else:
             print(out)
@@ -335,8 +333,6 @@ class GetInteractionJSON(luigi.Task):
             # if successful - add json to proasis_out object
             proasis_out.contacts = out.split('/')[-1]
         else:
-            shutil.rmtree('/' + '/'.join(self.output().path.split('/')[:-1]))
-            proasis_out.delete()
             raise Exception('contacts json not produced!')
 
         # save proasis out
@@ -495,6 +491,10 @@ class GetOutFiles(luigi.Task):
                     glob_string = os.path.join('/dls/labxchem/data/20*', visit1)
 
                     paths = glob.glob(glob_string)
+
+                    # can't always find paths, so if that's the case, use the soakdb filepath:
+                    if not paths:
+                        paths = [hit.crystal_name.visit.filename.split('database')[0]]
 
                     if len(paths) == 1:
                         hit_directory = os.path.join(paths[0], 'processing', 'fragalysis')
