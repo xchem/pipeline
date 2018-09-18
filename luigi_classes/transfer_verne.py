@@ -187,6 +187,10 @@ class TransferByTargetList(luigi.Task):
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
     target_list = VerneConfig().target_list
 
+    def output(self):
+        print(self.timestamp)
+        return luigi.LocalTarget(str('verne_transfer_' + self.timestamp))
+
     def requires(self):
         transfer_paths = []
         if os.path.isfile(self.target_list):
