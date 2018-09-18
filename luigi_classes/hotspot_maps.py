@@ -9,9 +9,6 @@ from xchem_db.models import *
 from . import cluster_submission
 
 
-
-
-
 class WriteRunCheckHot(luigi.Task):
 
     def requires(self):
@@ -23,9 +20,9 @@ class WriteRunCheckHot(luigi.Task):
             apo_pdb.append(o.apo)
             directory.append(os.path.join(o.root, o.start))
 
-        w_output_paths = [cluster_submission.AWriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
+        w_output_paths = [cluster_submission.WriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
 
-        yield [cluster_submission.AWriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
+        yield [cluster_submission.WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
         yield [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
                                             job_script=j.split('/')[-1]) for j in w_output_paths]
         yield [cluster_submission.CheckJob(
