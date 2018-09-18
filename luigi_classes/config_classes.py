@@ -8,3 +8,4 @@ class VerneConfig(luigi.Config):
     target_list = luigi.Parameter()
     update_user = luigi.Parameter()
     update_token = luigi.Parameter()
+    rand_string = luigi.Parameter()

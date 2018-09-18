@@ -211,15 +211,22 @@ class TransferByTargetList(luigi.Task):
 class UpdateVerne(luigi.Task):
     user = VerneConfig().update_user
     token = VerneConfig().update_token
+    rand_string = VerneConfig().rand_string
+    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
 
     def requires(self):
         return TransferByTargetList()
 
     def output(self):
-        pass
+        return luigi.LocalTarget(str('verne_update_' + str(self.timestamp)))
 
     def run(self):
         curl_string = str('curl -X POST "https://' + self.user +
-                          ':3cb2706a1d4af97b4eceb483f59f2c8b@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
+                          ':' + self.rand_string +
+                          '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
                           + self.token + '" -k')
+        os.system(curl_string)
+
+        with self.output().open('w') as f:
+            f.write('')
 
