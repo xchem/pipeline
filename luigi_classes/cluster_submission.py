@@ -250,7 +250,7 @@ class RemoveJobFiles(luigi.Task):
             f.write('')
 
 
-class WriteHotJob(luigi.Task):
+class AWriteHotJob(luigi.Task):
     # defaults need defining in settings
     site_id = luigi.Parameter(default='2035')
     confirmation_code = luigi.Parameter(default='4DFB42')
