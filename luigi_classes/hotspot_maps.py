@@ -1,4 +1,7 @@
 import os
+from setup_django import setup_django
+
+setup_django()
 
 import luigi
 
