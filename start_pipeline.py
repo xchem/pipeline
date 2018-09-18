@@ -7,6 +7,7 @@ import datetime
 from luigi_classes.transfer_pandda import TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, UpdateOtherFields
 from luigi_classes.pull_proasis import GetOutFiles
+from luigi_classes.transfer_soakdb import StartTransfers
 # from luigi_classes.pull_proasis import CreateProposalVisitFiles
 from luigi_classes.hotspot_maps import WriteRunCheckHot
 # from luigi_classes.transfer_verne import GetTransferDirectories
@@ -31,7 +32,7 @@ class StartPipeline(luigi.WrapperTask):
                 os.remove(path)
             except:
                 pass
-
+        yield StartTransfers()
         yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
