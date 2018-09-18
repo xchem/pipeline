@@ -272,25 +272,43 @@ class CreateMolTwoFile(luigi.Task):
                                              crystal=proasis_hit.crystal_name,
                                              ligand=self.ligand,
                                              ligid=self.ligid)
+
+        # Boron atom - tmp fix for non paramaterized antechamber forcefield
+        boron = Chem.MolFromSmarts('[B]')
+
         # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
-        # get charge from mol file
-        net_charge = AllChem.GetFormalCharge(rd_mol)
-        # use antechamber to calculate forcefield, and output a mol2 file
-        command_string = str("antechamber -i " + self.input().path + " -fi mdl -o " + self.output().path +
-                             " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
-        print(command_string)
-        process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
-        out = out.decode('ascii')
-        if 'Error' in out:
-            raise Exception(out)
-        else:
-            print(out)
-            print(err)
-            # save mol2 file to proasis_out object
+
+        boron_matches = rd_mol.GetSubstructMatches(boron)
+        if boron_matches:
+            obConv = openbabel.OBConversion()
+            obConv.SetInAndOutFormats('mol', 'mol2')
+            # blank mol for ob
+            mol = openbabel.OBMol()
+            # read pdb and write mol
+            obConv.ReadFile(mol, self.input().path)
+            obConv.WriteFile(mol, self.output().path)
             proasis_out.mol2 = self.output().path.split('/')[-1]
             proasis_out.save()
+
+        else:
+            # get charge from mol file
+            net_charge = AllChem.GetFormalCharge(rd_mol)
+            # use antechamber to calculate forcefield, and output a mol2 file
+            command_string = str("antechamber -i " + self.input().path + " -fi mdl -o " + self.output().path +
+                                 " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
+            print(command_string)
+            process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+            out = out.decode('ascii')
+            if 'Error' in out:
+                raise Exception(out)
+            else:
+                print(out)
+                print(err)
+                # save mol2 file to proasis_out object
+                proasis_out.mol2 = self.output().path.split('/')[-1]
+                proasis_out.save()
 
 
 class GetInteractionJSON(luigi.Task):
