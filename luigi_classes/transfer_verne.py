@@ -27,9 +27,7 @@ class TransferDirectory(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(date=datetime.date.today())\
-            # , \
-               # WriteRunCheckHot()
+        return GetOutFiles(date=datetime.date.today()), WriteRunCheckHot()
 
     def output(self):
         return luigi.LocalTarget(str(self.local_directory + 'verne.transferred'))
@@ -61,6 +59,7 @@ class TransferDirectory(luigi.Task):
             scp.close()
 
             remote_target = os.path.join(self.remote_directory, self.local_directory.split('/')[-1])
+            print(remote_target)
 
             local_file = os.path.join(os.getcwd(), 'NEW_DATA')
             if not local_file:
@@ -186,7 +185,7 @@ class GetTransferVisitProposal(luigi.Task):
 class TransferByTargetList(luigi.Task):
     remote_root = VerneConfig().remote_root
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
-    target_list = luigi.Parameter()
+    target_list = VerneConfig().target_list
 
     def requires(self):
         transfer_paths = []
