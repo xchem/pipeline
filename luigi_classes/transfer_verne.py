@@ -12,6 +12,7 @@ setup_django.setup_django()
 from .config_classes import VerneConfig
 from xchem_db.models import *
 from luigi_classes.pull_proasis import GetOutFiles
+from luigi_classes.hotspot_maps import WriteRunCheckHot
 
 
 class TransferDirectory(luigi.Task):
@@ -26,7 +27,7 @@ class TransferDirectory(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(date=datetime.date.today())
+        return GetOutFiles(date=datetime.date.today()), WriteRunCheckHot()
 
     def output(self):
         return luigi.LocalTarget(str(self.local_directory + 'verne.transferred'))
@@ -56,6 +57,13 @@ class TransferDirectory(luigi.Task):
             scp = SCPClient(ssh.get_transport())
             scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
             scp.close()
+
+            if len(self.remote_directory.replace(self.remote_root, '').split('/')) == 1:
+                local_file = os.path.join(os.getcwd(), 'NEW_DATA')
+                if not local_file:
+                    os.system(str('touch ' + local_file))
+                scp = SCPClient(ssh.get_transport())
+                scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=self.remote_directory)
 
         # write local output file to signify transfer done
         with self.output().open('w') as f:
