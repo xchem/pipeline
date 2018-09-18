@@ -27,7 +27,7 @@ class SubmitJob(luigi.Task):
         ok_to_submit = cluster_functions.check_cluster(self.remote_sub_command, self.max_jobs)
         if not ok_to_submit:
             raise Exception('Too many jobs running on the cluster. Will try again later!')
-        if not os.path.isfile(os.path.join(self.job_directory, self.job)):
+        if not os.path.isfile(os.path.join(self.job_directory, self.job_script)):
             raise Exception('job file doesnt exist')
         out, err = cluster_functions.submit_job(job_directory=self.job_directory, job_script=self.job_script,
                                                 remote_sub_command=self.remote_sub_command)

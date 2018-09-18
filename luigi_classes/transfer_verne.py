@@ -51,6 +51,7 @@ class TransferDirectory(luigi.Task):
                     sftp.stat(str(self.remote_root + f_path))
                 except FileNotFoundError:
                     sftp.mkdir(str(self.remote_root + f_path))
+
             # set up scp protocol and recursively push the directories across
             scp = SCPClient(ssh.get_transport())
             scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
