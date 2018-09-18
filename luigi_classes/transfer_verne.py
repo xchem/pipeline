@@ -186,7 +186,7 @@ class TransferByTargetList(luigi.Task):
                     if os.path.isdir(pth):
                         transfer_paths.append(pth)
 
-        print(transfer_paths)
+        transfer_paths = list(set(transfer_paths))
 
         return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp, p.split('/')[-1]),
                                   local_directory=p,
