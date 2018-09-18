@@ -279,7 +279,7 @@ class CreateMolTwoFile(luigi.Task):
         # create mol from input mol file
         rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
 
-        boron_matches = rd_mol.GetSubstructMatches(boron)
+        boron_matches = rd_mol.HasSubstructMatch(boron)
         if boron_matches:
             obConv = openbabel.OBConversion()
             obConv.SetInAndOutFormats('mol', 'mol2')
