@@ -73,3 +73,9 @@ class WriteRunCheckHot(luigi.WrapperTask):
                           j.replace('_apo_hotspots.sh', '_apolar.ccp4.gz')],
             job_file=j.split('/')[-1],
             directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]
+        yield [cluster_submission.RemoveJobFiles(
+            output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.gz'),
+                          j.replace('_apo_hotspots.sh', '_donor.ccp4.gz'),
+                          j.replace('_apo_hotspots.sh', '_apolar.ccp4.gz')],
+            job_file=j.split('/')[-1],
+            directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]

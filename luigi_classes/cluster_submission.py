@@ -237,12 +237,29 @@ FragBack xoxo
 
 
 class RemoveJobFiles(luigi.Task):
+    output_files = luigi.Parameter()
+    job_file = luigi.Parameter()
+    directory = luigi.Parameter()
+    done_name = luigi.Parameter()
 
     def requires(self):
-        pass
+        return CheckJob(output_files=self.output_files, job_file=self.job_file, directory=self.directory)
 
     def output(self):
-        pass
+        return luigi.LocalTarget(os.path.join(self.directory, str(self.done_name + '.done')))
 
     def run(self):
-        pass
+        job = os.path.join(self.directory, self.job_file)
+        output = glob.glob(str(job + '.o*'))
+        errors = glob.glob(str(job + '.e*'))
+        os.remove(job)
+        for o in output:
+            os.remove(o)
+        for e in errors:
+            os.remove(e)
+
+        os.remove(CheckJob(output_files=self.output_files, job_file=self.job_file,
+                           directory=self.directory).output().path)
+
+        with self.output().open('w') as f:
+            f.write('')
