@@ -33,9 +33,11 @@ def get_graph(request):
     count_4 = len(refinement_4)
     refinement_5 = Refinement.objects.filter(crystal_name__in=crystals, outcome=5)
     count_5 = len(refinement_5)
+    refinement_6 = Refinement.objects.filter(crystal_name__in=crystals, outcome=6)
+    count_6 = len(refinement_6)
 
-    data = {'y': [count_1, count_2, count_3, count_4, count_5],
-            'x': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready'],
+    data = {'y': [count_1, count_2, count_3, count_4, count_5, count_6],
+            'x': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready', 'Deposited'],
             'type': 'bar'}
 
     return JsonResponse(data)
