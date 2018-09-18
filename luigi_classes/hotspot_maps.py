@@ -65,7 +65,7 @@ class WriteRunCheckHot(luigi.Task):
             apo_pdb.append(o.apo)
             directory.append(os.path.join(o.root, o.start))
 
-        w_output_paths = [WriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
+        w_output_paths = [AWriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
 
         yield [AWriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
         yield [cluster_submission.BSubmitJob(job_directory='/'.join(j.split('/')[:-1]),
