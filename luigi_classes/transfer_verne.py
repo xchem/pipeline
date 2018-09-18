@@ -184,6 +184,8 @@ class TransferByTargetList(luigi.Task):
                     if os.path.isdir(pth):
                         transfer_paths.append(pth)
 
+        print(transfer_paths)
+
         return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp, p.split('/')[-1]),
                                   local_directory=p,
                                   timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
