@@ -60,7 +60,7 @@ class TransferDirectory(luigi.Task):
             scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
             scp.close()
 
-            if len(self.remote_directory.replace(self.remote_root, '').split('/')) == 1:
+            if len(self.remote_directory.replace(self.remote_root, '').split('/')) == 2:
                 local_file = os.path.join(os.getcwd(), 'NEW_DATA')
                 if not local_file:
                     os.system(str('touch ' + local_file))
