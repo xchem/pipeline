@@ -213,7 +213,9 @@ def submit_proasis_job_string(substring):
 
 
 def add_proasis_file(file_type, filename, strucid, title):
-    add_file = str('/usr/local/Proasis2/utils/addnewfile.py' + ' ' + '-i' + ' ' + file_type + ' ' + '-f' + ' ' + filename + ' ' + '-s' + ' ' + strucid + ' ' + '-t' + ' ' + title)
+    add_file = str(
+        '/usr/local/Proasis2/utils/addnewfile.py' + ' ' + '-i' + ' ' + file_type + ' ' + '-f' + ' ' + filename + ' ' +
+        '-s' + ' ' + strucid + ' ' + '-t' + ' ' + title)
 
     process = subprocess.Popen(add_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()

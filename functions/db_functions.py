@@ -364,7 +364,7 @@ def transfer_table(translate_dict, filename, model):
         try:
             with transaction.atomic():
                 m = model.objects.create(**d)
-                m.save
+                m.save()
 
         except IntegrityError as e:
             print(d)

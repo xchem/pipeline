@@ -333,7 +333,7 @@ class GetInteractionJSON(luigi.Task):
             # if successful - add json to proasis_out object
             proasis_out.contacts = out.split('/')[-1]
         else:
-            raise Exception('contacts json not produced!')
+            raise Exception(str('contacts json not produced: ' + ', '.join([lig, self.output().path, strucid])))
 
         # save proasis out
         proasis_out.save()
@@ -504,7 +504,6 @@ class GetOutFiles(luigi.Task):
                         hit_directory = ''
 
                     hit_dirs.append(hit_directory)
-
 
         return [CreateMolTwoFile(hit_directory=h,
                                  crystal_id=c,
