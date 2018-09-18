@@ -178,8 +178,9 @@ class TransferByTargetList(luigi.Task):
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
             for target in target_list:
-                print(target)
-                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=target)
+                tgt = target.rstrip()
+                print(tgt)
+                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
                 for o in proasis_out:
                     pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
                     if os.path.isdir(pth):
