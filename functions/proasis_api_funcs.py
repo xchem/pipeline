@@ -283,7 +283,7 @@ def get_lig_sdf(strucid, ligand, outfile):
         r = requests.get(url, data=data)
         json_string = r.json()
         print(json_string)
-        
+
         file_dict = dict_from_string(json_string)
     if os.path.isfile(outfile):
         os.remove(outfile)
