@@ -64,22 +64,6 @@ touch %s.done
             f.write(job_script)
 
 
-# class CheckJobOutput(luigi.Task):
-#     job_directory = luigi.Parameter()
-#     job_output_file = luigi.Parameter()
-#
-#     def output(self):
-#         return luigi.LocalTarget(os.path.join(self.job_directory, str(self.job_output_file + '.done')))
-#
-#     def run(self):
-#         if os.path.isfile(os.path.join(self.job_directory, self.job_output_file)):
-#             with self.output().open('wb') as f:
-#                 f.write('')
-#         else:
-#             raise Exception('Job output not found!')
-
-
-# Task for writing jobs that include loading a conda environment and running a python script
 class WriteCondaEnvJob(luigi.Task):
     job_directory = luigi.Parameter()
     job_filename = luigi.Parameter()
