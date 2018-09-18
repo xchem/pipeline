@@ -62,7 +62,8 @@ class TransferDirectory(luigi.Task):
 
             local_file = os.path.join(os.getcwd(), 'NEW_DATA')
             if not local_file:
-                os.system(str('touch ' + local_file))
+                with open(local_file, 'w') as f:
+                    f.write('')
             scp = SCPClient(ssh.get_transport())
             scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=self.remote_directory)
             scp.close()
