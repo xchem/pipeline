@@ -9,7 +9,7 @@ from xchem_db.models import *
 from . import cluster_submission
 
 
-class WriteHotJob(luigi.Task):
+class AWriteHotJob(luigi.Task):
     # defaults need defining in settings
     site_id = luigi.Parameter(default='2035')
     confirmation_code = luigi.Parameter(default='4DFB42')
@@ -67,8 +67,8 @@ class WriteRunCheckHot(luigi.Task):
 
         w_output_paths = [WriteHotJob(apo_pdb=a, directory=d).output().path for (a, d) in zip(apo_pdb, directory)]
 
-        yield [WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
-        yield [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
+        yield [AWriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(apo_pdb, directory)]
+        yield [cluster_submission.BSubmitJob(job_directory='/'.join(j.split('/')[:-1]),
                                             job_script=j.split('/')[-1]) for j in w_output_paths]
         yield [cluster_submission.CheckJob(
             output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.gz'),
@@ -76,7 +76,7 @@ class WriteRunCheckHot(luigi.Task):
                           j.replace('_apo_hotspots.sh', '_apolar.ccp4.gz')],
             job_file=j.split('/')[-1],
             directory='/'.join(j.split('/')[:-1])) for j in w_output_paths]
-        yield [cluster_submission.RemoveJobFiles(
+        yield [cluster_submission.DRemoveJobFiles(
             output_files=[j.replace('_apo_hotspots.sh', '_acceptor.ccp4.gz'),
                           j.replace('_apo_hotspots.sh', '_donor.ccp4.gz'),
                           j.replace('_apo_hotspots.sh', '_apolar.ccp4.gz')],
