@@ -5,6 +5,11 @@ import re
 import shutil
 import subprocess
 
+from setup_django import setup_django
+
+setup_django()
+
+
 import datetime
 import luigi
 import numpy as np
