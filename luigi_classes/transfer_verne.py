@@ -207,3 +207,14 @@ class TransferByTargetList(luigi.Task):
                                   timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
                 for p in transfer_paths]
 
+
+class UpdateVerne(luigi.Task):
+    def requires(self):
+        return TransferByTargetList()
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
