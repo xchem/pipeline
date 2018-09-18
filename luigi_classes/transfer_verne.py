@@ -46,6 +46,7 @@ class TransferDirectory(luigi.Task):
             f_path = ''
             for f in self.remote_directory.replace(self.remote_root, '').split('/'):
                 f_path += str('/' + f)
+                print(f_path)
                 try:
                     sftp.stat(str(self.remote_root + f_path))
                 except FileNotFoundError:
