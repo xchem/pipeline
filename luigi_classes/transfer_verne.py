@@ -166,3 +166,26 @@ class GetTransferVisitProposal(luigi.Task):
         # write local output file to signify all transfers done
         with self.output().open('w') as f:
             f.write('')
+
+
+class TransferByTargetList(luigi.Task):
+    remote_root = VerneConfig().remote_root
+    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
+    target_list = luigi.Parameter()
+
+    def requires(self):
+        transfer_paths = []
+        if os.path.isfile(self.target_list):
+            target_list = open(self.target_list, 'r')
+            for target in target_list:
+                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=target)
+                for o in proasis_out:
+                    pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
+                    if os.path.isdir(pth):
+                        transfer_paths.append(pth)
+
+        return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp, p.split('/')[-1]),
+                                  local_directory=p,
+                                  timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+                for p in transfer_paths]
+
