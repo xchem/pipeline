@@ -307,6 +307,10 @@ def get_lig_interactions(strucid, ligand, outfile):
     json_string = r.json()
     print(json_string)
     file_dict = dict_from_string(json_string)
+    if 'errorMessage' in file_dict.keys():
+        err = file_dict['errorMessage']
+        if 'Structure not in database' in err:
+            return 'DELETE'
     if os.path.isfile(outfile):
         os.remove(outfile)
 
