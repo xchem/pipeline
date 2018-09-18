@@ -5,6 +5,10 @@ import shutil
 import subprocess
 import traceback
 
+from setup_django import setup_django
+
+setup_django()
+
 import datetime
 import luigi
 import pandas as pd
