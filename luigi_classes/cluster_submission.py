@@ -234,3 +234,15 @@ FragBack xoxo
             # send the email to everyone
             s.sendmail(msg['From'], self.emails, msg.as_string())
             s.quit()
+
+
+class RemoveJobFiles(luigi.Task):
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
