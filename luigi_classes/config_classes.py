@@ -6,3 +6,5 @@ class VerneConfig(luigi.Config):
     hostname = luigi.Parameter()
     remote_root = luigi.Parameter()
     target_list = luigi.Parameter()
+    update_user = luigi.Parameter()
+    update_token = luigi.Parameter()

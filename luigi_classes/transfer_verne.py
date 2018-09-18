@@ -209,6 +209,9 @@ class TransferByTargetList(luigi.Task):
 
 
 class UpdateVerne(luigi.Task):
+    user = VerneConfig().update_user
+    token = VerneConfig().update_token
+
     def requires(self):
         return TransferByTargetList()
 
@@ -216,5 +219,7 @@ class UpdateVerne(luigi.Task):
         pass
 
     def run(self):
-        pass
+        curl_string = str('curl -X POST "https://' + self.user +
+                          ':3cb2706a1d4af97b4eceb483f59f2c8b@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
+                          + self.token + '" -k')
 
