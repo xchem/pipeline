@@ -41,7 +41,7 @@ class StartPipeline(luigi.WrapperTask):
         # yield CreateProposalVisitFiles()
         # yield GetTransferDirectories()
         # yield WriteRunCheckHot()
-        yield UpdateOtherFields()
+        # yield UpdateOtherFields()
 
     def output(self):
         return luigi.LocalTarget('logs/pipe.done')
