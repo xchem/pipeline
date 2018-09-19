@@ -27,7 +27,7 @@ class TransferDirectory(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(date=datetime.date.today()), WriteRunCheckHot()
+        return GetOutFiles(date=datetime.date.today())
 
     def output(self):
         return luigi.LocalTarget(str(self.local_directory + 'verne.transferred'))
@@ -245,7 +245,7 @@ class UpdateVerne(luigi.Task):
                           ':' + self.rand_string +
                           '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
                           + self.token + '" -k')
-        
+
         os.system(curl_string)
 
         with self.output().open('w') as f:
