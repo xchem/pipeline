@@ -258,7 +258,7 @@ class UpdateVerne(luigi.Task):
 
         for target in targets:
             with open('TARGET_LIST', 'a') as f:
-                f.write(target)
+                f.write(str(str(target) + ' '))
 
         local_file = os.path.join(os.getcwd(), 'READY')
         if not local_file:
