@@ -40,7 +40,7 @@ class StartPipeline(luigi.WrapperTask):
         yield GetOutFiles(date=self.date)
         # yield CreateProposalVisitFiles()
         # yield GetTransferDirectories()
-        yield WriteRunCheckHot()
+        # yield WriteRunCheckHot()
         yield UpdateOtherFields()
 
     def output(self):
