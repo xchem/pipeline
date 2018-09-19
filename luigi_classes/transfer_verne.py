@@ -217,6 +217,9 @@ class UpdateVerne(luigi.Task):
     token = VerneConfig().update_token
     rand_string = VerneConfig().rand_string
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
+    remote_root = VerneConfig().remote_root
+    username = VerneConfig().username
+    hostname = VerneConfig().hostname
 
     def requires(self):
         return TransferByTargetList()
@@ -225,10 +228,24 @@ class UpdateVerne(luigi.Task):
         return luigi.LocalTarget(str('verne_update_' + str(self.timestamp)))
 
     def run(self):
+        ssh = SSHClient()
+        ssh.load_system_host_keys()
+        ssh.connect(self.hostname, username=self.username)
+
+        local_file = os.path.join(os.getcwd(), 'READY')
+        if not local_file:
+            with open(local_file, 'w') as f:
+                f.write('')
+        scp = SCPClient(ssh.get_transport())
+        scp.put(os.path.join(os.getcwd(), 'READY'), recursive=True,
+                remote_path=os.path.join(self.remote_root, self.timestamp))
+        scp.close()
+
         curl_string = str('curl -X POST "https://' + self.user +
                           ':' + self.rand_string +
                           '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
                           + self.token + '" -k')
+        
         os.system(curl_string)
 
         with self.output().open('w') as f:
