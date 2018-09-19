@@ -220,6 +220,7 @@ class UpdateVerne(luigi.Task):
     remote_root = VerneConfig().remote_root
     username = VerneConfig().username
     hostname = VerneConfig().hostname
+    target_list = VerneConfig().target_list
 
     def requires(self):
         return TransferByTargetList()
@@ -231,6 +232,33 @@ class UpdateVerne(luigi.Task):
         ssh = SSHClient()
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
+        verne_dirs = []
+        v_sftp = ssh.open_sftp()
+        v_sftp.chdir(self.remote_root)
+        for i in v_sftp.listdir():
+            lstatout = str(v_sftp.lstat(i)).split()[0]
+            if 'd' in lstatout:
+                verne_dirs.append(str(i))
+        v_sftp.close()
+
+        verne_dirs.sort()
+
+        previous_dir = verne_dirs[-2]
+
+        remote_target_list = os.path.join(self.remote_root, previous_dir, 'TARGET_LIST')
+        scp = SCPClient(ssh.get_transport())
+        scp.get(remote_target_list)
+        scp.close()
+
+        targets = str(open('TARGET_LIST', 'r')).rsplit()
+        local_targets = str(open(self.target_list, 'r')).rsplit()
+        targets.extend(local_targets)
+
+        os.remove('TARGET_LIST')
+
+        for target in targets:
+            with open('TARGET_LIST', 'a') as f:
+                f.write(target)
 
         local_file = os.path.join(os.getcwd(), 'READY')
         if not local_file:
@@ -238,6 +266,8 @@ class UpdateVerne(luigi.Task):
                 f.write('')
         scp = SCPClient(ssh.get_transport())
         scp.put(os.path.join(os.getcwd(), 'READY'), recursive=True,
+                remote_path=os.path.join(self.remote_root, self.timestamp))
+        scp.put(os.path.join(os.getcwd(), 'TARGET_LIST'), recursive=True,
                 remote_path=os.path.join(self.remote_root, self.timestamp))
         scp.close()
 

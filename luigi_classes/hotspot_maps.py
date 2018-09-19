@@ -9,6 +9,27 @@ from xchem_db.models import *
 from . import cluster_submission
 
 
+class WriteHot(luigi.Task):
+    apo_pdb = luigi.Parameter()
+    directory = luigi.Parameter()
+
+    def run(self):
+        yield [cluster_submission.WriteHotJob(apo_pdb=a, directory=d) for (a, d) in zip(self.apo_pdb, self.directory)]
+
+
+class SubmitHot(luigi.Task):
+    output_paths=luigi.Parameter()
+    apo_pdb = luigi.Parameter()
+    directory = luigi.Parameter()
+
+    def requires(self):
+        return WriteHot(apo_pdb=self.apo_pdb, directory=self.directory)
+
+    def run(self):
+        yield [cluster_submission.SubmitJob(job_directory='/'.join(j.split('/')[:-1]),
+                                            job_script=j.split('/')[-1]) for j in self.output_paths]
+
+
 class WriteRunCheckHot(luigi.Task):
 
     def requires(self):
