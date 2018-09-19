@@ -53,21 +53,21 @@ class TransferDirectory(luigi.Task):
                 except FileNotFoundError:
                     sftp.mkdir(str(self.remote_root + f_path))
 
-            # set up scp protocol and recursively push the directories across
-            scp = SCPClient(ssh.get_transport())
-            scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
-            scp.close()
+        # set up scp protocol and recursively push the directories across
+        scp = SCPClient(ssh.get_transport())
+        scp.put(self.local_directory, recursive=True, remote_path=self.remote_directory)
+        scp.close()
 
-            remote_target = os.path.join(self.remote_directory, self.local_directory.split('/')[-1])
-            print(remote_target)
+        remote_target = os.path.join(self.remote_directory, self.local_directory.split('/')[-1])
+        print(remote_target)
 
-            local_file = os.path.join(os.getcwd(), 'NEW_DATA')
-            if not local_file:
-                with open(local_file, 'w') as f:
-                    f.write('')
-            scp = SCPClient(ssh.get_transport())
-            scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=remote_target)
-            scp.close()
+        local_file = os.path.join(os.getcwd(), 'NEW_DATA')
+        if not local_file:
+            with open(local_file, 'w') as f:
+                f.write('')
+        scp = SCPClient(ssh.get_transport())
+        scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=remote_target)
+        scp.close()
 
         # write local output file to signify transfer done
         with self.output().open('w') as f:
