@@ -352,10 +352,10 @@ class CheckFileUpload(luigi.Task):
             else:
                 status = False
 
-            print('Checking same number of rows in test_xchem: ' + str(status))
-            if not status:
-                raise Exception('FAIL: no of entries in test_xchem = ' + str(
-                    len(Crystal.objects.filter(visit__filename=self.filename))))
+            # print('Checking same number of rows in test_xchem: ' + str(status))
+            # if not status:
+            #     raise Exception('FAIL: no of entries in test_xchem = ' + str(
+            #         len(Crystal.objects.filter(visit__filename=self.filename))))
 
             proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
 
