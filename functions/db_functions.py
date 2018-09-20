@@ -288,6 +288,11 @@ def transfer_table(translate_dict, filename, model):
         compound_smiles = row['CompoundSMILES']
         crystal_name = row['CrystalName']
         target = row['ProteinName']
+        if not target or target=='None':
+            try:
+                target = str(row['CrystalName']).split('-')[0]
+            except:
+                continue
 
         # set up blank dictionary to hold model values
         d = {}
@@ -310,11 +315,8 @@ def transfer_table(translate_dict, filename, model):
         disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
                              'Analysis Pending', 'in-situ']
 
-        before_disallowed_floats = {k: v for k, v in d.items()}
-
-        print(before_disallowed_floats)
         d = {k: v for k, v in d.items() if v not in disallowed_floats}
-        print(d)
+
         if model != models.Reference and 'crystal_name' not in d.keys():
             continue
 
@@ -379,12 +381,12 @@ def transfer_table(translate_dict, filename, model):
                 print('Crystal duplicated!')
                 continue
         # uncomment to debug
-        except ValueError as e:
-            print(d)
-            print('WARNING: ' + str(e.__cause__))
-            print(e)
-            print(model_fields)
-            continue
+        # except ValueError as e:
+        #     print(d)
+        #     print('WARNING: ' + str(e.__cause__))
+        #     print(e)
+        #     print(model_fields)
+        #     continue
 
 
 def soakdb_query(filename):
