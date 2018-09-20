@@ -113,8 +113,8 @@ class TransferVisitAndProposalFiles(luigi.Task):
             else:
                 break
 
-            with self.output().open('w') as o:
-                o.write('')
+        with self.output().open('w') as o:
+            o.write('')
 
 
 class GetTransferDirectories(luigi.Task):
@@ -210,6 +210,10 @@ class TransferByTargetList(luigi.Task):
                                               local_directory=p,
                                               timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
                 for p in transfer_paths]
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class UpdateVerne(luigi.Task):
