@@ -29,9 +29,11 @@ class TransferDirectory(luigi.Task):
         return GetOutFiles(date=datetime.date.today()), CreateProposalVisitFiles()
 
     def output(self):
+        print(self.local_directory)
         return luigi.LocalTarget(str(self.local_directory + '/verne.transferred'))
 
     def run(self):
+        print(self.remote_directory)
         # create SSH client with paramiko and connect with system host keys
         ssh = SSHClient()
         ssh.load_system_host_keys()
@@ -85,8 +87,9 @@ class TransferVisitAndProposalFiles(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        TransferDirectory(
-                          local_directory=self.local_directory, remote_directory=self.remote_directory,
+        print(self.local_directory)
+        print(self.remote_directory)
+        return TransferDirectory(local_directory=self.local_directory, remote_directory=self.remote_directory,
                           timestamp=self.timestamp)
 
     def output(self):
@@ -208,7 +211,7 @@ class TransferByTargetList(luigi.Task):
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
                                               local_directory=p,
-                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+                                              timestamp=datetime.datetime.now())
                 for p in transfer_paths]
 
     def run(self):
