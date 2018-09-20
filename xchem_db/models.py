@@ -352,7 +352,6 @@ class ProasisOut(models.Model):
     pjson = models.TextField(blank=True, null=True)
     pmtz = models.TextField(blank=True, null=True)
     added = models.DateTimeField(auto_now_add=True)
-    lig_conf = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'proasis_out'
