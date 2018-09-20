@@ -194,7 +194,7 @@ class TransferByTargetList(luigi.Task):
         transfer_paths = []
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
-            for target in target_list.readlines():
+            for target in target_list:
                 tgt = target.rstrip()
                 print(tgt)
                 proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
@@ -251,6 +251,7 @@ class UpdateVerne(luigi.Task):
         scp.close()
 
         targets = str(open('TARGET_LIST', 'r')).rsplit()
+        print(targets)
         local_targets = str(open(self.target_list, 'r')).rsplit()
         targets.extend(local_targets)
 
