@@ -22,7 +22,7 @@ from . import transfer_soakdb
 
 
 class InitDBEntries(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
@@ -236,7 +236,7 @@ class InitDBEntries(luigi.Task):
 
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
@@ -266,7 +266,7 @@ class AddProject(luigi.Task):
 
 
 class AddProjects(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
@@ -283,7 +283,7 @@ class AddProjects(luigi.Task):
 
 
 class AddLead(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     site_centroids = luigi.Parameter()
     reference_structure = luigi.Parameter()
@@ -429,7 +429,7 @@ class AddLead(luigi.Task):
 
 
 class UploadLeads(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
@@ -866,7 +866,7 @@ class AddFiles(luigi.Task):
 
 
 class UploadHits(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
@@ -894,7 +894,7 @@ class UploadHits(luigi.Task):
 
 
 class WriteBlackLists(luigi.Task):
-    date = luigi.DateParameter(default=datetime.date.today())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
