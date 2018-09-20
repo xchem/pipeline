@@ -199,9 +199,10 @@ class TransferByTargetList(luigi.Task):
                 print(tgt)
                 proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
                 for o in proasis_out:
-                    pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
-                    if os.path.isdir(pth):
-                        transfer_paths.append(pth)
+                    if o.root and o.start:
+                        pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
+                        if os.path.isdir(pth):
+                            transfer_paths.append(pth)
 
         transfer_paths = list(set(transfer_paths))
 
