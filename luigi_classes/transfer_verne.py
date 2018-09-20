@@ -206,9 +206,9 @@ class TransferByTargetList(luigi.Task):
 
         transfer_paths = list(set(transfer_paths))
 
-        return [TransferDirectory(remote_directory=os.path.join(self.remote_root, self.timestamp),
-                                  local_directory=p,
-                                  timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+        return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
+                                              local_directory=p,
+                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
                 for p in transfer_paths]
 
 
