@@ -40,7 +40,7 @@ def transfer_file(data_file):
 
 class FindSoakDBFiles(luigi.Task):
     # date parameter - needs to be changed
-    date = luigi.DateParameter(default=datetime.date.now())
+    date = luigi.DateParameter(default=datetime.datetime.now())
 
     # filepath parameter can be changed elsewhere
     filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
