@@ -12,7 +12,6 @@ setup_django.setup_django()
 from .config_classes import VerneConfig
 from xchem_db.models import *
 from luigi_classes.pull_proasis import GetOutFiles
-from luigi_classes.hotspot_maps import WriteRunCheckHot
 
 
 class TransferDirectory(luigi.Task):
@@ -30,7 +29,7 @@ class TransferDirectory(luigi.Task):
         return GetOutFiles(date=datetime.date.today())
 
     def output(self):
-        return luigi.LocalTarget(str(self.local_directory + 'verne.transferred'))
+        return luigi.LocalTarget(str(self.local_directory + '/verne.transferred'))
 
     def run(self):
         # create SSH client with paramiko and connect with system host keys
