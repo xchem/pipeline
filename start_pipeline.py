@@ -15,7 +15,7 @@ import os
 
 
 class StartPipeline(luigi.WrapperTask):
-    date = luigi.DateParameter(default=datetime.date.now())
+    date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
