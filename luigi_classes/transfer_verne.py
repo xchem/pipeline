@@ -194,7 +194,7 @@ class TransferByTargetList(luigi.Task):
         transfer_paths = []
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
-            for target in target_list:
+            for target in target_list.readlines():
                 tgt = target.rstrip()
                 print(tgt)
                 proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
