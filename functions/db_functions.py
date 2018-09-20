@@ -379,12 +379,12 @@ def transfer_table(translate_dict, filename, model):
                 print('Crystal duplicated!')
                 continue
         # uncomment to debug
-        # except ValueError as e:
-        #     print(d)
-        #     print('WARNING: ' + str(e.__cause__))
-        #     print(e)
-        #     print(model_fields)
-        #     continue
+        except ValueError as e:
+            print(d)
+            print('WARNING: ' + str(e.__cause__))
+            print(e)
+            print(model_fields)
+            continue
 
 
 def soakdb_query(filename):
