@@ -266,8 +266,8 @@ class PanddaRun(models.Model):
 
 
 class PanddaStatisticalMap(models.Model):
-    resolution_from = models.FloatField()
-    resolution_to = models.FloatField()
+    resolution_from = models.FloatField(blank=True, null=True)
+    resolution_to = models.FloatField(blank=True, null=True)
     dataset_list = models.TextField()
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
 

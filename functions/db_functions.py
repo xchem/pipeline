@@ -310,8 +310,11 @@ def transfer_table(translate_dict, filename, model):
         disallowed_floats = [None, 'None', '', '-', 'n/a', 'null', 'pending', 'NULL', '#NAME?', '#NOM?', 'None\t',
                              'Analysis Pending', 'in-situ']
 
-        d = {k: v for k, v in d.items() if v not in disallowed_floats}
+        before_disallowed_floats = {k: v for k, v in d.items()}
 
+        print(before_disallowed_floats)
+        d = {k: v for k, v in d.items() if v not in disallowed_floats}
+        print(d)
         if model != models.Reference and 'crystal_name' not in d.keys():
             continue
 
