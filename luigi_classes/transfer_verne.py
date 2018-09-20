@@ -145,7 +145,7 @@ class GetTransferDirectories(luigi.Task):
                    TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp,
                                                                                '/'.join(p.split('/')[-3:])),
                                                  local_directory=p,
-                                                 timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+                                                 timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
                    for p in transfer_checks]
 
     def run(self):
@@ -175,7 +175,7 @@ class GetTransferVisitProposal(luigi.Task):
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp,
                                                                             '/'.join(p.split('/')[-3:])),
                                               local_directory=p,
-                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%d'))
+                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
                 for p in transfer_checks]
 
     def run(self):
@@ -211,7 +211,7 @@ class TransferByTargetList(luigi.Task):
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
                                               local_directory=p,
-                                              timestamp=datetime.datetime.now())
+                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
                 for p in transfer_paths]
 
     def run(self):
