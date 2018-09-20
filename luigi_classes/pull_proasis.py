@@ -1,8 +1,9 @@
 import glob
+import json
 import os
 import shutil
 import subprocess
-import json
+
 import setup_django
 
 setup_django.setup_django()
@@ -575,6 +576,12 @@ class GetOutFiles(luigi.Task):
                                refinement_id=r,
                                ligand=l,
                                ligid=lid, altconf=a)
+                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)], \
+               [GetLigConf(hit_directory=h,
+                           crystal_id=c,
+                           refinement_id=r,
+                           ligand=l,
+                           ligid=lid, altconf=a)
                 for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)]
 
     def run(self):
