@@ -11,7 +11,7 @@ setup_django.setup_django()
 
 from .config_classes import VerneConfig
 from xchem_db.models import *
-from luigi_classes.pull_proasis import GetOutFiles
+from luigi_classes.pull_proasis import GetOutFiles, CreateProposalVisitFiles
 
 
 class TransferDirectory(luigi.Task):
@@ -26,7 +26,7 @@ class TransferDirectory(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(date=datetime.date.today())
+        return GetOutFiles(date=datetime.date.today()), CreateProposalVisitFiles()
 
     def output(self):
         return luigi.LocalTarget(str(self.local_directory + '/verne.transferred'))
