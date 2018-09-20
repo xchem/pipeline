@@ -2,7 +2,9 @@ import glob
 import os
 import shutil
 import subprocess
+import setup_django
 
+setup_django.setup_django()
 import datetime
 import luigi
 import openbabel
