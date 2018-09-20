@@ -283,17 +283,13 @@ class UpdateVerne(luigi.Task):
                 remote_path=os.path.join(self.remote_root, self.timestamp))
         scp.close()
         ssh.exec_command(str('chmod -R 775 ' + os.path.join(self.remote_root, self.timestamp)))
-        # v_sftp.sendcmd('')
-        # v_sftp.chmod(os.path.join(self.remote_root, self.timestamp, 'READY'), mode=775)
-        # v_sftp.chmod(os.path.join(self.remote_root, self.timestamp, 'TARGET_LIST'), mode=775)
-        # v_sftp.close()
 
-        # curl_string = str('curl -X POST "https://' + self.user +
-        #                   ':' + self.rand_string +
-        #                   '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
-        #                   + self.token + '" -k')
-        #
-        # os.system(curl_string)
+        curl_string = str('curl -X POST "https://' + self.user +
+                          ':' + self.rand_string +
+                          '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
+                          + self.token + '" -k')
+
+        os.system(curl_string)
 
         with self.output().open('w') as f:
             f.write('')
