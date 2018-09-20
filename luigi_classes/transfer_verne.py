@@ -250,9 +250,10 @@ class UpdateVerne(luigi.Task):
         scp.get(remote_target_list)
         scp.close()
 
-        targets = str(open('TARGET_LIST', 'r')).rsplit()
+        targets = str(open('TARGET_LIST', 'r').read()).rsplit()
         print(targets)
-        local_targets = str(open(self.target_list, 'r')).rsplit()
+        local_targets = str(open(self.target_list, 'r').read()).rsplit()
+        print(local_targets)
         targets.extend(local_targets)
 
         os.remove('TARGET_LIST')
