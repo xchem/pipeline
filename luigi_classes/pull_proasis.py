@@ -453,6 +453,13 @@ class CreateProposalVisitFiles(luigi.Task):
                [CreateVisitFile(visits=visit_dict[target], out_directory=od)
                 for target in targets for od in out_dict[target]]
 
+    def output(self):
+        return luigi.LocalTarget(str('proposals_visits_' + datetime.datetime.now().strftime('%Y-%m-%dT%H')))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
 
 class GetOutFiles(luigi.Task):
     # hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
