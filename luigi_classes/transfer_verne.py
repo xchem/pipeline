@@ -50,7 +50,7 @@ class TransferDirectory(luigi.Task):
                 try:
                     sftp.stat(str(self.remote_root + f_path))
                 except FileNotFoundError:
-                    sftp.mkdir(str(self.remote_root + f_path))
+                    sftp.mkdir(str(self.remote_root + f_path), mode=775)
 
         # set up scp protocol and recursively push the directories across
         scp = SCPClient(ssh.get_transport())
@@ -243,7 +243,7 @@ class UpdateVerne(luigi.Task):
             lstatout = str(v_sftp.lstat(i)).split()[0]
             if 'd' in lstatout:
                 verne_dirs.append(str(i))
-        v_sftp.close()
+        # v_sftp.close()
 
         verne_dirs.sort()
 
@@ -278,6 +278,10 @@ class UpdateVerne(luigi.Task):
         scp.put(os.path.join(os.getcwd(), 'TARGET_LIST'), recursive=True,
                 remote_path=os.path.join(self.remote_root, self.timestamp))
         scp.close()
+
+        v_sftp.chmod(os.path.join(self.remote_root, self.timestamp, 'READY'), mode=775)
+        v_sftp.chmod(os.path.join(self.remote_root, self.timestamp, 'TARGET_LIST'), mode=775)
+        v_sftp.close()
 
         curl_string = str('curl -X POST "https://' + self.user +
                           ':' + self.rand_string +
