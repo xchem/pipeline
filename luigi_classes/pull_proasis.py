@@ -2,6 +2,7 @@ import glob
 import os
 import shutil
 import subprocess
+import json
 import setup_django
 
 setup_django.setup_django()
@@ -459,6 +460,33 @@ class CreateProposalVisitFiles(luigi.Task):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
+
+
+class GetLigConf(luigi.Task):
+    hit_directory = luigi.Parameter()
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
+
+    def requires(self):
+        return GetCurated(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_lig_conf.json')
+
+    def run(self):
+        refinement = Refinement.objects.get(pk=self.refinement_id)
+        lig_confidence = {'ligand_confidence': refinement.lig_confidence}
+        with self.output().open('w') as f:
+            json.dump(lig_confidence, f)
 
 
 class GetOutFiles(luigi.Task):
