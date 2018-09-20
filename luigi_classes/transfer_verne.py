@@ -260,6 +260,8 @@ class UpdateVerne(luigi.Task):
         print(local_targets)
         targets.extend(local_targets)
 
+        targets = list(set(targets))
+
         os.remove('TARGET_LIST')
 
         for target in targets:
