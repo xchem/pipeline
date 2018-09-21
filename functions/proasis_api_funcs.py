@@ -321,21 +321,13 @@ def get_lig_interactions(strucid, ligand, outfile):
         r = requests.get(url, data=data)
         json_string = r.json()
         print(json_string)
-        # file_dict = dict_from_string(json_string)
 
     if os.path.isfile(outfile):
         os.remove(outfile)
 
-    # command_string = ('touch ' + outfile)
-    # process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # out, err = process.communicate()
-    # out = out.decode('ascii')
-    # if err:
-    #     err = err.decode('ascii')
-
-    # print(out)
-    # print(err)
-
     with open(outfile, 'w') as f:
-        json.dump(json_string, f)
+        try:
+            json.dump(json_string, f)
+        except:
+            outfile=None
     return outfile
