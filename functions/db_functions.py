@@ -152,6 +152,8 @@ def refinement_translations():
         'matrix_weight': 'RefinementMatrixWeight',
         'refinement_path': 'RefinementPathToRefinementFolder',
         'lig_confidence': 'RefinementLigandConfidence',
+        'lig_confidence_int': 'RefinementLigandConfidence',
+        'lig_confidence_string': 'RefinementLigandConfidence',
         'lig_bound_conf': 'RefinementLigandBoundConformation',
         'bound_conf': 'RefinementBoundConformation',
         'molprobity_score': 'RefinementMolProbityScore',
@@ -364,6 +366,18 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = int(value[0])
                 except:
                     continue
+
+            if key == 'lig_confidence_int':
+                if d[key]:
+                    d[key] = int(d[key].split('-')[0])
+                else:
+                    d[key] = -1
+
+            if key == 'lig_confidence_string':
+                if d[key]:
+                    d[key] = d[key].split('-')[1]
+                else:
+                    d[key] = 'Unassigned'
 
         # write out the row to the relevant model (table)
         try:
