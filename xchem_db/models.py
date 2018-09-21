@@ -176,6 +176,8 @@ class Refinement(models.Model):
     lig_bound_conf = models.TextField(blank=True, null=True)
     lig_cc = models.TextField(blank=True, null=True)
     lig_confidence = models.TextField(blank=True, null=True)
+    lig_confidence_int = models.IntegerField(blank=True, null=True)
+    lig_confidence_string = models.TextField(blank=True, null=True)
     matrix_weight = models.TextField(blank=True, null=True)
     molprobity_score = models.FloatField(blank=True, null=True)
     mtz_free = models.TextField(blank=True, null=True)
