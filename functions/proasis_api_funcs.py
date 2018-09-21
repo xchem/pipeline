@@ -333,8 +333,8 @@ def get_lig_interactions(strucid, ligand, outfile):
     # if err:
     #     err = err.decode('ascii')
 
-    print(out)
-    print(err)
+    # print(out)
+    # print(err)
 
     with open(outfile, 'w') as f:
         try:
