@@ -314,7 +314,7 @@ def get_lig_interactions(strucid, ligand, outfile):
     r = requests.get(url, data=data)
     json_string = r.json()
     print(json_string)
-    # file_dict = dict_from_string(json_string)
+    file_dict = dict_from_string(json_string)
 
     if 'errorMessage' in file_dict.keys():
         data = str('{"username":"uzw12877","password":"uzw12877"}')
