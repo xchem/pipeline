@@ -337,5 +337,5 @@ def get_lig_interactions(strucid, ligand, outfile):
     # print(err)
 
     with open(outfile, 'w') as f:
-        json.dumps(json_string, f)
+        json.dump(json_string, f)
     return outfile
