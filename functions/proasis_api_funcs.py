@@ -5,6 +5,7 @@ import subprocess
 import requests
 
 from functions import misc_functions
+import json
 
 
 def get_json(url):
@@ -313,32 +314,31 @@ def get_lig_interactions(strucid, ligand, outfile):
     r = requests.get(url, data=data)
     json_string = r.json()
     print(json_string)
-    file_dict = dict_from_string(json_string)
+    # file_dict = dict_from_string(json_string)
 
     if 'errorMessage' in file_dict.keys():
         data = str('{"username":"uzw12877","password":"uzw12877"}')
         r = requests.get(url, data=data)
         json_string = r.json()
         print(json_string)
-        file_dict = dict_from_string(json_string)
+        # file_dict = dict_from_string(json_string)
 
     if os.path.isfile(outfile):
         os.remove(outfile)
 
-    command_string = ('touch ' + outfile)
-    process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-    out = out.decode('ascii')
-    if err:
-        err = err.decode('ascii')
+    # command_string = ('touch ' + outfile)
+    # process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # out, err = process.communicate()
+    # out = out.decode('ascii')
+    # if err:
+    #     err = err.decode('ascii')
 
     print(out)
     print(err)
 
-    with open(outfile, 'a') as f:
+    with open(outfile, 'w') as f:
         try:
-            for line in file_dict['output']:
-                f.write(line)
+            json.dumps(json_string, f)
         except:
             outfile = None
     return outfile
