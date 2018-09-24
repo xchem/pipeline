@@ -119,12 +119,7 @@ def dimple_translations():
         'r_free': 'DimpleRfree',
         'pdb_path': 'DimplePathToPDB',
         'mtz_path': 'DimplePathToMTZ',
-        # 'reference_pdb': 'DimpleReferencePDB',
         'status': 'DimpleStatus',
-        # 'pandda_run': 'DimplePANDDAwasRun',
-        # 'pandda_hit': 'DimplePANDDAhit',
-        # 'pandda_reject': 'DimplePANDDAreject',
-        # 'pandda_path': 'DimplePANDDApath',
         'crystal_name': 'CrystalName',
         'reference': 'DimpleReferencePDB'
     }
