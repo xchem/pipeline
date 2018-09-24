@@ -231,8 +231,7 @@ class UpdateVerne(luigi.Task):
     target_list = VerneConfig().target_list
 
     def requires(self):
-        # return TransferByTargetList()
-        pass
+        return TransferByTargetList()
 
     def output(self):
         return luigi.LocalTarget(str('verne_update_' + str(self.timestamp)))
