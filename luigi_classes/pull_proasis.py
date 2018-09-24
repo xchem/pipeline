@@ -488,7 +488,7 @@ class GetLigConf(luigi.Task):
         lig_confidence = {'ligand_confidence_int': refinement.lig_confidence_int,
                           'ligand_confidence_comment': refinement.lig_confidence_string,
                           'refinement_outcome': refinement.outcome}
-        
+
         with self.output().open('w') as f:
             json.dump(lig_confidence, f)
 
