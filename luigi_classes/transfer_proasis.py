@@ -196,32 +196,32 @@ class InitDBEntries(luigi.Task):
                     # if no altconfs
                     if not confs:
                         # create entry without an altconf
-                        proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj,
-                                                                              crystal_name=obj.crystal_name,
-                                                                              pdb_file=bound_conf,
-                                                                              modification_date=mod_date,
-                                                                              mtz=mtz[1], two_fofc=two_fofc[1],
-                                                                              fofc=fofc[1], ligand_list=unique_ligands)
+                        ProasisHits.objects.get_or_create(refinement=obj,
+                                                          crystal_name=obj.crystal_name,
+                                                          pdb_file=bound_conf,
+                                                          modification_date=mod_date,
+                                                          mtz=mtz[1], two_fofc=two_fofc[1],
+                                                          fofc=fofc[1], ligand_list=unique_ligands)
                     # if altconfs
                     if confs:
                         for conf in confs:
                             # create an entry for each altconf
                             # TODO: The pdb file will need to be edited later to pull out other altconfs of the same lig
 
-                            proasis_hit_entry = ProasisHits.objects.get_or_create(refinement=obj,
-                                                                                  crystal_name=obj.crystal_name,
-                                                                                  pdb_file=bound_conf,
-                                                                                  modification_date=mod_date,
-                                                                                  mtz=mtz[1], two_fofc=two_fofc[1],
-                                                                                  fofc=fofc[1],
-                                                                                  ligand_list=unique_ligands,
-                                                                                  altconf=conf)
+                            ProasisHits.objects.get_or_create(refinement=obj,
+                                                              crystal_name=obj.crystal_name,
+                                                              pdb_file=bound_conf,
+                                                              modification_date=mod_date,
+                                                              mtz=mtz[1], two_fofc=two_fofc[1],
+                                                              fofc=fofc[1],
+                                                              ligand_list=unique_ligands,
+                                                              altconf=conf)
 
                 dimple = Dimple.objects.filter(crystal_name=obj.crystal_name)
                 if dimple.count() == 1:
                     if dimple[0].reference and dimple[0].reference.reference_pdb:
                         if os.path.isfile(dimple[0].reference.reference_pdb):
-                            proasis_lead_entry = ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
+                            ProasisLeads.objects.get_or_create(reference_pdb=dimple[0].reference)
                         else:
                             if ProasisLeads.objects.filter(reference_pdb=dimple[0].reference).exists():
                                 print('removing...')

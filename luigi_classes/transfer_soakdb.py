@@ -241,8 +241,6 @@ class TransferChangedDataFile(luigi.Task):
             crystals = Crystal.objects.filter(visit=soakdb_query)
 
             for crystal in crystals:
-                refinement = Refinement.objects.get(crystal_name=crystal)
-
                 target_name = str(crystal.target.target_name).upper()
                 crystal_name = str(crystal.crystal_name)
                 proasis_crystal_directory = os.path.join(self.hit_directory, target_name, crystal_name)
@@ -350,10 +348,10 @@ class CheckFileUpload(luigi.Task):
         try:
             print('Number of rows from file = ' + str(len(results)))
 
-            if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
-                status = True
-            else:
-                status = False
+            # if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
+            #     status = True
+            # else:
+            #     status = False
 
             # print('Checking same number of rows in test_xchem: ' + str(status))
             # if not status:

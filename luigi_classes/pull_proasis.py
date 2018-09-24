@@ -114,7 +114,7 @@ class CreateApo(luigi.Task):
 
         # open the input apo structure as 'pdb_file'
         pdb_file = open(self.input().path, 'r')
-        for l in ligand_list:
+        for _ in ligand_list:
             for line in pdb_file:
                 # if any of the ligands in the ligand list appear in the line, continue
                 if any(lig in line for lig in ligand_list):
@@ -532,8 +532,8 @@ class GetOutFiles(luigi.Task):
                     # if ProasisOut.objects.filter(proasis=hit, ligand=ligand, ligid=ligid,
                     #                                                crystal=hit.crystal_name).exists():
 
-                    proasis_out = ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
-                                                                   crystal=hit.crystal_name)
+                    ProasisOut.objects.get_or_create(proasis=hit, ligand=ligand, ligid=ligid,
+                                                     crystal=hit.crystal_name)
 
                     # add data needed for pulling files to tmp lists
                     crys_ids.append(hit.crystal_name_id)

@@ -39,6 +39,7 @@ def check_cluster(remote_sub_command, max_jobs):
     out = int(out.decode('ascii').split()[-1])
     if err:
         err = err.decode('ascii')
+        print(err)
     print(out)
     if int(out) > 0:
         number = int(out) - 2

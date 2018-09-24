@@ -1,4 +1,3 @@
-import csv
 import os
 import re
 import sqlite3
@@ -232,8 +231,8 @@ def test_duplicate_method(filename):
                 for result in results:
                     time = (int(result['LastUpdated'].replace('-', '').replace(':', '').replace(' ', '')))
                     timestamps.append(time)
-                if len(list(set(timestamps))) > 1:
-                    ind = numpy.argmax(timestamps)
+                # if len(list(set(timestamps))) > 1:
+                #     ind = numpy.argmax(timestamps)
 
 
 def check_db_duplicates(filename):
