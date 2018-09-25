@@ -58,7 +58,7 @@ def get_update_times(request):
 
     real_time_mod_dates = [get_mod_date(f) for f in files]
 
-    data = {'files': [files], 'db_mod_dates': [mod_dates_db], 'rt_mod_dates': [real_time_mod_dates]}
+    data = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
 
     return JsonResponse(data)
 
