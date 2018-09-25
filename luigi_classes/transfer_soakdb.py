@@ -257,10 +257,11 @@ class TransferChangedDataFile(luigi.Task):
 
                         if ProasisOut.objects.filter(proasis=hit).exists:
                             for obj in ProasisOut.objects.filter(proasis=hit):
-                                pth = os.path.join(obj.root, obj.start.split('/')[0])
-                                if os.path.isdir(pth):
-                                    shutil.rmtree(pth)
-                                obj.delete()
+                                if obj.root:
+                                    pth = os.path.join(obj.root, obj.start.split('/')[0])
+                                    if os.path.isdir(pth):
+                                        shutil.rmtree(pth)
+                                    obj.delete()
                         hit.delete()
 
             soakdb_query.delete()
