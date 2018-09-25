@@ -1,7 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
-from xchem_db.models import Target, Crystal, Refinement
+from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles
+from functions.misc_functions import get_mod_date
 
 
 def targets(request):
@@ -41,3 +42,24 @@ def get_graph(request):
             'type': 'bar'}
 
     return JsonResponse(data)
+
+
+def get_update_times(request):
+
+    queryset = Target.objects.filter()
+    filter_fields = ('target_name',)
+
+    submission = request.GET.get('target_name', '')
+    crystals = Crystal.objects.filter(target__target_name=submission)
+
+    files = list(set([c.visit.filename for c in crystals]))
+
+    mod_dates_db = [f.modification_date for f in [SoakdbFiles.objects.get(filename=fn) for fn in files]]
+
+    real_time_mod_dates = [get_mod_date(f) for f in files]
+
+    data = {'Files': files, 'DB mod dates': mod_dates_db, 'Real-time mod dates': real_time_mod_dates}
+
+    return JsonResponse(data)
+
+
