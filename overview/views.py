@@ -53,13 +53,16 @@ def get_update_times(request):
     crystals = Crystal.objects.filter(target__target_name=submission)
 
     files = list(set([c.visit.filename for c in crystals]))
+    print(files)
 
     mod_dates_db = [f.modification_date for f in [SoakdbFiles.objects.get(filename=fn) for fn in files]]
+    print(mod_dates_db)
 
     real_time_mod_dates = [get_mod_date(f) for f in files]
+    print(real_time_mod_dates)
 
     data = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
 
-    return HTTPResponse(data)
+    return JsonResponse(data)
 
 
