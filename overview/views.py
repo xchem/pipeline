@@ -63,8 +63,8 @@ def get_update_times(request):
     print(real_time_mod_dates)
 
     # data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
-    data = {[{'file': f, 'db_date': dbd, 'rt_date': rtd} for (f, dbd, rtd) in
-            zip(files, mod_dates_db, real_time_mod_dates)]}
+    data = {{'file': f, 'db_date': dbd, 'rt_date': rtd} for (f, dbd, rtd) in
+            zip(files, mod_dates_db, real_time_mod_dates)}
 
     return JsonResponse(data)
 
