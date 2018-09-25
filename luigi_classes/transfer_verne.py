@@ -220,6 +220,8 @@ class TransferByTargetList(luigi.Task):
         outfiles = [p.path for p in self.input()]
 
         for f in outfiles:
+            print(get_mod_date(f).strftime('%Y-%m-%dT%H'))
+            print(self.timestamp)
             if get_mod_date(f).strftime('%Y-%m-%dT%H') == self.timestamp:
                 with self.output().open('w') as f:
                     f.write('')
