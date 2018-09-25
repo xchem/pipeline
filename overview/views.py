@@ -64,7 +64,8 @@ def get_update_times(request):
     print(real_time_mod_dates)
 
     # data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
-    data = [{'file': f, 'db_date': datetime.datetime.strptime(str(dbd), '%Y%m%d%H').strftime('%Y-%m-%dT%H'), 'rt_date': datetime.datetime.strptime(str(rtd), '%Y%m%d%H%M%S').strftime('%Y-%m-%dT%H')}
+    data = [{'file': f, 'db_date': datetime.datetime.strptime(str(dbd), '%Y%m%d%H%M%S').strftime('%Y-%m-%dT%H'),
+             'rt_date': datetime.datetime.strptime(str(rtd), '%Y%m%d%H%M%S').strftime('%Y-%m-%dT%H')}
             for (f, dbd, rtd) in zip(files, mod_dates_db, real_time_mod_dates)]
 
     return JsonResponse(data, safe=False)
