@@ -99,7 +99,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
                               local_directory=self.local_directory, remote_directory=self.remote_directory,
                               timestamp=self.timestamp).output().path.split('/')[:-1])
 
-        return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals_' + self.timestamp + '.done')))
+        return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals.done')))
 
     def run(self):
         # create SSH client with paramiko and connect with system host keys
