@@ -49,7 +49,7 @@ def get_update_times(request):
     queryset = Target.objects.filter()
     filter_fields = ('target_name',)
 
-    submission = request.GET.get('target_name', '')
+    submission = request.GET.get('target_name')
     crystals = Crystal.objects.filter(target__target_name=submission)
 
     files = list(set([c.visit.filename for c in crystals]))
