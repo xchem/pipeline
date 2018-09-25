@@ -4,6 +4,7 @@ import datetime
 import luigi
 from paramiko import SSHClient
 from scp import SCPClient
+from functions.misc_functions import get_mod_date
 
 import setup_django
 
@@ -216,6 +217,12 @@ class TransferByTargetList(luigi.Task):
                 for p in transfer_paths]
 
     def run(self):
+        outfiles = [p.path for p in self.input()]
+        
+        for f in outfiles:
+            if get_mod_date(f).strftime('%Y-%m-%dT%H') != self.timestamp:
+                raise Exception('No data to be updated...')
+
         with self.output().open('w') as f:
             f.write('')
 
@@ -237,6 +244,7 @@ class UpdateVerne(luigi.Task):
         return luigi.LocalTarget(str('verne_update_' + str(self.timestamp)))
 
     def run(self):
+
         ssh = SSHClient()
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
