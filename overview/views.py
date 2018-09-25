@@ -60,6 +60,6 @@ def get_update_times(request):
 
     data = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
 
-    return JsonResponse(data)
+    return HTTPResponse(data)
 
 
