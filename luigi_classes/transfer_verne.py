@@ -218,13 +218,16 @@ class TransferByTargetList(luigi.Task):
 
     def run(self):
         outfiles = [p.path for p in self.input()]
-        
-        for f in outfiles:
-            if get_mod_date(f).strftime('%Y-%m-%dT%H') != self.timestamp:
-                raise Exception('No data to be updated...')
 
-        with self.output().open('w') as f:
-            f.write('')
+        for f in outfiles:
+            if get_mod_date(f).strftime('%Y-%m-%dT%H') == self.timestamp:
+                with self.output().open('w') as f:
+                    f.write('')
+                pass
+
+                # raise Exception('No data to be updated...')
+
+
 
 
 class UpdateVerne(luigi.Task):
