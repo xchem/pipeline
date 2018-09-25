@@ -38,7 +38,8 @@ def get_graph(request):
     count_6 = len(refinement_6)
 
     data = {'y': [count_1, count_2, count_3, count_4, count_5, count_6],
-            'x': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready', 'Deposition Ready', 'Deposited'],
+            'x': ['Analysis pending', 'Pandda Model', 'In Refinement', 'CompChem Ready',
+                  'Deposition Ready', 'Deposited'],
             'type': 'bar'}
 
     return JsonResponse(data)
@@ -61,8 +62,10 @@ def get_update_times(request):
     real_time_mod_dates = [get_mod_date(f) for f in files]
     print(real_time_mod_dates)
 
-    data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
+    # data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
+    data = [{'file': f, 'db_date': dbd, 'rt_date': rtd} for (f, dbd, rtd) in
+            zip(files, mod_dates_db, real_time_mod_dates)]
 
-    return JsonResponse(data2)
+    return JsonResponse(data)
 
 
