@@ -3,6 +3,7 @@ from django.template import loader
 
 from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles
 from functions.misc_functions import get_mod_date
+import datetime
 
 
 def targets(request):
@@ -63,7 +64,7 @@ def get_update_times(request):
     print(real_time_mod_dates)
 
     # data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
-    data = [{'file': f, 'db_date': str(dbd).strftime('%Y-%m-%dT%H'), 'rt_date': str(rtd).strftime('%Y-%m-%dT%H')}
+    data = [{'file': f, 'db_date': datetime.datetime.strptime(str(dbd)).strftime('%Y-%m-%dT%H'), 'rt_date': datetime.datetime.strptime(str(rtd)).strftime('%Y-%m-%dT%H')}
             for (f, dbd, rtd) in zip(files, mod_dates_db, real_time_mod_dates)]
 
     return JsonResponse(data, safe=False)
