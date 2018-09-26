@@ -120,7 +120,6 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data2) {
-                    console.log(JSON.stringify(data2));
                     $('#example').empty();
                     var trHTML = '<tr><th>Filename</th><th>Mod. Date (DB)</th><th>Mod. Date (Real time)</th></tr>';
                     $.each(data2, function (i, item) {
