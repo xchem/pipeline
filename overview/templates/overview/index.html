@@ -50,11 +50,10 @@
         }
 
         sort($list);                    # sort is oldest to newest,
-        # $newest = array_pop($list);
+        $newest = array_pop($list);
+        echo $list;
 
     ?>
-
-    <tr><td> <input name="type" value="<?= array_pop($list) ?>" ></td></tr>
 
     <div class="content container">
         {% block content %}
