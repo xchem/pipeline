@@ -111,7 +111,9 @@
                 dataType: 'json',
                 success: function (data) {
                     Plotly.newPlot('chart', [data]);
-                    console.log('update')
+                    console.log('update');
+                    $('#example').empty();
+
                 }});
 
              $.ajax({
@@ -120,7 +122,6 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data2) {
-                    $('#example').empty();
                     var trHTML = '<tr><th>Filename</th><th>Mod. Date (DB)</th><th>Mod. Date (Real time)</th></tr>';
                     $.each(data2, function (i, item) {
                         trHTML += '<tr><td>' + item.file + '</td><td>' + item.db_date + '</td><td>' + item.rt_date + '</td></tr>';
