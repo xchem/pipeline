@@ -43,6 +43,17 @@
   </head>
   <body>
 
+    <?php
+        foreach (glob('*.jpg') as $f) {
+            # store the image name
+            $list[] = $f;
+        }
+
+        sort($list);                    # sort is oldest to newest,
+
+        echo '<b>Data transfer task last run: </b><br>' array_pop($list); '</br>   # Newest
+    ?>
+
     <div class="content container">
         {% block content %}
             <div class="dropdown">
