@@ -98,7 +98,7 @@
                 success: function (data2) {
                     console.log(JSON.stringify(data2));
                     $('#example').empty();
-                    var trHTML = '';
+                    var trHTML = '<th>Filename</th><th>Modification Date (DB)</th><th>Modification Date (Real-time)</th>';
                     $.each(data2, function (i, item) {
                         trHTML += '<tr><td>' + item.file + '</td><td>' + item.db_date + '</td><td>' + item.rt_date + '</td></tr>';
                     });
