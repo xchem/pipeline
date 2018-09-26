@@ -296,7 +296,7 @@ class TransferNewDataFile(luigi.Task):
 
 class StartTransfers(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
-    # date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def get_file_list(self, status_code):
@@ -318,7 +318,7 @@ class StartTransfers(luigi.Task):
                    for datafile in changed_list]
 
     def output(self):
-        return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date.strftime("%Y%m%d%H")) + '.done')
+        return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
 
     def run(self):
         with self.output().open('w') as f:
