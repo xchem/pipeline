@@ -117,7 +117,15 @@
         {% endblock %}
 
         <script type="text/javascript">
-            $(document).on('click', '.panel-heading span.clickable', function(e){
+            $(document).ajaxStart(function() {
+                    $('#loading').show();  // show loading indicator
+                });
+
+            $(document).ajaxStop(function() {
+                $('#loading').hide();  // hide loading indicator
+            });
+            
+            $(document).on('click', '.panel-heading span.clickable', function(){
                 var $this = $(this);
                 if(!$this.hasClass('panel-collapsed')) {
                     $this.parents('.panel').find('.panel-body').slideUp();
@@ -159,14 +167,6 @@
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
                     }
                 }
-            });
-
-            $(document).ajaxStart(function() {
-                    $('#loading').show();  // show loading indicator
-                });
-
-            $(document).ajaxStop(function() {
-                $('#loading').hide();  // hide loading indicator
             });
 
             $(".dropdown-menu li").click(function(){
