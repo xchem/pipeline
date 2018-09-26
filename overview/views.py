@@ -56,13 +56,16 @@ def get_update_times(request):
 
     files = list(set([c.visit.filename for c in crystals]))
 
-    mod_dates_db = [datetime.datetime.strptime(str(f.modification_date), '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S")
+    formt = "%Y-%m-%d %H:%M:%S"
+
+    mod_dates_db = [datetime.datetime.strptime(str(f.modification_date), '%Y%m%d%H%M%S').strftime(formt)
                     for f in [SoakdbFiles.objects.get(filename=fn) for fn in files]]
 
     real_time_mod_dates = [datetime.datetime.strptime(str(get_mod_date(f)),
-                                                      '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S") for f in files]
+                                                      '%Y%m%d%H%M%S').strftime(formt) for f in files]
 
-    data = [{'file': f, 'db_date': dbd, 'rt_date': rtd, 'difference': int(rtd)-int(dbd)}
+    data = [{'file': f, 'db_date': dbd, 'rt_date': rtd,
+             'difference': datetime.datetime.strptime(rtd, formt)-datetime.datetime.strptime(dbd, formt)}
             for (f, dbd, rtd) in zip(files, mod_dates_db, real_time_mod_dates)]
 
     return JsonResponse(data, safe=False)
