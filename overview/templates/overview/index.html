@@ -107,14 +107,14 @@
                 }
             });
 
-            $.ajaxStart(function () {
-                    $('#loading').show();  // show loading indicator
-                });
-
-            $.ajaxStop(function()
-            {
-                $('#loading').hide();  // hide loading indicator
-            });
+            // $.ajaxStart(function () {
+            //         $('#loading').show();  // show loading indicator
+            //     });
+            //
+            // $.ajaxStop(function()
+            // {
+            //     $('#loading').hide();  // hide loading indicator
+            // });
 
             $(".dropdown-menu li").click(function(){
               $('#selected').text($(this).text());
