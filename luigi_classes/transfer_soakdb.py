@@ -295,7 +295,6 @@ class TransferNewDataFile(luigi.Task):
 
 
 class StartTransfers(luigi.Task):
-    date = luigi.DateParameter(default=datetime.datetime.now())
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
