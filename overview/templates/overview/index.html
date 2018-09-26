@@ -92,7 +92,8 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data2) {
-                    console.log(JSON.stringify(data2))
+                    console.log(JSON.stringify(data2));
+                    $('#mod_dates').append(data2)
                 }});
             });
 
