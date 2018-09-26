@@ -46,7 +46,8 @@
     <?php
         $files = scandir('../../', SCANDIR_SORT_DESCENDING);
         $newest_file = $files[0];
-        echo "<br>".$newest_file; ?>
+        print "<br>".$files;
+        print "<br>".$newest_file; ?>
 
     <div class="content container">
         {% block content %}
