@@ -39,6 +39,13 @@
             background-color: #2678b2;
             color: white;
         }
+
+        #chart {
+            margin: 0 auto;
+            border: 1px solid black;
+            height: 85vh;
+            min-height: 300px;
+        }
         </style>
   </head>
   <body>
@@ -55,7 +62,7 @@
                     {% if targets %}
                         {% for target in targets %}
                             <li class="dropdown-item">{{ target.target_name }}</li>
-                        {% endfor %}}
+                        {% endfor %}
                     {% endif %}
                 </ul>
             </div>
