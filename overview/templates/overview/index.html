@@ -55,6 +55,9 @@
 
     <div class="content container">
         {% block content %}
+            <div id="loading" class="hidden">
+                <img src="https://www.drupal.org/files/issues/throbber_13.gif">
+            </div>
             <div class="dropdown">
                 <br>
                 <button id="selected" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -77,9 +80,7 @@
                 </div>
             </div>
             <div id="chart"></div>
-            <div id="loading" class="hidden">
-                <img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/ab79a231234507.564a1d23814ef.gif">
-            </div>
+
         {% endblock %}
 
         <script type="text/javascript">
