@@ -47,9 +47,6 @@
 
         .hidden {
             display: none;
-            position:absolute;
-            width:100%;
-            height:100%
         }
         </style>
   </head>
@@ -58,7 +55,7 @@
 
     <div class="content container">
         {% block content %}
-            <div id="loading" class="hidden">
+            <div id="loading" class="hidden" style="position:absolute; width:100%; height:100%">
                 <img src="https://www.drupal.org/files/issues/throbber_13.gif">
             </div>
             <div class="dropdown">
