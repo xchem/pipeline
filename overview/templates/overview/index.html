@@ -70,9 +70,6 @@
 
     <div class="content container">
         {% block content %}
-            <div id="loading" class="hidden">
-                <img src="https://www.drupal.org/files/issues/throbber_13.gif" height="42" width="42" alt="'loading...">
-            </div>
             <div class="dropdown">
                 <br>
                 <button id="selected" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -94,8 +91,11 @@
                             <h3 class="panel-title">SoakDB Files and Time Status</h3>
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                         </div>
-                        <div class="panel-body"><table cellpadding="10" cellspacing="0" border="0" id="example">
-                            <tbody></tbody>
+                        <div class="panel-body">
+                             <div id="loading" class="hidden">
+                                 <img src="https://www.drupal.org/files/issues/throbber_13.gif" height="42" width="42" alt="'loading...">
+                             </div>
+                            <table cellpadding="10" cellspacing="0" border="0" id="example"><tbody></tbody>
                     </table></div>
                     </div>
                 </div>
@@ -107,8 +107,10 @@
                             <h3 class="panel-title">Status Overview</h3>
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                         </div>
-                        <div class="panel-body"><div id="chart"></div></tbody>
-                    </table></div>
+                        <div class="panel-body"><div id="chart"></div>
+                             <div id="loading" class="hidden">
+                                 <img src="https://www.drupal.org/files/issues/throbber_13.gif" height="42" width="42" alt="'loading...">
+                             </div></div>
                     </div>
                 </div>
             </div>
