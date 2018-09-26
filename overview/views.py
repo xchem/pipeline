@@ -55,17 +55,14 @@ def get_update_times(request):
     crystals = Crystal.objects.filter(target__target_name=submission)
 
     files = list(set([c.visit.filename for c in crystals]))
-    print(files)
 
-    mod_dates_db = [f.modification_date for f in [SoakdbFiles.objects.get(filename=fn) for fn in files]]
-    print(mod_dates_db)
+    mod_dates_db = [datetime.datetime.strptime(str(f.modification_date), '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S")
+                    for f in [SoakdbFiles.objects.get(filename=fn) for fn in files]]
 
-    real_time_mod_dates = [get_mod_date(f) for f in files]
-    print(real_time_mod_dates)
+    real_time_mod_dates = [datetime.datetime.strptime(str(get_mod_date(f)),
+                                                      '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S") for f in files]
 
-    # data2 = {'files': files, 'db_mod_dates': mod_dates_db, 'rt_mod_dates': real_time_mod_dates}
-    data = [{'file': f, 'db_date': datetime.datetime.strptime(str(dbd), '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S"),
-             'rt_date': datetime.datetime.strptime(str(rtd), '%Y%m%d%H%M%S').strftime("%Y-%m-%d %H:%M:%S")}
+    data = [{'file': f, 'db_date': dbd, 'rt_date': rtd}
             for (f, dbd, rtd) in zip(files, mod_dates_db, real_time_mod_dates)]
 
     return JsonResponse(data, safe=False)
