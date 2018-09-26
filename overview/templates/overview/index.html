@@ -70,6 +70,9 @@
 
     <div class="content container">
         {% block content %}
+            <div id="loading" class="hidden">
+                <img src="https://www.drupal.org/files/issues/throbber_13.gif" height="42" width="42" alt="'loading...">
+            </div>
             <div class="dropdown">
                 <br>
                 <button id="selected" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -92,9 +95,6 @@
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                         </div>
                         <div class="panel-body">
-                             <div id="loading" class="hidden">
-                                 <img src="https://www.drupal.org/files/issues/throbber_13.gif" height="42" width="42" alt="'loading...">
-                             </div>
                             <table cellpadding="10" cellspacing="0" border="0" id="example"><tbody></tbody>
                     </table></div>
                     </div>
@@ -112,7 +112,6 @@
                     </div>
                 </div>
             </div>
-            <!--<div id="chart"></div>-->
 
         {% endblock %}
 
@@ -124,7 +123,7 @@
             $(document).ajaxStop(function() {
                 $('#loading').hide();  // hide loading indicator
             });
-            
+
             $(document).on('click', '.panel-heading span.clickable', function(){
                 var $this = $(this);
                 if(!$this.hasClass('panel-collapsed')) {
