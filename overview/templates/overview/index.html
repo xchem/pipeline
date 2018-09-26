@@ -44,16 +44,9 @@
   <body>
 
     <?php
-        foreach (glob('../../../logs/transfer_logs/*') as $f) {
-            # store the image name
-            $list[] = $f;
-        }
-
-        sort($list);                    # sort is oldest to newest,
-        $newest = array_pop($list);
-        echo "<br>" . $list;
-
-    ?>
+        $files = scandir('../../', SCANDIR_SORT_DESCENDING);
+        $newest_file = $files[0];
+        echo "<br>".$newest_file; ?>
 
     <div class="content container">
         {% block content %}
