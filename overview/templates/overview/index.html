@@ -144,8 +144,8 @@
                     success: function (data2) {
                         var trHTML = '<tr><th>Filename</th><th>Mod. Date (DB)</th><th>Mod. Date (Real time)</th><th>Time Difference</th></tr>';
                         $.each(data2, function (i, item) {
-                            trHTML += '<tr><td>' + item.file + '</td><td>' + item.db_date + '</td><td class="difference">' + item.rt_date +
-                                '</td><td>' + item.difference + '</td></tr>';
+                            trHTML += '<tr><td>' + item.file + '</td><td>' + item.db_date + '</td><td>' + item.rt_date +
+                                '</td><td class="difference">' + item.difference + '</td></tr>';
                         });
                         $('#example').append(trHTML);
                         $('.difference').css("color", "red");
