@@ -73,10 +73,19 @@
             </div>
             <br>
             <div class="row">
-                <div id="mod_dates">
-                    <table cellpadding="10" cellspacing="0" border="0" id="example">
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">SoakDB Files and Time Status</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                        </div>
+                        <div class="panel-body"><table cellpadding="10" cellspacing="0" border="0" id="example">
                             <tbody></tbody>
-                    </table>
+                    </table></div>
+                    </div>
+                </div>
+                <div id="mod_dates">
+
                 </div>
             </div>
             <div id="chart"></div>
@@ -84,6 +93,19 @@
         {% endblock %}
 
         <script type="text/javascript">
+            $(document).on('click', '.panel-heading span.clickable', function(e){
+                var $this = $(this);
+                if(!$this.hasClass('panel-collapsed')) {
+                    $this.parents('.panel').find('.panel-body').slideUp();
+                    $this.addClass('panel-collapsed');
+                    $this.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                } else {
+                    $this.parents('.panel').find('.panel-body').slideDown();
+                    $this.removeClass('panel-collapsed');
+                    $this.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+                }
+            });
+            
             // using jQuery
             function getCookie(name) {
                 var cookieValue = null;
@@ -106,6 +128,7 @@
                 // these HTTP methods do not require CSRF protection
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
+
             $.ajaxSetup({
                 beforeSend: function(xhr, settings) {
                     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
