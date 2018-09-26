@@ -42,16 +42,12 @@
         </style>
   </head>
   <body>
-
-    <?php
-        $files = scandir('../../', SCANDIR_SORT_DESCENDING);
-        $newest_file = $files[0];
-        print $files;
-        print $newest_file; ?>
+    <br>
 
     <div class="content container">
         {% block content %}
             <div class="dropdown">
+                <br>
                 <button id="selected" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Select Target
                 </button>
@@ -63,9 +59,11 @@
                     {% endif %}
                 </ul>
             </div>
+            <br>
             <div class="row">
                 <div id="chart"></div>
             </div>
+            <br>
             <div class="row">
                 <div id="mod_dates">
                     <table cellpadding="0" cellspacing="0" border="0" id="example">
