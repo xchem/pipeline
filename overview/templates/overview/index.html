@@ -108,18 +108,6 @@
           $('#selected').text($(this).text());
           var req = $(this).text();
             $.ajax({
-                url: '/overview/targets/graph/',
-                data: {'target_name': req},
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    Plotly.newPlot('chart', [data], {responsive: true});
-                    console.log('update');
-                    $('#example').empty();
-
-                }});
-
-             $.ajax({
                 url: '/overview/targets/mod_date/',
                 data: {'target_name': req},
                 type: 'GET',
@@ -130,6 +118,17 @@
                         trHTML += '<tr><td>' + item.file + '</td><td>' + item.db_date + '</td><td>' + item.rt_date + '</td></tr>';
                     });
                     $('#example').append(trHTML);
+                }});
+            $.ajax({
+                url: '/overview/targets/graph/',
+                data: {'target_name': req},
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    Plotly.newPlot('chart', [data], {responsive: true});
+                    console.log('update');
+                    $('#example').empty();
+
                 }});
             });
 
