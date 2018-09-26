@@ -110,6 +110,17 @@
         $(".dropdown-menu li").click(function(){
           $('#selected').text($(this).text());
           var req = $(this).text();
+
+            $.ajax({
+                url: '/overview/targets/graph/',
+                data: {'target_name': req},
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    Plotly.newPlot('chart', [data], {responsive: true},);
+                    console.log('update');
+                    $('#example').empty();
+
             $.ajax({
                 url: '/overview/targets/mod_date/',
                 data: {'target_name': req},
@@ -122,15 +133,6 @@
                     });
                     $('#example').append(trHTML);
                 }});
-            $.ajax({
-                url: '/overview/targets/graph/',
-                data: {'target_name': req},
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    Plotly.newPlot('chart', [data], {responsive: true});
-                    console.log('update');
-                    $('#example').empty();
 
                 }});
             });
