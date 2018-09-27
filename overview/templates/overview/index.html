@@ -67,7 +67,7 @@
         #chart {
             margin: 0 auto;
             width: 100%;
-            min-height: 300px;
+            /*min-height: 300px;*/
         }
 
         .loading {
@@ -272,7 +272,7 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (data) {
-                        Plotly.newPlot('chart', [data], {responsive: true},);
+                        Plotly.newPlot('chart', [data], {responsive: true, height: 500},);
                         console.log('update');
                         $('#example').empty();
                         $('#cryst').empty();
