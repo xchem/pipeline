@@ -25,6 +25,8 @@ class TransferDirectory(luigi.Task):
     remote_directory = luigi.Parameter()
     local_directory = luigi.Parameter()
     timestamp = luigi.Parameter()
+    target_file = luigi.Parameter()
+    target_name = luigi.Parameter()
 
     def requires(self):
         return GetOutFiles(), CreateProposalVisitFiles()
@@ -71,6 +73,11 @@ class TransferDirectory(luigi.Task):
         scp = SCPClient(ssh.get_transport())
         scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=remote_target)
         scp.close()
+
+        current_list = open(self.target_file, 'r').read().rsplit()
+        if self.target_name not in current_list:
+            with open(self.target_file, 'a') as f:
+                f.write(str(self.target_name + ' '))
 
         # write local output file to signify transfer done
         with self.output().open('w') as f:
@@ -190,12 +197,15 @@ class TransferByTargetList(luigi.Task):
     remote_root = VerneConfig().remote_root
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
     target_list = VerneConfig().target_list
+    target_file = 'TARGET_LIST'
 
     def output(self):
         print(self.timestamp)
         return luigi.LocalTarget(str('verne_transfer_' + self.timestamp))
 
     def requires(self):
+        if os.path.isfile(self.target_file):
+            os.remove(self.target_file)
         transfer_paths = []
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
@@ -207,13 +217,15 @@ class TransferByTargetList(luigi.Task):
                     if o.root and o.start:
                         pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
                         if os.path.isdir(pth):
-                            transfer_paths.append(pth)
+                            transfer_paths.append([pth, tgt])
 
         transfer_paths = list(set(transfer_paths))
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
-                                              local_directory=p,
-                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
+                                              local_directory=p[0],
+                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'),
+                                              target_file=self.target_file,
+                                              target_name=p[1])
                 for p in transfer_paths]
 
     def run(self):
@@ -228,7 +240,8 @@ class TransferByTargetList(luigi.Task):
                 pass
 
                 # raise Exception('No data to be updated...')
-
+        with self.output().open('w') as f:
+            f.write('')
 
 
 
@@ -253,37 +266,38 @@ class UpdateVerne(luigi.Task):
         ssh = SSHClient()
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
-        verne_dirs = []
-        v_sftp = ssh.open_sftp()
-        v_sftp.chdir(self.remote_root)
-        for i in v_sftp.listdir():
-            lstatout = str(v_sftp.lstat(i)).split()[0]
-            if 'd' in lstatout:
-                verne_dirs.append(str(i))
-        v_sftp.close()
+        
+        # verne_dirs = []
+        # v_sftp = ssh.open_sftp()
+        # v_sftp.chdir(self.remote_root)
+        # for i in v_sftp.listdir():
+        #     lstatout = str(v_sftp.lstat(i)).split()[0]
+        #     if 'd' in lstatout:
+        #         verne_dirs.append(str(i))
+        # v_sftp.close()
+        #
+        # verne_dirs.sort()
+        #
+        # previous_dir = verne_dirs[-2]
 
-        verne_dirs.sort()
-
-        previous_dir = verne_dirs[-2]
-
-        remote_target_list = os.path.join(self.remote_root, previous_dir, 'TARGET_LIST')
-        scp = SCPClient(ssh.get_transport())
-        scp.get(remote_target_list)
-        scp.close()
-
-        targets = str(open('TARGET_LIST', 'r').read()).rsplit()
-        print(targets)
-        local_targets = str(open(self.target_list, 'r').read()).rsplit()
-        print(local_targets)
-        targets.extend(local_targets)
-
-        targets = list(set(targets))
-
-        os.remove('TARGET_LIST')
-
-        for target in targets:
-            with open('TARGET_LIST', 'a') as f:
-                f.write(str(str(target) + ' '))
+        # remote_target_list = os.path.join(self.remote_root, previous_dir, 'TARGET_LIST')
+        # scp = SCPClient(ssh.get_transport())
+        # scp.get(remote_target_list)
+        # scp.close()
+        #
+        # targets = str(open('TARGET_LIST', 'r').read()).rsplit()
+        # print(targets)
+        # local_targets = str(open(self.target_list, 'r').read()).rsplit()
+        # print(local_targets)
+        # targets.extend(local_targets)
+        #
+        # targets = list(set(targets))
+        #
+        # os.remove('TARGET_LIST')
+        #
+        # for target in targets:
+        #     with open('TARGET_LIST', 'a') as f:
+        #         f.write(str(str(target) + ' '))
 
         local_file = os.path.join(os.getcwd(), 'READY')
         if not local_file:
