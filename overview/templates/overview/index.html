@@ -272,7 +272,7 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (data) {
-                        Plotly.newPlot('chart', [data], {responsive: true, height: 500, width: 500},);
+                        Plotly.newPlot('chart', [data], {responsive: true},);
                         console.log('update');
                         $('#example').empty();
                         $('#cryst').empty();
