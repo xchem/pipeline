@@ -141,7 +141,7 @@
                 <div class="col-md-12">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Summary of Crystals (>= Comp. Chem. ready)</h3>
+                            <h3 class="panel-title">Summary of Crystals (Outcomes: 4=CompChem, 5=Deposition Ready, 6=Deposited)</h3>
                             <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                         </div>
                         <div class="panel-body">
@@ -245,14 +245,14 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (data2) {
-                        var trHTML = '<tr><th>Crystal</th><th>Outcome (4=CompChem, 5=Deposition Ready, 6=Deposited)</th><th>Pandda Model Found</th><th>Uploaded to proasis</th><th>Proasis strucids</th><th>Files pulled back</th><th>Out Directory</th><th>Uploaded to verne</th></tr>';
+                        var trHTML = '<tr><th>Crystal</th><th>Outcome</th><th>Pandda Model Found</th><th>Uploaded to proasis</th><th>Proasis strucids</th><th>Files pulled back</th><th>Out Directory</th><th>Uploaded to verne</th></tr>';
                         $.each(data2, function (i, item) {
                             trHTML += '<tr><td>' + item.crys + '</td><td>' + item.refinement_status + '</td><td class="boolean_img">' + item.pandda_model + '</td><td class="boolean_img">' + item.in_proasis + '</td><td>' + item.proasis_strucids + '</td><td class="boolean_img">' + item.files_out + '</td><td>' + item.out_directory + '</td><td class="boolean_img">' + item.uploaded_to_verne +
                                 '</td></tr>';
                         });
                         $('#cryst').append(trHTML);
                         $('.boolean_img:contains(✘)').css("color", "red");
-                        $('.boolean_img:contains(1)').css("color", "green");
+                        $('.boolean_img:contains(✓)').css("color", "green");
                     }});
 
             });

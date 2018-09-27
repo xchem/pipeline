@@ -103,7 +103,7 @@ def get_crystal_info(request):
             events = list(set([pr.pandda_run for pr in PanddaEvent.objects.filter(crystal=crys)]))
 
             if events:
-                out_dict['pandda_model'] = 1
+                out_dict['pandda_model'] = '✓'
 
 
             proasis = ProasisHits.objects.filter(crystal_name=crys).exclude(strucid=None).exclude(strucid='')
@@ -111,7 +111,7 @@ def get_crystal_info(request):
             pout = []
             uploaded = 0
             if proasis:
-                out_dict['in_proasis'] = 1
+                out_dict['in_proasis'] = '✓'
                 proasis_strucids = [p.strucid for p in proasis]
                 out_dict['proasis_strucids'] = ', '.join(proasis_strucids)
                 for p in proasis:
@@ -124,7 +124,7 @@ def get_crystal_info(request):
 
                     if len(out_root) == 1:
                         if os.path.isfile(os.path.join(out_root[0], 'verne.transferred')):
-                            out_dict['uploaded_to_verne'] = 1
+                            out_dict['uploaded_to_verne'] = '✓'
 
             data.append(out_dict)
 
