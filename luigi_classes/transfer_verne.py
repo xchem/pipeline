@@ -27,7 +27,7 @@ class TransferDirectory(luigi.Task):
     timestamp = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(date=datetime.date.today()), CreateProposalVisitFiles()
+        return GetOutFiles(), CreateProposalVisitFiles()
 
     def output(self):
         print(self.local_directory)
