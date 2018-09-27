@@ -494,7 +494,7 @@ class GetLigConf(luigi.Task):
 
 
 class GetOutFiles(luigi.Task):
-    datestamp = luigi.DateParameter(default=datetime.datetime.now().strftime('%Y%m%d%H'))
+    datestamp = luigi.DateParameter(default=str(datetime.datetime.now().strftime('%Y%m%d%H')))
 
     def output(self):
         return luigi.LocalTarget(str('logs/proasis/out/proasis_out_' + self.datestamp + '.txt'))
