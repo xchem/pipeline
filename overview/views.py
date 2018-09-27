@@ -91,9 +91,9 @@ def get_crystal_info(request):
                 'refinement_status': '✘',
                 'pandda_model': '✘',
                 'in_proasis': '✘',
-                'proasis_strucids': '',
+                'proasis_strucids': '✘',
                 'files_out': '✘',
-                'out_directory': '',
+                'out_directory': '✘',
                 'uploaded_to_verne': '✘',
             }
 
