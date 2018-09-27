@@ -79,21 +79,24 @@ def get_crystal_info(request):
     submission = request.GET.get('target_name')
     crystals = Crystal.objects.filter(target__target_name=submission)
 
-    out_dict = {
-        'crys': [],
-        'refinement_status': [],
-        'pandda_model': [],
-        'in_proasis': [],
-        'proasis_strucids': [],
-        'files_out': [],
-        'out_directory': [],
-        'uploaded_to_verne': [],
-    }
+    data = []
+
 
 
     for crys in crystals:
         refinements = Refinement.objects.filter(crystal_name=crys, outcome__gte=1)
         for ref in refinements:
+            out_dict = {
+                'crys': [],
+                'refinement_status': [],
+                'pandda_model': [],
+                'in_proasis': [],
+                'proasis_strucids': [],
+                'files_out': [],
+                'out_directory': [],
+                'uploaded_to_verne': [],
+            }
+
             out_dict['crys'].append(crys.crystal_name)
             out_dict['refinement_status'].append(ref.outcome)
 
@@ -134,8 +137,10 @@ def get_crystal_info(request):
             out_dict['uploaded_to_verne'].append(uploaded)
             out_dict['proasis_strucids'].append(proasis_strucids)
 
+            data.append(out_dict)
 
-    return JsonResponse(out_dict, safe=False)
+
+    return JsonResponse(data, safe=False)
 
 
 
