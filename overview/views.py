@@ -120,7 +120,7 @@ def get_crystal_info(request):
                     out_root = list(set([os.path.join(o.root, o.start.split('/')[0]) for o in pout]))
 
                     if len(out_root) == 1:
-                        if os.path.isfile(os.path.join(out_root, 'verne.transferred')):
+                        if os.path.isfile(os.path.join(out_root[0], 'verne.transferred')):
                             uploaded = 1
                 else:
                     out_dict['files_out'].append(0)
