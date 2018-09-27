@@ -84,7 +84,7 @@ def get_crystal_info(request):
 
 
     for crys in crystals:
-        refinements = Refinement.objects.filter(crystal_name=crys, outcome__gte=1)
+        refinements = Refinement.objects.filter(crystal_name=crys, outcome__gte=4)
         for ref in refinements:
             out_dict = {
                 'crys': '',
