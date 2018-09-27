@@ -18,22 +18,45 @@
 
     <title>Targets overview</title>
       <style>
-        #example #cryst {
+        #example {
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             border-collapse: collapse;
             width: 100%;
         }
 
-        #example #cryst td, #example #cryst th {
+        #example td, #example th {
             border: 1px solid #ddd;
             padding: 8px;
         }
 
-        #example #cryst tr:nth-child(even){background-color: #f2f2f2;}
+        #example tr:nth-child(even){background-color: #f2f2f2;}
 
-        #example #cryst tr:hover {background-color: #ddd;}
+        #example tr:hover {background-color: #ddd;}
 
-        #example #cryst th {
+        #example th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #2678b2;
+            color: white;
+        }
+
+        #cryst {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #cryst td, #cryst th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #cryst tr:nth-child(even){background-color: #f2f2f2;}
+
+        #cryst tr:hover {background-color: #ddd;}
+
+        #cryst th {
             padding-top: 12px;
             padding-bottom: 12px;
             text-align: left;
@@ -228,7 +251,7 @@
                                 '</td></tr>';
                         });
                         $('#cryst').append(trHTML);
-                        $('.boolean_img:contains(0)').css("color", "red");
+                        $('.boolean_img:contains('✘')').css("color", "red");
                         $('.boolean_img:contains(1)').css("color", "green");
                     }});
 
