@@ -90,6 +90,7 @@ def get_crystal_info(request):
         'uploaded_to_verne': [],
     }
 
+
     for crys in crystals:
         refinements = Refinement.objects.filter(crystal_name=crys)
         for ref in refinements:
@@ -133,7 +134,8 @@ def get_crystal_info(request):
             out_dict['uploaded_to_verne'].append(uploaded)
             out_dict['proasis_strucids'].append(proasis_strucids)
 
-        return JsonResponse(out_dict, safe=False)
+
+    return JsonResponse(out_dict, safe=False)
 
 
 
