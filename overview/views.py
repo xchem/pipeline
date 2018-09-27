@@ -88,13 +88,13 @@ def get_crystal_info(request):
         for ref in refinements:
             out_dict = {
                 'crys': '',
-                'refinement_status': 0,
-                'pandda_model': 0,
-                'in_proasis': 0,
+                'refinement_status': '✘',
+                'pandda_model': '✘',
+                'in_proasis': '✘',
                 'proasis_strucids': '',
-                'files_out': 0,
+                'files_out': '✘',
                 'out_directory': '',
-                'uploaded_to_verne': 0,
+                'uploaded_to_verne': '✘',
             }
 
             out_dict['crys'] = str(crys.crystal_name)
