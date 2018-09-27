@@ -107,9 +107,8 @@ def get_crystal_info(request):
 
 
             proasis = ProasisHits.objects.filter(crystal_name=crys).exclude(strucid=None).exclude(strucid='')
-            proasis_strucids = []
             pout = []
-            uploaded = 0
+
             if proasis:
                 out_dict['in_proasis'] = '✓'
                 proasis_strucids = [p.strucid for p in proasis]
@@ -118,7 +117,7 @@ def get_crystal_info(request):
                     pout = ProasisOut.objects.filter(crystal=crys, proasis=p)
                 if pout:
                     out_dirs = list(set([os.path.join(o.root, o.start) for o in pout]))
-                    out_dict['files_out'] = 1
+                    out_dict['files_out'] = '✓'
                     out_dict['out_directory'] = ', '.join(out_dirs)
                     out_root = list(set([os.path.join(o.root, o.start.split('/')[0]) for o in pout]))
 
