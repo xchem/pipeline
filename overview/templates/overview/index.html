@@ -114,6 +114,19 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Summary of Crystals (>= Comp. Chem. ready)</h3>
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <table cellpadding="10" cellspacing="0" border="0" id="cryst"><tbody></tbody>
+                    </table></div>
+                    </div>
+                </div>
+            </div>
 
         {% endblock %}
 
@@ -184,6 +197,8 @@
                         console.log('update');
                         $('#example').empty();
 
+                    }});
+
                 $.ajax({
                     url: '/overview/targets/mod_date/',
                     data: {'target_name': req},
@@ -200,8 +215,25 @@
                         $('.difference:contains(0:00:00)').css("color", "green");
                     }});
 
+
+                $.ajax({
+                    url: '/overview/targets/crystal_summary/',
+                    data: {'target_name': req},
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data2) {
+                        var trHTML = '<tr><th>Crystal</th><th>Outcome (4=CompChem, 5=Deposition Ready, 6=Deposited)</th><th>Pandda Model Found</th><th>Uploaded to proasis</th><th>Proasis strucids</th><th>Files pulled back</th><th>Out Directory</th><th>Uploaded to verne</th></tr>';
+                        $.each(data2, function (i, item) {
+                            trHTML += '<tr><td>' + item.crys + '</td><td>' + item.refinement_status + '</td><td class="boolean_img">' + item.pandda_model + '</td><td class="boolean_img">' + item.in_proasis + '</td><td>' + item.proasis_strucids + '</td><td class="boolean_img">' + item.files_out + '</td><td>' + item.out_directory + '</td><td class="boolean_img">' + item.uploaded_to_verne +
+                                '</td></tr>';
+                        });
+                        $('#example').append(trHTML);
+                        $('.boolean_img:contains(0)').css("color", "red");
+                        $('.boolean_img:contains(1)').css("color", "green");
                     }});
-                });
+
+            });
+
 
 
 
