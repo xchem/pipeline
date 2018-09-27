@@ -87,58 +87,46 @@ def get_crystal_info(request):
         refinements = Refinement.objects.filter(crystal_name=crys, outcome__gte=1)
         for ref in refinements:
             out_dict = {
-                'crys': [],
-                'refinement_status': [],
-                'pandda_model': [],
-                'in_proasis': [],
-                'proasis_strucids': [],
-                'files_out': [],
-                'out_directory': [],
-                'uploaded_to_verne': [],
+                'crys': '',
+                'refinement_status': 0,
+                'pandda_model': 0,
+                'in_proasis': 0,
+                'proasis_strucids': '',
+                'files_out': 0,
+                'out_directory': '',
+                'uploaded_to_verne': 0,
             }
 
-            out_dict['crys'].append(crys.crystal_name)
-            out_dict['refinement_status'].append(ref.outcome)
+            out_dict['crys'] = str(crys.crystal_name)
+            out_dict['refinement_status'] = str(ref.outcome)
 
             events = list(set([pr.pandda_run for pr in PanddaEvent.objects.filter(crystal=crys)]))
 
             if events:
-                out_dict['pandda_model'].append(1)
-            else:
-                out_dict['pandda_model'].append(0)
+                out_dict['pandda_model'] = 1
+
 
             proasis = ProasisHits.objects.filter(crystal_name=crys).exclude(strucid=None).exclude(strucid='')
             proasis_strucids = []
             pout = []
             uploaded = 0
             if proasis:
-                out_dict['in_proasis'].append(1)
+                out_dict['in_proasis'] = 1
                 proasis_strucids = [p.strucid for p in proasis]
+                out_dict['proasis_strucids'] = ', '.join(proasis_strucids)
                 for p in proasis:
                     pout = ProasisOut.objects.filter(crystal=crys, proasis=p)
                 if pout:
                     out_dirs = list(set([os.path.join(o.root, o.start) for o in pout]))
-                    out_dict['files_out'].append(1)
-                    out_dict['out_directory'].append(out_dirs)
+                    out_dict['files_out'] = 1
+                    out_dict['out_directory'] = ', '.join(out_dirs)
                     out_root = list(set([os.path.join(o.root, o.start.split('/')[0]) for o in pout]))
 
                     if len(out_root) == 1:
                         if os.path.isfile(os.path.join(out_root[0], 'verne.transferred')):
-                            uploaded = 1
-                else:
-                    out_dict['files_out'].append(0)
-                    out_dict['files_out'].append([])
-            else:
-                out_dict['in_proasis'].append(0)
-                out_dict['files_out'].append(0)
-                out_dict['out_directory'].append([])
-                out_dict['uploaded_to_verne'].append(0)
-
-            out_dict['uploaded_to_verne'].append(uploaded)
-            out_dict['proasis_strucids'].append(proasis_strucids)
+                            out_dict['uploaded_to_verne'] = 1
 
             data.append(out_dict)
-
 
     return JsonResponse(data, safe=False)
 
