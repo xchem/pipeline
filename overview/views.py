@@ -117,7 +117,7 @@ def get_crystal_info(request):
                     out_dirs = list(set([os.path.join(o.root, o.start) for o in pout]))
                     out_dict['files_out'].append(1)
                     out_dict['out_directory'].append(out_dirs)
-                    out_root = list(set([os.path.join(o.root, o.start.split('/')[0]) for o in out_dirs]))
+                    out_root = list(set([os.path.join(o.root, o.start.split('/')[0]) for o in pout]))
 
                     if len(out_root) == 1:
                         if os.path.isfile(os.path.join(out_root, 'verne.transferred')):
