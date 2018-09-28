@@ -4,9 +4,9 @@ import datetime
 import luigi
 from paramiko import SSHClient
 from scp import SCPClient
-from functions.misc_functions import get_mod_date
 
 import setup_django
+from functions.misc_functions import get_mod_date
 
 setup_django.setup_django()
 
@@ -106,8 +106,9 @@ class TransferVisitAndProposalFiles(luigi.Task):
     def output(self):
         self.out_dir = '/'.join(
             TransferDirectory(
-                              local_directory=self.local_directory, remote_directory=self.remote_directory,
-                              timestamp=self.timestamp).output().path.split('/')[:-1])
+                local_directory=self.local_directory, remote_directory=self.remote_directory,
+                timestamp=self.timestamp.output().path.split('/')[:-1], target_file=self.target_file,
+                target_name=self.target_name))
 
         return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals.done')))
 
