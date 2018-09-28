@@ -209,6 +209,7 @@ class TransferByTargetList(luigi.Task):
     def requires(self):
         if os.path.isfile(self.target_file):
             os.remove(self.target_file)
+        os.system(str('touch ' + self.target_file))
         transfer_paths = []
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
