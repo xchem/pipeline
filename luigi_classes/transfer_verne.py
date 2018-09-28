@@ -107,8 +107,8 @@ class TransferVisitAndProposalFiles(luigi.Task):
         self.out_dir = '/'.join(
             TransferDirectory(
                 local_directory=self.local_directory, remote_directory=self.remote_directory,
-                timestamp=self.timestamp.output().path.split('/')[:-1], target_file=self.target_file,
-                target_name=self.target_name))
+                timestamp=self.timestamp, target_file=self.target_file,
+                target_name=self.target_name).output().path.split('/')[:-1])
 
         return luigi.LocalTarget(os.path.join(self.out_dir, str('visits_proposals.done')))
 
