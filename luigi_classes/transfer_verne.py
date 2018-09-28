@@ -223,7 +223,6 @@ class TransferByTargetList(luigi.Task):
                         if os.path.isdir(pth):
                             transfer_paths.append((pth, tgt))
 
-        print(transfer_paths)
         transfer_paths = list(set(transfer_paths))
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
@@ -237,18 +236,12 @@ class TransferByTargetList(luigi.Task):
         outfiles = [p.path for p in self.input()]
 
         for f in outfiles:
-            print(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y-%m-%dT%H'))
-            print(self.timestamp)
-            if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H')) - \
-                    int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H')) <= 2:
+
+            if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')) - \
+                    int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
                 with self.output().open('w') as f:
                     f.write('')
                 pass
-
-        #         # raise Exception('No data to be updated...')
-        # with self.output().open('w') as f:
-        #     f.write('')
-
 
 
 class UpdateVerne(luigi.Task):
