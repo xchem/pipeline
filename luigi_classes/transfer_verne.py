@@ -219,6 +219,7 @@ class TransferByTargetList(luigi.Task):
                         if os.path.isdir(pth):
                             transfer_paths.append([pth, tgt])
 
+        print(transfer_paths)
         transfer_paths = list(set(transfer_paths))
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
@@ -266,7 +267,7 @@ class UpdateVerne(luigi.Task):
         ssh = SSHClient()
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
-        
+
         # verne_dirs = []
         # v_sftp = ssh.open_sftp()
         # v_sftp.chdir(self.remote_root)
