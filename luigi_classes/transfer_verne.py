@@ -217,7 +217,7 @@ class TransferByTargetList(luigi.Task):
                     if o.root and o.start:
                         pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
                         if os.path.isdir(pth):
-                            transfer_paths.append([pth, tgt])
+                            transfer_paths.append((pth, tgt))
 
         print(transfer_paths)
         transfer_paths = list(set(transfer_paths))
