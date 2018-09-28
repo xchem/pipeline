@@ -94,12 +94,14 @@ class TransferVisitAndProposalFiles(luigi.Task):
     remote_directory = luigi.Parameter()
     local_directory = luigi.Parameter()
     timestamp = luigi.Parameter()
+    target_file = luigi.Parameter()
+    target_name = luigi.Parameter()
 
     def requires(self):
         print(self.local_directory)
         print(self.remote_directory)
         return TransferDirectory(local_directory=self.local_directory, remote_directory=self.remote_directory,
-                          timestamp=self.timestamp)
+                          timestamp=self.timestamp, target_file=self.target_file, target_name=self.target_name)
 
     def output(self):
         self.out_dir = '/'.join(
