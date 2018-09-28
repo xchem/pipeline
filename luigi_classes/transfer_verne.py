@@ -237,16 +237,16 @@ class TransferByTargetList(luigi.Task):
         outfiles = [p.path for p in self.input()]
 
         for f in outfiles:
-            print(get_mod_date(f).strftime('%Y-%m-%dT%H'))
+            print(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y-%m-%dT%H'))
             print(self.timestamp)
-            if get_mod_date(f).strftime('%Y-%m-%dT%H') == self.timestamp:
+            if datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y-%m-%dT%H') == self.timestamp:
                 with self.output().open('w') as f:
                     f.write('')
                 pass
 
-                # raise Exception('No data to be updated...')
-        with self.output().open('w') as f:
-            f.write('')
+        #         # raise Exception('No data to be updated...')
+        # with self.output().open('w') as f:
+        #     f.write('')
 
 
 
