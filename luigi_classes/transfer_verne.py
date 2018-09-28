@@ -239,7 +239,8 @@ class TransferByTargetList(luigi.Task):
         for f in outfiles:
             print(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y-%m-%dT%H'))
             print(self.timestamp)
-            if datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y-%m-%dT%H') == self.timestamp:
+            if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H')) - \
+                    int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H')) <= 2:
                 with self.output().open('w') as f:
                     f.write('')
                 pass
