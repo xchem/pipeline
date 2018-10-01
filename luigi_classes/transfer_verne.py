@@ -266,28 +266,26 @@ class UpdateVerne(luigi.Task):
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
 
-        if not os.path.isfile(os.path.join(os.getcwd(), 'TARGET_LIST')):
-            os.system(str('touch ' + os.path.join(os.getcwd(), 'TARGET_LIST')))
+        if os.path.isfile(os.path.join(os.getcwd(), 'TARGET_LIST')):
+            os.remove(os.path.join(os.getcwd(), 'TARGET_LIST'))
 
-        f = open(os.path.join(os.getcwd(), 'TARGET_LIST'), 'a')
+        os.system('touch ' + os.path.join(os.getcwd(), 'TARGET_LIST'))
 
-        transfer_paths = []
+        verne_dirs = []
+        v_sftp = ssh.open_sftp()
+        v_sftp.chdir(os.path.join(self.remote_root, self.timestamp))
+        for i in v_sftp.listdir():
+            lstatout = str(v_sftp.lstat(i)).split()[0]
+            if 'd' in lstatout:
+                verne_dirs.append(str(i))
+        v_sftp.close()
 
-        if os.path.isfile(self.target_list):
-            target_list = open(self.target_list, 'r')
-            for target in target_list:
-                tgt = target.rstrip()
-                print(tgt)
-                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
-                for o in proasis_out:
-                    if o.root and o.start:
-                        pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
-                        transfer_paths.append(pth)
+        verne_dirs.sort()
 
-        for p in transfer_paths:
-            if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')) - \
-                    int(datetime.datetime.strptime(get_mod_date(p), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
-                f.write(p.split('/')[-1])
+        write_string = ' '.join(verne_dirs)
+
+        with open(os.path.join(os.getcwd(), 'TARGET_LIST'), 'w') as f:
+            f.write(write_string)
 
         local_file = os.path.join(os.getcwd(), 'READY')
         if not local_file:
