@@ -204,7 +204,7 @@ class TransferByTargetList(luigi.Task):
 
     def output(self):
         print(self.timestamp)
-        return luigi.LocalTarget(str('verne_transfer_' + self.timestamp))
+        return luigi.LocalTarget(str('logs/verne_transfer_' + self.timestamp))
 
     def requires(self):
         if os.path.isfile(self.target_file):
@@ -258,7 +258,7 @@ class UpdateVerne(luigi.Task):
         return TransferByTargetList()
 
     def output(self):
-        return luigi.LocalTarget(str('verne_update_' + str(self.timestamp)))
+        return luigi.LocalTarget(str('logs/verne_update_' + str(self.timestamp)))
 
     def run(self):
 
