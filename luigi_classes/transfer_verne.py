@@ -235,6 +235,8 @@ class TransferByTargetList(luigi.Task):
         outfiles = [p.path for p in self.input()]
 
         for f in outfiles:
+            print(int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')))
+            print(int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')))
 
             if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')) - \
                     int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
