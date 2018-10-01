@@ -209,7 +209,6 @@ class TransferByTargetList(luigi.Task):
     def requires(self):
         if os.path.isfile(self.target_file):
             os.remove(self.target_file)
-        os.system(str('touch ' + self.target_file))
         transfer_paths = []
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
@@ -241,7 +240,6 @@ class TransferByTargetList(luigi.Task):
                     int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
                 with self.output().open('w') as f:
                     f.write('')
-                pass
 
 
 class UpdateVerne(luigi.Task):
@@ -266,37 +264,28 @@ class UpdateVerne(luigi.Task):
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
 
-        # verne_dirs = []
-        # v_sftp = ssh.open_sftp()
-        # v_sftp.chdir(self.remote_root)
-        # for i in v_sftp.listdir():
-        #     lstatout = str(v_sftp.lstat(i)).split()[0]
-        #     if 'd' in lstatout:
-        #         verne_dirs.append(str(i))
-        # v_sftp.close()
-        #
-        # verne_dirs.sort()
-        #
-        # previous_dir = verne_dirs[-2]
+        if not os.path.isfile(os.path.join(os.getcwd(), 'TARGET_LIST')):
+            os.system(str('touch ' + os.path.join(os.getcwd(), 'TARGET_LIST')))
 
-        # remote_target_list = os.path.join(self.remote_root, previous_dir, 'TARGET_LIST')
-        # scp = SCPClient(ssh.get_transport())
-        # scp.get(remote_target_list)
-        # scp.close()
-        #
-        # targets = str(open('TARGET_LIST', 'r').read()).rsplit()
-        # print(targets)
-        # local_targets = str(open(self.target_list, 'r').read()).rsplit()
-        # print(local_targets)
-        # targets.extend(local_targets)
-        #
-        # targets = list(set(targets))
-        #
-        # os.remove('TARGET_LIST')
-        #
-        # for target in targets:
-        #     with open('TARGET_LIST', 'a') as f:
-        #         f.write(str(str(target) + ' '))
+        f = open(os.path.join(os.getcwd(), 'TARGET_LIST'), 'a')
+
+        transfer_paths = []
+
+        if os.path.isfile(self.target_list):
+            target_list = open(self.target_list, 'r')
+            for target in target_list:
+                tgt = target.rstrip()
+                print(tgt)
+                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
+                for o in proasis_out:
+                    if o.root and o.start:
+                        pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
+                        transfer_paths.append(pth)
+
+        for p in transfer_paths:
+            if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')) - \
+                    int(datetime.datetime.strptime(get_mod_date(p), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
+                f.write(p.split('/')[-1])
 
         local_file = os.path.join(os.getcwd(), 'READY')
         if not local_file:
