@@ -74,11 +74,6 @@ class TransferDirectory(luigi.Task):
         scp.put(os.path.join(os.getcwd(), 'NEW_DATA'), recursive=True, remote_path=remote_target)
         scp.close()
 
-        current_list = open(self.target_file, 'r').read().rsplit()
-        if self.target_name not in current_list:
-            with open(self.target_file, 'a') as f:
-                f.write(str(self.target_name + ' '))
-
         # write local output file to signify transfer done
         with self.output().open('w') as f:
             f.write('')
