@@ -93,7 +93,7 @@ def get_crystal_info(request):
                 'refinement_status': '✘',
                 'pandda_model': '✘',
                 'pdb_present': '✘',
-                '2fofc_present': '✘',
+                'twofofc_present': '✘',
                 'fofc_present': '✘',
                 'mtz_present': '✘',
                 'in_proasis': '✘',
@@ -153,7 +153,7 @@ def get_crystal_info(request):
             if mtz[0]:
                 out_dict['mtz_present'] = mtz[1]
             if two_fofc[0]:
-                out_dict['2fofc_present'] = two_fofc[1]
+                out_dict['twofofc_present'] = two_fofc[1]
             if fofc[0]:
                 out_dict['fofc_present'] = fofc[1]
 
