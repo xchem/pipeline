@@ -137,7 +137,7 @@ def get_crystal_info(request):
                         bound_conf = ref.pdb_latest
 
             if bound_conf:
-                out_dict['pdb_present'] = bound_conf
+                out_dict['pdb_present'] = bound_conf.split('/')[-1]
 
             if 'split.bound-state' in bound_conf:
                 mtz = check_file_status('refine.mtz', ref.pdb_latest)
