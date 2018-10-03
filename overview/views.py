@@ -151,11 +151,11 @@ def get_crystal_info(request):
 
 
             if mtz[0]:
-                out_dict['mtz_present'] = mtz[1]
+                out_dict['mtz_present'] = '✓'
             if two_fofc[0]:
-                out_dict['twofofc_present'] = two_fofc[1]
+                out_dict['twofofc_present'] = '✓'
             if fofc[0]:
-                out_dict['fofc_present'] = fofc[1]
+                out_dict['fofc_present'] = '✓'
 
             if proasis:
                 out_dict['in_proasis'] = '✓'
