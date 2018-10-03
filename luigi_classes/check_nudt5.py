@@ -7,7 +7,7 @@ from functions import misc_functions
 from xchem_db.models import *
 
 fail_count = 0
-refinement = Refinement.objects.filter(outcome__gte=3, crystal_name__target__target_name='NUDT5A')
+refinement = Refinement.objects.filter(outcome__gte=4, crystal_name__target__target_name='NS3Hel')
 # set up info for each entry that matches the filter
 for obj in refinement:
     # set up blank fields for entries in proasis hits table
