@@ -22,7 +22,7 @@ from . import transfer_soakdb
 
 
 class InitDBEntries(luigi.Task):
-    date = luigi.DateParameter(default=datetime.datetime.now())
+    date = luigi.Parameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
