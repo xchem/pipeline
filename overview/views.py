@@ -3,8 +3,10 @@ from django.template import loader
 
 from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles, PanddaEvent, ProasisHits, ProasisOut
 from functions.misc_functions import get_mod_date
+from functions.db_functions import check_file_status
 import datetime
 import os
+import glob
 
 
 def targets(request):
@@ -90,6 +92,10 @@ def get_crystal_info(request):
                 'crys': '',
                 'refinement_status': '✘',
                 'pandda_model': '✘',
+                'pdb_present': '✘',
+                '2fofc_present': '✘',
+                'fofc_present': '✘',
+                'mtz_present': '✘',
                 'in_proasis': '✘',
                 'proasis_strucids': '✘',
                 'files_out': '✘',
@@ -108,6 +114,48 @@ def get_crystal_info(request):
 
             proasis = ProasisHits.objects.filter(crystal_name=crys).exclude(strucid=None).exclude(strucid='')
             pout = []
+
+            bound_conf = ''
+
+            # if there is a pdb file named in the bound_conf field, use it as the upload structure for proasis
+            if ref.bound_conf:
+                if os.path.isfile(ref.bound_conf):
+                    bound_conf = ref.bound_conf
+            # otherwise, use the most recent pdb file (according to soakdb)
+            elif ref.pdb_latest:
+                if os.path.isfile(ref.pdb_latest):
+                    # if this is from a refinement folder, find the bound-state pdb file, rather than the ensemble
+                    if 'Refine' in ref.pdb_latest:
+                        search_path = '/'.join(ref.pdb_latest.split('/')[:-1])
+                        print(search_path)
+                        files = glob.glob(str(search_path + '/refine*split.bound*.pdb'))
+                        print(files)
+                        if len(files) == 1:
+                            bound_conf = files[0]
+                    else:
+                        # if can't find bound state, just use the latest pdb file
+                        bound_conf = ref.pdb_latest
+
+            if bound_conf:
+                out_dict['pdb_present'] = bound_conf
+
+            if 'split.bound-state' in bound_conf:
+                mtz = check_file_status('refine.mtz', ref.pdb_latest)
+                two_fofc = check_file_status('2fofc.map', ref.pdb_latest)
+                fofc = check_file_status('fofc.map', ref.pdb_latest)
+
+            else:
+                mtz = check_file_status('refine.mtz', bound_conf)
+                two_fofc = check_file_status('2fofc.map', bound_conf)
+                fofc = check_file_status('fofc.map', bound_conf)
+
+
+            if mtz[0]:
+                out_dict['mtz_present'] = mtz[1]
+            if two_fofc[0]:
+                out_dict['2fofc_present'] = two_fofc[1]
+            if fofc[0]:
+                out_dict['fofc_present'] = fofc[1]
 
             if proasis:
                 out_dict['in_proasis'] = '✓'
