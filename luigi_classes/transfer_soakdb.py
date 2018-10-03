@@ -142,11 +142,6 @@ class CheckFiles(luigi.Task):
                     update_status.status = 1
                     update_status.save()
 
-            # else:
-            #     update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
-            #     update_status.status = 0
-            #     update_status.save()
-
             # if there is more than one entry, raise an exception (should never happen - filename field is unique)
             if len(soakdb_query) > 1:
                 raise Exception('More than one entry for file! Something has gone wrong!')
@@ -237,6 +232,19 @@ class TransferChangedDataFile(luigi.Task):
 
         if maint_exists == 1:
             soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
+
+            # for pandda file finding
+            split_path = self.data_file.split('database')
+            search_path = split_path[0]
+            sdb_file = str('database' + split_path[1])
+            # soakdb_filepath = self.soak_db_filepath
+
+            # remove pandda data transfer done file
+            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
+
+            # .sites.done
+            # .events.done
+            # .run.done
 
             crystals = Crystal.objects.filter(visit=soakdb_query)
 
@@ -348,16 +356,6 @@ class CheckFileUpload(luigi.Task):
         try:
             print('Number of rows from file = ' + str(len(results)))
 
-            # if len(Crystal.objects.filter(visit__filename=self.filename)) == len(results):
-            #     status = True
-            # else:
-            #     status = False
-
-            # print('Checking same number of rows in test_xchem: ' + str(status))
-            # if not status:
-            #     raise Exception('FAIL: no of entries in test_xchem = ' + str(
-            #         len(Crystal.objects.filter(visit__filename=self.filename))))
-
             proteins = list(set([protein for protein in [protein['ProteinName'] for protein in results]]))
 
             print('Unique targets in soakdb file: ' + str(proteins))
@@ -418,13 +416,6 @@ class CheckFileUpload(luigi.Task):
                                           'Analysis Pending', 'in-situ']:
                             continue
                         else:
-                            # try:
-                            #     error_dict['crystal'].append(eval(str('lab_object[0].' + key + '.crystal_name')))
-                            # except:
-                            #     if key=='crystal_name':
-                            #         error_dict['crystal'].append(eval(str('lab_object[0].' + key)))
-                            #     else:
-                            #         raise Exception(key)
                             error_dict['crystal'].append(str(lab_object[0].crystal_name.crystal_name))
                             error_dict['soakdb_field'].append(translation[key])
                             error_dict['model_field'].append(key)

@@ -48,7 +48,6 @@ class AddPanddaSites(luigi.Task):
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.sites.done'))
 
-    @transaction.atomic
     def run(self):
         run = PanddaRun.objects.get(pandda_log=self.log_file)
         sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
@@ -203,16 +202,9 @@ class AddPanddaRun(luigi.Task):
     def requires(self):
         pass
 
-    # def complete(self):
-    #     if PanddaRun.objects.filter(pandda_log=self.log_file).exists():
-    #         return True
-    #     else:
-    #         return False
-
     def output(self):
         return luigi.LocalTarget(str(self.log_file + '.run.done'))
 
-    @transaction.atomic
     def run(self):
         print('ADDING PANDDA RUN...')
         pandda_run = \
@@ -348,8 +340,6 @@ class FindSearchPaths(luigi.Task):
         for path in list(set(search_paths)):
             count = search_paths.count(path)
             if count > 1:
-                # print(path)
-                # print([i for (x, i) in zipped if x == path])
 
                 while path in search_paths:
                     search_paths.remove(path)
@@ -362,7 +352,7 @@ class FindSearchPaths(luigi.Task):
             print(path)
             print(sdbfile)
             print(os.path.join(path, sdbfile))
-            # yield AddPanddaTables(
+
             out_dict['search_path'].append(path)
             out_dict['soak_db_filepath'].append(self.soak_db_filepath)
             out_dict['sdbfile'].append(os.path.join(path, sdbfile))
