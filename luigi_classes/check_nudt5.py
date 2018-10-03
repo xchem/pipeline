@@ -1,6 +1,8 @@
 import glob
 import os
 import re
+import setup_django
+setup_django.setup_django()
 
 from functions import db_functions
 from functions import misc_functions
