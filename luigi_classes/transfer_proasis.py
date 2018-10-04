@@ -236,7 +236,7 @@ class InitDBEntries(luigi.Task):
 
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
-    date = luigi.DateParameter(default=datetime.datetime.now())
+    date = luigi.Parameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
