@@ -240,7 +240,8 @@ class TransferChangedDataFile(luigi.Task):
             # soakdb_filepath = self.soak_db_filepath
 
             # remove pandda data transfer done file
-            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
+            if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
+                os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
             # .sites.done
             # .events.done
