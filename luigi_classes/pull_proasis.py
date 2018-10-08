@@ -27,8 +27,8 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     return luigi.LocalTarget(os.path.join(
         hit_directory,  # /dls/science/groups/proasis/LabXChem
         target_name.upper(),  # /TARGET
-        str(crystal_name + '_' + str(ligid)),  # /CRYSTAL_N
-        str(crystal_name + str('_' + str(ligid) + extension))  # /CRYSTAL_N<extension>
+        str(crystal_name.upper() + '_' + str(ligid)),  # /CRYSTAL_N
+        str(crystal_name.upper() + str('_' + str(ligid) + extension))  # /CRYSTAL_N<extension>
     ))
 
 
