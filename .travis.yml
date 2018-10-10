@@ -1,0 +1,11 @@
+deploy:
+  provider: pypi
+  user: abradle
+  distributions: sdist bdist_wheel
+  on:
+    branch: master
+    tags: true
+    repo: xchem/pipeline
+    python: '2.7'
+  password:
+    secure: J3/7Pr19TysQLoubMzVIDnGkeheI5lgOa9eu3tRq2zrxJit4WWXo6JC63PMhWHJqU0aVhF5/TyQuF08au7yB/vm43ca/dkL/GdHuFBldufVwAFltEtKcV1rrbB322vKkGiDEf7bd0SEqlhiMGklehXRyGbQtlgCzn4dohAS8YAM36cKroXL75x8CkynQxqqwEzn9IqTS946whX+nymjdGKtOX4D8kaU+idO78GmzcPaa2LU2QR02hXQA3oLAIGO8WXNi66j9LUC+BxQa43jzQkBn5K9ODQDNTR3shae3vsWxXfEBddhR00SKHsQ4Y2bcvVTqzJXw2yUXosD0+JespBL1GoeoBFYFagBPtz7lxepT/OXp2XxlMBD2aH5s/ukHJLS8fS6sG4k5UnyLWQ4hK2ydBQT7XlvjhKR/5DcUhY5id6MlrH4spAWFIwoWKBH3mnP/o8CGS1QDnEvk9kjr2cI9mZmBPlSJDg160kPcaQ2UJmmEt74nrcTZgAfN5u1ZR33/TgWpb4DDWAzBkh/0KI/zfWvaTEtZDks6sMwAr9EaLEAUsH4PHWp2zVNy4XixqAYwyZwtyWfVz8L8Rvu0lq80nlvOUKit9xqVMOo2hIhH4Swv/iy2pImYJah0hm2qiC8VX1WeVzN4KblMqTXNLSxuEKr4q0gnNWa53ydcUiY=
