@@ -20,12 +20,15 @@ RUN chmod 777 settings.py
 RUN chown postgres run_services.sh
 RUN chmod 777 run_services.sh
 
-# mkdir for database files
-RUN mkdir database/
-RUN mkdir database/db_files
-RUN chown postgres database/
-RUN chown postgres database/db_files
+## mkdir for database files
+#RUN mkdir database/
+#RUN mkdir database/db_files
+#RUN chown postgres database/
+#RUN chown postgres database/db_files
 RUN chmod 777 /tmp
+
+RUN mkdir /pipeline/xchem_db/migrations
+RUN chmod -R 777 /pipeline/xchem_db/migrations/
 
 # Run the rest of the commands as the 'postgres' user
 USER postgres
