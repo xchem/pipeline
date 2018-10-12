@@ -5,12 +5,10 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 5432
 EXPOSE 8082
 
-# Git pull pipeline
-#RUN git clone https://github.com/xchem/pipeline.git
 RUN mkdir /pipeline
 RUN chmod -R 777 /pipeline
 WORKDIR /pipeline
-ADD * /pipeline
+ADD * /pipeline/
 
 RUN adduser postgres
 
