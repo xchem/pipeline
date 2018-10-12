@@ -8,7 +8,17 @@ EXPOSE 8082
 RUN mkdir /pipeline
 RUN chmod -R 777 /pipeline
 WORKDIR /pipeline
-ADD * /pipeline/
+ADD /api/ /pipeline/api/
+ADD /functions/ /pipeline/functions/
+ADD /luigi_classes/ /pipeline/luigi_classes
+ADD /overview/ /pipeline/overview/
+ADD /tests/ /pipeline/tests/
+COPY run_services.sh .
+COPY manage.py .
+COPY settings_docker_django.py .
+COPY setup_django.py .
+COPY urls.py .
+COPY wsgi.py .
 
 RUN adduser postgres
 
