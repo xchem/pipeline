@@ -31,5 +31,3 @@ RUN chmod 777 /tmp
 # Run the rest of the commands as the 'postgres' user
 USER postgres
 WORKDIR /pipeline
-#RUN ./run_services.sh
-
