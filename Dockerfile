@@ -14,7 +14,7 @@ RUN chown pipeline settings_docker_django.py
 RUN chmod 777 settings_docker_django.py
 RUN mv settings_docker_django.py settings.py
 RUN chmod 777 settings.py
-RUN chown postgres run_services.sh
+RUN chown pipeline run_services.sh
 RUN chmod 777 run_services.sh
 
 # mkdir for database files
