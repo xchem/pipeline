@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/xchem/pipeline.svg?branch=master)](https://travis-ci.org/xchem/pipeline)
+<img src=https://travis-ci.org/xchem/pipeline.svg?branch=master>
 
 =====
 XChemDB
