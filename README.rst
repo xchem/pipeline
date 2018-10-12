@@ -1,5 +1,3 @@
-<img src=https://travis-ci.org/xchem/pipeline.svg?branch=master>
-
 =====
 XChemDB
 =====
