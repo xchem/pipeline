@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/xchem/pipeline.svg?branch=master)](https://travis-ci.org/xchem/pipeline)
 
-=====
+
 XChemDB
 =====
 
