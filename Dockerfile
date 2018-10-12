@@ -10,7 +10,7 @@ WORKDIR pipeline/
 RUN adduser pipeline
 
 # add settings file for django
-COPY settings_docker_django.py .
+#COPY settings_docker_django.py .
 RUN chown pipeline settings_docker_django.py
 RUN chmod 777 settings_docker_django.py
 RUN mv settings_docker_django.py settings.py
