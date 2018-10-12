@@ -25,7 +25,6 @@ RUN mkdir database/
 RUN mkdir database/db_files
 RUN chown postgres database/
 RUN chown postgres database/db_files
-RUN mkdir /tmp
 RUN chmod 777 /tmp
 
 # Run the rest of the commands as the 'postgres' user
