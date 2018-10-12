@@ -27,5 +27,5 @@ RUN mkdir database/db_files
 USER pipeline
 WORKDIR /pipeline
 #ENV PATH /opt/conda/envs/pipeline
-RUN ./run_services.sh
+#RUN ./run_services.sh
 
