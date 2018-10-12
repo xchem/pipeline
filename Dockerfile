@@ -13,7 +13,7 @@ COPY . /pipeline/
 RUN adduser postgres
 
 # add settings file for django
-RUN chown -R /pipeline/ postgres
+RUN chown -R postgres /pipeline/
 RUN chown postgres settings_docker_django.py
 RUN chmod 777 settings_docker_django.py
 RUN mv settings_docker_django.py settings.py
