@@ -1,4 +1,5 @@
 #!/bin/bash
+ls
 source ~/.bashrc
 source activate pipeline
 PYTHONPATH='.'
