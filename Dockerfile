@@ -13,6 +13,7 @@ COPY . /pipeline/
 RUN adduser postgres
 
 # add settings file for django
+RUN chown -R /pipeline/ postgres
 RUN chown postgres settings_docker_django.py
 RUN chmod 777 settings_docker_django.py
 RUN mv settings_docker_django.py settings.py
@@ -27,8 +28,8 @@ RUN chmod 777 run_services.sh
 #RUN chown postgres database/db_files
 RUN chmod 777 /tmp
 
-RUN mkdir /pipeline/xchem_db/migrations
-RUN chmod -R 777 /pipeline/xchem_db/migrations/
+#RUN mkdir /pipeline/xchem_db/migrations
+#RUN chmod -R 777 /pipeline/xchem_db/migrations/
 
 # Run the rest of the commands as the 'postgres' user
 USER postgres
