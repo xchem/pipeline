@@ -1,36 +1,27 @@
+# pull base container with conda environment 'pipeline' in it:
+# github = xchem/django-luigi-docker (linked to autobuild on docker hub)
 FROM reskyner/django-luigi-docker
 
+# use bash from now on
 SHELL ["/bin/bash", "-c"]
 
+# expose 5432 for postgres, and 8082 for luigi
 EXPOSE 5432
 EXPOSE 8082
 
+# create a 'pipeline' directory, and add everything from the current repo into it
 RUN mkdir /pipeline
 RUN chmod -R 777 /pipeline
 WORKDIR /pipeline
 COPY . /pipeline/
 
+# add a new user (postgres for database, but could be changed if changed in settings'
 RUN adduser postgres
 
-# add settings file for django
+# change permissions on all files needed (tmp needed by postgres later)
 RUN chown -R postgres /pipeline/
-RUN chown postgres settings_docker_django.py
-RUN chmod 777 settings_docker_django.py
-RUN mv settings_docker_django.py settings.py
-RUN chmod 777 settings.py
-RUN chown postgres run_services.sh
-RUN chmod 777 run_services.sh
-
-## mkdir for database files
-#RUN mkdir database/
-#RUN mkdir database/db_files
-#RUN chown postgres database/
-#RUN chown postgres database/db_files
 RUN chmod 777 /tmp
 
-#RUN mkdir /pipeline/xchem_db/migrations
-#RUN chmod -R 777 /pipeline/xchem_db/migrations/
-
-# Run the rest of the commands as the 'postgres' user
+# change to postgres user and make sure we start in the pipeline directory
 USER postgres
 WORKDIR /pipeline
