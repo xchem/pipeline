@@ -11,9 +11,9 @@ EXPOSE 8082
 
 # create a 'pipeline' directory, and add everything from the current repo into it
 RUN mkdir /pipeline
-RUN chmod -R 777 /pipeline
 WORKDIR /pipeline
 COPY . /pipeline/
+RUN chmod -R 777 /pipeline/
 
 # add a new user (postgres for database, but could be changed if changed in settings'
 RUN adduser postgres
