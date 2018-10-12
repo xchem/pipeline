@@ -10,25 +10,26 @@ RUN git clone https://github.com/xchem/pipeline.git
 RUN chmod -R 777 pipeline/
 WORKDIR pipeline/
 
-RUN adduser pipeline
+RUN adduser postgres
 
 # add settings file for django
-RUN chown pipeline settings_docker_django.py
+RUN chown postgres settings_docker_django.py
 RUN chmod 777 settings_docker_django.py
 RUN mv settings_docker_django.py settings.py
 RUN chmod 777 settings.py
-RUN chown pipeline run_services.sh
+RUN chown postgres run_services.sh
 RUN chmod 777 run_services.sh
 
 # mkdir for database files
 RUN mkdir database/
 RUN mkdir database/db_files
-RUN chown pipeline database/
-RUN chown pipeline database/db_files
+RUN chown postgres database/
+RUN chown postgres database/db_files
+RUN mkdir /tmp
+RUN chmod 777 /tmp
 
 # Run the rest of the commands as the 'postgres' user
-USER pipeline
+USER postgres
 WORKDIR /pipeline
-#ENV PATH /opt/conda/envs/pipeline
-#RUN ./run_services.sh
+RUN ./run_services.sh
 
