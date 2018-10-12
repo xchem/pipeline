@@ -1,3 +1,9 @@
+sudo: required
+services: docker
+install: docker build -t pipeline .
+script: docker run pipeline /bin/bash -c "./run_services.sh"
+
+
 deploy:
   provider: pypi
   user: abradle
