@@ -22,6 +22,9 @@ RUN adduser postgres
 RUN chown -R postgres /pipeline/
 RUN chmod 777 /tmp
 
+# move django settings to correct file name
+RUN mv settings_docker_django.py settings.py
+
 # change to postgres user and make sure we start in the pipeline directory
 USER postgres
 WORKDIR /pipeline
