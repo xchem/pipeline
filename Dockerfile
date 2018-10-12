@@ -10,10 +10,10 @@ WORKDIR pipeline/
 RUN adduser pipeline
 
 # add settings file for django
-#COPY settings_docker_django.py .
-RUN chown pipeline settings_docker_django.py
-RUN chmod 777 settings_docker_django.py
-RUN mv settings_docker_django.py settings.py
+##COPY settings_docker_django.py .
+#RUN chown pipeline settings_docker_django.py
+#RUN chmod 777 settings_docker_django.py
+#RUN mv settings_docker_django.py settings.py
 #RUN chmod 777 settings.py
 #COPY run_services.sh .
 #RUN chown postgres run_services.sh
@@ -29,5 +29,5 @@ RUN mkdir database/db_files
 USER pipeline
 WORKDIR /pipeline
 #ENV PATH /opt/conda/envs/pipeline
-RUN ./run_services.sh
+#RUN ./run_services.sh
 
