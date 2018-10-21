@@ -107,25 +107,24 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.remove(self.findsoakdb_outfile)
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
-    def test_check_files(self):
-        check_files = run_luigi_worker(CheckFiles())
-
-        self.assertTrue(check_files)
-
-    def test_transfers(self):
-        print('TESTING TRANSFERS: test_transfers')
-        find_file = run_luigi_worker(FindSoakDBFiles(
-            filepath=str(self.working_dir + '*')))
-        self.assertTrue(find_file)
-        test_new_file = run_luigi_worker(TransferNewDataFile(data_file=self.db_full_path,
-                                                             soak_db_filepath=str(self.working_dir + '*')
-                                                             ))
-        self.assertTrue(test_new_file)
-
-        # get the status value from soakdb entry for current file
-        status = list(SoakdbFiles.objects.values_list('status', flat=True))
-        # check == 2 (not changed - ie. has been successfully added)
-        self.assertEqual(int(status[0]), 2)
+    # def test_check_files(self):
+    #     check_files = run_luigi_worker(CheckFiles())
+    #     self.assertTrue(check_files)
+    #
+    # def test_transfers(self):
+    #     print('TESTING TRANSFERS: test_transfers')
+    #     find_file = run_luigi_worker(FindSoakDBFiles(
+    #         filepath=str(self.working_dir + '*')))
+    #     self.assertTrue(find_file)
+    #     test_new_file = run_luigi_worker(TransferNewDataFile(data_file=self.db_full_path,
+    #                                                          soak_db_filepath=str(self.working_dir + '*')
+    #                                                          ))
+    #     self.assertTrue(test_new_file)
+    #
+    #     # get the status value from soakdb entry for current file
+    #     status = list(SoakdbFiles.objects.values_list('status', flat=True))
+    #     # check == 2 (not changed - ie. has been successfully added)
+    #     self.assertEqual(int(status[0]), 2)
 
 #         test_changed_file = run_luigi_worker(TransferChangedDataFile(data_file=self.db_full_path,
 #                                                                           soak_db_filepath=str(self.working_dir + '*')
