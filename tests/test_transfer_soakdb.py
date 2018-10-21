@@ -46,7 +46,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         json_file = json.load(open(os.path.join(cls.filepath, cls.json_file_name)))
 
         # write json to sqlite file
-        conn = sqlite3.connect(db)
+        conn = sqlite3.connect(cls.db)
         df = pandas.DataFrame.from_dict(json_file)
         df.to_sql("mainTable", conn, if_exists='replace')
         conn.close()
