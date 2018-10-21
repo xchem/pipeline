@@ -16,7 +16,7 @@ EXPOSE 8082
 RUN mkdir /pipeline
 WORKDIR /pipeline
 COPY . /pipeline/
-#RUN chmod -R 777 /pipeline/
+RUN chmod 777 /pipeline/run_services.sh
 
 # add a new user (postgres for database, but could be changed if changed in settings'
 RUN adduser postgres
