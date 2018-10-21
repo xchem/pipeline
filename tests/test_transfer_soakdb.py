@@ -1,5 +1,4 @@
 import os
-import shutil
 import unittest
 import sqlite3
 import json
@@ -12,16 +11,29 @@ from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndD
 from test_functions import run_luigi_worker
 from xchem_db.models import *
 
+# task list:
+# + FindSoakDBFiles
+# - CheckFiles
+# + TransferAllFedIDsAndDatafiles
+# - TransferChangedDataFile
+# - TransferNewDataFile
+# - StartTransfers
+# - CheckFileUpload
+# - CheckUploadedFiles
 
-class TestTasks(unittest.TestCase):
 
+class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
     filepath = '/pipeline/tests/data/soakdb_files/'
     db_file_name = 'soakDBDataFile.sqlite'
     json_file_name = 'soakDBDataFile.json'
 
     # date for tasks
-    date = datetime.date.today()
+    date = datetime.datetime.now()
+
+    # variables to check
+    findsoakdb_outfile = os.path.join('/pipeline', date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt'))
+    transfer_outfile = os.path.join('/pipeline', date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt'))
 
     @classmethod
     def setUpClass(cls):
@@ -39,41 +51,66 @@ class TestTasks(unittest.TestCase):
         df.to_sql("mainTable", conn, if_exists='replace')
         conn.close()
 
+        # create log directories
+        os.makedirs('/pipeline/logs/soakDBfiles')
+        os.makedirs('/pipeline/logs/transfer_logs')
 
     @classmethod
     def tearDownClass(cls):
         pass
 
+    # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
-        print('TESTING FINDSOAKDB: test_findsoakdb')
-        os.chdir(self.working_dir)
-        print(os.path.join(self.working_dir) + '*')
-        find_file = run_luigi_worker(FindSoakDBFiles(
-            filepath=str(self.working_dir + '*')))
-        self.assertTrue(find_file)
+        # Run the FindSoakDBFiles task
+        find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.filepath, date=self.date))
+        # find the output file according to the task
+        output_file = FindSoakDBFiles(filepath=self.filepath).output().path
+        # read the output file from the task
+        output_text = open(output_file, 'r').read().rstrip()
 
+        # check the task has run (by worker)
+        self.assertTrue(find_file)
+        # check the output file is as expected
+        self.assertEqual(output_file, self.findsoakdb_outfile)
+        # check the text in the output file is as expected
+        self.assertEqual(output_text, self.db)
+
+        # delete files created by the test
+        os.remove(output_file)
+
+    # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles
     def test_transfer_fedids_files(self):
+
+        # make sure there's nothing in the soakdb_files table
         soakdb_rows = SoakdbFiles.objects.all()
         soakdb_rows.delete()
 
-        run_luigi_worker(FindSoakDBFiles(
-            filepath=str(self.working_dir + '*')))
-        print('TESTING FEDIDS: test_transfer_fedids_files')
-        transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(
-            date=self.date, soak_db_filepath=str(self.working_dir + '*')))
+        # run the task to transfer all fedids and datafiles
+        transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
+                                                                  soak_db_filepath=self.filepath))
+
+        output_file = TransferAllFedIDsAndDatafiles(date=self.date, soak_db_filepath=self.filepath).output().path
+
+        # check the find files task has run (by output)
+        self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
+        # check the transfer task has run (by worker)
         self.assertTrue(transfer)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.transfer_outfile)
 
+        # make sure there's nothing in the soakdb_files table
+        soakdb_rows = SoakdbFiles.objects.all()
+        soakdb_rows.delete()
+
+        # remove output files
+        os.remove(output_file)
+        os.remove(self.findsoakdb_outfile)
+
+    # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     def test_check_files(self):
-        print('TESTING CHECK_FILES: test_check_files')
-        check_files = run_luigi_worker(CheckFiles(soak_db_filepath=str(self.working_dir + '*')))
-        self.assertTrue(check_files)
+        check_files = run_luigi_worker(CheckFiles())
 
-        # get the status value from soakdb entry for current file
-        print('\n')
-        print('status:')
-        status = list(SoakdbFiles.objects.values_list('status', flat=True))
-        print(status)
-        print('\n')
+        self.assertTrue(check_files)
 
     def test_transfers(self):
         print('TESTING TRANSFERS: test_transfers')
