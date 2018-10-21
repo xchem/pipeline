@@ -1,0 +1,15 @@
+
+Validation summary for refine.pdb:
+  Ramachandran outliers =   0.53 %
+                favored =  97.62 %
+  Rotamer outliers      =   3.30 %
+  C-beta deviations     =     1
+  Clashscore            =   7.66 (percentile: 26.8)
+  RMS(bonds)            =   0.0000
+  RMS(angles)           =   0.00
+  MolProbity score      =   1.89 (percentile: 21.9)
+  Resolution            =   1.65
+  R-work                =   0.2117 (percentile: 10.4)
+  R-free                =   0.2490 (percentile: 8.4)
+  Refinement program    = REFMAC
+

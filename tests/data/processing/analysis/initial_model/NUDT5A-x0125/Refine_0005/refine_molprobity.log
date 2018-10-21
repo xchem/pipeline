@@ -1,0 +1,505 @@
+
+============================== Experimental data ==============================
+
+  Wavelength                 = 0.9159
+  Resolution range           =  31.872 - 1.650 (1.709 - 1.650)
+  Number of reflections      =   100263 (9924)
+     after outlier rejection =   100250 (9924)
+  Completeness               =  96.26% (94.94%)
+  R-work                     =   0.2280 (0.4120)
+  R-free                     =   0.2601 (0.4195)
+  By resolution bin:
+   BIN  RESOLUTION RANGE  COMPL.    NWORK NFREE   RWORK  RFREE  CCWORK CCFREE
+     1 31.8777 -  3.5533    0.98     9716   479  0.1842 0.2046   0.910  0.873
+     2  3.5533 -  2.8209    0.97     9598   513  0.2275 0.2614   0.872  0.822
+     3  2.8209 -  2.4645    0.97     9548   536  0.2309 0.2712   0.858  0.798
+     4  2.4645 -  2.2392    0.97     9585   476  0.2247 0.2689   0.863  0.768
+     5  2.2392 -  2.0788    0.97     9593   505  0.2395 0.2908   0.842  0.737
+     6  2.0788 -  1.9562    0.95     9370   517  0.2470 0.2860   0.821  0.741
+     7  1.9562 -  1.8583    0.96     9497   498  0.2930 0.3217   0.725  0.673
+     8  1.8583 -  1.7774    0.96     9386   545  0.3229 0.3557   0.629  0.568
+     9  1.7774 -  1.7090    0.96     9492   472  0.3706 0.3843   0.469  0.362
+    10  1.7090 -  1.6500    0.95     9407   517  0.4120 0.4195   0.319  0.325
+
+              ----------Residues with poor real-space CC----------             
+
+  atom                   b_iso   occ  2Fo-Fc  Fmodel     CC
+   B  14  LYS            56.59  1.00    1.82    2.19  0.749
+   B 165  GLY            73.14  1.00    1.18    1.83  0.793
+   C  23  ILE            56.38  1.00    2.22    2.57  0.777
+   C  39  PRO            49.94  1.00    2.01    3.04  0.794
+   C  43  THR            59.01  1.00    1.76    2.55  0.759
+   C  55  LYS            57.26  1.00    1.88    2.46  0.779
+   C 101  ASP            62.95  1.00    1.60    2.89  0.777
+   D  53  THR            51.98  1.00    2.02    2.67  0.780
+   D 152  ASP            53.03  1.00    1.79    2.74  0.734
+   D 154  GLU            45.16  1.00    2.22    2.87  0.756
+   D 208  ASN            30.16  0.25    1.38    2.50  0.716
+   D 208  ASN            30.16  0.25    1.38    2.50  0.716
+   D 208  ASN            34.83  0.25    1.43    2.36  0.741
+   D 208  ASN            34.83  0.25    1.43    2.36  0.741
+   B 303  MG             95.92  1.00    1.20    1.30  0.792
+   E   1  LIG            37.70  0.22    0.60    1.12  0.786
+   E   1  LIG            37.70  0.22    0.60    1.12  0.786
+   E   2  LIG            48.84  0.29    0.97    1.41  0.775
+   E   2  LIG            48.84  0.29    0.97    1.41  0.775
+  66 residues (including water) with CC(Fc,2mFo-DFc) < 0.8
+
+                 ----------Suspicious water molecules----------                
+
+  Waters in poor density:
+  atom                   b_iso   occ  2Fo-Fc   Fo-Fc    Anom     CC
+   A 401    O            43.19  1.00    1.86    0.02     ---  0.706
+   A 412    O            53.48  1.00    1.29    0.42     ---  0.722
+   A 421    O            47.27  1.00    1.70    0.26     ---  0.719
+   A 432    O            39.46  1.00    1.93   -0.40     ---  0.781
+   A 447    O            45.65  1.00    1.17   -0.83     ---  0.796
+   A 448    O            52.74  1.00    1.04   -0.03     ---  0.533
+   A 450    O            42.92  1.00    2.63    2.31     ---  0.747
+   A 452    O            42.96  1.00    2.57    2.23     ---  0.620
+   A 453    O            54.55  1.00    0.68   -0.89     ---  0.770
+   A 458    O            55.08  1.00    1.61    1.29     ---  0.726
+   A 461    O            46.93  1.00    2.00    1.19     ---  0.780
+   A 468    O            43.23  1.00    2.18    0.60     ---  0.748
+   A 469    O            52.06  1.00    2.02    1.40     ---  0.665
+   B 422    O            41.39  1.00    2.43    1.23     ---  0.777
+   B 429    O            48.57  1.00    1.67    0.78     ---  0.637
+   B 431    O            48.65  1.00    1.39   -0.19     ---  0.693
+   B 449    O            53.25  1.00    1.31    0.06     ---  0.622
+   B 450    O            51.69  1.00    2.14    1.22     ---  0.742
+   B 453    O            50.29  1.00    1.93    1.08     ---  0.712
+   B 457    O            53.17  1.00    1.81    0.91     ---  0.745
+   B 459    O            49.68  1.00    1.83    0.56     ---  0.793
+   B 461    O            43.91  1.00    1.60   -0.24     ---  0.725
+   B 462    O            44.19  1.00    1.76    0.08     ---  0.734
+   B 463    O            54.14  1.00    1.03   -0.25     ---  0.613
+   C 414    O            47.57  1.00    1.86    0.18     ---  0.735
+   C 420    O            45.55  1.00    1.61   -0.18     ---  0.729
+   C 433    O            57.17  1.00    1.66    0.85     ---  0.779
+   C 436    O            60.32  1.00    0.99   -0.49     ---  0.693
+   C 441    O            64.24  1.00    0.75   -0.03     ---  0.458
+   C 445    O            60.79  1.00    0.73   -0.04     ---  0.534
+   C 453    O            39.55  1.00    2.68    1.83     ---  0.681
+   C 455    O            46.83  1.00    2.39    2.04     ---  0.731
+   C 456    O            56.33  1.00    1.56    1.21     ---  0.798
+   C 459 A  O            36.55  0.21    3.46    2.08     ---  0.952
+   C 459 B  O            36.55  0.21    3.46    2.08     ---  0.952
+   C 460    O            45.81  1.00    1.78    0.47     ---  0.744
+   C 462    O            52.71  1.00    1.91    0.93     ---  0.751
+   C 464    O            50.06  1.00    1.49    0.14     ---  0.777
+   D 407    O            56.20  1.00    1.12   -0.21     ---  0.762
+   D 408    O            55.38  1.00    1.27    0.44     ---  0.741
+   D 414 A  O            20.96  0.21    2.09    2.05     ---  0.867
+   D 414 B  O            20.96  0.21    2.09    2.05     ---  0.867
+   D 420    O            51.83  1.00    1.01   -0.36     ---  0.523
+   D 423    O            44.78  1.00    2.84    2.61     ---  0.599
+   D 424    O            42.18  1.00    1.42   -3.03     ---  0.957
+   D 426    O            57.40  1.00    1.74    1.62     ---  0.771
+   F   1 C  O            31.33  0.29    1.85    1.32     ---  0.785
+   F   1 D  O            31.33  0.29    1.85    1.32     ---  0.785
+   F   2 C  O            27.80  0.29    2.37    1.80     ---  0.927
+   F   2 D  O            27.80  0.29    2.37    1.80     ---  0.927
+   F   3 C  O            43.91  0.50    1.70   -0.60     ---  0.798
+   F   3 D  O            43.91  0.50    1.70   -0.60     ---  0.798
+   F   4 C  O            58.58  0.29   -0.13    0.15     ---  0.221
+   F   4 D  O            58.58  0.29   -0.13    0.15     ---  0.221
+   F   5 C  O            36.35  0.29    1.69    1.16     ---  0.865
+   F   5 D  O            36.35  0.29    1.69    1.16     ---  0.865
+   F   6 C  O            29.33  0.29    2.15    1.99     ---  0.913
+   F   6 D  O            29.33  0.29    2.15    1.99     ---  0.913
+
+  Poorly ordered waters:    58
+
+=============================== Model properties ==============================
+
+  Overall:
+    Number of atoms = 6655  (anisotropic = 0)
+    B_iso: mean =  35.5  max =  96.7  min =  17.3
+    Occupancy: mean = 0.90  max = 1.00  min = 0.21
+    108 total B-factor or occupancy problem(s) detected
+  Macromolecules:
+    Number of atoms = 6330  (anisotropic = 0)
+    B_iso: mean =  35.3  max =  96.7  min =  17.3
+    Occupancy: mean = 0.90  max = 1.00  min = 0.21
+    23 total B-factor or occupancy problem(s) detected
+  Ligands:
+    Number of atoms = 86  (anisotropic = 0)
+    B_iso: mean =  44.5  max =  95.9  min =  26.7
+    Occupancy: mean = 0.39  max = 1.00  min = 0.22
+    71 total B-factor or occupancy problem(s) detected
+  Waters:
+    Number of atoms = 239  (anisotropic = 0)
+    B_iso: mean =  37.6  max =  64.2  min =  18.0
+    Occupancy: mean = 0.95  max = 1.00  min = 0.21
+    14 total B-factor or occupancy problem(s) detected
+
+============================= Geometry restraints =============================
+
+
+                        ----------Bond lengths----------                       
+
+  atoms                 ideal   model   delta   sigma   slack  residual   deviation
+   D 152  ASP  C      
+   D 154  GLU  N           1.33     2.95    -1.62  1.40e-02  1.34e+04  115.9*sigma
+   A 104  THR  CB     
+   A 104  THR  CG2         1.52     1.37     0.15  3.30e-02  2.02e+01   4.5*sigma
+
+  Min. delta:    0.000 (Z=  0.000)
+  Max. delta:    1.622 (Z=115.890)
+  Mean delta:    0.027 (Z=  1.700)
+
+                        ----------Bond angles----------                        
+
+  atoms                   ideal    model    delta   sigma  residual   deviation
+   D 152  ASP  O      
+   D 152  ASP  C      
+   D 154  GLU  N         123.00    86.34    36.66  1.60e+00  5.25e+02  22.9*sigma
+   D 152  ASP  C      
+   D 154  GLU  N      
+   D 154  GLU  CA        121.70   142.72   -21.02  1.80e+00  1.36e+02  11.7*sigma
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 154  GLU  N         116.20   128.04   -11.84  2.00e+00  3.50e+01   5.9*sigma
+   A  82  GLN  C      
+   A  82  GLN  CA     
+   A  82  GLN  CB        110.10   100.88     9.22  1.90e+00  2.35e+01   4.9*sigma
+   B  38  ASP  C      
+   B  38  ASP  CA     
+   B  38  ASP  CB        110.10   119.06    -8.96  1.90e+00  2.22e+01   4.7*sigma
+   D  74  TYR  CA     
+   D  74  TYR  CB     
+   D  74  TYR  CG        113.90   122.32    -8.42  1.80e+00  2.19e+01   4.7*sigma
+   C 207  ALA  CA     
+   C 207  ALA  C      
+   C 207  ALA  O         120.80   113.43     7.37  1.70e+00  1.88e+01   4.3*sigma
+   D 132  MET  CG     
+   D 132  MET  SD     
+   D 132  MET  CE        100.90    91.64     9.26  2.20e+00  1.77e+01   4.2*sigma
+   A  38  ASP  C      
+   A  38  ASP  CA     
+   A  38  ASP  CB        110.10   117.92    -7.82  1.90e+00  1.69e+01   4.1*sigma
+   A 125  GLU  N      
+   A 125  GLU  CA     
+   A 125  GLU  CB        110.50   117.44    -6.94  1.70e+00  1.67e+01   4.1*sigma
+   B  75  GLU  C      
+   B  75  GLU  CA     
+   B  75  GLU  CB        110.10   102.38     7.72  1.90e+00  1.65e+01   4.1*sigma
+
+  Min. delta:    0.000 (Z=  0.000)
+  Max. delta:   36.661 (Z= 22.913)
+  Mean delta:    1.995 (Z=  0.958)
+
+                      ----------Dihedral angles----------                      
+
+  atoms                   ideal    model    delta   sigma  residual   deviation
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 154  GLU  N      
+   D 154  GLU  CA        180.00    84.04    95.96  5.00e+00  3.68e+02  19.2*sigma
+   D 196 BARG  CD     
+   D 196 BARG  NE     
+   D 196 BARG  CZ     
+   D 196 BARG  NH1         0.00   179.80  -179.80  1.00e+01  1.92e+02  18.0*sigma
+   D 196 DARG  CD     
+   D 196 DARG  NE     
+   D 196 DARG  CZ     
+   D 196 DARG  NH1         0.00   179.80  -179.80  1.00e+01  1.92e+02  18.0*sigma
+   D  51 CARG  CD     
+   D  51 CARG  NE     
+   D  51 CARG  CZ     
+   D  51 CARG  NH1         0.00   179.77  -179.77  1.00e+01  1.92e+02  18.0*sigma
+   D  51 DARG  CD     
+   D  51 DARG  NE     
+   D  51 DARG  CZ     
+   D  51 DARG  NH1         0.00   179.77  -179.77  1.00e+01  1.92e+02  18.0*sigma
+   A 196  ARG  CD     
+   A 196  ARG  NE     
+   A 196  ARG  CZ     
+   A 196  ARG  NH1         0.00   177.42  -177.42  1.00e+01  1.92e+02  17.7*sigma
+   C  70  ARG  CD     
+   C  70  ARG  NE     
+   C  70  ARG  CZ     
+   C  70  ARG  NH1         0.00  -175.72   175.72  1.00e+01  1.92e+02  17.6*sigma
+   B 207  ALA  CA     
+   B 207  ALA  C      
+   B 208  ASN  N      
+   B 208  ASN  CA        180.00   149.43    30.57  5.00e+00  3.74e+01   6.1*sigma
+   B 106  GLU  CB     
+   B 106  GLU  CG     
+   B 106  GLU  CD     
+   B 106  GLU  OE1         0.00  -177.69   177.69  3.00e+01  2.13e+01   5.9*sigma
+   D 188  GLU  CB     
+   D 188  GLU  CG     
+   D 188  GLU  CD     
+   D 188  GLU  OE1         0.00  -177.13   177.13  3.00e+01  2.13e+01   5.9*sigma
+   B 188  GLU  CB     
+   B 188  GLU  CG     
+   B 188  GLU  CD     
+   B 188  GLU  OE1         0.00  -175.51   175.51  3.00e+01  2.13e+01   5.9*sigma
+   B 115  GLU  CB     
+   B 115  GLU  CG     
+   B 115  GLU  CD     
+   B 115  GLU  OE1         0.00  -174.27   174.27  3.00e+01  2.13e+01   5.8*sigma
+   A  32  GLU  CB     
+   A  32  GLU  CG     
+   A  32  GLU  CD     
+   A  32  GLU  OE1         0.00   172.21  -172.21  3.00e+01  2.12e+01   5.7*sigma
+   C 112  GLU  CB     
+   C 112  GLU  CG     
+   C 112  GLU  CD     
+   C 112  GLU  OE1         0.00   170.55  -170.55  3.00e+01  2.12e+01   5.7*sigma
+   C 115  GLU  CB     
+   C 115  GLU  CG     
+   C 115  GLU  CD     
+   C 115  GLU  OE1         0.00  -170.51   170.51  3.00e+01  2.12e+01   5.7*sigma
+   A  47  GLU  CB     
+   A  47  GLU  CG     
+   A  47  GLU  CD     
+   A  47  GLU  OE1         0.00  -170.16   170.16  3.00e+01  2.12e+01   5.7*sigma
+   B  32  GLU  CB     
+   B  32  GLU  CG     
+   B  32  GLU  CD     
+   B  32  GLU  OE1         0.00   169.54  -169.54  3.00e+01  2.12e+01   5.7*sigma
+   D 106  GLU  CB     
+   D 106  GLU  CG     
+   D 106  GLU  CD     
+   D 106  GLU  OE1         0.00   168.31  -168.31  3.00e+01  2.11e+01   5.6*sigma
+   A 115  GLU  CB     
+   A 115  GLU  CG     
+   A 115  GLU  CD     
+   A 115  GLU  OE1         0.00  -167.17   167.17  3.00e+01  2.11e+01   5.6*sigma
+   B  47  GLU  CB     
+   B  47  GLU  CG     
+   B  47  GLU  CD     
+   B  47  GLU  OE1         0.00  -167.12   167.12  3.00e+01  2.11e+01   5.6*sigma
+   A 112  GLU  CB     
+   A 112  GLU  CG     
+   A 112  GLU  CD     
+   A 112  GLU  OE1         0.00   166.72  -166.72  3.00e+01  2.10e+01   5.6*sigma
+   B 154  GLU  CB     
+   B 154  GLU  CG     
+   B 154  GLU  CD     
+   B 154  GLU  OE1         0.00   163.70  -163.70  3.00e+01  2.09e+01   5.5*sigma
+   B 112  GLU  CB     
+   B 112  GLU  CG     
+   B 112  GLU  CD     
+   B 112  GLU  OE1         0.00   161.75  -161.75  3.00e+01  2.08e+01   5.4*sigma
+   C 106  GLU  CB     
+   C 106  GLU  CG     
+   C 106  GLU  CD     
+   C 106  GLU  OE1         0.00   160.65  -160.65  3.00e+01  2.07e+01   5.4*sigma
+   C 101  ASP  CA     
+   C 101  ASP  CB     
+   C 101  ASP  CG     
+   C 101  ASP  OD1         0.00  -137.09   107.09  2.00e+01  3.11e+01   5.4*sigma
+   A 125  GLU  CB     
+   A 125  GLU  CG     
+   A 125  GLU  CD     
+   A 125  GLU  OE1         0.00   160.07  -160.07  3.00e+01  2.07e+01   5.3*sigma
+   C 154  GLU  CB     
+   C 154  GLU  CG     
+   C 154  GLU  CD     
+   C 154  GLU  OE1         0.00   157.78  -157.78  3.00e+01  2.05e+01   5.3*sigma
+   A  82  GLN  C      
+   A  82  GLN  N      
+   A  82  GLN  CA     
+   A  82  GLN  CB       -122.60  -109.49   -13.11  2.50e+00  2.75e+01   5.2*sigma
+   D 196 BARG  CG     
+   D 196 BARG  CD     
+   D 196 BARG  NE     
+   D 196 BARG  CZ         90.00   -11.86   -78.14  1.50e+01  2.04e+01   5.2*sigma
+   D 196 DARG  CG     
+   D 196 DARG  CD     
+   D 196 DARG  NE     
+   D 196 DARG  CZ         90.00   -11.86   -78.14  1.50e+01  2.04e+01   5.2*sigma
+   A 141  ILE  CA     
+   A 141  ILE  C      
+   A 142  HIS  N      
+   A 142  HIS  CA        180.00   154.00    26.00  5.00e+00  2.70e+01   5.2*sigma
+   D  52  THR  CA     
+   D  52  THR  C      
+   D  53  THR  N      
+   D  53  THR  CA        180.00   154.34    25.66  5.00e+00  2.63e+01   5.1*sigma
+   A 106  GLU  CB     
+   A 106  GLU  CG     
+   A 106  GLU  CD     
+   A 106  GLU  OE1         0.00   150.86  -150.86  3.00e+01  2.00e+01   5.0*sigma
+   D 133  ASP  CA     
+   D 133  ASP  C      
+   D 134  PRO  N      
+   D 134  PRO  CA        180.00  -155.02   -24.98  5.00e+00  2.50e+01   5.0*sigma
+   A  20  GLU  CB     
+   A  20  GLU  CG     
+   A  20  GLU  CD     
+   A  20  GLU  OE1         0.00   149.15  -149.15  3.00e+01  1.98e+01   5.0*sigma
+   C 100  ASP  CA     
+   C 100  ASP  CB     
+   C 100  ASP  CG     
+   C 100  ASP  OD1         0.00   168.39   -98.39  2.00e+01  2.75e+01   4.9*sigma
+   A 127  SER  CA     
+   A 127  SER  C      
+   A 128  PRO  N      
+   A 128  PRO  CA        180.00   155.64    24.36  5.00e+00  2.37e+01   4.9*sigma
+   C 141  ILE  CA     
+   C 141  ILE  C      
+   C 142  HIS  N      
+   C 142  HIS  CA        180.00   156.32    23.68  5.00e+00  2.24e+01   4.7*sigma
+   D  52  THR  C      
+   D  52  THR  N      
+   D  52  THR  CA     
+   D  52  THR  CB       -122.00  -133.79    11.79  2.50e+00  2.23e+01   4.7*sigma
+   D 115  GLU  CB     
+   D 115  GLU  CG     
+   D 115  GLU  CD     
+   D 115  GLU  OE1         0.00  -141.47   141.47  3.00e+01  1.90e+01   4.7*sigma
+   D 125 AGLU  CB     
+   D 125 AGLU  CG     
+   D 125 AGLU  CD     
+   D 125 AGLU  OE1         0.00   140.74  -140.74  3.00e+01  1.89e+01   4.7*sigma
+   D 125 BGLU  CB     
+   D 125 BGLU  CG     
+   D 125 BGLU  CD     
+   D 125 BGLU  OE1         0.00   140.74  -140.74  3.00e+01  1.89e+01   4.7*sigma
+   B 125 BGLU  CB     
+   B 125 BGLU  CG     
+   B 125 BGLU  CD     
+   B 125 BGLU  OE1         0.00   139.87  -139.87  3.00e+01  1.88e+01   4.7*sigma
+   B 125 AGLU  CB     
+   B 125 AGLU  CG     
+   B 125 AGLU  CD     
+   B 125 AGLU  OE1         0.00   139.87  -139.87  3.00e+01  1.88e+01   4.7*sigma
+   B 127 DSER  CA     
+   B 127 DSER  C      
+   B 128  PRO  N      
+   B 128  PRO  CA        180.00   157.16    22.84  5.00e+00  2.09e+01   4.6*sigma
+   B 127 CSER  CA     
+   B 127 CSER  C      
+   B 128  PRO  N      
+   B 128  PRO  CA        180.00   157.16    22.84  5.00e+00  2.09e+01   4.6*sigma
+   D  74  TYR  C      
+   D  74  TYR  N      
+   D  74  TYR  CA     
+   D  74  TYR  CB       -122.60  -111.39   -11.21  2.50e+00  2.01e+01   4.5*sigma
+   A 164  ASP  CA     
+   A 164  ASP  CB     
+   A 164  ASP  CG     
+   A 164  ASP  OD1         0.00  -117.93    87.93  2.00e+01  2.31e+01   4.4*sigma
+   D  24  SER  CA     
+   D  24  SER  C      
+   D  25  GLU  N      
+   D  25  GLU  CA        180.00  -158.26   -21.74  5.00e+00  1.89e+01   4.3*sigma
+   A 133  ASP  CA     
+   A 133  ASP  C      
+   A 134  PRO  N      
+   A 134  PRO  CA        180.00  -158.52   -21.48  5.00e+00  1.85e+01   4.3*sigma
+   D 207  ALA  CA     
+   D 207  ALA  C      
+   D 208 DASN  N      
+   D 208 DASN  CA        180.00   158.57    21.43  5.00e+00  1.84e+01   4.3*sigma
+   D 207  ALA  CA     
+   D 207  ALA  C      
+   D 208 CASN  N      
+   D 208 CASN  CA        180.00   158.57    21.43  5.00e+00  1.84e+01   4.3*sigma
+   D 160  PRO  CA     
+   D 160  PRO  C      
+   D 161  LYS  N      
+   D 161  LYS  CA        180.00   158.64    21.36  5.00e+00  1.82e+01   4.3*sigma
+   A 100  ASP  CA     
+   A 100  ASP  CB     
+   A 100  ASP  CG     
+   A 100  ASP  OD1         0.00   153.61   -83.61  2.00e+01  2.13e+01   4.2*sigma
+   B  82  GLN  C      
+   B  82  GLN  N      
+   B  82  GLN  CA     
+   B  82  GLN  CB       -122.60  -112.23   -10.37  2.50e+00  1.72e+01   4.1*sigma
+   D 151  ASP  CA     
+   D 151  ASP  CB     
+   D 151  ASP  CG     
+   D 151  ASP  OD1         0.00   152.57   -82.57  2.00e+01  2.09e+01   4.1*sigma
+   B 133  ASP  CA     
+   B 133  ASP  C      
+   B 134  PRO  N      
+   B 134  PRO  CA        180.00  -159.75   -20.25  5.00e+00  1.64e+01   4.0*sigma
+
+  Min. delta:    0.003
+  Max. delta:  179.801
+  Mean delta:   19.166
+
+                       ----------Chiral volumes----------                      
+
+  All restrained atoms within 4.0 sigma of ideal values.
+
+  Min. delta:    0.000
+  Max. delta:    0.461
+  Mean delta:    0.122
+
+                       ----------Planar groups----------                       
+
+  atoms                 rms_deltas   delta_max    residual   deviation
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 152  ASP  O      
+   D 154  GLU  N             0.199       0.152      394.40   7.6*sigma
+
+  Min. delta:    0.000
+  Max. delta:    0.199
+  Mean delta:    0.013
+
+============================ Molprobity validation ============================
+
+  
+  deviations from ideal values.
+    bond      :  0.027   1.622   6493
+    angle     :  1.995  36.661   8930
+    chirality :  0.122   0.461   1053
+    planarity :  0.013   0.199   1187
+    dihedral  : 19.166 179.801   3951
+    min nonbonded distance : 1.183 
+    
+  molprobity statistics.
+    all-atom clashscore : 6.14
+    ramachandran plot:
+      outliers : 0.53  %
+      allowed  : 1.99  %
+      favored  : 97.48 %
+    rotamer outliers : 3.63 %
+    cbeta deviations : 0
+    peptide plane:
+      cis-proline     : 0.0
+      cis-general     : 0.0
+      twisted proline : 0.0
+      twisted general : 0.127388535032
+
+                     ----------Asn/Gln/His flips----------                     
+
+   C 206 CHIS
+   C 206 DHIS
+   D 206  HIS
+   A 206 AHIS
+   A 206 BHIS
+   A 206 CHIS
+   A 206 DHIS
+   B 206  HIS
+   A  73  HIS
+   B  73  HIS
+   B 190  HIS
+   B 208  ASN
+   D  69  GLN
+   D 149 AASN
+   D 149 BASN
+   D 155  ASN
+
+=================================== Summary ===================================
+
+  Ramachandran outliers =   0.53 %
+                favored =  97.48 %
+  Rotamer outliers      =   3.63 %
+  C-beta deviations     =     3
+  Clashscore            =   6.14
+  RMS(bonds)            =   0.0275
+  RMS(angles)           =   1.99
+  MolProbity score      =   1.87
+  Resolution            =   1.65
+  R-work                =   0.2280
+  R-free                =   0.2601
+  Refinement program    = REFMAC
