@@ -1,0 +1,65 @@
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Checking the continuity of the protein backbone                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+No breaks in the backbone - hooray! (nothing needs to be done here)
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Generating restraints for duplicated conformers                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+Found 2 duplicated conformers consisting of 22 atoms
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                            refmac duplicate conformer restraints                             ---
+----------------------------------------------- *** ------------------------------------------------
+
+exte dist first chain D resi  196 alte A atom  N   second chain D resi  196 alte C atom  N   value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  CA  second chain D resi  196 alte C atom  CA  value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  C   second chain D resi  196 alte C atom  C   value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  O   second chain D resi  196 alte C atom  O   value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  CB  second chain D resi  196 alte C atom  CB  value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  CG  second chain D resi  196 alte C atom  CG  value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  CD  second chain D resi  196 alte C atom  CD  value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  196 alte A atom  NE  second chain D resi  196 alte C atom  NE  value 0.0 sigma 0.02 type 1
+exte dist first chain D resi  19...
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                            phenix duplicate conformer restraints                             ---
+----------------------------------------------- *** ------------------------------------------------
+
+refinement.geometry_restraints.edits {
+    bond {
+        action = *add
+        atom_selection_1 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'A' and name  N  
+        atom_selection_2 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'C' and name  N  
+        distance_ideal = 0.0
+        sigma = 0.02
+        slack = None
+    }
+    bond {
+        action = *add
+        atom_selection_1 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'A' and name  CA 
+        atom_selection_2 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'C' and name  CA 
+        distance_ideal = 0.0
+        sigma = 0.02
+        slack = None
+    }
+    bond {
+        action = *add
+        atom_selection_1 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'A' and name  C  
+        atom_selection_2 = chain 'D' and resseq  196 and icode ' ' and resname 'ARG' and altid 'C' and name  C  
+        distance_ideal = 0.0
+ ...
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                           Generating occupancy-constrained groups                            ---
+----------------------------------------------- *** ------------------------------------------------
+
+Looking for ligands with resname DRG or FRG or LIG or UNK or UNL
+
+No matching residues were found (no occupancy constraints created)

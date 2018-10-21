@@ -1,0 +1,102 @@
+
+============================== Collecting inputs ==============================
+
+
+                   ----------Processing X-ray data----------                   
+
+F-obs:
+  /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0456/Refine_0001/refine_1.mtz:F,SIGF
+Miller array info: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0456/Refine_0001/refine_1.mtz:F,SIGF
+Observation type: xray.amplitude
+Type of data: double, size=105382
+Type of sigmas: double, size=105382
+Number of Miller indices: 105382
+Anomalous flag: False
+Unit cell: (48.26, 59.47, 79.77, 79.99, 82.36, 76.48)
+Space group: P 1 (No. 1)
+Systematic absences: 0
+Centric reflections: 0
+Resolution range: 78.1898 1.61
+Completeness in resolution range: 0.962595
+Completeness with d_max=infinity: 0.962595
+Wavelength: 0.9159
+
+Number of F-obs in resolution range:                   105382
+Number of F-obs<0 (these reflections will be rejected): 0
+Number of F-obs=0 (these reflections will be used in refinement): 0
+Refinement resolution range: d_max =  78.1898
+                             d_min =   1.6100
+
+R-free flags:
+  /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0456/Refine_0001/refine_1.mtz:FreeR_flag
+Miller array info: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0456/Refine_0001/refine_1.mtz:FreeR_flag
+Observation type: None
+Type of data: int, size=109498
+Type of sigmas: None
+Number of Miller indices: 109498
+Anomalous flag: False
+Unit cell: (48.26, 59.47, 79.77, 79.99, 82.36, 76.48)
+Space group: P 1 (No. 1)
+Systematic absences: 0
+Centric reflections: 0
+Resolution range: 78.1898 1.60985
+Completeness in resolution range: 1
+Completeness with d_max=infinity: 1
+Wavelength: 9.9990
+
+Test (R-free flags) flag value: 0
+
+Number of work/free reflections by resolution:
+                                            work   free  %free
+  bin  1: 78.2821 -  3.4686 [10722/10924]  10219    503   4.7%
+  bin  2:  3.4686 -  2.7530 [10687/10974]  10142    545   5.1%
+  bin  3:  2.7530 -  2.4050 [10644/10960]  10084    560   5.3%
+  bin  4:  2.4050 -  2.1851 [10547/10922]  10054    493   4.7%
+  bin  5:  2.1851 -  2.0285 [10548/10951]  10007    541   5.1%
+  bin  6:  2.0285 -  1.9089 [10507/10983]   9980    527   5.0%
+  bin  7:  1.9089 -  1.8133 [10504/10950]   9943    561   5.3%
+  bin  8:  1.8133 -  1.7343 [10466/10926]   9929    537   5.1%
+  bin  9:  1.7343 -  1.6675 [10451/10974]   9943    508   4.9%
+  bin 10:  1.6675 -  1.6100 [10306/10913]   9762    544   5.3%
+                                  overall 100063   5319   5.0%
+
+============================== Scattering factors =============================
+
+
+                ----------X-ray scattering dictionary----------                
+
+Number of scattering types: 6
+  Type Number    sf(0)   Gaussians
+   Cl      1     16.95       2
+   S      31     15.96       2
+   Mg      8     11.95       2
+   O    1350      7.97       2
+   N     962      6.97       2
+   C    3623      5.97       2
+  sf(0) = scattering factor at diffraction angle 0.
+Number of scatterers: 5975
+At special positions: 0
+Unit cell: (48.26, 59.47, 79.77, 79.99, 82.36, 76.48)
+Space group: P 1 (No. 1)
+
+                  ----------F(model) initialization----------                  
+
+Twinning will be detected automatically.
+                   start: r(all,work,free)=0.3752 0.3774 0.3358 n_refl.: 105382
+       re-set all scales: r(all,work,free)=0.3752 0.3774 0.3358 n_refl.: 105382
+         remove outliers: r(all,work,free)=0.3747 0.3769 0.3358 n_refl.: 105377
+bulk-solvent and scaling: r(all,work,free)=0.2268 0.2253 0.2560 n_refl.: 105377
+         remove outliers: r(all,work,free)=0.2268 0.2253 0.2560 n_refl.: 105377
+|--(resolution: 1.61 - 78.19 A, n_refl.=105377 (all), 5.05  % free)-----------|
+|                                                                             |
+| r_work= 0.2253 r_free= 0.2560 coordinate error (max.-lik. estimate): 0.25 A |
+|                                                                             |
+| normalized target function (ml) (work): 3.958848                            |
+| target function (ml) not normalized (work): 396114.422975                   |
+| target function (ml) not normalized (free): 21431.292591                    |
+|-----------------------------------------------------------------------------|
+
+End of input processing
+
+                     ----------Validating ligands----------                    
+
