@@ -1,0 +1,100 @@
+<!--SUMMARY_BEGIN-->
+ 
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ### CCP4 7.0.047: UNIQUE           version 7.0.047 :         ##
+ ###############################################################
+ User: unknown  Run date:  9/ 7/2018 Run time: 14:32:06 
+
+
+ Please reference: Collaborative Computational Project, Number 4. 2011.
+ "Overview of the CCP4 suite and current developments". Acta Cryst. D67, 235-242.
+ as well as any specific reference in the program write-up.
+
+<!--SUMMARY_END-->
+ Data line--- cell 49.6 60.14 80.01 79.92 81.52 75.49
+ Data line--- symmetry 'P 1'
+ Data line--- resolution 1.000
+ Data line--- labout F=F_UNIQUE SIGF=SIGF_UNIQUE
+ Data line--- end
+Reciprocal space symmetry: 
+Space group: "P 1" Point group: "PG1" Laue group: "-1" 
+Reference asymmetric unit: "l>0 or (l==0 and (h>0 or (h==0 and k>=0)))" 
+  (change of basis may be applied) 
+
+ Spacegroup 1 "P 1" 
+ Original indices for reflection hkl with symmetry number ISYM 
+
+                              Bijvoet positive 
+       ISYM              ISYM              ISYM              ISYM              
+  ISYM   1  +h,+k,+l    
+
+                              Bijvoet negative 
+       ISYM              ISYM              ISYM              ISYM              
+  ISYM   2  -h,-k,-l    
+
+ Maximum and minimum Bragg spacings     1.000 10000.000 Angstroms
+
+
+ Limits on H,K,L.. -49 to  49    -60 to  60      0 to  80
+
+
+ WRITTEN OUTPUT MTZ FILE 
+ Logical Name: HKLOUT   Filename: unique.mtz 
+
+ * Title:
+
+ 
+
+ * Base dataset:
+
+        0 HKL_base
+          HKL_base
+          HKL_base
+
+ * Number of Datasets = 0
+
+ * Dataset ID, project/crystal/dataset names, cell dimensions, wavelength:
+
+
+ * Number of Columns = 5
+
+ * Number of Reflections = 473636
+
+ * Missing value set to NaN in input mtz file
+
+ * Column Labels :
+
+ H K L F_UNIQUE SIGF_UNIQUE
+
+ * Column Types :
+
+ H H H F Q
+
+ * Associated datasets :
+
+ 0 0 0 0 0
+
+ * Cell Dimensions : (obsolete - refer to dataset cell dimensions above)
+
+   49.6000   60.1400   80.0100   79.9200   81.5200   75.4900 
+
+ *  Resolution Range :
+
+    0.00016    1.00000     (     78.308 -      1.000 A )
+
+ * Sort Order :
+
+      1     2     3     0     0
+
+ * Space group = 'P 1' (number     1)
+
+
+
+     970299 reflections tested
+     473636 reflections within resolution limits written to output file
+<!--SUMMARY_BEGIN-->
+ UNIQUE:  Normal Termination
+Times: User:       0.2s System:    0.0s Elapsed:     0:00  
+<!--SUMMARY_END-->

@@ -1,0 +1,120 @@
+
+
+OPTIONS ARE:
+
+    ABSENT      MODE      CALC  CHECKHKL  COMPLETE    CORREL
+    DELETE    EXPAND       FFT    FOURPT    HLCONV       I2F
+      LIST       MAP    MAP2SF     MAPIN  MAPLIMIT    MAPOUT
+   MAPSTAT     MERGE   OPTION1   PHASHFT      PLOT     PURGE
+      READ    REDUCE   REINDEX     RFREE    SELECT       SET
+      SORT      STOP    WINDOW     WRITE
+
+>> give your option (or hit <return> to list options)
+
+selected: READ    
+
+
+
+ OPENED INPUT MTZ FILE 
+ Logical Name: unique.mtz   Filename: unique.mtz 
+
+
+Reading file : unique.mtz                                                       
+With format  : MTZ
+
+ SYMINFO file set to /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/lib/data/syminfo.lib 
+The following columns will be read:
+
+TYPE  LABEL
+===========
+
+  F   F                                                                         
+  Q   SIGF                                                                      
+  now sorting the reflections
+  now merging the reflections
+
+  111246 reflections read from file
+       0 reflections appended to existing data
+  111246 reflections newly created
+  111246 reflections now stored in memory
+
+
+>> give your option (or hit <return> to list options)
+
+selected: CALC    
+
+
+
+  column labels are :
+  ===================
+
+  Column Type : Label
+
+     1     F    F                                                 
+     2     Q    SIGF                                              
+
+
+      111246  Reflections in the data base
+      111246  Reflections were active
+      111246  Reflections processed
+
+
+>> give your option (or hit <return> to list options)
+
+selected: CALC    
+
+
+
+  column labels are :
+  ===================
+
+  Column Type : Label
+
+     1     F    F                                                 
+     2     Q    SIGF                                              
+
+
+      111246  Reflections in the data base
+      111246  Reflections were active
+      111246  Reflections processed
+
+
+>> give your option (or hit <return> to list options)
+
+selected: WRITE   
+
+
+
+Writing file : sftools.mtz                                                     
+With format  : MTZ
+
+Columns used :
+ALL                                                                             
+The following columns will be written :
+
+TYPE  LABEL
+===========
+
+  F   F                                                                         
+  Q   SIGF                                                                      
+
+
+ WRITTEN OUTPUT MTZ FILE 
+ Logical Name: sftools.mtz   Filename: sftools.mtz 
+
+
+>> give your option (or hit <return> to list options)
+  !!! WARNING, premature end of input !!!
+  have you saved your changes ???
+
+  type yes if you really want to stop
+  THE DEFAULT IS NO
+  IT IS NOT POSSIBLE TO ESCAPE TO THE MAIN PROGRAM
+  BY GIVING CNTR-Z OR CNTR-D AT THIS POSITION
+  PLEASE TYPE Y OR N, OTHERWISE THE PROGRAM ABORTS
+  IT IS NOT POSSIBLE TO ESCAPE TO THE MAIN PROGRAM
+  BY GIVING CNTR-Z OR CNTR-D AT THIS POSITION
+  PLEASE TYPE Y OR N, OTHERWISE THE PROGRAM ABORTS
+
+  ILLEGAL ESCAPE FROM SUBROUTINE YES
+  PROGRAM ABORTED

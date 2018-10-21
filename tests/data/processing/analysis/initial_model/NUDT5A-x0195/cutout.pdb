@@ -1,0 +1,16 @@
+REMARK  MODEL FROM LIG-E-2.pdb TRANSLATED BY (  28.544   -4.060   64.102) 
+HETATM    1  N   LIG E   2       2.412   3.311   0.141  0.81 40.05           N
+HETATM    2  C   LIG E   2       0.924   5.103   1.012  0.81 39.92           C
+HETATM    3  O   LIG E   2       2.314   2.037  -0.223  0.81 42.45           O
+HETATM    4  C1  LIG E   2       1.199   3.735   0.541  0.81 40.68           C
+HETATM    5  C2  LIG E   2       0.257   2.637   0.422  0.81 42.02           C
+HETATM    6  C3  LIG E   2       1.030   1.596  -0.060  0.81 44.07           C
+HETATM    7  C4  LIG E   2       0.806   0.155  -0.367  0.81 48.12           C
+HETATM    8  C5  LIG E   2      -1.043  -1.561  -0.581  0.81 54.40           C
+HETATM    9  C6  LIG E   2      -2.412  -1.972  -0.605  0.81 55.98           C
+HETATM   10  C7  LIG E   2      -2.397  -3.355  -0.776  0.81 57.47           C
+HETATM   11  C8  LIG E   2      -0.556  -5.103  -1.013  0.81 56.36           C
+HETATM   12  N1  LIG E   2      -0.546  -0.243  -0.354  0.81 51.43           N
+HETATM   13  N2  LIG E   2      -1.063  -3.732  -0.847  0.81 57.64           N
+HETATM   14  N3  LIG E   2      -0.205  -2.662  -0.737  0.81 56.44           N
+HETATM   15  O1  LIG E   2       1.750  -0.580  -0.625  0.81 51.62           O
