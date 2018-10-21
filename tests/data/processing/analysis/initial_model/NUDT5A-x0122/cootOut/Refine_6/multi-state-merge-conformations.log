@@ -1,0 +1,202 @@
+
+############################################## <~~~> ###############################################
+###                         Validating input parameters and input files                          ###
+############################################## <~~~> ###############################################
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Processed merging parameters                                 ---
+----------------------------------------------- *** ------------------------------------------------
+
+input {
+  major = "/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0122/refine.split.ground-state.pdb"
+  minor = "refine.modified.pdb"
+  pdb = None
+}
+options {
+  minor_occupancy = 1
+  major_occupancy = 1
+  prune_duplicates_rmsd = 0.05
+  reset_all_occupancies = False
+}
+output {
+  pdb = "multi-state-model.pdb"
+  log = "multi-state-merge-conformations.log"
+  make_restraints = True
+}
+settings {
+  overwrite = True
+  verbose = False
+}
+
+----------------------------------------------- *** ------------------------------------------------
+---                                     Reading input files                                      ---
+----------------------------------------------- *** ------------------------------------------------
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                         Updating input occupancies prior to merging                          ---
+----------------------------------------------- *** ------------------------------------------------
+
+Multiplying occupancies of input.major by 1.0
+Multiplying occupancies of input.minor by 1.0
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Post-processing occupancies                                  ---
+----------------------------------------------- *** ------------------------------------------------
+
+Sanitising occupancies so that residue occupancies are between 0 and 1
+
+Setting all main-conf occupancies to 1.0
+
+----------------------------------------------- *** ------------------------------------------------
+---                                   Writing output structure                                   ---
+----------------------------------------------- *** ------------------------------------------------
+
+Writing output structure to multi-state-model.pdb
+
+############################################## <~~~> ###############################################
+###                             Parameters for generating restraints                             ###
+############################################## <~~~> ###############################################
+
+restraints {
+  output {
+    phenix = "multi-state-restraints.phenix.params"
+    refmac = "multi-state-restraints.refmac.params"
+    log = "multi-state-merge-conformations.log"
+  }
+  modes {
+    all = False
+    peptide_bond_links = True
+    duplicated_atom_restraints = True
+    local_structure_restraints = False
+    occupancy_groups = True
+    b_factor_restraints = False
+  }
+  duplicates {
+    make_for = *all protein het
+    rmsd_cutoff = 0.1
+    sigma_xyz = 0.02
+  }
+  peptide_bonds {
+    suffix = ".link.pdb"
+  }
+  local_restraints {
+    altlocs = "C,D"
+    max_distance = 4.2
+    min_distance = 1.6
+    sigma_xyz = 0.1
+  }
+  occupancy {
+    resname = "DRG,FRG,LIG,UNK,UNL"
+    group_dist = 5
+    overlap_dist = 2
+    complete_groups = True
+    simple_groups = False
+    exclude_altlocs = None
+  }
+  b_factors {
+    resname = None
+    contact_dist = 4
+    sigma_b = 1
+  }
+}
+
+############################################## <~~~> ###############################################
+###                                    Generating restraints                                     ###
+############################################## <~~~> ###############################################
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Checking the continuity of the protein backbone                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+No breaks in the backbone - hooray! (nothing needs to be done here)
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Generating restraints for duplicated conformers                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+Found 187 duplicated conformers consisting of 1173 atoms
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                           Generating occupancy-constrained groups                            ---
+----------------------------------------------- *** ------------------------------------------------
+
+------------------------------------->>>
+
+Created 2 occupancy groups for overlapping conformers
+
+
+############################################## <~~~> ###############################################
+###                                           FINISHED                                           ###
+############################################## <~~~> ###############################################
+
+
+############################################## <~~~> ###############################################
+###                                       Final Parameters                                       ###
+############################################## <~~~> ###############################################
+
+input {
+  major = "/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0122/refine.split.ground-state.pdb"
+  minor = "refine.modified.pdb"
+  pdb = None
+}
+options {
+  minor_occupancy = 1
+  major_occupancy = 1
+  prune_duplicates_rmsd = 0.05
+  reset_all_occupancies = False
+}
+output {
+  pdb = "multi-state-model.pdb"
+  log = "multi-state-merge-conformations.log"
+  make_restraints = True
+}
+restraints {
+  output {
+    phenix = "multi-state-restraints.phenix.params"
+    refmac = "multi-state-restraints.refmac.params"
+    log = "multi-state-merge-conformations.log"
+  }
+  modes {
+    all = False
+    peptide_bond_links = True
+    duplicated_atom_restraints = True
+    local_structure_restraints = False
+    occupancy_groups = True
+    b_factor_restraints = False
+  }
+  duplicates {
+    make_for = *all protein het
+    rmsd_cutoff = 0.1
+    sigma_xyz = 0.02
+  }
+  peptide_bonds {
+    suffix = ".link.pdb"
+  }
+  local_restraints {
+    altlocs = "C,D"
+    max_distance = 4.2
+    min_distance = 1.6
+    sigma_xyz = 0.1
+  }
+  occupancy {
+    resname = "DRG,FRG,LIG,UNK,UNL"
+    group_dist = 5
+    overlap_dist = 2
+    complete_groups = True
+    simple_groups = False
+    exclude_altlocs = None
+  }
+  b_factors {
+    resname = None
+    contact_dist = 4
+    sigma_b = 1
+  }
+}
+settings {
+  overwrite = True
+  verbose = False
+}
