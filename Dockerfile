@@ -5,6 +5,9 @@ FROM reskyner/django-luigi-docker
 # use bash from now on
 SHELL ["/bin/bash", "-c"]
 
+# incase /tmp doesn't exist - make it
+RUN mkdir /tmp
+
 # expose 5432 for postgres, and 8082 for luigi
 EXPOSE 5432
 EXPOSE 8082
@@ -13,14 +16,14 @@ EXPOSE 8082
 RUN mkdir /pipeline
 WORKDIR /pipeline
 COPY . /pipeline/
-RUN chmod -R 777 /pipeline/
+#RUN chmod -R 777 /pipeline/
 
 # add a new user (postgres for database, but could be changed if changed in settings'
 RUN adduser postgres
 
 # change permissions on all files needed (tmp needed by postgres later)
 RUN chown -R postgres /pipeline/
-RUN chmod 777 /tmp
+RUN chown -R postgres /tmp
 
 # move django settings to correct file name
 RUN mv settings_docker_django.py settings.py
