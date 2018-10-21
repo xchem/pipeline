@@ -1,0 +1,191 @@
+# workflow log (compatible with Python ConfigParser)
+
+[workflow]
+host: cs04r-sc-com06-27.diamond.ac.uk
+platform: Linux-2.6.32-696.28.1.el6.x86_64-x86_64-with-redhat-6.9-Santiago
+cwd: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0114/dimple/dimple_rerun_on_selected_file
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/lib/py2/dimple/__main__.py
+args:
+ --no-cleanup
+ NUDT5A-x0114.999A.mtz
+ /dls/labxchem/data/2018/lb18145-71/processing/reference/6gru.pdb
+ dimple
+output_dir: dimple
+CCP4: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0
+CCP4_SCR: /dls/labxchem/data/2018/lb18145-71/processing/tmp
+version: 2.5.6
+#      ### Dimple v2.5.6. Problems and suggestions: ccp4.github.io/dimple ###
+# 
+# MTZ (1.9A)            P 1          (49.38, 59.83, 80.14,  79.36, 81.67, 75.75)
+# 45c752b68a57bd88da92e30db181b853 /dls/labxchem/data/2018/lb18145-71/processing/reference/6gru.pdb
+data_file: ../NUDT5A-x0114.999A.mtz
+pdb_files: ["/dls/labxchem/data/2018/lb18145-71/processing/reference/6gru.pdb"]
+# 
+# 6gru.pdb              P 1          (49.60, 60.14, 80.01,  79.92, 81.52, 75.49)
+
+[rwcontents]
+start_time: 2018-07-09 14:30:51
+input: end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/rwcontents
+args: XYZIN ini.pdb
+end_time: 2018-07-09 14:30:51
+info: 1 x 82kDa (+ 4kDa het) in 226nm3, 55% solvent
+stdout: 01-rwcontents.log
+num_mol: 1
+aa_count: 770
+weight: 81790.914
+Vm: 2.76
+water_count: 225.0
+volume: 226138.219
+total_weight: 85844.359
+solvent_percent: 55.4347826087
+
+[pointless]
+start_time: 2018-07-09 14:30:51
+input: TOLERANCE 5
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/pointless
+args: HKLIN ../NUDT5A-x0114.999A.mtz HKLOUT pointless.mtz XYZIN ini.pdb
+end_time: 2018-07-09 14:31:11
+info: resol. 1.89 A   #refl: 69661
+stdout: 02-pointless.log
+refl_out: 69661
+output_cell: (49.38, 59.83, 80.14, 79.36, 81.67, 75.75)
+resol: 1.889
+refl_ref: 70273
+alt_reindex: [{"cc": 0.561, "cell_deviat": 0.6, "op": "[h,k,l]"}]
+# 
+#     [h,k,l]    CC: 0.561    cell diff: 0.6A
+# 
+# Rigid-body refinement with resolution 3.5 A, 10 cycles.
+#  0.3 waters/aa.
+
+[refmac5 rigid]
+start_time: 2018-07-09 14:31:11
+input: labin FP=F SIGFP=SIGF
+  refinement type rigidbody resolution 15 3.5
+  rigidbody ncycle 10
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/refmac5
+args: HKLIN pointless.mtz HKLOUT refmacRB.mtz XYZIN ini.pdb XYZOUT refmacRB.pdb
+end_time: 2018-07-09 14:32:04
+info: 10/10   R  0.2261  ->  0.2152
+stdout: 03-refmac5_rigid.log
+ncyc: 10
+overall_r: 0.2152
+iter_overall_r: [0.2261, 0.2153, 0.2152, 0.2152, 0.2152, 0.2152, 0.2152, 0.2152, 0.2152, 0.2153, 0.2152]
+ini_overall_r: 0.2261
+cycle: 10
+# 
+# No MR for R < 0.4.
+# 
+# Replace free-R flags
+#  (repeatably)
+
+[unique]
+start_time: 2018-07-09 14:32:04
+input: cell 49.6 60.14 80.01 79.92 81.52 75.49
+  symmetry 'P 1'
+  resolution 1.000
+  labout F=F_UNIQUE SIGF=SIGF_UNIQUE
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/unique
+args: HKLOUT unique.mtz
+end_time: 2018-07-09 14:32:04
+stdout: 04-unique.log
+
+[freerflag]
+start_time: 2018-07-09 14:32:04
+input: end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/freerflag
+args: HKLIN unique.mtz HKLOUT free.mtz
+end_time: 2018-07-09 14:32:05
+stdout: 05-freerflag.log
+
+[cad]
+start_time: 2018-07-09 14:32:05
+input: labin file 1 E1=F_unique E2=SIGF_unique E3=F E4=SIGF E5=DANO E6=SIGDANO E7=F(+) E8=SIGF(+) E9=F(-) E10=SIGF(-) E11=ISYM E12=IMEAN E13=SIGIMEAN E14=I(+) E15=SIGI(+) E16=I(-) E17=SIGI(-)
+  labin file 2 E1=FreeR_flag
+  sysab_keep
+  reso overall 1000.0 1.88849
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/cad
+args: HKLIN1 pointless.mtz HKLIN2 free.mtz HKLOUT prepared.mtz
+end_time: 2018-07-09 14:32:06
+info: #refl  69661 -> 69768
+stdout: 06-cad.log
+refl_out: 69768
+refl_in1: 69661
+# 
+# Restrained refinement, 4+8 cycles.
+
+[refmac5 jelly]
+start_time: 2018-07-09 14:32:07
+input: labin FP=F SIGFP=SIGF FREE=FreeR_flag
+  make newligand continue
+  refinement type restrained
+  weight auto
+  ridge distance sigma 0.01
+  make hydrogen no
+  ncycle 4
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/refmac5
+args: HKLIN prepared.mtz HKLOUT jelly.mtz XYZIN refmacRB.pdb XYZOUT jelly.pdb
+end_time: 2018-07-09 14:34:01
+info:  4/4   R/Rfree  0.2767/0.2752  ->  0.2409/0.2591
+stdout: 07-refmac5_jelly.log
+ncyc: 4
+ini_free_r: 0.2752
+overall_r: 0.2409
+iter_overall_r: [0.2767, 0.2533, 0.2463, 0.2428, 0.2409]
+iter_free_r: [0.2752, 0.2657, 0.2614, 0.2598, 0.2591]
+rmsBOND: [0.0151, 0.0155, 0.0158, 0.0162, 0.0164]
+ini_overall_r: 0.2767
+free_r: 0.2591
+rmsANGL: [1.725, 1.755, 1.776, 1.792, 1.802]
+rmsCHIRAL: [0.098, 0.105, 0.108, 0.11, 0.112]
+cycle: 4
+# 
+#     RMS:   bond 0.015 -> 0.016   angle 1.73 -> 1.80   chiral 0.10 -> 0.11
+
+[refmac5 restr]
+start_time: 2018-07-09 14:34:01
+input: labin FP=F SIGFP=SIGF FREE=FreeR_flag
+  make newligand continue
+  refinement type restrained
+  weight auto
+  ncycle 8
+  end
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/refmac5
+args: HKLIN prepared.mtz HKLOUT final.mtz XYZIN jelly.pdb XYZOUT final.pdb
+end_time: 2018-07-09 14:38:14
+info:  8/8   R/Rfree  0.2374/0.2581  ->  0.2206/0.2621
+stdout: 08-refmac5_restr.log
+ncyc: 8
+ini_free_r: 0.2581
+overall_r: 0.2206
+iter_overall_r: [0.2374, 0.2285, 0.2249, 0.2232, 0.2222, 0.2216, 0.2211, 0.2208, 0.2206]
+iter_free_r: [0.2581, 0.2577, 0.2586, 0.2599, 0.2608, 0.2615, 0.2616, 0.262, 0.2621]
+rmsBOND: [0.0164, 0.0166, 0.017, 0.017, 0.0169, 0.0169, 0.0169, 0.0168, 0.0168]
+ini_overall_r: 0.2374
+free_r: 0.2621
+rmsANGL: [1.803, 1.731, 1.771, 1.794, 1.803, 1.807, 1.811, 1.814, 1.815]
+rmsCHIRAL: [0.112, 0.104, 0.105, 0.105, 0.104, 0.104, 0.104, 0.103, 0.103]
+cycle: 8
+# 
+#     RMS:   bond 0.016 -> 0.017   angle 1.80 -> 1.81   chiral 0.11 -> 0.10
+
+[find-blobs]
+start_time: 2018-07-09 14:38:14
+prog: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/find-blobs
+args: -c -s0.8 final.mtz final.pdb
+end_time: 2018-07-09 14:38:15
+info: Blob scores: 67 60 55 52
+stdout: 09-find-blobs.log
+center: (-21.4, 7.941, -30.88)
+density_info: Density std.dev: 0.261, cut-off: 0.208 e/A^3 (0.8 sigma)
+blobs: [[-17.68, -14.88, -4.53], [-22.39, 28.13, -58.33], [-29.01, 4.88, -64.5], [-14.74, -16.75, -36.24]]
+scores: [67.41, 59.77, 55.32, 51.59]
+# 
+# To see it in Coot run /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0114/dimple/dimple_rerun_on_selected_file/dimple/coot.sh
+# 
