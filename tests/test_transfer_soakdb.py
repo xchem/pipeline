@@ -42,7 +42,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
             os.remove(os.path.join(cls.filepath, cls.db_file_name))
 
         # initialise db and json objects
-        db = sqlite3.connect(os.path.join(cls.filepath, cls.db_file_name))
+        db = os.path.join(cls.filepath, cls.db_file_name)
         json_file = json.load(open(os.path.join(cls.filepath, cls.json_file_name)))
 
         # write json to sqlite file
