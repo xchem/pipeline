@@ -5,9 +5,6 @@ FROM reskyner/django-luigi-docker
 # use bash from now on
 SHELL ["/bin/bash", "-c"]
 
-# incase /tmp doesn't exist - make it
-RUN mkdir /tmp
-
 # expose 5432 for postgres, and 8082 for luigi
 EXPOSE 5432
 EXPOSE 8082
