@@ -1,0 +1,145 @@
+# Command Line Args
+# 
+# pandda.analyse data_dirs="/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/*" out_dir="/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas" min_build_datasets="40" max_new_datasets="500" grid_spacing="0.5" cpus="11" events.order_by="cluster_size" pdb_style="dimple.pdb" mtz_style="dimple.mtz" lig_style="/compound/*.cif" use_b_factor_scaling="False" write_mean_map="interesting"
+
+pandda {
+  input {
+    data_dirs = "/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/*"
+    pdb_style = "dimple.pdb"
+    mtz_style = "dimple.mtz"
+    lig_style = "compound/*.cif"
+    max_new_datasets = 500
+    regex {
+      dir_regex = None
+      pdb_regex = None
+      mtz_regex = None
+    }
+    filter {
+      pdb = None
+    }
+    reference {
+      pdb = None
+      mtz = None
+      structure_factors = None
+    }
+    flags {
+      exclude_from_zmap_analysis = None
+      exclude_from_characterisation = None
+      ignore_datasets = None
+      reprocess_datasets = None
+    }
+  }
+  output {
+    out_dir = "/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas"
+    new_analysis_dir = True
+    dataset_prefix = ""
+    maps {
+      write_z_maps = none *interesting all
+      write_mean_map = none *interesting all
+      write_dataset_map = *none interesting all
+      write_statistical_maps = *none reference
+    }
+    pickling {
+      pickle_complete_pandda = False
+      pickle_map_analysers = False
+      pickle_dataset_maps = False
+    }
+    developer {
+      write_all = False
+      write_reference_frame_maps = False
+      write_reference_frame_grid_masks = False
+      write_reference_frame_statistical_maps = False
+      write_reference_frame_all_z_map_types = False
+    }
+  }
+  flags {
+    stages = *add_datasets *density_characterisation *zmap_analysis
+    existing_datasets = reprocess *reload ignore
+    recalculate_statistical_maps = *yes no extend
+    density_analysis_for = all_resolutions *datasets
+  }
+  shortcuts {
+    run_in_single_dataset_mode = False
+  }
+  params {
+    checks {
+      all_data_are_valid_values = True
+      low_resolution_completeness = 4
+    }
+    alignment {
+      method = global *local
+    }
+    maps {
+      structure_factors = "FWT,PHWT"
+      structure_factors = "2FOFCWT_fill,PH2FOFCWT_fill"
+      structure_factors = "2FOFCWT,PH2FOFCWT"
+      use_b_factor_scaling = False
+      scaling = none *sigma volume
+      resolution_factor = 0.25
+      grid_spacing = 0.5
+      padding = 3
+    }
+    masks {
+      pdb = None
+      align_mask_to_reference = True
+      inner_mask = 1.8
+      inner_mask_symmetry = 3
+      outer_mask = 6
+    }
+    filtering {
+      max_rmsd_to_reference = 1.5
+      max_rfree = 0.4
+      flags {
+        same_space_group_only = True
+        similar_models_only = False
+      }
+    }
+    excluding {
+      max_wilson_plot_z_score = 5
+    }
+    analysis {
+      min_build_datasets = 40
+      max_build_datasets = 60
+      dynamic_res_limits = True
+      high_res_upper_limit = 0
+      high_res_lower_limit = 4
+      high_res_increment = 0.05
+    }
+    z_map {
+      map_type = naive uncertainty *adjusted+uncertainty
+    }
+    blob_search {
+      contour_level = 2.5
+      negative_values = False
+      min_blob_volume = 10
+      min_blob_z_peak = 3
+    }
+    background_correction {
+      min_bdc = 0
+      max_bdc = 1
+      increment = 0.01
+      output_multiplier = 1
+    }
+  }
+  results {
+    events {
+      order_by = z_peak z_mean *cluster_size
+    }
+    sites {
+      order_by = *num_events
+    }
+  }
+  exit_flags {
+    dry_run = False
+    setup_only = False
+    calculate_first_mean_map_only = False
+  }
+}
+settings {
+  cpus = 11
+  verbose = True
+  plot_graphs = True
+  plotting {
+    backend = "agg"
+  }
+}
