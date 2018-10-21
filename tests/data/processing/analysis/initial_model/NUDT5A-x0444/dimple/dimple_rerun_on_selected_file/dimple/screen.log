@@ -1,0 +1,21 @@
+
+     ### Dimple v2.5.6. Problems and suggestions: ccp4.github.io/dimple ###
+MTZ (1.6A)            P 1          (49.35, 59.86, 80.01,  79.34, 81.54, 75.65)
+6gru.pdb              P 1          (49.60, 60.14, 80.01,  79.92, 81.52, 75.49)
+  1 rwcontents       0.0s  1 x 82kDa (+ 4kDa het) in 226nm3, 55% solvent
+  2 pointless       20.5s  resol. 1.62 A   #refl: 110219
+    [h,k,l]    CC: 0.562    cell diff: 0.6A
+Rigid-body refinement with resolution 3.5 A, 10 cycles. 0.3 waters/aa.
+  3 refmac5 rigid  3394.3s  10/10   R  0.2157  ->  0.2085
+No MR for R < 0.4.
+Replace free-R flags (repeatably)
+  4 unique           0.6s  
+  5 freerflag        1.4s  
+  6 cad              1.9s  #refl  110219 -> 110332
+Restrained refinement, 4+8 cycles.
+  7 refmac5 jelly  161.4s   4/4   R/Rfree  0.2778/0.2766  ->  0.2454/0.2588
+    RMS:   bond 0.015 -> 0.018   angle 1.72 -> 1.90   chiral 0.10 -> 0.12
+  8 refmac5 restr  341.8s   8/8   R/Rfree  0.2420/0.2571  ->  0.2284/0.2632
+    RMS:   bond 0.018 -> 0.020   angle 1.90 -> 2.02   chiral 0.12 -> 0.12
+  9 find-blobs       0.4s  Blob scores: 131 117 95 88 65 59 56 51
+To see it in Coot run /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0444/dimple/dimple_rerun_on_selected_file/dimple/coot.sh

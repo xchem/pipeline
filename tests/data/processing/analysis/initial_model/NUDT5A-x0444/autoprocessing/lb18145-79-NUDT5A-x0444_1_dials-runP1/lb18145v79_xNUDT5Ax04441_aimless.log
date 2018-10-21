@@ -1,0 +1,1720 @@
+ 
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ### CCP4 7.0.058: AIMLESS            version 0.7.1 : 27/03/18##
+ ###############################################################
+ User: unknown  Run date: 27/ 7/2018 Run time: 23:54:44 
+
+
+ Please reference: Collaborative Computational Project, Number 4. 2011.
+ "Overview of the CCP4 suite and current developments". Acta Cryst. D67, 235-242.
+ as well as any specific reference in the program write-up.
+
+==== Command line arguments ====
+hklin /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_sorted.mtz
+hklout /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_scaled.mtz
+
+==== Input command lines ====
+
+refine parallel
+xmlout 22_aimless.xml
+bins 20
+intensities combine
+dump xNUDT5Ax04441_final.scales
+run 1 batch 1 to 1000
+resolution run 1 high 1.68
+sdcorrection same
+tie surface 0.0010
+scales rotation spacing 5 absorption 6 bfactor on
+cycles 100
+anomalous on
+output unmerged
+
+====     End of input    ====
+
+Release Date: 27th March 2018
+
+
+        ******************************************************
+        *                                                    *
+        *                      AIMLESS                       *
+        *                       0.7.1                        *
+        *                                                    *
+        *     Scaling & analysis of unmerged intensities     *
+        *     Phil Evans MRC LMB, Cambridge                  *
+        *                                                    *
+        ******************************************************
+
+
+---------------------------------------------------------------
+
+Reading data from HKLIN filename: /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_sorted.mtz
+
+Reflection list generated from file: /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_sorted.mtz
+
+Title: from dials.export_mtz
+
+   Space group from HKLIN file : P 1
+   Cell:    49.32   59.84   79.99   79.35   81.53   75.65
+   Resolution range in file:     78.16        1.15
+
+Time for reading HKLIN: cpu time: 0.29 secs, elapsed time: 0.0 secs
+
+   Resolution range accepted:    78.16        1.15
+
+   Number of reflections  =        199932
+   Number of observations =        301328
+   Number of parts        =        301328
+   Number of batches      =          1000
+   Number of datasets     =             1
+
+   
+ * Dataset information *
+      Project: lb18145v79 Crystal: xNUDT5Ax04441 Dataset: SAD 
+         Unit cell:     49.32   59.84   79.99   79.35   81.53   75.65
+         Wavelength:  0.91587
+         Runs:       1
+      Run number:   1 consists of batches 1 - 1000
+         Resolution range for run:    78.16        1.68
+         Phi range:   108.00 to   288.00   Time range:   108.00 to   288.00
+         Closest reciprocal axis to spindle: b* (angle   48.4 degrees)
+
+   Average unit cell:    49.32   59.84   79.99   79.35   81.53   75.65
+   
+Selection of intensity type (Isum or Ipr) will be optimised
+Profile fitted value Ipr will be used for 1st scaling
+
+Outlier rejection parameters:
+In scaling:
+Reflections measured 3 or more times:   6 maximum deviation from weighted mean of all other observations
+Reflections measured twice:   6 maximum deviation from weighted mean
+   Policy for deviant reflections measured twice: KEEP
+Reflections judged implausibly large will be rejected
+     Maximum and minimum normalised F (ie E) for acentric reflection     10.00,      -5.00
+     Maximum and minimum normalised F (ie E) for centric reflection      13.94,      -6.97
+
+In merging:
+Reflections measured 3 or more times:   6 maximum deviation from weighted mean of all other observations
+Reflections measured twice:   6 maximum deviation from weighted mean
+   Policy for deviant reflections measured twice: KEEP
+Reflections judged implausibly large will be rejected
+     Maximum and minimum normalised F (ie E) for acentric reflection     10.00,      -5.00
+     Maximum and minimum normalised F (ie E) for centric reflection      13.94,      -6.97
+
+
+Parallisation of refinement:
+Number of processors determined automatically
+  from number of observations 301328 and number/processor 200000
+Number of processors used for refinement stages =  2 of maximum 20
+
+>>>> Layout of scale factors: <<<<
+
+Run     1
+Smooth scaling:    38 scales at intervals of      5 over range     108 to     288 in  36 parts
+Smooth B-factors:  11 scales at intervals of     20 over range     108 to     288 in   9 parts
+Secondary beam correction in crystal frame, lmax =    6,    5, pole = automatic
+
+Secondary beam parameters will be TIED to zero, ie restrained to a sphere, 
+      with a standard deviation of  0.001, number of ties    48
+
+Parameter variances (DIAGONAL) will be used for sigma(I) estimates
+
+
+========= Initial scaling =========
+
+
+The average fractional overlap = Noverlapped/Ntotal, where Noverlapped is the number of observations
+with equivalent observations in a different rotation range, and Ntotal is the total number of observations
+
+Average fractional overlap between rotation ranges for run     1
+      0.86      0.87      0.87      0.86      0.86      0.86      0.86      0.86      0.86      0.86
+      0.87      0.86      0.86      0.86      0.86      0.86      0.87      0.86      0.86      0.86
+      0.86      0.86      0.86      0.86      0.86      0.86      0.86      0.86      0.86      0.86
+      0.86      0.87      0.87      0.87      0.87      0.88
+
+Overall fractional overlap between rotation ranges  0.86, minimum  0.86
+
+   Optimization statistics macrocycle #1
+   Cycle  end-this-cycle  change-from-start  change-from-last  
+   start  -13137163.039                                 
+   #1      -2036443.200  11100719.839       11100719.839
+   #2      -2026542.567  11110620.472           9900.633
+   #3      -2026536.558  11110626.482              6.009
+   #4      -2026536.558  11110626.482              0.000
+
+Initial scales for run     1
+     1.267     1.208     1.150     1.024     1.052     0.980     0.930     0.905     0.883     0.873
+     0.820     0.802     0.734     0.781     0.733     0.829     0.811     0.921     0.910     1.022
+     1.024     1.086     1.148     1.112     1.160     1.151     1.136     1.097     1.191     1.205
+     1.210     1.196     1.129     1.231     1.101     1.115
+
+Time for initial scaling: cpu time: 0.07 secs, elapsed time: 0.0 secs
+
+Sufficient rotation ranges are above the minimum threshold for fractional overlap between rotation ranges =  0.05
+
+========= First round scaling =========
+
+First scaling:  112373 reflections selected from   199932 with I/sd >  25.00, using every   3'th reflection above that limit
+
+   Optimization statistics macrocycle #1
+   Cycle  end-this-cycle  change-from-start  change-from-last  
+   start    -220192.769                                 
+   #1       -215110.530      5082.240           5082.240
+   #2       -214974.064      5218.706            136.466
+
+   ---ITERATION LIMIT OF MACROCYCLE---
+
+
+Number of outliers within I+ || I- sets:      0,  between I+ & I-      0, on |E|max     17
+
+Time for 1st scaling: cpu time: 1.45 secs, elapsed time: 2.0 secs
+
+
+========= Optimising selection of intensity estimate =========
+
+The input HKLIN file contains two estimates of intensity,
+a summation integration value Isum and a profile-fitted value Ipr
+The optimisation here chooses the value which gives the smallest overall Rmeas:
+either Ipr, Isum or a combination of the two based on the Iraw value, where
+Iraw is the Isum value back-corrected for Lorentz and Polarisation
+
+Mean Iraw for all data:     3408.7
+
+Rmeas also printed for inner and outer resolution ranges
+
+                         Intensity type        Rmeas       Inner       Outer
+                     Resolution range (A)        All   78.2-9.14   1.71-1.68
+ 
+                   Summation intensities      0.1230      0.0942      1.0156
+                     Profile intensities      0.1110      0.0941      0.4889
+        Combined intensities Imid = 2727      0.1144      0.0942      0.4889
+        Combined intensities Imid = 4090      0.1140      0.0942      0.4889
+        Combined intensities Imid = 4772      0.1138      0.0942      0.4889
+        Combined intensities Imid = 5113      0.1137      0.0942      0.4889
+
+Best value:
+                     Profile intensities      0.1110      0.0941      0.4889
+
+Profile-fitted intensities will be used
+
+Time for optimisation of intensity type selection: cpu time: 0.41 secs, elapsed time: 0.0 secs
+
+First rough optimisation and analysis of standard deviations
+============================================================
+
+Weighting scheme for averages: variance weights
+
+Run    1 has only fulls
+
+For run 1, slope of central part of normal probability plot =   1.12
+  Correction applied to parameters for fulls
+
+SD correction parameters after normal probability correction
+                                  Fulls
+    Run                  SdFac    SdB   SdAdd  ISa
+      1   OnlyFulls       1.12   0.00  0.0200 44.6
+
+I+ and I- will be kept separate in SD optimisation
+
+For SD optimisation, number of outliers within I+ || I- sets:    423,  between I+ & I-      0, on |E|max      7
+
+  45150 reflections selected for SD optimisation out of   199932 in file
+
+Damping factor: 0.050
+No restraints on SD correction parameters
+Cycle   1 residual    0.74152
+Cycle   2 residual    0.24399
+Cycle   3 residual    0.06466
+Cycle   4 residual    0.02049
+Cycle   5 residual    0.01450
+Cycle   6 residual    0.01360
+
+SD correction parameters after optimisation
+                                  Fulls
+    Run                  SdFac    SdB   SdAdd  ISa
+AllRuns   OnlyFulls       1.52   0.00  0.0609 10.8
+
+Time for SD optimisation = cpu time: 1.88 secs, elapsed time: 2.0 secs
+
+Number of outliers within I+ || I- sets:      0,  between I+ & I-      0, on |E|max      7
+
+========= Main scaling =========
+
+Main scaling:  139161 reflections selected from   199932 with |E^2| >   0.80 and |E^2| <   5.00
+
+
+   Optimization statistics macrocycle #1
+   Cycle  end-this-cycle  change-from-start  change-from-last  
+   start     -62881.409                                 
+   #1        -60934.992      1946.417           1946.417
+   #2        -60699.502      2181.906            235.489
+   #3        -60690.729      2190.679              8.773
+   #4        -60690.023      2191.386              0.706
+   #5        -60689.993      2191.415              0.029
+
+Scale parameters:
+
+Run     1
+Primary scales and number of observations
+
+Scales:    0.986    1.000    0.929    1.036    0.849    0.805    0.811    0.785    0.727    0.717
+Sd:        0.052    0.017    0.012    0.013    0.010    0.009    0.009    0.009    0.008    0.008
+Nobs:       1284     2698     4063     4217     4385     4672     4899     5045     5134     5135
+
+Scales:    0.766    0.679    0.660    0.657    0.632    0.688    0.654    0.701    0.714    0.758
+Sd:        0.009    0.008    0.007    0.007    0.007    0.008    0.007    0.008    0.008    0.009
+Nobs:       5161     5194     5277     5278     5226     5123     5051     4960     4922     4798
+
+Scales:    0.786    0.780    0.778    0.855    0.822    0.875    0.848    0.826    0.805    0.790
+Sd:        0.009    0.009    0.010    0.011    0.010    0.011    0.011    0.011    0.010    0.011
+Nobs:       4686     4463     4254     4011     3912     3865     3789     3706     3483     3383
+
+Scales:    0.742    0.760    0.799    0.795    0.776    0.820    0.903    0.867
+Sd:        0.010    0.010    0.010    0.010    0.011    0.011    0.015    0.046
+Nobs:       3272     3316     3355     3427     3647     3785     2621     1277
+
+Relative B-factors and number of observations
+
+B-factors:   -0.478   -0.045   -0.076   -1.033    0.000   -0.939   -2.077   -1.453   -4.959   -4.386
+Sd:           0.583    0.171    0.131    0.115    0.116    0.118    0.137    0.149    0.169    0.197
+Nobs:          5501    12128    19063    20434    20288    18883    17003    14918    14312     9320
+
+B-factors:    4.052
+Sd:           0.613
+Nobs:          4924
+
+Secondary scales
+
+Scale set   1
+Coefficient(Sd): -0.0009(8)     0.0008(8)     0.0012(7)    -0.0003(7)    -0.0008(8)     0.0006(8)   
+Coefficient(Sd):  0.0001(7)    -0.0013(7)     0.0015(7)     0.0008(7)    -0.0006(7)    -0.0009(7)   
+Coefficient(Sd): -0.0004(7)     0.0002(7)     0.0001(7)    -0.0005(7)     0.0013(7)    -0.0003(7)   
+Coefficient(Sd): -0.0003(8)    -0.0001(7)     0.0003(7)     0.0014(7)    -0.0002(7)    -0.0003(7)   
+Coefficient(Sd):  0.0002(7)    -0.0004(7)    -0.0025(7)    -0.0008(7)     0.0024(7)     0.0005(7)   
+Coefficient(Sd): -0.0006(7)     0.0006(7)    -0.0014(7)    -0.0005(7)     0.0009(7)     0.0012(7)   
+Coefficient(Sd):  0.0006(7)     0.0003(7)    -0.0019(7)     0.0013(7)     0.0012(7)    -0.0007(7)   
+Coefficient(Sd): -0.0016(7)    -0.0015(7)    -0.0010(7)     0.0010(7)     0.0004(7)    -0.0010(7)   
+
+
+
+Time for main scaling: cpu time: 7.30 secs, elapsed time: 4.0 secs
+
+Secondary scale corrections, in crystal frame (ABSORPTION), pole  automatic
+
+Calculated for polar angles of theta (colatitude from 0 at N pole, 180 at S pole) and phi (longitude)
+Printed only for angular ranges containing data
+
+Range of secondary corrections: 0.983 - 1.018
+
+Secondary scale number   1
+ Theta   0   10   20   30   40   50   60   70   80   90  100  110  120  130  140  150  160  170 
+  Phi
+    0    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   10    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   20    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   30    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   40    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   50    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   60    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   70    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   80    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+   90    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+  100    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    -    - 
+  110    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 0.99 0.99 0.99   -    - 
+  120    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 0.99 0.99 1.00   - 
+  130    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 0.99 0.99 1.00 1.01
+  140    -    -    -    -    -    -    -    -    -    -  1.00 1.01 1.01 1.00 0.99 0.99 1.00 1.01
+  150    -    -    -    -    -    -    -    -    -    -  1.00 1.01 1.01 1.00 1.00 0.99 1.00 1.01
+  160    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  170    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  180    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  190    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  200    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  210    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  220    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  230    -    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.01
+  240    -    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  250    -    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  260    -    -    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 0.99 1.00 1.00 1.01
+  270    -    -    -    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  280    -    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.01
+  290    -    -    -  1.00 1.00 1.00 1.00 1.00 1.00 0.99 1.00 1.00 1.00 1.00 1.00 1.00 1.01   - 
+  300    -    -  1.00 1.00 1.00 1.00 1.00 1.00 0.99 0.99 0.99 1.00 1.01 1.01 1.01 1.01   -    - 
+  310    -    -  1.00 1.00 1.00 1.00 1.00 1.00 0.99 0.99 1.00 1.00 1.01   -    -    -    -    - 
+  320    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00 1.00   -    -    -    -    -    -    - 
+  330    -    -  1.00 1.00 1.00 1.00 1.00 1.00 1.00   -    -    -    -    -    -    -    -    - 
+  340    -    -    -  1.00 1.00 1.00 1.00   -    -    -    -    -    -    -    -    -    -    - 
+  350    -    -    -    -  1.00 1.00   -    -    -    -    -    -    -    -    -    -    -    - 
+
+
+$TABLE: Histogram of secondary corrections:
+$GRAPHS:Histogram of secondary corrections:N:2,3:
+ $$
+    N  SecScale   Number   $$ $$
+   11      0.98    27582
+   12      1.00   117341
+   13      1.02    22476
+$$
+
+Optimisation and analysis of standard deviations
+================================================
+
+Weighting scheme for averages: variance weights
+
+Run    1 has only fulls
+
+For run 1, slope of central part of normal probability plot =   0.73
+  Correction applied to parameters for fulls
+
+SD correction parameters after normal probability correction
+                                  Fulls
+    Run                  SdFac    SdB   SdAdd  ISa
+      1   OnlyFulls       1.11   0.00  0.0609 14.8
+
+I+ and I- will be kept separate in SD optimisation
+
+For SD optimisation, number of outliers within I+ || I- sets:    218,  between I+ & I-      0, on |E|max     12
+
+  45871 reflections selected for SD optimisation out of   199932 in file
+
+Damping factor: 0.050
+Restraints on SD correction parameters (target (+-SD)): SdB 0.0 (+-10.0)
+Cycle   1 residual    0.15308   (main residual  0.15308 restraint residual  0.00000)
+Cycle   2 residual    0.02820   (main residual  0.02792 restraint residual  0.00029)
+Cycle   3 residual    0.50304   (main residual  0.00553 restraint residual  0.49751)
+Cycle   4 residual    0.02279   (main residual  0.02266 restraint residual  0.00013)
+Cycle   5 residual    0.02652   (main residual  0.00733 restraint residual  0.01918)
+Cycle   6 residual    0.01645   (main residual  0.00576 restraint residual  0.01069)
+Cycle   7 residual    0.02922   (main residual  0.00430 restraint residual  0.02492)
+Cycle   8 residual    0.01409   (main residual  0.00522 restraint residual  0.00887)
+Cycle   9 residual    0.04784   (main residual  0.00375 restraint residual  0.04409)
+Cycle  10 residual    0.01054   (main residual  0.00639 restraint residual  0.00416)
+Cycle  11 residual    0.19902   (main residual  0.00344 restraint residual  0.19558)
+Cycle  12 residual    0.01432   (main residual  0.01389 restraint residual  0.00043)
+Cycle  13 residual    0.13105   (main residual  0.00521 restraint residual  0.12584)
+Cycle  14 residual    0.01297   (main residual  0.01201 restraint residual  0.00096)
+Cycle  15 residual    0.09133   (main residual  0.00478 restraint residual  0.08655)
+Cycle  16 residual    0.01125   (main residual  0.00961 restraint residual  0.00164)
+Cycle  17 residual    0.13430   (main residual  0.00423 restraint residual  0.13007)
+Cycle  18 residual    0.01255   (main residual  0.01168 restraint residual  0.00087)
+Cycle  19 residual    0.13836   (main residual  0.00467 restraint residual  0.13369)
+Cycle  20 residual    0.01297   (main residual  0.01212 restraint residual  0.00085)
+Residual increased at end, revert to best cycle   10 and exit
+
+SD correction parameters after optimisation
+                                  Fulls
+    Run                  SdFac    SdB   SdAdd  ISa
+      1   OnlyFulls       0.58   9.12  0.1647 10.4
+
+Time for SD optimisation = cpu time: 3.97 secs, elapsed time: 4.0 secs
+
+
+Normal probability analysis of anomalous differences
+====================================================
+        All data                     Data within expected delta  0.90
+   Slope Intercept     Number            Slope Intercept   Number
+      1.08    0.03      58965             0.76    0.03      37259   
+
+Outlier rejection limits for I+ v I-
+    have been adjusted by a factor    3.70 *    0.76
+
+Reflections measured 3 or more times: 25.4 maximum deviation from weighted mean of all other observations
+Reflections measured twice: 25.4 maximum deviation from weighted mean
+   Policy for deviant reflections measured twice: KEEP
+
+Anomalous flag switched ON in input but the anomalous signal is weak
+
+Outlier analysis
+================
+Emax test limited to high resolution    1.147 A
+Number of rejected outliers within I+ || I- sets:      0,  between I+ & I-      0, on |E|max     12
+
+********************
+* Final statistics *
+********************
+
+
+***************************************************************
+* Merging statistics for dataset lb18145v79/xNUDT5Ax04441/SAD *
+***************************************************************
+
+Analysis by Batch is in groups of batches, group width    1.00 degrees,   6 batches/group
+
+Time for determination of anisotropic axes: cpu time: 0.80 secs, elapsed time: 1.0 secs
+Multiplicity 1.5 is above threshold 1.5 so deviant reflections measured twice are REJECTED in SD and Chi^2 analysis
+
+Accepted data:
+Number of unique reflections                      95133
+Number of observations                           167394
+
+Number of rejected outliers                           0
+Number of observations rejected on Emax limit        12
+
+
+Scale factors analysed by Batch for each dataset
+================================================
+
+Note that 0k below is calculated for the centre of each rotation range,
+at theta = 0 (for the B-factor)
+Mn(k) is average applied scale, including any input scale
+0k is the scale calculated excluding any input scale
+Analysis by Batch is in groups of batches, group width    1.00 degrees,   6 batches/group
+
+Bdecay comes from a straight line fit to the B-factors within each run
+   For run number    1, slope of B (A^2/degree)   -0.001
+
+
+$TABLE:  === Scales v rotation range, SAD:
+$GRAPHS:Mn(k) & 0k (theta=0) v. batch:N:1,5,6:
+:Relative Bfactor & Decay v. batch:A:1,8,9:
+ $$
+    N  Run    Phi    Batch     Mn(k)        0k      Number   Bfactor    Bdecay   $$ $$
+    3    1  108.45       3     1.0248     0.9933       657   -0.2501    0.5810
+    9    1  109.53       9     1.0229     0.9937      1020   -0.2262    0.5557
+   15    1  110.61      15     1.0160     0.9901       971   -0.2031    0.5303
+   21    1  111.69      21     1.0044     0.9810      1040   -0.1813    0.5050
+   27    1  112.77      27     0.9878     0.9667       994   -0.1612    0.4797
+   33    1  113.85      33     0.9726     0.9531       996   -0.1431    0.4543
+   39    1  114.93      39     0.9646     0.9458      1052   -0.1271    0.4290
+   45    1  116.01      45     0.9667     0.9484       967   -0.1132    0.4036
+   51    1  117.09      51     0.9799     0.9617      1040   -0.1014    0.3783
+   57    1  118.17      57     0.9987     0.9814       974   -0.0916    0.3530
+   63    1  119.25      63     1.0141     0.9989      1052   -0.0837    0.3276
+   69    1  120.33      69     1.0155     1.0023       998   -0.0773    0.3023
+   75    1  121.41      75     0.9966     0.9861       997   -0.0725    0.2769
+   81    1  122.49      81     0.9611     0.9522      1055   -0.0689    0.2516
+   87    1  123.57      87     0.9207     0.9106       951   -0.0664    0.2263
+   93    1  124.65      93     0.8884     0.8779      1014   -0.0648    0.2009
+   99    1  125.73      99     0.8665     0.8565      1026   -0.0640    0.1756
+  105    1  126.81     105     0.8520     0.8416      1011   -0.0639    0.1502
+  111    1  127.89     111     0.8388     0.8290      1006   -0.0642    0.1249
+  117    1  128.97     117     0.8295     0.8179       981   -0.0731    0.0996
+  123    1  130.05     123     0.8234     0.8114      1043   -0.0787    0.0742
+  129    1  131.13     129     0.8210     0.8083      1046   -0.0854    0.0489
+  135    1  132.21     135     0.8215     0.8077       993   -0.0933    0.0235
+  141    1  133.29     141     0.8226     0.8080       995   -0.1029   -0.0018
+  147    1  134.37     147     0.8244     0.8086      1018   -0.1143   -0.0271
+  153    1  135.45     153     0.8241     0.8078      1016   -0.1280   -0.0525
+  159    1  136.53     159     0.8223     0.8050      1026   -0.1444   -0.0778
+  165    1  137.61     165     0.8192     0.8000       990   -0.1638   -0.1032
+  171    1  138.69     171     0.8137     0.7929       996   -0.1868   -0.1285
+  177    1  139.77     177     0.8093     0.7861      1019   -0.2137   -0.1538
+  183    1  140.85     183     0.8034     0.7784      1007   -0.2449   -0.1792
+  189    1  141.93     189     0.7958     0.7680      1026   -0.2805   -0.2045
+  195    1  143.01     195     0.7846     0.7542      1013   -0.3206   -0.2299
+  201    1  144.09     201     0.7756     0.7420      1006   -0.3649   -0.2552
+  207    1  145.17     207     0.7709     0.7331      1016   -0.4130   -0.2805
+  213    1  146.25     213     0.7693     0.7277      1024   -0.4640   -0.3059
+  219    1  147.33     219     0.7701     0.7240      1013   -0.5169   -0.3312
+  225    1  148.41     225     0.7720     0.7214      1000   -0.5690   -0.3566
+  231    1  149.49     231     0.7755     0.7208       989   -0.6184   -0.3819
+  237    1  150.57     237     0.7809     0.7228      1052   -0.6651   -0.4072
+  243    1  151.65     243     0.7918     0.7283       984   -0.7076   -0.4326
+  249    1  152.73     249     0.8047     0.7377       970   -0.7449   -0.4579
+  255    1  153.81     255     0.8162     0.7468      1052   -0.7759   -0.4833
+  261    1  154.89     261     0.8233     0.7515      1013   -0.8000   -0.5086
+  267    1  155.97     267     0.8201     0.7481      1009   -0.8168   -0.5339
+  273    1  157.05     273     0.8066     0.7358      1021   -0.8259   -0.5593
+  279    1  158.13     279     0.7852     0.7171       988   -0.8271   -0.5846
+  285    1  159.21     285     0.7661     0.6994      1038   -0.8205   -0.6100
+  291    1  160.29     291     0.7523     0.6870       954   -0.8060   -0.6353
+  297    1  161.37     297     0.7411     0.6790      1048   -0.7837   -0.6606
+  303    1  162.45     303     0.7328     0.6730      1005   -0.7541   -0.6860
+  309    1  163.53     309     0.7235     0.6675       988   -0.7174   -0.7113
+  315    1  164.61     315     0.7168     0.6639      1026   -0.6746   -0.7367
+  321    1  165.69     321     0.7103     0.6616       995   -0.6266   -0.7620
+  327    1  166.77     327     0.7050     0.6601      1025   -0.5746   -0.7873
+  333    1  167.85     333     0.6997     0.6591       992   -0.5202   -0.8127
+  339    1  168.93     339     0.6941     0.6576      1037   -0.4726   -0.8380
+  345    1  170.01     345     0.6887     0.6559       983   -0.4198   -0.8634
+  351    1  171.09     351     0.6821     0.6531      1043   -0.3704   -0.8887
+  357    1  172.17     357     0.6737     0.6486       987   -0.3259   -0.9140
+  363    1  173.25     363     0.6657     0.6434      1009   -0.2873   -0.9394
+  369    1  174.33     369     0.6597     0.6396       991   -0.2555   -0.9647
+  375    1  175.41     375     0.6585     0.6394      1037   -0.2309   -0.9900
+  381    1  176.49     381     0.6626     0.6441       969   -0.2139   -1.0154
+  387    1  177.57     387     0.6720     0.6538      1046   -0.2047   -1.0407
+  393    1  178.65     393     0.6840     0.6658       999   -0.2034   -1.0661
+  399    1  179.73     399     0.6934     0.6750       996   -0.2099   -1.0914
+  405    1  180.81     405     0.6970     0.6785      1017   -0.2240   -1.1167
+  411    1  181.89     411     0.6965     0.6764      1009   -0.2454   -1.1421
+  417    1  182.97     417     0.6926     0.6704      1023   -0.2739   -1.1674
+  423    1  184.05     423     0.6890     0.6647      1005   -0.3087   -1.1928
+  429    1  185.13     429     0.6893     0.6619       989   -0.3490   -1.2181
+  435    1  186.21     435     0.6952     0.6637       977   -0.3937   -1.2434
+  441    1  187.29     441     0.7054     0.6704      1007   -0.4416   -1.2688
+  447    1  188.37     447     0.7208     0.6806      1025   -0.5019   -1.2941
+  453    1  189.45     453     0.7360     0.6903      1012   -0.5580   -1.3195
+  459    1  190.53     459     0.7460     0.6973      1019   -0.6138   -1.3448
+  465    1  191.61     465     0.7570     0.7020      1002   -0.6684   -1.3701
+  471    1  192.69     471     0.7645     0.7059      1011   -0.7213   -1.3955
+  477    1  193.77     477     0.7742     0.7104      1015   -0.7723   -1.4208
+  483    1  194.85     483     0.7814     0.7143      1023   -0.8214   -1.4462
+  489    1  195.93     489     0.7905     0.7191       972   -0.8692   -1.4715
+  495    1  197.01     495     0.8034     0.7263      1007   -0.9162   -1.4968
+  501    1  198.09     501     0.8172     0.7365      1040   -0.9632   -1.5222
+  507    1  199.17     507     0.8328     0.7462       965   -1.0110   -1.5475
+  513    1  200.25     513     0.8480     0.7541      1029   -1.0606   -1.5729
+  519    1  201.33     519     0.8588     0.7607      1014   -1.1126   -1.5982
+  525    1  202.41     525     0.8706     0.7674       994   -1.1676   -1.6235
+  531    1  203.49     531     0.8836     0.7746      1020   -1.2258   -1.6489
+  537    1  204.57     537     0.8946     0.7799      1003   -1.2872   -1.6742
+  543    1  205.65     543     0.9046     0.7828      1033   -1.3512   -1.6996
+  549    1  206.73     549     0.9126     0.7836      1001   -1.4170   -1.7249
+  555    1  207.81     555     0.9181     0.7829       985   -1.4836   -1.7502
+  561    1  208.89     561     0.9241     0.7817      1030   -1.5583   -1.7756
+  567    1  209.97     567     0.9288     0.7805      1022   -1.6183   -1.8009
+  573    1  211.05     573     0.9314     0.7798      1021   -1.6750   -1.8263
+  579    1  212.13     579     0.9374     0.7793      1022   -1.7270   -1.8516
+  585    1  213.21     585     0.9409     0.7795       996   -1.7733   -1.8769
+  591    1  214.29     591     0.9497     0.7809      1023   -1.8130   -1.9023
+  597    1  215.37     597     0.9599     0.7848       974   -1.8458   -1.9276
+  603    1  216.45     603     0.9663     0.7932      1014   -1.8713   -1.9530
+  609    1  217.53     609     0.9868     0.8072      1006   -1.8896   -1.9783
+  615    1  218.61     615     1.0126     0.8243      1007   -1.9009   -2.0036
+  621    1  219.69     621     1.0223     0.8376      1058   -1.9053   -2.0290
+  627    1  220.77     627     1.0317     0.8440       989   -1.9031   -2.0543
+  633    1  221.85     633     1.0317     0.8435      1004   -1.8947   -2.0797
+  639    1  222.93     639     1.0267     0.8383      1002   -1.8805   -2.1050
+  645    1  224.01     645     1.0118     0.8331      1043   -1.8612   -2.1303
+  651    1  225.09     651     1.0091     0.8304      1012   -1.8375   -2.1557
+  657    1  226.17     657     1.0043     0.8327       982   -1.8101   -2.1810
+  663    1  227.25     663     1.0142     0.8402       990   -1.7800   -2.2064
+  669    1  228.33     669     1.0271     0.8511      1028   -1.7842   -2.2317
+  675    1  229.41     675     1.0352     0.8610      1019   -1.7617   -2.2570
+  681    1  230.49     681     1.0432     0.8662       980   -1.7438   -2.2824
+  687    1  231.57     687     1.0384     0.8663      1028   -1.7323   -2.3077
+  693    1  232.65     693     1.0315     0.8626      1012   -1.7288   -2.3331
+  699    1  233.73     699     1.0275     0.8568      1028   -1.7347   -2.3584
+  705    1  234.81     705     1.0198     0.8514       994   -1.7515   -2.3837
+  711    1  235.89     711     1.0195     0.8469       989   -1.7808   -2.4091
+  717    1  236.97     717     1.0209     0.8423      1003   -1.8238   -2.4344
+  723    1  238.05     723     1.0144     0.8366      1009   -1.8820   -2.4598
+  729    1  239.13     729     1.0224     0.8316      1002   -1.9567   -2.4851
+  735    1  240.21     735     1.0275     0.8273      1045   -2.0490   -2.5104
+  741    1  241.29     741     1.0345     0.8233       986   -2.1594   -2.5358
+  747    1  242.37     747     1.0413     0.8188      1002   -2.2883   -2.5611
+  753    1  243.45     753     1.0500     0.8133      1023   -2.4350   -2.5864
+  759    1  244.53     759     1.0664     0.8089      1010   -2.5981   -2.6118
+  765    1  245.61     765     1.0784     0.8054      1002   -2.7749   -2.6371
+  771    1  246.69     771     1.1024     0.8020      1027   -2.9620   -2.6625
+  777    1  247.77     777     1.1217     0.7984       975   -3.1551   -2.6878
+  783    1  248.85     783     1.1367     0.7935      1020   -3.3688   -2.7131
+  789    1  249.93     789     1.1576     0.7888      1008   -3.5592   -2.7385
+  795    1  251.01     795     1.1739     0.7829       952   -3.7412   -2.7638
+  801    1  252.09     801     1.1818     0.7742      1020   -3.9108   -2.7892
+  807    1  253.17     807     1.1828     0.7633      1044   -4.0651   -2.8145
+  813    1  254.25     813     1.1933     0.7541       977   -4.2023   -2.8398
+  819    1  255.33     819     1.1966     0.7487       997   -4.3213   -2.8652
+  825    1  256.41     825     1.2014     0.7475      1032   -4.4220   -2.8905
+  831    1  257.49     831     1.2246     0.7494      1005   -4.5050   -2.9159
+  837    1  258.57     837     1.2425     0.7535      1013   -4.5713   -2.9412
+  843    1  259.65     843     1.2636     0.7580       976   -4.6220   -2.9665
+  849    1  260.73     849     1.2616     0.7628      1029   -4.6586   -2.9919
+  855    1  261.81     855     1.2791     0.7691      1031   -4.6824   -3.0172
+  861    1  262.89     861     1.3115     0.7775       982   -4.6948   -3.0426
+  867    1  263.97     867     1.3074     0.7863      1035   -4.6975   -3.0679
+  873    1  265.05     873     1.3197     0.7923       984   -4.6917   -3.0932
+  879    1  266.13     879     1.3148     0.7954      1029   -4.6791   -3.1186
+  885    1  267.21     885     1.3320     0.7964       979   -4.6611   -3.1439
+  891    1  268.29     891     1.3034     0.7961       998   -4.5843   -3.1693
+  897    1  269.37     897     1.3054     0.7948      1004   -4.5236   -3.1946
+  903    1  270.45     903     1.2805     0.7932      1022   -4.4549   -3.2199
+  909    1  271.53     909     1.2669     0.7906      1001   -4.3768   -3.2453
+  915    1  272.61     915     1.2496     0.7868      1001   -4.2874   -3.2706
+  921    1  273.69     921     1.2361     0.7833       998   -4.1844   -3.2960
+  927    1  274.77     927     1.2142     0.7816      1006   -4.0649   -3.3213
+  933    1  275.85     933     1.1929     0.7831      1024   -3.9257   -3.3466
+  939    1  276.93     939     1.1823     0.7887       998   -3.7630   -3.3720
+  945    1  278.01     945     1.1718     0.7984       992   -3.5729   -3.3973
+  951    1  279.09     951     1.1545     0.8093      1023   -3.3516   -3.4227
+  957    1  280.17     957     1.1397     0.8199      1010   -3.0954   -3.4480
+  963    1  281.25     963     1.1213     0.8317       988   -2.8018   -3.4733
+  969    1  282.33     969     1.0968     0.8474      1022   -2.4694   -3.4987
+  975    1  283.41     975     1.0742     0.8667      1001   -2.0986   -3.5240
+  981    1  284.49     981     1.0508     0.8822       998   -1.6924   -3.5494
+  987    1  285.57     987     1.0074     0.8904      1021   -1.2559   -3.5747
+  993    1  286.65     993     0.9607     0.8911       969   -0.7971   -3.6000
+  998    1  287.55     998     0.9232     0.8871       356   -0.4046   -3.6212
+$$
+    N  Run    Phi    Batch     Mn(k)        0k      Number   Bfactor    Bdecay
+
+
+Agreement between batches
+=========================
+
+ Rmerge in this table is the difference from Mn(Imean),
+  but in later tables Rmerge is the difference from Mn(I+),Mn(I-)
+Mean Chi^2 values are calculated for all data, and also
+ excluding observations with large deviations >5sd, including for reflections measured only twice (Chi^2c)
+
+ SmRmerge and SmMaxRes in table are smoothed over   5 batch groups
+
+
+$TABLE:  Analysis against all Batches for all runs, SAD:
+$GRAPHS:Rmerge v Batch for all runs:N:1,15,6:
+:Filtered Mean(Chi^2)(<5sd) v Batch:N:1,14:
+:Mean(Chi^2), Mean(Chi^2)(<5sd) v Batch:N:1,13,14:
+:Cumulative %completeness & Anom%cmpl v Batch:N:1,10,9:
+:Maximum resolution limit, I/sigma > 1.0:A:1,16,11:
+:Imean & RMS Scatter:N:1,3,4:
+:Imean/RMS scatter:N:1,5:
+:Number of rejects:N:1,8:
+:Cumulative multiplicity:N:1,12:
+ $$
+    N   Batch    Mn(I)   RMSdev  I/rms  Rmerge    Number  Nrej Cm%poss  AnoCmp MaxRes CMlplc   Chi^2  Chi^2c SmRmerge SmMaxRes   $$ $$
+    3       3    449.1    212.5   2.11   0.088       853     0     0.7      -    1.68   0.01    1.10    0.85    0.075     1.77
+    9       9    421.9    109.5   3.85   0.065      1313     0     1.7      -    1.77   0.02    1.79    0.80    0.075     1.77
+   15      15    397.8     93.0   4.28   0.072      1270     0     2.7     0.0   1.79   0.03    0.71    0.71    0.075     1.77
+   21      21    443.8    114.3   3.88   0.074      1352     0     3.7     0.0   1.76   0.04    1.49    0.93    0.076     1.77
+   27      27    470.2    141.5   3.32   0.078      1303     0     4.7     0.0   1.74   0.05    3.18    0.70    0.076     1.76
+   33      33    419.4    189.3   2.22   0.090      1324     0     5.7     0.0   1.78   0.06    3.61    0.97    0.076     1.76
+   39      39    437.7     94.4   4.63   0.066      1363     0     6.8     0.0   1.73   0.07    4.57    0.86    0.077     1.76
+   45      45    494.6    208.4   2.37   0.076      1271     0     7.8     0.0   1.78   0.08    7.49    0.74    0.073     1.76
+   51      51    404.4    136.8   2.96   0.075      1326     0     8.8     0.0   1.74   0.09    1.62    0.63    0.065     1.75
+   57      57    455.1     74.2   6.13   0.059      1289     0     9.8     0.0   1.76   0.10    1.09    0.60    0.065     1.76
+   63      63    506.3     70.0   7.23   0.051      1342     0    10.9     0.0   1.74   0.11    0.76    0.67    0.064     1.77
+   69      69    455.4     92.1   4.95   0.065      1291     0    11.9     0.0   1.77   0.12    0.78    0.65    0.063     1.77
+   75      75    455.8    107.5   4.24   0.071      1282     0    12.8     0.1   1.79   0.13    0.97    0.75    0.064     1.77
+   81      81    396.2     76.5   5.18   0.072      1343     0    13.9     0.1   1.77   0.14    1.72    0.72    0.070     1.77
+   87      87    454.4     80.2   5.66   0.065      1221     0    14.8     0.1   1.77   0.15    1.22    0.67    0.073     1.76
+   93      93    480.2    113.3   4.24   0.075      1258     0    15.8     0.2   1.75   0.16    5.88    0.66    0.076     1.75
+   99      99    474.4    167.3   2.83   0.083      1267     0    16.8     0.2   1.68   0.17    3.20    0.78    0.079     1.74
+  105     105    417.7    110.7   3.77   0.088      1258     0    17.8     0.3   1.72   0.18    6.05    0.68    0.078     1.68
+  111     111    494.2    252.0   1.96   0.086      1264     0    18.7     0.3   1.75   0.19    2.47    0.74    0.076     1.71
+  117     117    446.9     73.1   6.11   0.059      1200     0    19.6     0.4   1.68   0.20    1.17    0.54    0.071     1.71
+  123     123    430.5     99.3   4.33   0.060      1260     0    20.6     0.5   1.75   0.21    1.04    0.56    0.071     1.71
+  129     129    459.4     83.8   5.48   0.060      1225     0    21.6     0.6   1.71   0.22    1.36    0.70    0.068     1.71
+  135     135    444.5    193.9   2.29   0.090      1177     0    22.5     0.7   1.71   0.23    3.78    0.63    0.067     1.72
+  141     141    474.3    165.3   2.87   0.071      1138     0    23.3     0.9   1.71   0.24    2.26    0.59    0.068     1.71
+  147     147    474.4     66.4   7.15   0.055      1172     0    24.2     1.0   1.72   0.25    1.22    0.64    0.069     1.71
+  153     153    469.5     90.0   5.22   0.064      1167     0    25.1     1.2   1.68   0.26    1.47    0.62    0.064     1.72
+  159     159    443.7     91.8   4.83   0.066      1118     0    25.9     1.4   1.75   0.27    0.95    0.68    0.064     1.72
+  165     165    537.4    163.2   3.29   0.066      1066     0    26.7     1.6   1.76   0.28    2.34    0.63    0.064     1.72
+  171     171    482.1    108.1   4.46   0.069      1052     0    27.4     1.8   1.71   0.29    4.59    0.51    0.062     1.71
+  177     177    461.2     77.4   5.96   0.055      1053     0    28.2     2.1   1.73   0.30    0.63    0.63    0.061     1.68
+  183     183    509.6     83.4   6.11   0.053      1005     0    29.0     2.4   1.68   0.31    0.64    0.39    0.059     1.68
+  189     189    513.7    108.1   4.75   0.060      1029     0    29.7     2.7   1.68   0.32    5.59    0.46    0.056     1.68
+  195     195    509.4     97.8   5.21   0.057       976     0    30.4     3.0   1.68   0.33    0.36    0.36    0.058     1.68
+  201     201    532.0     90.8   5.86   0.054       972     0    31.1     3.3   1.68   0.34    0.58    0.58    0.059     1.68
+  207     207    488.1    128.5   3.80   0.067       983     0    31.8     3.7   1.68   0.35    0.90    0.33    0.058     1.68
+  213     213    442.4     62.9   7.04   0.056       991     0    32.5     4.0   1.73   0.36    1.02    0.48    0.059     1.68
+  219     219    519.9    117.7   4.42   0.058       960     0    33.2     4.4   1.68   0.38    0.70    0.55    0.061     1.68
+  225     225    477.6     97.1   4.92   0.059       949     0    33.8     4.7   1.68   0.39    1.06    0.47    0.059     1.68
+  231     231    470.9     92.1   5.11   0.064       917     0    34.5     5.1   1.68   0.40    2.25    0.31    0.061     1.68
+  237     237    473.3     80.3   5.90   0.060       988     0    35.1     5.5   1.68   0.41    1.06    0.43    0.063     1.68
+  243     243    574.5    134.8   4.26   0.064       922     0    35.8     5.8   1.70   0.42    1.02    0.59    0.067     1.68
+  249     249    514.7     98.1   5.25   0.067       900     0    36.4     6.2   1.71   0.43    0.45    0.45    0.069     1.68
+  255     255    461.8    101.6   4.55   0.080       962     0    37.1     6.6   1.68   0.44    8.54    0.69    0.082     1.68
+  261     261    475.5     98.4   4.83   0.072       940     0    37.7     7.0   1.68   0.45    0.71    0.47    0.084     1.68
+  267     267    518.2    431.8   1.20   0.127       931     0    38.3     7.3   1.68   0.46  160.80    0.48    0.084     1.68
+  273     273    487.1     84.0   5.80   0.070       914     0    39.0     7.7   1.68   0.47    6.35    0.42    0.080     1.68
+  279     279    537.5    165.4   3.25   0.070       895     0    39.6     8.1   1.68   0.48    0.72    0.72    0.078     1.68
+  285     285    508.9    111.1   4.58   0.061       949     0    40.2     8.5   1.68   0.49    1.24    0.61    0.065     1.68
+  291     291    486.9    102.2   4.76   0.061       861     0    40.8     8.9   1.68   0.50    0.62    0.62    0.064     1.68
+  297     297    471.4    104.7   4.50   0.064       949     0    41.5     9.3   1.68   0.51    0.37    0.37    0.065     1.68
+  303     303    528.0    106.9   4.94   0.065       915     0    42.1     9.7   1.68   0.52    0.41    0.41    0.064     1.68
+  309     309    563.2    129.8   4.34   0.071       870     0    42.7    10.1   1.68   0.53    0.48    0.48    0.065     1.68
+  315     315    518.4     76.8   6.75   0.056       931     0    43.3    10.5   1.68   0.54    0.21    0.21    0.065     1.68
+  321     321    549.9    120.8   4.55   0.070       889     0    43.9    10.9   1.68   0.55    0.65    0.65    0.063     1.68
+  327     327    484.1     99.4   4.87   0.063       924     0    44.6    11.3   1.68   0.56    0.77    0.77    0.062     1.68
+  333     333    463.4     81.2   5.71   0.053       870     0    45.2    11.7   1.68   0.57    0.94    0.94    0.067     1.68
+  339     339    601.1    131.1   4.59   0.066       935     1    45.8    12.2   1.68   0.58    0.82    0.82    0.067     1.68
+  345     345    529.1    175.3   3.02   0.082       871     0    46.4    12.6   1.68   0.59    0.55    0.57    0.067     1.68
+  351     351    486.3    102.4   4.75   0.072       927     0    47.0    13.0   1.68   0.60    0.81    0.81    0.071     1.68
+  357     357    530.2    104.8   5.06   0.064       868     0    47.6    13.4   1.68   0.61    0.70    0.72    0.072     1.68
+  363     363    491.0    181.7   2.70   0.071       891     0    48.2    13.8   1.68   0.62    1.43    0.25    0.070     1.68
+  369     369    530.9    153.0   3.47   0.072       892     0    48.8    14.2   1.68   0.63    1.45    0.75    0.070     1.68
+  375     375    523.2    123.1   4.25   0.069       923     0    49.4    14.6   1.68   0.64    0.55    0.55    0.071     1.68
+  381     381    473.5    113.8   4.16   0.074       847     0    50.0    15.0   1.68   0.65    0.38    0.38    0.070     1.68
+  387     387    441.7    105.5   4.19   0.072       927     0    50.6    15.5   1.68   0.66    0.43    0.43    0.072     1.68
+  393     393    538.5    135.8   3.96   0.067       899     0    51.2    15.9   1.68   0.67    1.38    0.29    0.071     1.68
+  399     399    534.4    128.7   4.15   0.078       880     0    51.8    16.3   1.68   0.68    0.43    0.43    0.072     1.68
+  405     405    559.9     97.3   5.75   0.065       901     0    52.4    16.7   1.71   0.69   13.74    0.47    0.071     1.68
+  411     411    541.4    127.9   4.23   0.076       885     0    53.0    17.1   1.68   0.70    8.60    0.47    0.072     1.68
+  417     417    494.8    115.1   4.30   0.069       895     0    53.6    17.6   1.68   0.71    6.23    0.28    0.071     1.68
+  423     423    475.1    117.9   4.03   0.074       891     0    54.2    18.0   1.68   0.72    0.16    0.17    0.076     1.68
+  429     429    472.0    125.6   3.76   0.072       873     0    54.8    18.4   1.68   0.73    0.53    0.53    0.078     1.68
+  435     435    505.6    258.3   1.96   0.090       860     0    55.3    18.8   1.68   0.74    0.45    0.45    0.085     1.68
+  441     441    520.5    151.2   3.44   0.084       886     0    55.9    19.3   1.68   0.75    0.35    0.35    0.085     1.68
+  447     447    507.5    211.3   2.40   0.101       903     0    56.5    19.7   1.68   0.76    0.92    0.92    0.089     1.68
+  453     453    503.5    160.1   3.14   0.079       902     0    57.1    20.1   1.68   0.77   12.81    0.42    0.088     1.68
+  459     459    454.1    141.8   3.20   0.091       916     0    57.7    20.6   1.71   0.78    0.69    0.69    0.089     1.68
+  465     465    504.7    179.1   2.82   0.086       868     0    58.3    21.0   1.68   0.79    0.19    0.19    0.085     1.68
+  471     471    474.0    129.9   3.65   0.088       897     0    58.9    21.4   1.68   0.80   17.72    1.04    0.085     1.68
+  477     477    453.4    148.0   3.06   0.080       887     0    59.5    21.9   1.68   0.81    1.25    1.25    0.080     1.68
+  483     483    462.5    145.6   3.18   0.079       901     0    60.1    22.3   1.71   0.82    0.51    0.51    0.081     1.68
+  489     489    470.1    101.3   4.64   0.066       851     0    60.6    22.7   1.70   0.83    0.47    0.47    0.082     1.68
+  495     495    393.8    151.7   2.60   0.093       887     0    61.2    23.1   1.68   0.84    1.34    0.21    0.085     1.68
+  501     501    542.3    195.9   2.77   0.089       920     0    61.8    23.6   1.68   0.86  277.62    0.87    0.086     1.68
+  507     507    481.6    255.6   1.88   0.099       843     0    62.3    24.0   1.68   0.87    1.36    0.29    0.091     1.68
+  513     513    413.7    112.4   3.68   0.086       898     0    62.9    24.4   1.73   0.88    0.39    0.39    0.088     1.71
+  519     519    496.4    157.2   3.16   0.089       900     0    63.5    24.9   1.72   0.89   24.65    0.28    0.091     1.71
+  525     525    498.4    131.1   3.80   0.080       861     0    64.1    25.3   1.73   0.90    0.50    0.50    0.086     1.72
+  531     531    458.1    290.2   1.58   0.101       914     0    64.7    25.7   1.68   0.91    0.40    0.24    0.086     1.72
+  537     537    512.5    128.9   3.98   0.077       870     0    65.3    26.2   1.72   0.92   66.57    0.95    0.087     1.73
+  543     543    461.1    173.8   2.65   0.087       920     0    65.8    26.6   1.72   0.93   17.05    0.34    0.091     1.72
+  549     549    428.3    134.8   3.18   0.092       873     0    66.4    27.0   1.76   0.94    0.66    0.66    0.087     1.72
+  555     555    415.8    211.7   1.96   0.104       859     0    67.0    27.5   1.73   0.95    0.40    0.40    0.089     1.72
+  561     561    474.0    127.4   3.72   0.081       913     0    67.6    27.9   1.68   0.96    9.63    0.61    0.090     1.73
+  567     567    427.2    119.5   3.57   0.083       889     0    68.1    28.4   1.72   0.97    0.83    0.83    0.087     1.72
+  573     573    493.1    164.4   3.00   0.092       917     0    68.7    28.8   1.76   0.98    0.36    0.36    0.083     1.72
+  579     579    429.1    108.7   3.95   0.078       911     0    69.3    29.2   1.73   0.99    0.30    0.30    0.084     1.72
+  585     585    411.2    103.5   3.97   0.080       869     0    69.8    29.7   1.68   1.00   29.36    0.22    0.083     1.75
+  591     591    382.7    157.5   2.43   0.085       902     0    70.4    30.1   1.68   1.01   22.75    0.71    0.080     1.75
+  597     597    374.6    104.4   3.59   0.074       860     0    71.0    30.5   1.76   1.02    1.63    0.41    0.082     1.75
+  603     603    450.7    126.1   3.58   0.081       890     0    71.5    31.0   1.77   1.03    0.67    0.67    0.082     1.75
+  609     609    445.0    129.3   3.44   0.089       883     0    72.1    31.4   1.72   1.04    3.29    0.68    0.085     1.76
+  615     615    350.7     87.3   4.02   0.078       901     0    72.7    31.8   1.68   1.05    4.23    0.95    0.088     1.75
+  621     621    463.0    151.7   3.05   0.098       927     0    73.2    32.3   1.68   1.06    0.42    0.42    0.090     1.75
+  627     627    385.8    118.7   3.25   0.088       871     0    73.8    32.8   1.72   1.07    0.75    0.57    0.088     1.76
+  633     633    412.3    147.4   2.80   0.095       892     2    74.3    33.2   1.77   1.08    0.60    0.60    0.095     1.77
+  639     639    385.4     88.3   4.37   0.076       895     0    74.9    33.6   1.78   1.09    0.48    0.48    0.093     1.77
+  645     645    413.0    165.6   2.49   0.113       963     0    75.5    34.1   1.80   1.10    0.87    0.87    0.090     1.78
+  651     651    442.1    146.0   3.03   0.087       878     0    76.0    34.5   1.79   1.11    0.39    0.39    0.089     1.79
+  657     657    443.3    112.4   3.94   0.079       882     0    76.6    34.9   1.80   1.12    0.88    0.88    0.090     1.79
+  663     663    407.2    128.9   3.16   0.086       869     0    77.1    35.4   1.76   1.13    3.07    0.52    0.085     1.78
+  669     669    439.7    137.8   3.19   0.086       935     0    77.7    35.8   1.80   1.14    0.70    0.51    0.083     1.77
+  675     675    406.2    141.6   2.87   0.089       917     0    78.2    36.3   1.74   1.15    0.77    0.77    0.083     1.77
+  681     681    435.2    108.7   4.00   0.078       874     0    78.8    36.7   1.75   1.16    2.65    0.44    0.085     1.79
+  687     687    408.4    117.2   3.48   0.078       937     0    79.3    37.1   1.80   1.17    0.46    0.46    0.084     1.80
+  693     693    429.2    150.1   2.86   0.093       906     0    79.9    37.6   1.81   1.18    8.71    1.25    0.082     1.80
+  699     699    344.2    106.0   3.25   0.080       931     0    80.4    38.0   1.80   1.19    2.46    0.56    0.084     1.80
+  705     705    391.0     98.2   3.98   0.081       906     0    80.9    38.4   1.77   1.20    0.73    0.73    0.085     1.80
+  711     711    424.9    159.7   2.66   0.088       897     0    81.5    38.9   1.79   1.21    0.36    0.36    0.085     1.80
+  717     717    477.3    134.5   3.55   0.080       904     0    82.0    39.3   1.78   1.22    0.62    0.62    0.090     1.80
+  723     723    449.4    159.1   2.83   0.096       915     0    82.6    39.7   1.81   1.23    0.57    0.57    0.091     1.81
+  729     729    363.1    156.5   2.32   0.109       920     0    83.1    40.2   1.81   1.24    1.83    0.95    0.090     1.81
+  735     735    361.2    103.0   3.51   0.085       947     0    83.6    40.7   1.68   1.25    0.57    0.57    0.092     1.81
+  741     741    410.6    172.0   2.39   0.082       913     0    84.1    41.1   1.81   1.26   11.80    0.50    0.091     1.81
+  747     747    425.8    141.3   3.01   0.091       910     0    84.6    41.5   1.79   1.27    4.32    0.64    0.085     1.80
+  753     753    431.2    199.6   2.16   0.091       964     0    85.2    42.0   1.80   1.28    0.48    0.48    0.083     1.80
+  759     759    376.2     93.5   4.02   0.075       947     0    85.7    42.4   1.81   1.29    0.61    0.61    0.082     1.80
+  765     765    391.8     99.8   3.92   0.075       934     0    86.2    42.8   1.80   1.30    2.21    0.86    0.082     1.80
+  771     771    489.7    150.7   3.25   0.079       973     0    86.7    43.3   1.79   1.32    0.45    0.45    0.077     1.80
+  777     777    379.4    164.2   2.31   0.089       915     0    87.2    43.7   1.80   1.33    3.19    0.73    0.078     1.80
+  783     783    404.2     93.5   4.33   0.068       970     0    87.7    44.2   1.81   1.34    1.50    0.68    0.078     1.80
+  789     789    392.7     94.5   4.15   0.080       957     0    88.1    44.6   1.79   1.35    0.78    0.64    0.079     1.80
+  795     795    422.8    116.2   3.64   0.075       913     0    88.6    45.0   1.79   1.36    0.69    0.69    0.080     1.80
+  801     801    321.2     82.0   3.92   0.087      1001     0    89.1    45.5   1.79   1.37    8.02    0.83    0.080     1.79
+  807     807    373.8    163.5   2.29   0.093      1035     0    89.5    45.9   1.79   1.38    3.57    0.61    0.082     1.80
+  813     813    389.9    113.1   3.45   0.068       988     0    89.9    46.3   1.81   1.39    0.73    0.73    0.085     1.80
+  819     819    343.7     93.1   3.69   0.085      1015     0    90.4    46.8   1.82   1.40    0.95    0.84    0.087     1.81
+  825     825    395.7    109.8   3.60   0.093      1022     0    90.8    47.2   1.79   1.41    9.31    0.92    0.085     1.81
+  831     831    381.0    227.4   1.68   0.095      1070     0    91.1    47.7   1.82   1.42    2.15    1.00    0.091     1.82
+  837     837    367.6     76.3   4.81   0.084      1118     0    91.5    48.1   1.84   1.43    1.82    1.09    0.091     1.83
+  843     843    378.1    169.1   2.24   0.099      1090     0    91.8    48.6   1.83   1.44    0.95    0.95    0.089     1.83
+  849     849    358.1     72.2   4.96   0.085      1140     0    92.1    49.0   1.85   1.45    1.54    1.07    0.089     1.83
+  855     855    416.9    133.5   3.12   0.085      1171     0    92.4    49.4   1.83   1.46    1.37    1.12    0.088     1.83
+  861     861    349.4     91.9   3.80   0.091      1144     1    92.7    49.9   1.86   1.47    2.03    0.85    0.086     1.83
+  867     867    409.6     83.4   4.91   0.082      1231     0    93.0    50.3   1.82   1.48    4.66    0.98    0.085     1.83
+  873     873    465.5    140.3   3.32   0.087      1185     0    93.2    50.8   1.85   1.49    2.66    0.92    0.085     1.83
+  879     879    394.1     67.1   5.88   0.079      1240     0    93.4    51.2   1.83   1.50    1.56    0.95    0.085     1.83
+  885     885    376.0     72.7   5.17   0.084      1228     0    93.6    51.7   1.82   1.51    1.98    0.87    0.089     1.83
+  891     891    405.6    229.8   1.77   0.093      1216     0    93.8    52.1   1.85   1.52    2.01    0.97    0.087     1.83
+  897     897    445.1    198.9   2.24   0.100      1241     0    94.0    52.5   1.81   1.53    8.48    1.21    0.090     1.82
+  903     903    438.2     92.8   4.72   0.078      1283     0    94.2    53.0   1.83   1.54    2.98    1.10    0.087     1.82
+  909     909    391.0    356.2   1.10   0.095      1286     0    94.4    53.4   1.81   1.55    1.08    0.90    0.083     1.82
+  915     915    384.2     89.5   4.29   0.073      1283     0    94.5    53.8   1.82   1.56    2.21    0.97    0.079     1.82
+  921     921    392.3     80.1   4.89   0.070      1258     0    94.7    54.3   1.81   1.57    1.45    0.90    0.079     1.81
+  927     927    341.2     57.8   5.90   0.077      1281     0    94.8    54.7   1.80   1.58    1.16    0.93    0.075     1.81
+  933     933    392.2     88.7   4.42   0.080      1326     0    95.0    55.2   1.82   1.59    3.31    1.03    0.075     1.81
+  939     939    375.6     79.8   4.71   0.072      1316     0    95.1    55.6   1.77   1.60    3.40    0.95    0.072     1.80
+  945     945    353.3     73.4   4.81   0.074      1300     0    95.3    56.0   1.81   1.61    1.91    0.88    0.070     1.80
+  951     951    498.5     97.6   5.11   0.062      1353     0    95.4    56.5   1.80   1.62    2.15    0.85    0.068     1.80
+  957     957    378.7     67.6   5.60   0.064      1298     0    95.5    56.9   1.80   1.63    1.18    0.82    0.066     1.81
+  963     963    421.3    119.4   3.53   0.068      1302     0    95.7    57.3   1.75   1.64    1.84    0.82    0.064     1.80
+  969     969    465.3    101.2   4.60   0.064      1328     0    95.8    57.8   1.81   1.65    1.19    0.82    0.063     1.80
+  975     975    438.5     78.8   5.56   0.060      1325     0    95.9    58.3   1.79   1.66    1.28    0.84    0.067     1.80
+  981     981    470.1     78.2   6.01   0.060      1329     0    96.1    58.7   1.80   1.67    1.22    0.67    0.065     1.80
+  987     987    389.0    143.3   2.72   0.084      1329     0    96.2    59.1   1.77   1.68    6.32    0.71    0.074     1.79
+  993     993    451.7     85.1   5.31   0.060      1291     0    96.3    59.6   1.80   1.69    2.74    0.76    0.074     1.79
+  998     998    592.7   1084.9   0.55   0.152       471     0    96.3    59.7   1.78   1.70    0.90    0.81    0.074     1.79
+$$
+    N   Batch    Mn(I)   RMSdev  I/rms  Rmerge    Number  Nrej Cm%poss  AnoCmp MaxRes CMlplc   Chi^2  Chi^2c SmRmerge SmMaxRes
+Nbins 20 20
+
+
+Correlation coefficients for anomalous differences & Imean between random half-datasets (CC1/2)
+===============================================================================================
+
+ CC(1/2) values (for Imean and anomalous differences) are calculated by splitting the data randomly in half
+ CC(1/2)v for Imean is calculated from variances, see Assmann, Brehm & Diederichs(2016),J.Appl.Cryst.49,1021-1028)
+ The RMS Correlation Ratio (RCR) is calculated from a scatter plot of pairs of DeltaI(anom)
+ from the two subsets (halves) by comparing the RMS value (excluding extremes) projected on the line 
+ with slope = 1 ('correlation') with the RMS value perpendicular to this ('error').
+ This ratio will be > 1 if there is a significant anomalous signal
+
+ Rsplit = (1/Sqrt(2)) Sum (|I1 - I2|)/0.5*Sum(I1 + I2) where I1,I2 are the half-dataset intensities as for CC(1/2)
+ Note that internal R-factors of any sort are deprecated as metrics for assessment of effective resolution
+
+ Estimates of maximum resolution for intensities and anomalous differences,
+  based on the point at which CC(1/2) falls below a threshold
+
+ Curve fitting as suggested by Ed Pozharski to a tanh function
+  of the form (1/2)(1 - tanh(z)) where z = (s - d0)/r,
+    s = 1/d^2, d0 is the value of s at the half-falloff value, and r controls the steepness of falloff
+
+Estimate of resolution limit for intensities:
+Threshold (see ANALYSIS keyword):   0.30
+Resolution limit determined from a curve fit to the function (1/2)(1 - tanh((s - d0)/r))
+All scores are above the threshold, ie data extends to the maximum resolution of   1.68A
+
+Estimate of resolution limit for significant anomalous differences:
+Threshold (see ANALYSIS keyword):   0.15
+Insufficient data to determine resolution limit
+Fitted scores are below the threshold, ie there is no apparent anomalous signal from CCanom
+
+
+$TABLE:  Correlations CC(1/2) within dataset, SAD:
+$GRAPHS: CC(1/2) v resolution, max resolution 1.68, anom 0.00:0|0.354304x0|1:2,4,7,9,11:
+: RMS anomalous correlation ratio :0|0.354304x0|1:2,6:
+: Rsplit :0|0.354304x0|0.560149:2,9:
+ $$
+  N  1/d^2    Dmid CCanom    Nanom   RCRanom   CC1/2   NCC1/2  CC1/2v   Rsplit     CCfit   $$ $$
+  1  0.0089  10.63   -           0      -      0.972      922   0.975    0.091     0.953
+  2  0.0266   6.13   -           0      -      0.977     1371   0.976    0.090     0.946
+  3  0.0443   4.75   -           0      -      0.974     2221   0.973    0.090     0.938
+  4  0.0620   4.02   -           0      -      0.973     2184   0.971    0.089     0.930
+  5  0.0797   3.54   -           0      -      0.923     2343   0.926    0.093     0.920
+  6  0.0974   3.20   -           0      -      0.972     3079   0.972    0.096     0.909
+  7  0.1151   2.95   -           0      -      0.979     3479   0.979    0.094     0.896
+  8  0.1329   2.74   -           0      -      0.937     3412   0.946    0.115     0.882
+  9  0.1506   2.58   -           0      -      0.971     3069   0.972    0.110     0.867
+ 10  0.1683   2.44   -           0      -      0.972     3843   0.971    0.111     0.849
+ 11  0.1860   2.32   -           0      -      0.796     4141   0.720    0.135     0.830
+ 12  0.2037   2.22   -           0      -      0.560     4444   0.523    0.225     0.809
+ 13  0.2214   2.13   -           0      -      0.960     4505   0.957    0.149     0.786
+ 14  0.2392   2.04   -           0      -      0.308     3933   0.145    0.354     0.762
+ 15  0.2569   1.97   -           0      -      0.583     4163   0.534    0.245     0.735
+ 16  0.2746   1.91   -           0      -      0.483     4703   0.533    0.406     0.706
+ 17  0.2923   1.85   -           0      -      0.788     5131   0.858    0.275     0.676
+ 18  0.3100   1.80   -           0      -      0.911     5472   0.908    0.303     0.644
+ 19  0.3277   1.75   -           0      -      0.866     5245   0.867    0.397     0.611
+ 20  0.3454   1.70   -           0      -      0.480     4601   0.406    0.560     0.577
+$$
+Overall:            0.000        0     0.000   0.976    72261   0.806    0.107
+                   CCanom    Nanom   RCRanom   CC1/2   NCC1/2  CC1/2v   Rsplit     CCfit
+
+
+
+Analysis of anisotropy of data
+==============================
+
+Mn(I/sd) and half-dataset correlation coefficients CC(1/2) are analysed by resolution
+within an maxangle of 20 degrees of principal axes of anisotropy
+weighted according to angle, w = [cos(angle) - cos(maxangle)]/[1 - cos(maxangle)],
+   Principal axes:
+      d1:    0.78 a* + 0.51 b* + 0.37 c*
+      d2:   -0.22 a* + 0.59 b* + 0.78 c*
+      d3:    0.08 a* - 0.50 b* + 0.86 c*
+
+Eigenvalues of [B](orth) along principal axes :   -9.481    2.960    6.522
+Difference between maximum and minimum anisotropic B (= 8 pi^2 U)    16.0
+
+ Estimated maximum resolution limits, d1:  1.98, d2:  1.68, d3:  1.68
+ Columns 'CCft' are values from curve-fitting as for overall analysis
+
+
+$TABLE:  Anisotropy analysis of CC(1/2) and I/sd, SAD:
+$GRAPHS: Anisotropic CC(1/2) v resolution:0|0.354304x-0.0706872|1:2,4,5,6,13,14,15:
+: Anisotropic Mn(I/sd) v resolution:0|0.354304x0|13.1954:2,7,8,9:
+: Projected CC(1/2) v resolution:0|0.354304x0|1:2,10,11,12:
+ $$
+  N  1/d^2    Dmid    CC:d1   CC:d2   CC:d3  I/sd:d1  I/sd:d2  I/sd:d3    CCp1    CCp2    CCp3  CCft:d1  CCft:d2  CCft:d3   $$ $$
+  1  0.0089  10.63    0.977   0.977   0.977    12.50    12.50    12.50   0.978   0.981   0.975    1.000    0.979    0.985
+  2  0.0266   6.13    0.978   0.989   0.979    11.21    10.95    11.20   0.977   0.977   0.979    1.000    0.976    0.983
+  3  0.0443   4.75    0.965   0.990   0.963    11.17    12.47    13.20   0.977   0.983   0.978    0.999    0.972    0.981
+  4  0.0620   4.02    0.980   0.990   0.963    11.07    11.90    11.71   0.947   0.969   0.976    0.999    0.968    0.979
+  5  0.0797   3.54    0.958   0.796   0.969    10.65    10.71    11.21   0.974   0.843   0.963    0.997    0.963    0.976
+  6  0.0974   3.20    0.974   0.978   0.961     8.70    10.39    11.91   0.545   0.867   0.949    0.994    0.957    0.973
+  7  0.1151   2.95    0.826   0.987   0.979     7.53     9.66    10.63   0.579   0.959   0.946    0.989    0.951    0.970
+  8  0.1329   2.74    0.444   0.981   0.897     6.07     9.03     8.79   0.319   0.846   0.774    0.979    0.943    0.966
+  9  0.1506   2.58    0.877   0.978   0.961     5.11     7.13     7.96   0.630   0.741   0.958    0.958    0.935    0.962
+ 10  0.1683   2.44    0.893   0.969   0.956     4.52     6.97     8.32   0.283   0.859   0.930    0.921    0.925    0.958
+ 11  0.1860   2.32    0.927   0.943   0.981     3.68     6.61     7.95   0.320   0.607   0.916    0.855    0.915    0.953
+ 12  0.2037   2.22    0.771   0.634   0.883     3.14     6.06     8.08   0.327   0.622   0.914    0.749    0.902    0.947
+ 13  0.2214   2.13    0.798   0.941   0.961     2.48     5.28     7.15   0.072   0.861   0.888    0.602    0.889    0.941
+ 14  0.2392   2.04    0.036   0.387   0.851     1.79     4.54     5.89   0.129   0.656   0.799    0.433    0.873    0.934
+ 15  0.2569   1.97    0.482   0.890   0.950     1.15     3.93     5.32   0.184   0.915   0.615    0.279    0.856    0.927
+ 16  0.2746   1.91    0.124   0.904   0.324     0.81     3.12     5.06   0.114   0.798   0.602    0.163    0.837    0.918
+ 17  0.2923   1.85    0.177   0.784   0.949     0.43     2.45     4.56   0.012   0.793   0.942    0.090    0.816    0.909
+ 18  0.3100   1.80    0.076   0.866   0.938     0.18     1.87     3.89   0.070   0.743   0.924    0.048    0.793    0.899
+ 19  0.3277   1.75   -0.071   0.777   0.921     0.09     1.44     3.05  -0.069   0.753   0.907    0.025    0.767    0.888
+ 20  0.3454   1.70   -0.021   0.677   0.865     0.04     1.25     2.35  -0.106   0.623   0.774    0.013    0.740    0.876
+$$
+Overall:              0.983   0.957   0.979     5.05     6.65     7.78   0.976   0.976   0.976    0.0      0.0      0.0  
+                      CC:d1   CC:d2   CC:d3  I/sd:d1  I/sd:d2  I/sd:d3    CCp1    CCp2    CCp3  CCft:d1  CCft:d2  CCft:d3
+
+
+Cumulative CC(1/2) analysed by Batch for each dataset
+=====================================================
+
+Analysis by Batch is in groups of batches, group width    1.00 degrees,   6 batches/group
+
+
+$TABLE:  Cumulative CC(1/2) in resolution ranges vs. Batch:
+$GRAPHS:Cumulative CC(1/2):N:1,4,5,6,7:
+ $$
+    N  Run   Batch 3.76-2.66 2.66-2.17 2.17-1.88 1.88-1.68   $$ $$
+    3    1       3       -         -         -         -  
+    9    1       9       -         -         -         -  
+   15    1      15       -         -         -         -  
+   21    1      21       -         -         -         -  
+   27    1      27       -         -         -         -  
+   33    1      33       -         -         -         -  
+   39    1      39       -         -         -         -  
+   45    1      45       -         -         -         -  
+   51    1      51       -         -         -         -  
+   57    1      57       -         -         -         -  
+   63    1      63       -         -         -         -  
+   69    1      69       -         -         -         -  
+   75    1      75       -         -         -         -  
+   81    1      81      0.25       -         -         -  
+   87    1      87      0.25       -         -         -  
+   93    1      93      0.49       -         -         -  
+   99    1      99      0.49       -         -         -  
+  105    1     105      0.68       -         -         -  
+  111    1     111      0.98       -         -         -  
+  117    1     117      0.99      0.23       -         -  
+  123    1     123      0.99      0.49       -         -  
+  129    1     129      0.98      0.75       -         -  
+  135    1     135      0.97      0.99       -         -  
+  141    1     141      0.98      0.68      0.25       -  
+  147    1     147      0.99      0.96      0.25       -  
+  153    1     153      0.98      0.97      0.74       -  
+  159    1     159      0.99      0.98      0.22      0.25
+  165    1     165      0.99      0.99      0.96      0.48
+  171    1     171      0.99      0.97      0.98      0.73
+  177    1     177      0.98      0.98      0.84      0.89
+  183    1     183      0.98      0.98      0.95      0.96
+  189    1     189      0.94      0.97      0.98      0.95
+  195    1     195      0.96      0.97      0.91      0.89
+  201    1     201      0.99      0.79      0.49      0.62
+  207    1     207      0.98      0.98      0.89      0.90
+  213    1     213      0.99      0.99      0.50      0.89
+  219    1     219      0.98      0.97      0.96      0.93
+  225    1     225      0.98      0.99      0.62      0.92
+  231    1     231      0.99      0.97      0.89      0.89
+  237    1     237      0.94      0.91      0.78      0.90
+  243    1     243      0.96      0.97      0.96      0.90
+  249    1     249      0.98      0.96      0.65      0.86
+  255    1     255      0.98      0.96      0.51      0.91
+  261    1     261      0.98      0.95      0.92      0.90
+  267    1     267      0.99      0.95      0.88      0.83
+  273    1     273      0.99      0.96      0.76      0.90
+  279    1     279      0.98      0.96      0.93      0.87
+  285    1     285      0.99      0.97      0.93      0.90
+  291    1     291      0.99      0.98      0.80      0.86
+  297    1     297      0.97      0.98      0.90      0.63
+  303    1     303      0.98      0.99      0.76      0.91
+  309    1     309      0.97      0.99      0.98      0.92
+  315    1     315      0.98      0.97      0.94      0.95
+  321    1     321      0.97      0.88      0.94      0.90
+  327    1     327      0.98      0.98      0.85      0.95
+  333    1     333      0.99      0.97      0.97      0.94
+  339    1     339      0.97      0.98      0.93      0.83
+  345    1     345      0.98      0.98      0.76      0.87
+  351    1     351      0.96      0.96      0.43      0.92
+  357    1     357      0.97      0.96      0.92      0.94
+  363    1     363      0.97      0.97      0.67      0.94
+  369    1     369      0.97      0.97      0.91      0.94
+  375    1     375      0.97      0.97      0.70      0.96
+  381    1     381      0.96      0.97      0.39      0.95
+  387    1     387      0.98      0.96      0.98      0.94
+  393    1     393      0.99      0.97      0.92      0.90
+  399    1     399      0.97      0.70      0.92      0.89
+  405    1     405      0.98      0.99      0.96      0.91
+  411    1     411      0.95      0.96      0.95      0.90
+  417    1     417      0.97      0.97      0.93      0.94
+  423    1     423      0.96      0.96      0.92      0.91
+  429    1     429      0.93      0.92      0.94      0.90
+  435    1     435      0.88      0.97      0.97      0.85
+  441    1     441      0.97      0.95      0.52      0.85
+  447    1     447      0.77      0.97      0.45      0.84
+  453    1     453      0.96      0.96      0.82      0.92
+  459    1     459      0.96      0.96      0.82      0.89
+  465    1     465      0.97      0.97      0.90      0.95
+  471    1     471      0.98      0.92      0.66      0.81
+  477    1     477      0.96      0.99      0.76      0.90
+  483    1     483      0.97      0.97      0.95      0.92
+  489    1     489      0.97      0.94      0.95      0.78
+  495    1     495      0.96      0.95      0.65      0.91
+  501    1     501      0.98      0.99      0.23      0.95
+  507    1     507      0.94      0.95      0.92      0.89
+  513    1     513      0.95      0.95      0.63      0.91
+  519    1     519      0.97      0.90      0.78      0.80
+  525    1     525      0.96      0.97      0.91      0.84
+  531    1     531      0.98      0.95      0.77      0.68
+  537    1     537      0.96      0.56      0.94      0.92
+  543    1     543      0.94      0.96      0.77      0.70
+  549    1     549      0.98      0.97      0.94      0.84
+  555    1     555      0.97      0.98      0.32      0.88
+  561    1     561      0.97      0.93      0.96      0.95
+  567    1     567      0.97      0.97      0.77      0.90
+  573    1     573      0.95      0.94      0.99      0.86
+  579    1     579      0.98      0.96      0.92      0.90
+  585    1     585      0.93      0.88      0.91      0.52
+  591    1     591      0.98      0.97      0.93      0.87
+  597    1     597      0.99      0.96      0.95      0.91
+  603    1     603      0.97      0.96      0.62      0.85
+  609    1     609      0.96      0.70      0.66      0.88
+  615    1     615      0.97      0.96      0.91      0.60
+  621    1     621      0.96      0.84      0.41      0.55
+  627    1     627      0.92      0.97      0.90      0.85
+  633    1     633      0.88      0.98      0.91      0.77
+  639    1     639      0.98      0.83      0.80      0.90
+  645    1     645      0.91      0.90      0.73      0.87
+  651    1     651      0.95      0.81      0.59      0.86
+  657    1     657      0.93      0.97      0.93      0.85
+  663    1     663      0.95      0.51      0.95      0.66
+  669    1     669      0.95      0.98      0.48      0.90
+  675    1     675      0.96      0.95      0.55      0.90
+  681    1     681      0.97      0.98      0.79      0.63
+  687    1     687      0.98      0.97      0.95      0.89
+  693    1     693      0.96      0.92      0.34      0.88
+  699    1     699      0.98      0.97      0.95      0.92
+  705    1     705      0.96      0.97      0.48      0.77
+  711    1     711      0.98      0.82      0.59      0.85
+  717    1     717      0.97      0.97      0.65      0.84
+  723    1     723      0.98      0.95      0.97      0.54
+  729    1     729      0.88      0.95      0.85      0.70
+  735    1     735      0.97      0.97      0.81      0.59
+  741    1     741      0.96      0.98      0.90      0.93
+  747    1     747      0.96      0.97      0.68      0.91
+  753    1     753      0.97      0.94      0.71      0.88
+  759    1     759      0.92      0.97      0.75      0.86
+  765    1     765      0.98      0.98      0.83      0.63
+  771    1     771      0.97      0.97      0.89      0.87
+  777    1     777      0.98      0.95      0.71      0.89
+  783    1     783      0.99      0.95      0.92      0.81
+  789    1     789      0.76      0.95      0.66      0.86
+  795    1     795      0.96      0.97      0.94      0.89
+  801    1     801      0.97      0.96      0.45      0.78
+  807    1     807      0.96      0.98      0.61      0.69
+  813    1     813      0.98      0.90      0.81      0.51
+  819    1     819      0.96      0.97      0.76      0.74
+  825    1     825      0.97      0.91      0.58      0.64
+  831    1     831      0.98      0.87      0.88      0.64
+  837    1     837      0.86      0.95      0.56      0.65
+  843    1     843      0.85      0.76      0.82      0.67
+  849    1     849      0.96      0.96      0.56      0.51
+  855    1     855      0.97      0.96      0.66      0.62
+  861    1     861      0.97      0.71      0.70      0.78
+  867    1     867      0.97      0.78      0.52      0.66
+  873    1     873      0.97      0.79      0.53      0.71
+  879    1     879      0.95      0.94      0.88      0.56
+  885    1     885      0.99      0.93      0.29      0.73
+  891    1     891      0.99      0.50      0.87      0.63
+  897    1     897      0.97      0.71      0.21      0.66
+  903    1     903      0.89      0.95      0.67      0.66
+  909    1     909      0.99      0.97      0.83      0.74
+  915    1     915      0.98      0.96      0.75      0.67
+  921    1     921      0.94      0.95      0.85      0.63
+  927    1     927      0.97      0.97      0.78      0.61
+  933    1     933      0.97      0.82      0.57      0.63
+  939    1     939      0.98      0.89      0.26      0.66
+  945    1     945      0.98      0.92      0.46      0.66
+  951    1     951      0.98      0.95      0.65      0.49
+  957    1     957      0.98      0.97      0.78      0.69
+  963    1     963      0.98      0.85      0.68      0.59
+  969    1     969      0.98      0.88      0.72      0.69
+  975    1     975      0.99      0.50      0.83      0.63
+  981    1     981      0.98      0.87      0.80      0.71
+  987    1     987      0.95      0.88      0.44      0.76
+  993    1     993      0.99      0.97      0.33      0.54
+  998    1     998      0.80      0.81      0.86      0.70
+$$
+    N  Run   Batch 3.76-2.66 2.66-2.17 2.17-1.88 1.88-1.68
+
+
+Analysis by 4sinTheta/Lambda^2 bins (all statistics use Mn(I+),Mn(I-)etc)
+=========================================================================
+
+ Rmrg    :- conventional Rmerge = Sum(|Ihl - < Ih >|)/Sum(< Ih >)
+ Rcum    :- Rmrg up to this range
+ Rfull   :- Rmrg for fully-recorded observations only
+ Rmeas   :- multiplicity-independent R = Sum(Sqrt(N/(N-1))(|Ihl - < Ih >|))/Sum(< Ih >)
+ Rpim    :- Precision-indicating R = Sum(Sqrt(1/(N-1))(|Ihl - < Ih >|))/Sum(< Ih >)
+ Nmeas   :- Number of observations used in statistics
+ AvI     :- unmerged Ihl averaged in bin < Ihl >
+ RMSdev  :- rms scatter of observations from mean < Ih >
+ I/RMS   :- < Ihl > / rms scatter  = Av_I/RMSdev
+ sd      :- average standard deviation derived from experimental SDs, after
+             application of SdFac SdB SdAdd 'correction' terms
+ Mn(I/sd):- average < merged< Ih >/sd(< Ih >) > ~= signal/noise
+ Frcbias :- partial bias = Mean( Mn(If) - Ip )/Mean( Mn(I) )
+             for mixed sets only (If is a full if present, else the
+             partial with the smallest number of parts)
+ Chi^2   :- mean goodness of fit, all data
+ Chi^2c  :- mean goodness of fit, excluding large differences
+
+All statistics in this table are with I+ or I- sets (anomalous on)
+Mean Chi^2 values are calculated for all data, and also
+ excluding observations with large deviations >5sd, including for reflections measured only twice
+
+
+$TABLE:  Analysis against resolution, SAD:
+$GRAPHS:I/sigma, Mean Mn(I)/sd(Mn(I)):0|0.354304x0|12.5027:2,13,14:
+:Filtered Mean(Chi^2)(<5sd) v Resolution:N:2,17:
+:Mean(Chi^2), Mean(Chi^2)(<5sd) v Resolution:N:2,16,17:
+:Rmerge, Rfull, Rmeas, Rpim v Resolution:0|0.354304x0|0.914367:2,4,5,7,8:
+:Average I, RMSdeviation and Sd:0|0.354304x0|3528.77:2,10,11,12:
+:Fractional bias:0|0.354304x0|1:2,15:
+ $$
+  N  1/d^2    Dmid   Rmrg  Rfull   Rcum  Rmeas   Rpim    Nmeas      AvI  RMSdev    sd  I/RMS Mn(I/sd)  FrcBias  Chi^2 Chi^2c   $$ $$
+  1  0.0089  10.63  0.044  0.044  0.044  0.063  0.044       74     3529    417    352    8.5     12.5     -      0.78   0.78
+  2  0.0266   6.13  0.047  0.047  0.046  0.066  0.047      208     1821    207    189    8.8     11.0     -      1.04   1.04
+  3  0.0443   4.75  0.049  0.049  0.048  0.070  0.049      398     2900    354    293    8.2     12.3     -      1.07   0.92
+  4  0.0620   4.02  0.050  0.050  0.049  0.070  0.050      468     2528    332    257    7.6     11.5     -      1.25   1.07
+  5  0.0797   3.54  0.059  0.059  0.051  0.083  0.059      588     1697    376    177    4.5     10.8     -      5.35   0.92
+  6  0.0974   3.20  0.063  0.063  0.053  0.090  0.063      832     1010    131    111    7.7     10.4     -      1.03   1.00
+  7  0.1151   2.95  0.063  0.063  0.054  0.088  0.063      970      599     72     71    8.3      9.3     -      0.88   0.88
+  8  0.1329   2.74  0.095  0.095  0.056  0.134  0.095     1054      375     80     49    4.7      8.1     -      2.12   0.98
+  9  0.1506   2.58  0.084  0.084  0.057  0.119  0.084     1046      263     38     37    7.0      7.0     -      0.92   0.84
+ 10  0.1683   2.44  0.085  0.085  0.058  0.121  0.085     1334      211     31     32    6.9      6.6     -      0.70   0.70
+ 11  0.1860   2.32  0.100  0.100  0.060  0.142  0.100     1450      170     99     28    1.7      6.0     -      0.81   0.81
+ 12  0.2037   2.22  0.271  0.271  0.066  0.383  0.271     1588      151    202     25    0.7      5.6     -     10.87   0.88
+ 13  0.2214   2.13  0.132  0.132  0.067  0.187  0.132     1732      104     20     21    5.3      4.8     -      0.88   0.80
+ 14  0.2392   2.04  0.366  0.366  0.073  0.517  0.366     1608       96    173     19    0.6      4.2     -     10.55   0.99
+ 15  0.2569   1.97  0.237  0.237  0.074  0.335  0.237     1822       56     50     15    1.1      3.3     -      1.78   0.81
+ 16  0.2746   1.91  0.424  0.424  0.079  0.600  0.424     2006       53     83     14    0.6      3.0     -      9.97   0.82
+ 17  0.2923   1.85  0.317  0.317  0.080  0.448  0.317     2254       29     15     12    1.9      2.3     -      1.14   0.69
+ 18  0.3100   1.80  0.342  0.342  0.081  0.484  0.342     2430       19      6     10    3.0      1.8     -      1.56   0.52
+ 19  0.3277   1.75  0.471  0.471  0.083  0.666  0.471     2450       13      6     10    2.4      1.3     -      0.66   0.56
+ 20  0.3454   1.70  0.647  0.647  0.084  0.914  0.647     2288       11     13      9    0.8      1.1     -      1.06   0.59
+$$
+Overall:            0.084  0.084  0.084  0.119  0.084    26600      450    147     54    3.1      5.4    0.000   3.04   0.77
+  N  1/d^2    Dmid   Rmrg  Rfull   Rcum  Rmeas   Rpim    Nmeas      AvI  RMSdev    sd  I/RMS Mn(I/sd)  FrcBias  Chi^2 Chi^2c
+
+
+By 4sinTheta/Lambda^2 bins (statistics with and without anomalous)
+==================================================================
+
+Statistics labelled 'Ov' are relative to the overall mean I+/-, ignoring anomalous
+Other statistics are with either I+ or I- sets, for acentrics, ie with anomalous
+
+
+
+$TABLE:  Analysis against resolution, with & without anomalous (Ov), SAD:
+$GRAPHS:Rmerge, Rmeas, Rpim v Resolution:0|0.354304x0|0.914367:2,4,5,8,9,10,11:
+ $$
+  N  1/d^2    Dmid    Rmrg  RmrgOv    Rcum  RcumOv   Rmeas RmeasOv    Rpim  RpimOv    Nmeas   $$ $$
+  1  0.0089  10.63   0.044   0.064   0.044   0.064   0.063   0.091   0.044   0.064     1844
+  2  0.0266   6.13   0.047   0.064   0.046   0.064   0.066   0.090   0.047   0.064     2742
+  3  0.0443   4.75   0.049   0.064   0.048   0.064   0.070   0.090   0.049   0.064     4442
+  4  0.0620   4.02   0.050   0.063   0.049   0.063   0.070   0.089   0.050   0.063     4368
+  5  0.0797   3.54   0.059   0.066   0.051   0.064   0.083   0.094   0.059   0.066     4686
+  6  0.0974   3.20   0.063   0.068   0.053   0.064   0.090   0.096   0.063   0.068     6158
+  7  0.1151   2.95   0.063   0.066   0.054   0.065   0.088   0.094   0.063   0.066     6958
+  8  0.1329   2.74   0.095   0.082   0.056   0.065   0.134   0.116   0.095   0.082     6824
+  9  0.1506   2.58   0.084   0.078   0.057   0.066   0.119   0.110   0.084   0.078     6138
+ 10  0.1683   2.44   0.085   0.079   0.058   0.066   0.121   0.111   0.085   0.079     7686
+ 11  0.1860   2.32   0.100   0.096   0.060   0.067   0.142   0.135   0.100   0.096     8282
+ 12  0.2037   2.22   0.271   0.164   0.066   0.069   0.383   0.232   0.271   0.164     8888
+ 13  0.2214   2.13   0.132   0.106   0.067   0.069   0.187   0.150   0.132   0.106     9010
+ 14  0.2392   2.04   0.366   0.267   0.073   0.071   0.517   0.378   0.366   0.267     7866
+ 15  0.2569   1.97   0.237   0.176   0.074   0.072   0.335   0.249   0.237   0.176     8326
+ 16  0.2746   1.91   0.424   0.303   0.079   0.074   0.600   0.428   0.424   0.303     9406
+ 17  0.2923   1.85   0.317   0.197   0.080   0.074   0.448   0.278   0.317   0.197    10262
+ 18  0.3100   1.80   0.342   0.215   0.081   0.075   0.484   0.305   0.342   0.215    10944
+ 19  0.3277   1.75   0.471   0.284   0.083   0.075   0.666   0.402   0.471   0.284    10490
+ 20  0.3454   1.70   0.647   0.406   0.084   0.076   0.914   0.574   0.647   0.406     9202
+$$
+Overall:             0.084   0.076   0.084   0.076   0.119   0.107   0.084   0.076   144522
+  N  1/d^2    Dmid    Rmrg  RmrgOv    Rcum  RcumOv   Rmeas RmeasOv    Rpim  RpimOv    Nmeas
+
+
+By intensity bins
+=================
+All statistics in this table are with I+ or I- sets (anomalous on)
+
+
+$TABLE:  Analysis against intensity, SAD:
+$GRAPHS:Rmerge v Intensity:N:1,2,4,5:
+ $$
+      Imax   Rmrg   Rcum  Rmeas   Rpim    Nmeas      AvI  RMSdev    sd  I/RMS Mn(I/sd)  FrcBias   $$ $$
+        23  0.288  0.288  0.408  0.288    18632       24     42     11    0.6      2.2     -   
+       131  0.139  0.215  0.197  0.139     2730      132     47     25    2.8      6.8     -   
+       238  0.125  0.186  0.176  0.125     1464      241    112     36    2.1      8.6     -   
+       359  0.102  0.168  0.144  0.102      844      361    107     49    3.4      9.7     -   
+       501  0.096  0.155  0.135  0.096      588      503    141     63    3.6     10.5     -   
+       669  0.104  0.147  0.147  0.104      468      671    110     79    6.1     11.2     -   
+       880  0.085  0.138  0.120  0.085      396      884    152    100    5.8     11.6     -   
+      1172  0.071  0.128  0.101  0.071      340     1174    128    128    9.2     12.1     -   
+      1617  0.084  0.120  0.119  0.084      384     1619    177    171    9.1     12.5     -   
+      4294  0.047  0.084  0.066  0.047      754     4306    507    428    8.5     13.2     -   
+$$
+Overall:    0.084  0.084  0.119  0.084    26600      450    147     54    3.1      5.4    0.000
+
+      Imax   Rmrg   Rcum  Rmeas   Rpim    Nmeas      AvI  RMSdev    sd  I/RMS Mn(I/sd)  FrcBias
+
+
+Completeness and multiplicity, including reflections measured only once
+=======================================================================
+
+
+ %poss is completeness in the shell, C%poss in cumulative to that resolution
+ The anomalous completeness values (AnomCmpl) are the percentage of possible anomalous differences measured
+ AnomFrc is the % of measured acentric reflections for which an anomalous difference has been measured
+ Anomalous multiplicity AnoMlt is calculated for reflections with both I+ and I- measured, and is defined as:
+ Sum{[Min(n+, n-) + Dn/(Dn+1)]}/NanomMeasured, where n+, n- are the number of measurements  of I+, I-, Dn = |n+ - n-|
+
+
+
+$TABLE:  Completeness & multiplicity v. resolution, SAD:
+$GRAPHS:Completeness v Resolution :N:2,7,8,10,11:
+:Multiplicity v Resolution:0|0.354304x0|1.87441:2,9,12:
+ $$
+  N  1/d^2    Dmid    Nmeas     Nref    Ncent  %poss C%poss Mlplct   AnoCmp AnoFrc AnoMlt   $$ $$
+  1  0.0089  10.63     2007     1085        0   98.3   98.3    1.8     80.2   81.6    1.0
+  2  0.0266   6.13     3359     1988        0   98.4   98.4    1.7     62.7   63.7    1.0
+  3  0.0443   4.75     4761     2540        0   97.2   97.9    1.9     77.4   79.6    1.0
+  4  0.0620   4.02     5220     3036        0   98.4   98.1    1.7     63.2   64.2    1.0
+  5  0.0797   3.54     5770     3427        0   97.4   97.9    1.7     58.2   59.8    1.0
+  6  0.0974   3.20     6868     3789        0   97.9   97.9    1.8     68.8   70.3    1.0
+  7  0.1151   2.95     7610     4131        0   97.8   97.9    1.8     70.9   72.5    1.0
+  8  0.1329   2.74     7875     4463        0   97.8   97.9    1.8     63.2   64.6    1.0
+  9  0.1506   2.58     7699     4630        0   96.9   97.7    1.7     53.3   55.0    1.0
+ 10  0.1683   2.44     8846     5003        0   97.0   97.6    1.8     61.6   63.5    1.0
+ 11  0.1860   2.32     9316     5175        0   97.0   97.5    1.8     64.0   66.0    1.0
+ 12  0.2037   2.22     9815     5371        0   95.9   97.3    1.8     65.1   68.0    1.0
+ 13  0.2214   2.13    10163     5658        0   96.4   97.2    1.8     62.0   64.3    1.0
+ 14  0.2392   2.04     9764     5831        0   95.4   97.0    1.7     51.2   53.7    1.0
+ 15  0.2569   1.97    10167     6004        0   95.6   96.9    1.7     51.8   54.2    1.0
+ 16  0.2746   1.91    10918     6215        0   95.8   96.8    1.8     57.0   59.5    1.0
+ 17  0.2923   1.85    11506     6375        0   95.2   96.6    1.8     59.8   62.8    1.0
+ 18  0.3100   1.80    12114     6642        0   95.4   96.5    1.8     61.1   64.1    1.0
+ 19  0.3277   1.75    12077     6832        0   95.6   96.5    1.8     56.3   58.8    1.0
+ 20  0.3454   1.70    11539     6938        0   94.7   96.3    1.7     47.2   49.8    1.0
+$$
+Overall:             167394    95133        0   96.3   96.3    1.8     59.7   62.0    1.0
+                      Nmeas     Nref    Ncent  %poss C%poss Mlplct   AnoCmp AnoFrc AnoMlt
+
+
+Analysis of standard deviations
+===============================
+This analyses the distribution of the normalised deviations
+Delta = (Ihl - Mn(Iothers) )/sqrt[sd(Ihl)**2 + sd(Mn(I))**2]
+If the SD is a true estimate of the error, this distribution should have
+ Mean=0.0 and Sigma=1.0 for all ranges of intensity
+
+The analysis is repeated for ranges of increasing Imean
+The Mean is expected to increase with Imean since the latter
+is a weighted mean and sd(Ihl) & Ihl are correlated
+
+If the Sigma increases with Imean, increase the value of SdAdd
+
+ISa is the predicted asymptotic value of I/sd(I) for large I, see
+ K.Diederichs, Acta Cryst. D66,733
+
+SD corrections:- SdFac * Sqrt[sd(I)**2 + SdB I + (SdAdd I)**2]
+                                  Fulls
+    Run                  SdFac    SdB   SdAdd  ISa
+      1   OnlyFulls       0.58   9.12  0.1647 10.4
+
+
+$TABLE:  Run   1, standard deviation v. Intensity, SAD:
+$GRAPHS: Sigma(scatter/SD), Mn(Chi^2), within   5 sd:N:2,9,10:
+: Sigma(scatter/SD), Mn(Chi^2), within   5 sd, all and within   5 sd:N:2,5,6,9,10:
+
+                         Fulls, all                 Fulls, <  5 sd      
+ $$
+Range  Mn(I)       NF  MnF   SdF   ChiSqF      NFc  MnFc  SdFc ChiSqFc   $$ $$
+   1      23    18630  0.02  0.95    0.91    18480  0.02  0.80    0.64
+   2     131     2724 -0.00  1.56    2.43     2646  0.01  1.06    1.13
+   3     238     1458  0.00  2.10    4.39     1398  0.01  1.02    1.05
+   4     359      842  0.02  1.74    3.04      822  0.00  1.08    1.16
+   5     501      586  0.01  1.95    3.80      572  0.00  1.10    1.21
+   6     669      463 -0.02  2.28    5.17      450  0.00  1.17    1.36
+   7     880      394 -0.09  1.99    3.95      384  0.00  1.04    1.08
+   8    1172      338  0.00  1.31    1.71      334  0.00  0.97    0.94
+   9    1617      382  0.02  2.38    5.65      370  0.00  1.05    1.10
+  10    4294      753 -0.02  1.07    1.14      750  0.00  0.82    0.66
+$$
+Overall:        26570  0.01  1.26    1.59    26206  0.02  0.88    0.77
+
+
+Cumulative radiation damage analysis
+====================================
+
+At present this analysis is done only if there is a single run
+Note that this analysis will not be useful if the multiplicity is low
+
+Rcp is the cumulative pairwise residual devised by Graeme Winter for the program CHEF,
+inspired by Diederichs Rd statistic (Acta Cryst D62, 96-101 (2005))
+
+         Rcp(k) = Sum(||Ii - Ij||)/Sum(0.5*(Ii + Ij))
+ where i & j are the batch numbers (proxy for radiation dose) and k = Max(i, j)
+ ie a pairwise R-factor up to batch k
+
+CmPoss is cumulative completeness
+
+Batches are binned in groups of 6, ~= 1.0 degrees
+
+
+$TABLE: Radiation damage analysis for run   1:
+$GRAPHS:Rcp v. batch:N:2,12,3:
+:Rcp v. batch, in shells:N:2,4,5,6,7,8,9,10,11:
+ $$
+    N Batch  CmPoss   R1    R2    R3    R4    R5    R6    R7    R8   Rcp    $$ $$
+    1    3    0.007  -     -     -     -     -     -     -     -     -   
+    2    9    0.017  -     -     -     -     -     -     -     -     -   
+    3   15    0.027  -     -     -     -     -     -     -     -     -   
+    4   21    0.037 0.128  -     -     -     -     -     -     -    0.128
+    5   27    0.047 0.128  -     -     -     -     -     -     -    0.128
+    6   33    0.057 0.128  -     -     -     -     -     -     -    0.128
+    7   39    0.068 0.128  -     -     -     -     -     -     -    0.128
+    8   45    0.078 0.107  -     -     -     -     -     -     -    0.107
+    9   51    0.088 0.091  -     -     -     -     -     -     -    0.091
+   10   57    0.098 0.094  -     -     -     -     -     -     -    0.094
+   11   63    0.109 0.094  -     -     -     -     -     -     -    0.094
+   12   69    0.119 0.104  -     -     -     -     -     -     -    0.104
+   13   75    0.128 0.120  -     -     -     -     -     -     -    0.120
+   14   81    0.139 0.121  -     -     -     -     -     -     -    0.121
+   15   87    0.148 0.119  -     -     -     -     -     -     -    0.119
+   16   93    0.158 0.119  -     -     -     -     -     -     -    0.119
+   17   99    0.168 0.125 0.208  -     -     -     -     -     -    0.125
+   18  105    0.178 0.128 0.133  -     -     -     -     -     -    0.128
+   19  111    0.187 0.125 0.144  -     -     -     -     -     -    0.126
+   20  117    0.196 0.124 0.124  -     -     -     -     -     -    0.124
+   21  123    0.206 0.120 0.115  -     -     -     -     -     -    0.120
+   22  129    0.216 0.121 0.113  -     -     -     -     -     -    0.120
+   23  135    0.225 0.118 0.123 0.249  -     -     -     -     -    0.119
+   24  141    0.233 0.117 0.124 0.810  -     -     -     -     -    0.122
+   25  147    0.242 0.114 0.117 0.654  -     -     -     -     -    0.119
+   26  153    0.251 0.112 0.117 0.550  -     -     -     -     -    0.117
+   27  159    0.259 0.113 0.117 0.547  -     -     -     -     -    0.119
+   28  165    0.267 0.115 0.115 0.447 0.316  -     -     -     -    0.121
+   29  171    0.274 0.115 0.116 0.403 0.304  -     -     -     -    0.120
+   30  177    0.282 0.114 0.116 0.365 0.310  -     -     -     -    0.119
+   31  183    0.290 0.113 0.114 0.339 0.314  -     -     -     -    0.118
+   32  189    0.297 0.112 0.118 0.319 0.314  -     -     -     -    0.119
+   33  195    0.304 0.111 0.121 0.303 0.288  -     -     -     -    0.118
+   34  201    0.311 0.110 0.120 0.375 0.337  -     -     -     -    0.120
+   35  207    0.318 0.111 0.120 0.358 0.338  -     -     -     -    0.121
+   36  213    0.325 0.111 0.118 0.356 0.340  -     -     -     -    0.121
+   37  219    0.332 0.109 0.119 0.343 0.341  -     -     -     -    0.120
+   38  225    0.338 0.108 0.119 0.338 0.338  -     -     -     -    0.119
+   39  231    0.345 0.108 0.118 0.330 0.340  -     -     -     -    0.119
+   40  237    0.351 0.108 0.121 0.328 0.342  -     -     -     -    0.120
+   41  243    0.358 0.109 0.120 0.320 0.346  -     -     -     -    0.121
+   42  249    0.364 0.110 0.120 0.318 0.344  -     -     -     -    0.121
+   43  255    0.371 0.109 0.122 0.325 0.338  -     -     -     -    0.122
+   44  261    0.377 0.109 0.122 0.321 0.345  -     -     -     -    0.122
+   45  267    0.383 0.109 0.123 0.324 0.348  -     -     -     -    0.123
+   46  273    0.390 0.108 0.123 0.323 0.350  -     -     -     -    0.122
+   47  279    0.396 0.107 0.124 0.319 0.353  -     -     -     -    0.122
+   48  285    0.402 0.107 0.123 0.316 0.355  -     -     -     -    0.122
+   49  291    0.408 0.107 0.122 0.312 0.355  -     -     -     -    0.121
+   50  297    0.415 0.108 0.122 0.306 0.358  -     -     -     -    0.122
+   51  303    0.421 0.108 0.121 0.304 0.357  -     -     -     -    0.122
+   52  309    0.427 0.108 0.121 0.300 0.351  -     -     -     -    0.122
+   53  315    0.433 0.108 0.122 0.295 0.344  -     -     -     -    0.122
+   54  321    0.439 0.109 0.123 0.295 0.339  -     -     -     -    0.123
+   55  327    0.446 0.108 0.121 0.290 0.336  -     -     -     -    0.122
+   56  333    0.452 0.108 0.121 0.286 0.332  -     -     -     -    0.122
+   57  339    0.458 0.108 0.120 0.284 0.331  -     -     -     -    0.122
+   58  345    0.464 0.110 0.121 0.282 0.331  -     -     -     -    0.123
+   59  351    0.470 0.110 0.121 0.291 0.331  -     -     -     -    0.124
+   60  357    0.476 0.109 0.122 0.288 0.328  -     -     -     -    0.124
+   61  363    0.482 0.109 0.122 0.288 0.323  -     -     -     -    0.123
+   62  369    0.488 0.109 0.123 0.285 0.320  -     -     -     -    0.124
+   63  375    0.494 0.109 0.124 0.285 0.317  -     -     -     -    0.124
+   64  381    0.500 0.109 0.125 0.287 0.312  -     -     -     -    0.125
+   65  387    0.506 0.110 0.125 0.284 0.309  -     -     -     -    0.125
+   66  393    0.512 0.109 0.125 0.282 0.307  -     -     -     -    0.124
+   67  399    0.518 0.110 0.126 0.284 0.307  -     -     -     -    0.125
+   68  405    0.524 0.110 0.126 0.283 0.305  -     -     -     -    0.125
+   69  411    0.530 0.110 0.128 0.280 0.304  -     -     -     -    0.126
+   70  417    0.536 0.111 0.128 0.279 0.304  -     -     -     -    0.126
+   71  423    0.542 0.111 0.128 0.278 0.305  -     -     -     -    0.126
+   72  429    0.548 0.112 0.128 0.276 0.306  -     -     -     -    0.127
+   73  435    0.553 0.112 0.130 0.274 0.308  -     -     -     -    0.127
+   74  441    0.559 0.112 0.130 0.278 0.310  -     -     -     -    0.128
+   75  447    0.565 0.113 0.132 0.282 0.310  -     -     -     -    0.129
+   76  453    0.571 0.113 0.133 0.280 0.310  -     -     -     -    0.129
+   77  459    0.577 0.114 0.134 0.279 0.308  -     -     -     -    0.130
+   78  465    0.583 0.114 0.134 0.278 0.307  -     -     -     -    0.130
+   79  471    0.589 0.115 0.135 0.280 0.307  -     -     -     -    0.131
+   80  477    0.595 0.115 0.135 0.279 0.306  -     -     -     -    0.132
+   81  483    0.601 0.116 0.135 0.277 0.305  -     -     -     -    0.132
+   82  489    0.606 0.115 0.135 0.276 0.305  -     -     -     -    0.132
+   83  495    0.612 0.116 0.135 0.277 0.305  -     -     -     -    0.132
+   84  501    0.618 0.116 0.135 0.280 0.303  -     -     -     -    0.133
+   85  507    0.623 0.118 0.136 0.279 0.303  -     -     -     -    0.134
+   86  513    0.629 0.118 0.136 0.280 0.303  -     -     -     -    0.134
+   87  519    0.635 0.119 0.136 0.282 0.303  -     -     -     -    0.135
+   88  525    0.641 0.120 0.136 0.281 0.304  -     -     -     -    0.136
+   89  531    0.647 0.120 0.136 0.282 0.307  -     -     -     -    0.136
+   90  537    0.653 0.120 0.136 0.285 0.307  -     -     -     -    0.136
+   91  543    0.658 0.121 0.137 0.285 0.308  -     -     -     -    0.137
+   92  549    0.664 0.122 0.137 0.284 0.309  -     -     -     -    0.137
+   93  555    0.670 0.122 0.137 0.288 0.309  -     -     -     -    0.138
+   94  561    0.676 0.122 0.137 0.286 0.309  -     -     -     -    0.138
+   95  567    0.681 0.122 0.137 0.286 0.310  -     -     -     -    0.138
+   96  573    0.687 0.123 0.138 0.285 0.310  -     -     -     -    0.139
+   97  579    0.693 0.123 0.138 0.284 0.310  -     -     -     -    0.139
+   98  585    0.698 0.123 0.138 0.284 0.311  -     -     -     -    0.139
+   99  591    0.704 0.124 0.138 0.283 0.311  -     -     -     -    0.139
+  100  597    0.710 0.124 0.138 0.282 0.311  -     -     -     -    0.139
+  101  603    0.715 0.124 0.139 0.283 0.312  -     -     -     -    0.140
+  102  609    0.721 0.125 0.139 0.284 0.312  -     -     -     -    0.140
+  103  615    0.727 0.125 0.139 0.284 0.314  -     -     -     -    0.140
+  104  621    0.732 0.126 0.139 0.287 0.317  -     -     -     -    0.141
+  105  627    0.738 0.126 0.140 0.287 0.318  -     -     -     -    0.142
+  106  633    0.743 0.127 0.140 0.286 0.319  -     -     -     -    0.142
+  107  639    0.749 0.127 0.140 0.287 0.319  -     -     -     -    0.142
+  108  645    0.755 0.128 0.140 0.287 0.320  -     -     -     -    0.143
+  109  651    0.760 0.128 0.140 0.288 0.321  -     -     -     -    0.143
+  110  657    0.766 0.128 0.141 0.288 0.321  -     -     -     -    0.143
+  111  663    0.771 0.128 0.141 0.293 0.322  -     -     -     -    0.144
+  112  669    0.777 0.128 0.141 0.293 0.323  -     -     -     -    0.144
+  113  675    0.782 0.129 0.142 0.295 0.323  -     -     -     -    0.145
+  114  681    0.788 0.129 0.142 0.295 0.323  -     -     -     -    0.145
+  115  687    0.793 0.129 0.142 0.294 0.324  -     -     -     -    0.145
+  116  693    0.799 0.129 0.142 0.297 0.324  -     -     -     -    0.145
+  117  699    0.804 0.129 0.142 0.296 0.325  -     -     -     -    0.145
+  118  705    0.809 0.129 0.142 0.296 0.326  -     -     -     -    0.145
+  119  711    0.815 0.130 0.142 0.297 0.327  -     -     -     -    0.146
+  120  717    0.820 0.130 0.142 0.296 0.328  -     -     -     -    0.146
+  121  723    0.826 0.130 0.142 0.296 0.333  -     -     -     -    0.146
+  122  729    0.831 0.130 0.143 0.296 0.334  -     -     -     -    0.146
+  123  735    0.836 0.131 0.143 0.295 0.337  -     -     -     -    0.147
+  124  741    0.841 0.131 0.143 0.295 0.337  -     -     -     -    0.147
+  125  747    0.846 0.131 0.143 0.297 0.338  -     -     -     -    0.147
+  126  753    0.852 0.131 0.144 0.297 0.339  -     -     -     -    0.147
+  127  759    0.857 0.131 0.144 0.297 0.340  -     -     -     -    0.147
+  128  765    0.862 0.131 0.144 0.297 0.341  -     -     -     -    0.147
+  129  771    0.867 0.131 0.144 0.297 0.342  -     -     -     -    0.147
+  130  777    0.872 0.132 0.144 0.298 0.343  -     -     -     -    0.148
+  131  783    0.877 0.132 0.144 0.297 0.344  -     -     -     -    0.147
+  132  789    0.881 0.132 0.145 0.298 0.346  -     -     -     -    0.148
+  133  795    0.886 0.132 0.145 0.298 0.347  -     -     -     -    0.148
+  134  801    0.891 0.132 0.145 0.299 0.348  -     -     -     -    0.148
+  135  807    0.895 0.132 0.145 0.300 0.351  -     -     -     -    0.148
+  136  813    0.899 0.132 0.145 0.303 0.353  -     -     -     -    0.148
+  137  819    0.904 0.132 0.145 0.303 0.356  -     -     -     -    0.149
+  138  825    0.908 0.132 0.145 0.304 0.359  -     -     -     -    0.149
+  139  831    0.911 0.132 0.145 0.305 0.362  -     -     -     -    0.149
+  140  837    0.915 0.132 0.146 0.306 0.365  -     -     -     -    0.149
+  141  843    0.918 0.133 0.147 0.308 0.367  -     -     -     -    0.150
+  142  849    0.921 0.133 0.147 0.309 0.370  -     -     -     -    0.150
+  143  855    0.924 0.133 0.148 0.313 0.374  -     -     -     -    0.151
+  144  861    0.927 0.133 0.148 0.315 0.376  -     -     -     -    0.151
+  145  867    0.930 0.133 0.149 0.319 0.379  -     -     -     -    0.151
+  146  873    0.932 0.132 0.149 0.323 0.381  -     -     -     -    0.151
+  147  879    0.934 0.132 0.149 0.323 0.384  -     -     -     -    0.152
+  148  885    0.936 0.132 0.150 0.326 0.386  -     -     -     -    0.152
+  149  891    0.938 0.132 0.150 0.330 0.388  -     -     -     -    0.152
+  150  897    0.940 0.132 0.150 0.336 0.391  -     -     -     -    0.153
+  151  903    0.942 0.131 0.151 0.336 0.394  -     -     -     -    0.152
+  152  909    0.944 0.131 0.150 0.336 0.397  -     -     -     -    0.152
+  153  915    0.945 0.131 0.150 0.337 0.400  -     -     -     -    0.152
+  154  921    0.947 0.131 0.150 0.336 0.401  -     -     -     -    0.152
+  155  927    0.948 0.131 0.150 0.336 0.404  -     -     -     -    0.152
+  156  933    0.950 0.131 0.150 0.337 0.406  -     -     -     -    0.152
+  157  939    0.951 0.130 0.150 0.339 0.408  -     -     -     -    0.152
+  158  945    0.953 0.130 0.149 0.340 0.409  -     -     -     -    0.152
+  159  951    0.954 0.129 0.149 0.340 0.412  -     -     -     -    0.151
+  160  957    0.955 0.129 0.149 0.339 0.413  -     -     -     -    0.151
+  161  963    0.957 0.129 0.149 0.340 0.415  -     -     -     -    0.151
+  162  969    0.958 0.128 0.149 0.341 0.417  -     -     -     -    0.150
+  163  975    0.959 0.128 0.148 0.345 0.419  -     -     -     -    0.150
+  164  981    0.961 0.128 0.148 0.345 0.419  -     -     -     -    0.150
+  165  987    0.962 0.128 0.148 0.346 0.420  -     -     -     -    0.150
+  166  993    0.963 0.127 0.148 0.346 0.421  -     -     -     -    0.150
+  167  998    0.963 0.128 0.148 0.350 0.422  -     -     -     -    0.151
+$$
+
+Effect of allowing for parameter variance in estimation of sig(I)
+================================================================
+
+Corrected sd'(I') = Sqrt[sd(I')^2 + I'^2 (sd(k)/k)^2];  I' = kI
+
+Maximum relative correction relSD = (sd'(I') - sd(I'))/sd'(I') =     0.895
+
+Maximum relative sd(scale), sd(k)/k =    0.0601
+    for observation:
+     HKL 26, 5, -15, resolution(A): 1.69, batch: 999, scale: 0.944, sd(scale): 0.057
+         I': 9.6, sd(I'): 11.3, corrected sd'(I'): 11.3
+
+Analysis by resolution
+
+
+$TABLE: Effect of parameter variance on sd(I):
+$GRAPHS:Mean sd(k)/k and relative Delta(sd(I)) vs. resolution:0|0.354308x0|0.0240671:2,4,5:
+ $$
+  N  1/d^2    Dmid sd(k)/k    relSD   Number   $$ $$
+  1  0.0061  12.84  0.0101    0.499     1161
+  2  0.0179   7.48  0.0102    0.355     1814
+  3  0.0297   5.80  0.0103    0.253     2425
+  4  0.0415   4.91  0.0104    0.304     3081
+  5  0.0533   4.33  0.0106    0.289     3479
+  6  0.0651   3.92  0.0109    0.255     3406
+  7  0.0769   3.61  0.0111    0.206     3695
+  8  0.0887   3.36  0.0114    0.154     4326
+  9  0.1005   3.15  0.0118    0.116     4672
+ 10  0.1123   2.98  0.0121    0.082     4956
+ 11  0.1241   2.84  0.0125    0.060     5379
+ 12  0.1359   2.71  0.0129    0.046     5121
+ 13  0.1477   2.60  0.0134    0.035     5074
+ 14  0.1595   2.50  0.0138    0.032     5528
+ 15  0.1713   2.42  0.0143    0.023     5936
+ 16  0.1831   2.34  0.0148    0.020     6187
+ 17  0.1949   2.26  0.0153    0.020     6310
+ 18  0.2067   2.20  0.0159    0.013     6642
+ 19  0.2186   2.14  0.0164    0.011     6885
+ 20  0.2304   2.08  0.0169    0.013     6355
+ 21  0.2422   2.03  0.0175    0.006     6675
+ 22  0.2540   1.98  0.0181    0.005     6526
+ 23  0.2658   1.94  0.0187    0.004     7248
+ 24  0.2776   1.90  0.0192    0.007     7315
+ 25  0.2894   1.86  0.0198    0.002     7730
+ 26  0.3012   1.82  0.0204    0.002     7843
+ 27  0.3130   1.79  0.0210    0.001     8030
+ 28  0.3248   1.75  0.0216    0.001     8238
+ 29  0.3366   1.72  0.0222    0.001     7608
+ 30  0.3484   1.69  0.0229    0.000     7761
+$$
+Overall:            0.0165    0.052   167406
+
+==============================================================
+
+<!--SUMMARY_BEGIN--> $TEXT:Result: $$ $$
+Summary data for        Project: lb18145v79 Crystal: xNUDT5Ax04441 Dataset: SAD 
+
+                                           Overall  InnerShell  OuterShell
+Low resolution limit                       78.16     78.16      1.72
+High resolution limit                       1.68      7.51      1.68
+
+Rmerge  (within I+/I-)                     0.084     0.044     0.647
+Rmerge  (all I+ and I-)                    0.076     0.064     0.406
+Rmeas (within I+/I-)                       0.119     0.063     0.914
+Rmeas (all I+ & I-)                        0.107     0.091     0.574
+Rpim (within I+/I-)                        0.084     0.044     0.647
+Rpim (all I+ & I-)                         0.076     0.064     0.406
+Rmerge in top intensity bin                0.047        -         - 
+Total number of observations              167394      2007     11539
+Total number unique                        95133      1085      6938
+Mean((I)/sd(I))                              5.4      12.5       1.1
+Mn(I) half-set correlation CC(1/2)         0.976     0.972     0.480
+Completeness                                96.3      98.3      94.7
+Multiplicity                                 1.8       1.8       1.7
+Mean(Chi^2)                                 0.77      0.78      0.59
+
+Anomalous completeness                      59.7      80.2      47.2
+Anomalous multiplicity                       0.6       1.0       1.0
+DelAnom correlation between half-sets      0.000     0.000     0.000
+Mid-Slope of Anom Normal Probability       0.763       -         -  
+
+Anomalous flag switched ON in input but the anomalous signal is weak
+
+Estimates of resolution limits: overall
+   from half-dataset correlation CC(1/2) >  0.30: limit =  1.68A  == maximum resolution
+   from Mn(I/sd) >  1.50:                         limit =  1.76A 
+   from Mn(I/sd) >  2.00:                         limit =  1.82A 
+
+Estimates of resolution limits in reciprocal lattice directions:
+  Along    0.78 a* + 0.51 b* + 0.37 c*
+   from half-dataset correlation CC(1/2) >  0.30: limit =  1.98A 
+   from Mn(I/sd) >  1.50:                         limit =  2.01A 
+  Along   -0.22 a* + 0.59 b* + 0.78 c*
+   from half-dataset correlation CC(1/2) >  0.30: limit =  1.68A  == maximum resolution
+   from Mn(I/sd) >  1.50:                         limit =  1.75A 
+  Along    0.08 a* - 0.50 b* + 0.86 c*
+   from half-dataset correlation CC(1/2) >  0.30: limit =  1.68A  == maximum resolution
+   from Mn(I/sd) >  1.50:                         limit =  1.68A  == maximum resolution
+
+Anisotropic deltaB (i.e. range of principal components), A^2: 16.00
+
+Average unit cell:    49.32   59.84   79.99   79.35   81.53   75.65
+Space group: P 1
+Average mosaicity:   0.00
+
+Minimum and maximum SD correction factors: Fulls   0.18  84.36 Partials   0.00   0.00
+
+$$ <!--SUMMARY_END-->
+==============================================================
+
+==== Writing merged data for dataset lb18145v79/xNUDT5Ax04441/SAD to file /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_scaled.mtz
+
+Number of reflections written    95133 maximum resolution    1.680
+
+==== Writing unmerged data for dataset lb18145v79/xNUDT5Ax04441/SAD to file /dls/i04-1/data/2018/lb18145-79/tmp/NUDT5A/NUDT5A-x0444/NUDT5A-x0444_1_/xia2-dials-runP1/1532731610/xNUDT5Ax04441/scale/lb18145v79_xNUDT5Ax04441_scaled_unmerged.mtz
+ * Title:
+
+ from dials.export_mtz
+
+ * Base dataset:
+
+        0 HKL_base
+          HKL_base
+          HKL_base
+
+ * Number of Datasets = 1
+
+ * Dataset ID, project/crystal/dataset names, cell dimensions, wavelength:
+
+        1 lb18145v79
+          xNUDT5Ax04441
+          SAD
+             49.3176   59.8432   79.9895   79.3542   81.5297   75.6482
+             0.91587
+
+ * Number of Columns = 15
+
+ * Number of Reflections = 167394
+
+ * Missing value set to NaN in input mtz file
+
+ * Number of Batches = 1000
+
+ * Column Labels :
+
+ H K L M/ISYM BATCH I SIGI SCALEUSED SIGSCALEUSED NPART FRACTIONCALC XDET YDET ROT LP
+
+ * Column Types :
+
+ H H H Y B J Q R R I R R R R R
+
+ * Associated datasets :
+
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+ * Cell Dimensions : (obsolete - refer to dataset cell dimensions above)
+
+   49.3176   59.8432   79.9895   79.3542   81.5297   75.6482 
+
+ *  Resolution Range :
+
+    0.00016    0.35430     (     78.165 -      1.680 A )
+
+ * Sort Order :
+
+      1     2     3     4     5
+
+ * Space group = 'P 1' (number     1)
+
+  (spacegroup is known)
+
+
+Number of observations written =   167394
+
+Number of multiple (overlapped) observations written =        0
+
+$TEXT:Reference: $$ Please cite $$
+P.R.Evans and G.N.Murshudov, 'How good are my data and what is the resolution?' Acta Cryst. D69, 1204-1214  (2013).
+<a href="http://journals.iucr.org/d/issues/2013/07/00/ba5190/index.html">
+<b>PDF</b></a>
+$$
+
+End of aimless job, total time: cpu time: 20.75 secs, elapsed time: 18.0 secs
+
+# command line:
+# aimless  'hklin' 'lb18145v79_xNUDT5Ax04441_sorted.mtz' 'hklout' 'lb18145v79_xNUDT5Ax04441_scaled.mtz'
+#
+# timing information:
+#   time since process start: 17.9 seconds
+#   time since object initialization: 18.0 seconds
