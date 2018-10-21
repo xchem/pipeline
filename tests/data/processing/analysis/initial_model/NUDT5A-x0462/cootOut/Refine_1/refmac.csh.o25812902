@@ -1,0 +1,1795 @@
+
+------------------------------------------------------------------>
+-         .__               __
+-    ____ |__|____    _____/  |_
+-   / ___\|  \__  \  /    \   __\
+-  / /_/  >  |/ __ \|   |  \  |
+-  \___  /|__(____  /___|  /__|     A crystallographic toolbox for
+-  /_____/         \/     \/        protein structure determination
+-
+------------------------------------------------------------------>
+
+> giant.quick_refine
+
+    A tool to simplify the launching of standard refinement jobs in REFMAC or PHENIX.
+
+    1) Simple usage:
+        > giant.quick_refine input.pdb input.mtz ligand.cif
+
+    2) Defining custom names for the output folder and the output files
+        > giant.quick_refine ... dir_prefix='XXX' out_prefix='XXX'
+
+    3) Specify additonal parameter file (see giant.make_restraints)
+        > giant.quick_refine ... params=restraints.params
+
+------------------------------------------------------------------>
+
+Creating new output directory: Refine_0001
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Validating input parameters                                  ---
+----------------------------------------------- *** ------------------------------------------------
+
+Copying/linking files to refinement folder
+Real output file path prefixes: Refine_0001/refine_1
+Link output file path prefixes: refine
+
+----------------------------------------------- *** ------------------------------------------------
+---                     Preparing command line input for refinement program                      ---
+----------------------------------------------- *** ------------------------------------------------
+
+Program:
+	refmac5
+Command line arguments:
+	xyzin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/cootOut/Refine_1/NUDT5A-x0462-ensemble-model.pdb
+	hklin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/NUDT5A-x0462.free.mtz
+	xyzout
+	Refine_0001/refine_1.pdb
+	hklout
+	Refine_0001/refine_1.mtz
+	libin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Z57040482.cif
+Standard Input:
+	exte dist first chain D resi  196 alte A atom  N   second chain D resi  196 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CA  second chain D resi  196 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  C   second chain D resi  196 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  O   second chain D resi  196 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CB  second chain D resi  196 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CG  second chain D resi  196 alte C atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CD  second chain D resi  196 alte C atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NE  second chain D resi  196 alte C atom  NE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CZ  second chain D resi  196 alte C atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NH1 second chain D resi  196 alte C atom  NH1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NH2 second chain D resi  196 alte C atom  NH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  N   second chain D resi  196 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CA  second chain D resi  196 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  C   second chain D resi  196 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  O   second chain D resi  196 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CB  second chain D resi  196 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CG  second chain D resi  196 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CD  second chain D resi  196 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NE  second chain D resi  196 alte D atom  NE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CZ  second chain D resi  196 alte D atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NH1 second chain D resi  196 alte D atom  NH1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NH2 second chain D resi  196 alte D atom  NH2 value 0.0 sigma 0.02 type 1
+	    bref ISOT
+	
+	
+	
+	ncyc 10
+	weight AUTO
+	
+	
+	END
+------------------------------------->>>
+running refinement... (refmac5)
+
+----------------------------------------------- *** ------------------------------------------------
+---                                      Refinement output                                       ---
+----------------------------------------------- *** ------------------------------------------------
+
+output written to log file (1126 lines)
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Post-processing output files                                 ---
+----------------------------------------------- *** ------------------------------------------------
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                     linking output files                                     ---
+----------------------------------------------- *** ------------------------------------------------
+
+Linking refine.pdb -> Refine_0001/refine_1.pdb
+Linking refine.mtz -> Refine_0001/refine_1.mtz
+
+############################################## <~~~> ###############################################
+###                                    finished - refinement                                     ###
+############################################## <~~~> ###############################################
+
+
+------------------------------------------------------------------>
+-         .__               __
+-    ____ |__|____    _____/  |_
+-   / ___\|  \__  \  /    \   __\
+-  / /_/  >  |/ __ \|   |  \  |
+-  \___  /|__(____  /___|  /__|     A crystallographic toolbox for
+-  /_____/         \/     \/        protein structure determination
+-
+------------------------------------------------------------------>
+
+> giant.strip_conformations
+
+    A tool to remove unwanted conformations of a multi-conformer model.
+        Conformations to keep can be kept can be declared explicity (using conf=...) or implicitly,
+        through keeping the conformations associated with certain residue names (res=...).
+
+    1) Simple usage:
+        > giant.strip_conformations input.pdb
+
+------------------------------------------------------------------>
+
+
+############################################## <~~~> ###############################################
+###                                 Validating input parameters                                  ###
+############################################## <~~~> ###############################################
+
+
+############################################## <~~~> ###############################################
+###                               Splitting multi-state structures                               ###
+############################################## <~~~> ###############################################
+
+Conformers [] -> bound-state
+Conformers ['A', 'B', 'C', 'D'] -> ground-state
+
+----------------------------------------------- *** ------------------------------------------------
+---                                   Processing refine_1.pdb                                    ---
+----------------------------------------------- *** ------------------------------------------------
+
+
+------------------------------------->>>
+Outputting conformer(s) ABCD to refine_1.split.ground-state.pdb
+------------------------------------->>>
+Keeping ANY atom with conformer id: " " or A or B or C or D
+Selection: 
+	altid " " or altid "A" or altid "B" or altid "C" or altid "D"
+------------------------------------->>>
+Pruning redundant conformers
+------------------------------------->>>
+Resetting structure altlocs:
+	A -> "A"
+	B -> "B"
+	C -> "C"
+	D -> "D"
+------------------------------------->>>
+Writing structure: refine_1.split.ground-state.pdb
+------------------------------------->>>
+
+
+############################################## <~~~> ###############################################
+###                                           FINISHED                                           ###
+############################################## <~~~> ###############################################
+
+
+------------------------------------------------------------------>
+-         .__               __
+-    ____ |__|____    _____/  |_
+-   / ___\|  \__  \  /    \   __\
+-  / /_/  >  |/ __ \|   |  \  |
+-  \___  /|__(____  /___|  /__|     A crystallographic toolbox for
+-  /_____/         \/     \/        protein structure determination
+-
+------------------------------------------------------------------>
+
+> giant.strip_conformations
+
+    A tool to remove unwanted conformations of a multi-conformer model.
+        Conformations to keep can be kept can be declared explicity (using conf=...) or implicitly,
+        through keeping the conformations associated with certain residue names (res=...).
+
+    1) Simple usage:
+        > giant.strip_conformations input.pdb
+
+------------------------------------------------------------------>
+
+
+############################################## <~~~> ###############################################
+###                                 Validating input parameters                                  ###
+############################################## <~~~> ###############################################
+
+
+############################################## <~~~> ###############################################
+###                               Splitting multi-state structures                               ###
+############################################## <~~~> ###############################################
+
+Conformers [] -> bound-state
+Conformers ['A', 'B', 'C', 'D'] -> ground-state
+
+----------------------------------------------- *** ------------------------------------------------
+---                                   Processing refine_1.pdb                                    ---
+----------------------------------------------- *** ------------------------------------------------
+
+
+------------------------------------->>>
+Outputting conformer(s) ABCD to refine_1.output.ground-state.pdb
+------------------------------------->>>
+Keeping ANY atom with conformer id: " " or A or B or C or D
+Selection: 
+	altid " " or altid "A" or altid "B" or altid "C" or altid "D"
+------------------------------------->>>
+Pruning redundant conformers
+------------------------------------->>>
+Resetting structure altlocs:
+	A -> "A"
+	B -> "B"
+	C -> "C"
+	D -> "D"
+------------------------------------->>>
+Resetting output occupancies (maximum occupancy of 1.0, etc.)
+Fixing any residues that have greater than unitary occupancy
+Maximum occupancy of output structue: 1.0
+------------------------------------->>>
+Writing structure: refine_1.output.ground-state.pdb
+------------------------------------->>>
+
+
+############################################## <~~~> ###############################################
+###                                           FINISHED                                           ###
+############################################## <~~~> ###############################################
+
+
+------------------------------------------------------------------>
+-         .__               __
+-    ____ |__|____    _____/  |_
+-   / ___\|  \__  \  /    \   __\
+-  / /_/  >  |/ __ \|   |  \  |
+-  \___  /|__(____  /___|  /__|     A crystallographic toolbox for
+-  /_____/         \/     \/        protein structure determination
+-
+------------------------------------------------------------------>
+
+> giant.score_model
+
+    A tool to quickly score a ligand model against crystallographic electron density
+
+    1) Simple usage (for ligand called LIG or UNL):
+        > giant.score_model refined.pdb refined.mtz
+
+    2) Score a residue in the file (replace XXX with ligand 3-letter ID)
+        > giant.score_model ... res_names=XX1,XX2,XX3
+
+    3) Define a "fitted" model to compare the refined model against
+        > giant.score_model ... pdb1=fitted.pdb mtz1=fitted.mtz
+
+------------------------------------------------------------------>
+
+=======================++>
+Scoring model...
+Reading input structure: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.pdb
+Selecting residues named LIG or UNL or DRG or FRG: 0 residue(s)
+
+============================== Collecting inputs ==============================
+
+
+                   ----------Processing X-ray data----------                   
+
+F-obs:
+  /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.mtz:F,SIGF
+Miller array info: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.mtz:F,SIGF
+Observation type: xray.amplitude
+Type of data: double, size=59445
+Type of sigmas: double, size=59445
+Number of Miller indices: 59445
+Anomalous flag: False
+Unit cell: (48.9573, 59.7331, 79.7967, 79.8209, 81.8414, 76.0335)
+Space group: P 1 (No. 1)
+Systematic absences: 0
+Centric reflections: 0
+Resolution range: 57.3261 1.95953
+Completeness in resolution range: 0.963452
+Completeness with d_max=infinity: 0.963437
+Wavelength: 0.9159
+
+Number of F-obs in resolution range:                   59445
+Number of F-obs<0 (these reflections will be rejected): 0
+Number of F-obs=0 (these reflections will be used in refinement): 0
+Refinement resolution range: d_max =  57.3261
+                             d_min =   1.9595
+
+R-free flags:
+  /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.mtz:FreeR_flag
+Miller array info: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.mtz:FreeR_flag
+Observation type: None
+Type of data: int, size=61703
+Type of sigmas: None
+Number of Miller indices: 61703
+Anomalous flag: False
+Unit cell: (48.9573, 59.7331, 79.7967, 79.8209, 81.8414, 76.0335)
+Space group: P 1 (No. 1)
+Systematic absences: 0
+Centric reflections: 0
+Resolution range: 78.1155 1.95952
+Completeness in resolution range: 1
+Completeness with d_max=infinity: 1
+Wavelength: 9.9990
+
+Test (R-free flags) flag value: 0
+
+Number of work/free reflections by resolution:
+                                         work  free  %free
+  bin  1: 57.3506 -  4.2212 [6041/6175]  5755   286   4.7%
+  bin  2:  4.2212 -  3.3506 [5982/6156]  5708   274   4.6%
+  bin  3:  3.3506 -  2.9271 [6031/6192]  5725   306   5.1%
+  bin  4:  2.9271 -  2.6594 [6001/6180]  5679   322   5.4%
+  bin  5:  2.6594 -  2.4688 [5972/6170]  5654   318   5.3%
+  bin  6:  2.4688 -  2.3233 [5931/6124]  5631   300   5.1%
+  bin  7:  2.3233 -  2.2069 [5900/6180]  5620   280   4.7%
+  bin  8:  2.2069 -  2.1108 [5935/6189]  5637   298   5.0%
+  bin  9:  2.1108 -  2.0296 [5886/6179]  5580   306   5.2%
+  bin 10:  2.0296 -  1.9595 [5766/6155]  5456   310   5.4%
+                                overall 56445  3000   5.0%
+
+                   ----------Processing PDB file(s)----------                  
+
+  Monomer Library directory:
+    "/dls_sw/apps/phenix/1.13/phenix-1.13-2998/modules/chem_data/mon_lib"
+  Total number of atoms: 5975
+  Number of models: 1
+  Model: ""
+    Number of chains: 12
+    Chain: "A"
+      Number of atoms: 1450
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 194, 1450
+          Classifications: {'peptide': 194}
+          Incomplete info: {'truncation_to_alanine': 14}
+          Link IDs: {'PTRANS': 12, 'TRANS': 181}
+          Unresolved non-hydrogen bonds: 59
+          Unresolved non-hydrogen angles: 69
+          Unresolved non-hydrogen dihedrals: 51
+          Planarities with less than four sites: {'GLN:plan1': 1, 'GLU:plan': 5, 'HIS:plan': 1, 'ARG:plan': 1, 'ASP:plan': 1}
+          Unresolved non-hydrogen planarities: 37
+    Chain: "B"
+      Number of atoms: 1464
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 194, 1464
+          Classifications: {'peptide': 194}
+          Incomplete info: {'truncation_to_alanine': 11}
+          Link IDs: {'PTRANS': 12, 'TRANS': 181}
+          Chain breaks: 1
+          Unresolved non-hydrogen bonds: 43
+          Unresolved non-hydrogen angles: 49
+          Unresolved non-hydrogen dihedrals: 37
+          Unresolved non-hydrogen chiralities: 1
+          Planarities with less than four sites: {'GLN:plan1': 2, 'GLU:plan': 1, 'ARG:plan': 1, 'ASP:plan': 1}
+          Unresolved non-hydrogen planarities: 20
+    Chain: "C"
+      Number of atoms: 1402
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 192, 1402
+          Classifications: {'peptide': 192}
+          Incomplete info: {'truncation_to_alanine': 24}
+          Link IDs: {'PTRANS': 12, 'TRANS': 179}
+          Chain breaks: 1
+          Unresolved chain link angles: 1
+          Unresolved non-hydrogen bonds: 89
+          Unresolved non-hydrogen angles: 103
+          Unresolved non-hydrogen dihedrals: 76
+          Unresolved non-hydrogen chiralities: 4
+          Planarities with less than four sites: {'GLN:plan1': 2, 'GLU:plan': 5, 'ARG:plan': 2}
+          Unresolved non-hydrogen planarities: 38
+    Chain: "D"
+      Number of atoms: 1417
+      Number of conformers: 4
+      Conformer: "A"
+        Number of residues, atoms: 189, 1384
+          Classifications: {'peptide': 189}
+          Incomplete info: {'truncation_to_alanine': 20}
+          Link IDs: {'PTRANS': 12, 'TRANS': 176}
+          Chain breaks: 1
+          Unresolved non-hydrogen bonds: 84
+          Unresolved non-hydrogen angles: 102
+          Unresolved non-hydrogen dihedrals: 73
+          Unresolved non-hydrogen chiralities: 2
+          Planarities with less than four sites: {'GLN:plan1': 1, 'GLU:plan': 5, 'ARG:plan': 2, 'TRP:plan': 1, 'ASP:plan': 3}
+          Unresolved non-hydrogen planarities: 52
+      Conformer: "B"
+        Number of residues, atoms: 189, 1384
+          Classifications: {'peptide': 189}
+          Incomplete info: {'truncation_to_alanine': 20}
+          Link IDs: {'PTRANS': 12, 'TRANS': 176}
+          Chain breaks: 1
+          Unresolved non-hydrogen bonds: 84
+          Unresolved non-hydrogen angles: 102
+          Unresolved non-hydrogen dihedrals: 73
+          Unresolved non-hydrogen chiralities: 2
+          Planarities with less than four sites: {'GLN:plan1': 1, 'GLU:plan': 5, 'ARG:plan': 2, 'TRP:plan': 1, 'ASP:plan': 3}
+          Unresolved non-hydrogen planarities: 52
+          bond proxies already assigned to first conformer: 1398
+      Conformer: "C"
+        Number of residues, atoms: 189, 1384
+          Classifications: {'peptide': 189}
+          Incomplete info: {'truncation_to_alanine': 20}
+          Link IDs: {'PTRANS': 12, 'TRANS': 176}
+          Chain breaks: 1
+          Unresolved non-hydrogen bonds: 84
+          Unresolved non-hydrogen angles: 102
+          Unresolved non-hydrogen dihedrals: 73
+          Unresolved non-hydrogen chiralities: 2
+          Planarities with less than four sites: {'GLN:plan1': 1, 'GLU:plan': 5, 'ARG:plan': 2, 'TRP:plan': 1, 'ASP:plan': 3}
+          Unresolved non-hydrogen planarities: 52
+          bond proxies already assigned to first conformer: 1398
+      Conformer: "D"
+        Number of residues, atoms: 189, 1384
+          Classifications: {'peptide': 189}
+          Incomplete info: {'truncation_to_alanine': 20}
+          Link IDs: {'PTRANS': 12, 'TRANS': 176}
+          Chain breaks: 1
+          Unresolved non-hydrogen bonds: 84
+          Unresolved non-hydrogen angles: 102
+          Unresolved non-hydrogen dihedrals: 73
+          Unresolved non-hydrogen chiralities: 2
+          Planarities with less than four sites: {'GLN:plan1': 1, 'GLU:plan': 5, 'ARG:plan': 2, 'TRP:plan': 1, 'ASP:plan': 3}
+          Unresolved non-hydrogen planarities: 52
+          bond proxies already assigned to first conformer: 1398
+    Chain: "A"
+      Number of atoms: 3
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 3, 3
+          Unusual residues: {'MG ': 2, 'CL ': 1}
+          Classifications: {'undetermined': 3}
+          Link IDs: {None: 2}
+    Chain: "B"
+      Number of atoms: 6
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 3, 6
+          Unusual residues: {'MG ': 2, 'EDO': 1}
+          Classifications: {'undetermined': 3}
+          Link IDs: {None: 2}
+    Chain: "C"
+      Number of atoms: 6
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 3, 6
+          Unusual residues: {'MG ': 2, 'EDO': 1}
+          Classifications: {'undetermined': 3}
+          Link IDs: {None: 2}
+    Chain: "D"
+      Number of atoms: 2
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 2, 2
+          Unusual residues: {'MG ': 2}
+          Classifications: {'undetermined': 2}
+          Link IDs: {None: 1}
+    Chain: "A"
+      Number of atoms: 69
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 69, 69
+          Classifications: {'water': 69}
+          Link IDs: {None: 68}
+    Chain: "B"
+      Number of atoms: 64
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 64, 64
+          Classifications: {'water': 64}
+          Link IDs: {None: 63}
+    Chain: "C"
+      Number of atoms: 65
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 65, 65
+          Classifications: {'water': 65}
+          Link IDs: {None: 64}
+    Chain: "D"
+      Number of atoms: 27
+      Number of conformers: 1
+      Conformer: ""
+        Number of residues, atoms: 27, 27
+          Classifications: {'water': 27}
+          Link IDs: {None: 26}
+  Residues with excluded nonbonded symmetry interactions: 1
+    residue:
+      pdb=" N  AARG D 196 " occ=0.25
+      ... (42 atoms not shown)
+      pdb=" NH2DARG D 196 " occ=0.25
+  Time building chain proxies: 2.37, per 1000 atoms: 0.40
+  Number of scatterers: 5975
+  At special positions: 0
+  Unit cell: (48.9573, 59.7331, 79.7967, 79.8209, 81.8414, 76.0335)
+  Space group: P 1 (No. 1)
+  Number of sites at special positions: 0
+  Number of scattering types: 6
+    Type Number    sf(0)
+     Cl      1     17.00
+     S      31     16.00
+     Mg      8     11.99
+     O    1350      8.00
+     N     962      7.00
+     C    3623      6.00
+    sf(0) = scattering factor at diffraction angle 0.
+
+  Number of disulfides: simple=0, symmetry=0
+  Custom bonds:
+    Warning: Ignoring bond with distance_ideal = None:
+      atom_selection_1 = None
+      atom_selection_2 = None
+    Total number of custom bonds: 0
+  Custom angles:
+    Warning: Ignoring angle with angle_ideal = None:
+      atom_selection_1 = None
+      atom_selection_2 = None
+      atom_selection_3 = None
+    Total number of custom angles: 0
+  Custom dihedrals:
+    Warning: Ignoring dihedral with angle_ideal = None:
+      atom_selection_1 = None
+      atom_selection_2 = None
+      atom_selection_3 = None
+      atom_selection_4 = None
+    Total number of custom dihedrals: 0
+  Custom planarities:
+    Warning: Ignoring planarity with with sigma <= 0:
+      atom_selection = None
+None
+    Total number of custom planarities: 0
+  Custom parallelities:
+Warning: Ignoring parallelity with empty atom selection.
+    Total number of custom parallelities: 0
+
+  Automatic linking
+    Parameters for automatic linking
+      Linking & cutoffs
+        Metal                : False - 3.50
+        Amimo acid           : False - 1.90
+        Carbohydrate         : True  - 1.99
+        Ligands              : True  - 1.99
+        Small molecules      : False - 1.98
+        Amino acid - RNA/DNA : False
+      
+  Number of custom bonds: simple=0, symmetry=0
+  Time building additional restraints: 0.70
+  Adding C-beta torsion restraints...
+  Number of C-beta restraints generated:  1440
+
+  Time building geometry restraints manager: 0.82 seconds
+
+  NOTE: a complete listing of the restraints can be obtained by requesting
+        output of .geo file.
+
+  Histogram of bond lengths:
+        1.18 -     1.53: 4871
+        1.53 -     1.89: 979
+        1.89 -     2.25: 0
+        2.25 -     2.61: 0
+        2.61 -     2.97: 1
+  Bond restraints: 5851
+  Sorted by residual:
+  bond pdb=" C   ASP D 152 "
+       pdb=" N   GLU D 154 "
+    ideal  model  delta    sigma   weight residual
+    1.329  2.967 -1.638 1.40e-02 5.10e+03 1.37e+04
+  bond pdb=" CG  ASN D 208 "
+       pdb=" ND2 ASN D 208 "
+    ideal  model  delta    sigma   weight residual
+    1.328  1.408 -0.080 2.10e-02 2.27e+03 1.44e+01
+  bond pdb=" CA  THR A 104 "
+       pdb=" C   THR A 104 "
+    ideal  model  delta    sigma   weight residual
+    1.525  1.597 -0.072 2.10e-02 2.27e+03 1.18e+01
+  bond pdb=" N   MET A  87 "
+       pdb=" CA  MET A  87 "
+    ideal  model  delta    sigma   weight residual
+    1.458  1.395  0.063 1.90e-02 2.77e+03 1.09e+01
+  bond pdb=" CA  LEU A  79 "
+       pdb=" C   LEU A  79 "
+    ideal  model  delta    sigma   weight residual
+    1.525  1.458  0.067 2.10e-02 2.27e+03 1.03e+01
+  ... (remaining 5846 not shown)
+
+  Histogram of bond angle deviations from ideal:
+       86.67 -    97.20: 2
+       97.20 -   107.73: 512
+      107.73 -   118.26: 4207
+      118.26 -   128.79: 3214
+      128.79 -   139.32: 60
+  Bond angle restraints: 7995
+  Sorted by residual:
+  angle pdb=" O   ASP D 152 "
+        pdb=" C   ASP D 152 "
+        pdb=" N   GLU D 154 "
+      ideal   model   delta    sigma   weight residual
+     123.00   86.67   36.33 1.60e+00 3.91e-01 5.16e+02
+  angle pdb=" C   ASP D 152 "
+        pdb=" N   GLU D 154 "
+        pdb=" CA  GLU D 154 "
+      ideal   model   delta    sigma   weight residual
+     121.70  139.32  -17.62 1.80e+00 3.09e-01 9.58e+01
+  angle pdb=" CA  ASP D 152 "
+        pdb=" C   ASP D 152 "
+        pdb=" N   GLU D 154 "
+      ideal   model   delta    sigma   weight residual
+     116.20  134.72  -18.52 2.00e+00 2.50e-01 8.58e+01
+  angle pdb=" C   GLN A  82 "
+        pdb=" CA  GLN A  82 "
+        pdb=" CB  GLN A  82 "
+      ideal   model   delta    sigma   weight residual
+     110.10  101.52    8.58 1.90e+00 2.77e-01 2.04e+01
+  angle pdb=" C   ASP A  38 "
+        pdb=" CA  ASP A  38 "
+        pdb=" CB  ASP A  38 "
+      ideal   model   delta    sigma   weight residual
+     110.10  118.17   -8.07 1.90e+00 2.77e-01 1.80e+01
+  ... (remaining 7990 not shown)
+
+  Histogram of dihedral angle deviations from ideal:
+        0.00 -    35.83: 3428
+       35.83 -    71.65: 65
+       71.65 -   107.48: 12
+      107.48 -   143.31: 5
+      143.31 -   179.13: 23
+  Dihedral angle restraints: 3533
+    sinusoidal: 1297
+      harmonic: 2236
+  Sorted by residual:
+  dihedral pdb=" CA  ASP D 152 "
+           pdb=" C   ASP D 152 "
+           pdb=" N   GLU D 154 "
+           pdb=" CA  GLU D 154 "
+      ideal   model   delta  harmonic     sigma   weight residual
+     180.00   73.60  106.40     0      5.00e+00 4.00e-02 4.53e+02
+  dihedral pdb=" CD BARG D 196 "
+           pdb=" NE BARG D 196 "
+           pdb=" CZ BARG D 196 "
+           pdb=" NH1BARG D 196 "
+      ideal   model   delta sinusoidal    sigma   weight residual
+       0.00  179.11 -179.11     1      1.00e+01 1.00e-02 1.92e+02
+  dihedral pdb=" CD DARG D 196 "
+           pdb=" NE DARG D 196 "
+           pdb=" CZ DARG D 196 "
+           pdb=" NH1DARG D 196 "
+      ideal   model   delta sinusoidal    sigma   weight residual
+       0.00  179.11 -179.11     1      1.00e+01 1.00e-02 1.92e+02
+  ... (remaining 3530 not shown)
+
+  Histogram of chiral volume deviations from ideal:
+       0.000 -    0.085: 525
+       0.085 -    0.170: 302
+       0.170 -    0.254: 94
+       0.254 -    0.339: 22
+       0.339 -    0.424: 5
+  Chirality restraints: 948
+  Sorted by residual:
+  chirality pdb=" CA  GLN C  82 "
+            pdb=" N   GLN C  82 "
+            pdb=" C   GLN C  82 "
+            pdb=" CB  GLN C  82 "
+    both_signs  ideal   model   delta    sigma   weight residual
+      False      2.51    2.09    0.42 2.00e-01 2.50e+01 4.49e+00
+  chirality pdb=" CA  TYR D  74 "
+            pdb=" N   TYR D  74 "
+            pdb=" C   TYR D  74 "
+            pdb=" CB  TYR D  74 "
+    both_signs  ideal   model   delta    sigma   weight residual
+      False      2.51    2.88   -0.37 2.00e-01 2.50e+01 3.49e+00
+  chirality pdb=" CA  GLU A 189 "
+            pdb=" N   GLU A 189 "
+            pdb=" C   GLU A 189 "
+            pdb=" CB  GLU A 189 "
+    both_signs  ideal   model   delta    sigma   weight residual
+      False      2.51    2.15    0.36 2.00e-01 2.50e+01 3.27e+00
+  ... (remaining 945 not shown)
+
+  Planarity restraints: 1044
+  Sorted by residual:
+                                 delta    sigma   weight rms_deltas residual
+  plane pdb=" CA  ASP D 152 "    0.133 2.00e-02 2.50e+03   1.68e-01 2.83e+02
+        pdb=" C   ASP D 152 "   -0.287 2.00e-02 2.50e+03
+        pdb=" O   ASP D 152 "    0.104 2.00e-02 2.50e+03
+        pdb=" N   GLU D 154 "    0.050 2.00e-02 2.50e+03
+                                 delta    sigma   weight rms_deltas residual
+  plane pdb=" CD  ARG B 196 "   -0.051 2.00e-02 2.50e+03   4.30e-02 2.31e+01
+        pdb=" NE  ARG B 196 "    0.069 2.00e-02 2.50e+03
+        pdb=" CZ  ARG B 196 "    0.008 2.00e-02 2.50e+03
+        pdb=" NH1 ARG B 196 "    0.014 2.00e-02 2.50e+03
+        pdb=" NH2 ARG B 196 "   -0.040 2.00e-02 2.50e+03
+                                 delta    sigma   weight rms_deltas residual
+  plane pdb=" CB  PHE B  94 "    0.027 2.00e-02 2.50e+03   2.27e-02 9.05e+00
+        pdb=" CG  PHE B  94 "   -0.039 2.00e-02 2.50e+03
+        pdb=" CD1 PHE B  94 "   -0.014 2.00e-02 2.50e+03
+        pdb=" CD2 PHE B  94 "   -0.005 2.00e-02 2.50e+03
+        pdb=" CE1 PHE B  94 "    0.025 2.00e-02 2.50e+03
+        pdb=" CE2 PHE B  94 "    0.018 2.00e-02 2.50e+03
+        pdb=" CZ  PHE B  94 "   -0.013 2.00e-02 2.50e+03
+  ... (remaining 1041 not shown)
+
+  Histogram of nonbonded interaction distances:
+        1.85 -     2.46: 56
+        2.46 -     3.07: 4193
+        3.07 -     3.68: 9701
+        3.68 -     4.29: 15533
+        4.29 -     4.90: 23983
+  Nonbonded interactions: 53466
+  Sorted by model distance:
+  nonbonded pdb="MG   MG  A 302 "
+            pdb=" O   HOH A 417 "
+     model   vdw
+     1.850 2.230
+  nonbonded pdb="MG   MG  B 303 "
+            pdb=" O   HOH B 416 "
+     model   vdw
+     1.913 2.230
+  nonbonded pdb=" OE1 GLU C 125 "
+            pdb=" O   HOH C 403 "
+     model   vdw
+     1.938 2.440
+  nonbonded pdb=" OE2 GLU D 116 "
+            pdb="MG   MG  D 301 "
+     model   vdw
+     1.986 2.230
+  nonbonded pdb=" OE2 GLU C 116 "
+            pdb="MG   MG  C 303 "
+     model   vdw
+     1.988 2.230
+  ... (remaining 53461 not shown)
+
+  NOTE: a complete listing of the restraints can be obtained by requesting
+        output of .geo file.
+
+============================== Scattering factors =============================
+
+
+                ----------X-ray scattering dictionary----------                
+
+Number of scattering types: 6
+  Type Number    sf(0)   Gaussians
+   Cl      1     16.95       2
+   S      31     15.96       2
+   Mg      8     11.95       2
+   O    1350      7.97       2
+   N     962      6.97       2
+   C    3623      5.97       2
+  sf(0) = scattering factor at diffraction angle 0.
+
+Number of scatterers: 5975
+At special positions: 0
+Unit cell: (48.9573, 59.7331, 79.7967, 79.8209, 81.8414, 76.0335)
+Space group: P 1 (No. 1)
+
+                  ----------F(model) initialization----------                  
+
+Twinning will be detected automatically.
+                   start: r(all,work,free)=0.3391 0.3395 0.3363 n_refl.: 59445
+       re-set all scales: r(all,work,free)=0.3391 0.3395 0.3363 n_refl.: 59445
+         remove outliers: r(all,work,free)=0.3385 0.3388 0.3363 n_refl.: 59434
+bulk-solvent and scaling: r(all,work,free)=0.2227 0.2206 0.2631 n_refl.: 59434
+         remove outliers: r(all,work,free)=0.2226 0.2205 0.2631 n_refl.: 59428
+|--(resolution: 1.96 - 57.33 A, n_refl.=59428 (all), 5.05  % free)------------|
+|                                                                             |
+| r_work= 0.2205 r_free= 0.2631 coordinate error (max.-lik. estimate): 0.27 A |
+|                                                                             |
+| normalized target function (ml) (work): 4.573695                            |
+| target function (ml) not normalized (work): 258084.442489                   |
+| target function (ml) not normalized (free): 14059.757137                    |
+|-----------------------------------------------------------------------------|
+
+End of input processing
+
+============================== Experimental data ==============================
+
+  Wavelength                 = 0.9159
+  Resolution range           =  57.326 - 1.960 (2.030 - 1.960)
+  Number of reflections      =    59445 (5766)
+     after outlier rejection =    59428 (5764)
+  Completeness               =  96.32% (93.65%)
+  R-work                     =   0.2205 (0.3191)
+  R-free                     =   0.2631 (0.3280)
+  By resolution bin:
+   BIN  RESOLUTION RANGE  COMPL.    NWORK NFREE   RWORK  RFREE  CCWORK CCFREE
+     1 57.3506 -  4.2212    0.98     5752   286  0.1872 0.2170   0.914  0.866
+     2  4.2212 -  3.3506    0.97     5707   274  0.1999 0.2403   0.896  0.854
+     3  3.3506 -  2.9271    0.97     5725   306  0.2290 0.2784   0.857  0.787
+     4  2.9271 -  2.6594    0.97     5679   322  0.2338 0.2822   0.852  0.746
+     5  2.6594 -  2.4688    0.97     5654   318  0.2313 0.2990   0.852  0.727
+     6  2.4688 -  2.3233    0.97     5630   300  0.2425 0.2946   0.841  0.699
+     7  2.3233 -  2.2069    0.95     5617   280  0.2442 0.2932   0.826  0.700
+     8  2.2069 -  2.1108    0.96     5636   298  0.2687 0.2951   0.764  0.614
+     9  2.1108 -  2.0296    0.95     5574   306  0.2900 0.3354   0.722  0.658
+    10  2.0296 -  1.9595    0.94     5454   310  0.3191 0.3280   0.627  0.556
+
+              ----------Residues with poor real-space CC----------             
+
+  atom                   b_iso   occ  2Fo-Fc  Fmodel     CC
+   A  56  GLU            75.50  1.00    0.96    1.99  0.789
+   B  14  LYS            66.53  1.00    1.56    2.27  0.794
+   B  54  ARG            77.63  1.00    1.47    1.95  0.767
+   B  55  LYS            70.52  1.00    1.39    1.96  0.746
+   B  58  THR            58.35  1.00    1.40    2.46  0.780
+   B 163  GLY            67.51  1.00    1.39    2.28  0.736
+   C  21  GLU            76.71  1.00    1.14    1.88  0.788
+   C  23  ILE            62.17  1.00    2.12    2.19  0.749
+   C  39  PRO            61.35  1.00    1.52    2.24  0.769
+   C  42  LYS            60.33  1.00    1.88    2.43  0.788
+   C  43  THR            64.45  1.00    1.63    2.31  0.798
+   C  55  LYS            74.84  1.00    1.40    2.19  0.577
+   C 190  HIS            80.71  1.00    1.28    2.02  0.765
+   D  28  TRP            72.93  1.00    0.96    1.67  0.776
+   D  51  ARG            65.12  1.00    1.48    2.09  0.769
+   D 152  ASP            57.14  1.00    1.90    2.66  0.738
+   D 166  GLU            77.62  1.00    1.41    1.79  0.799
+   D 208  ASN            48.13  1.00    1.59    2.42  0.779
+  77 residues (including water) with CC(Fc,2mFo-DFc) < 0.8
+
+                 ----------Suspicious water molecules----------                
+
+  Waters in poor density:
+  atom                   b_iso   occ  2Fo-Fc   Fo-Fc    Anom     CC
+   A 401    O            52.13  1.00    1.07   -0.22     ---  0.797
+   A 403    O            60.80  1.00    1.05    0.53     ---  0.523
+   A 412    O            49.67  1.00    1.48    0.64     ---  0.615
+   A 421    O            45.68  1.00    1.96    0.43     ---  0.733
+   A 428    O            54.88  1.00    1.04    0.67     ---  0.597
+   A 443    O            52.77  1.00    1.62    0.51     ---  0.782
+   A 447    O            51.72  1.00    0.94   -0.33     ---  0.715
+   A 450    O            37.70  1.00    2.26    1.05     ---  0.637
+   A 452    O            48.90  1.00    1.79    1.59     ---  0.682
+   A 453    O            54.13  1.00    0.85   -1.05     ---  0.729
+   A 454    O            48.17  1.00    1.16   -0.83     ---  0.704
+   A 455    O            35.93  1.00    1.74   -1.00     ---  0.780
+   A 458    O            52.32  1.00    2.03    2.00     ---  0.768
+   A 465    O            43.00  1.00    2.01    1.60     ---  0.659
+   A 468    O            52.08  1.00    1.44    0.91     ---  0.664
+   A 469    O            42.95  1.00    2.23    0.94     ---  0.711
+   B 403    O            40.18  1.00    1.66   -0.64     ---  0.717
+   B 409    O            43.63  1.00    1.79   -0.02     ---  0.716
+   B 422    O            39.67  1.00    2.08    1.06     ---  0.786
+   B 429    O            41.12  1.00    2.50    1.10     ---  0.697
+   B 431    O            44.31  1.00    1.86    0.42     ---  0.725
+   B 435    O            75.59  1.00    0.48    0.47     ---  0.493
+   B 449    O            49.88  1.00    1.22   -0.03     ---  0.711
+   B 453    O            48.51  1.00    1.92    1.45     ---  0.690
+   B 457    O            43.27  1.00    2.25    0.86     ---  0.792
+   B 459    O            67.98  1.00    1.04    1.12     ---  0.531
+   B 461    O            48.40  1.00    1.40   -0.23     ---  0.719
+   B 463    O            53.00  1.00    1.10    0.15     ---  0.693
+   B 464    O            52.86  1.00    1.08    0.22     ---  0.722
+   C 404    O            55.48  1.00    1.86    1.60     ---  0.746
+   C 405    O            59.93  1.00    0.80   -0.55     ---  0.869
+   C 406    O            50.48  1.00    0.84   -0.62     ---  0.618
+   C 407    O            49.17  1.00    1.41    0.35     ---  0.762
+   C 413    O            47.75  1.00    1.32   -0.25     ---  0.735
+   C 414    O            55.86  1.00    1.12    0.28     ---  0.653
+   C 420    O            47.68  1.00    1.20   -0.64     ---  0.679
+   C 424    O            50.45  1.00    0.79   -0.71     ---  0.719
+   C 436    O            57.84  1.00    0.93    0.20     ---  0.791
+   C 441    O            71.80  1.00    0.42    0.13     ---  0.507
+   C 444    O            51.36  1.00    1.88    2.05     ---  0.703
+   C 445    O            63.43  1.00    0.91    0.05     ---  0.614
+   C 446    O            52.52  1.00    1.03    0.07     ---  0.733
+   C 448    O            52.90  1.00    0.81   -0.80     ---  0.767
+   C 449    O            50.92  1.00    1.52    0.43     ---  0.657
+   C 451    O            51.39  1.00    1.07   -0.04     ---  0.755
+   C 452    O            52.27  1.00    1.52    1.08     ---  0.771
+   C 453    O            41.72  1.00    2.81    2.23     ---  0.749
+   C 454    O            69.85  1.00    0.60    0.32     ---  0.792
+   C 455    O            46.03  1.00    1.84    1.52     ---  0.782
+   C 456    O            60.25  1.00    1.37    1.55     ---  0.720
+   C 457    O            65.99  1.00    1.07    1.17     ---  0.564
+   C 458    O            48.46  1.00    1.26    0.74     ---  0.739
+   C 460    O            42.18  1.00    2.08    0.96     ---  0.757
+   C 462    O            61.67  1.00    0.83    0.18     ---  0.490
+   C 463    O            54.86  1.00    1.40    1.01     ---  0.606
+   C 464    O            60.24  1.00    0.95    0.37     ---  0.706
+   C 465    O            46.49  1.00    1.84    0.13     ---  0.774
+   D 401    O            49.51  1.00    0.87   -1.08     ---  0.875
+   D 420    O            61.39  1.00    1.07    0.44     ---  0.738
+   D 423    O            50.04  1.00    1.61    1.45     ---  0.590
+   D 424    O            72.49  1.00    0.70    0.53     ---  0.603
+
+  Possibly mislabeled atoms:
+  atom                   b_iso   occ  2Fo-Fc   Fo-Fc    Anom     CC
+   A 460    O            43.55  1.00    3.05    3.24     ---  0.866
+   C 459    O            43.58  1.00    3.76    4.74     ---  0.835
+
+  Poorly ordered waters:    61
+  Mislabeled waters:         2
+
+=============================== Model properties ==============================
+
+  Overall:
+    Number of atoms = 5975  (anisotropic = 0)
+    B_iso: mean =  40.7  max = 113.3  min =  18.4
+    Occupancy: mean = 0.99  max = 1.00  min = 0.25
+    12 total B-factor or occupancy problem(s) detected
+  Macromolecules:
+    Number of atoms = 5733  (anisotropic = 0)
+    B_iso: mean =  40.7  max = 113.3  min =  18.4
+    Occupancy: mean = 0.99  max = 1.00  min = 0.25
+    11 total B-factor or occupancy problem(s) detected
+  Ligands:
+    Number of atoms = 17  (anisotropic = 0)
+    B_iso: mean =  52.1  max =  74.5  min =  34.5
+  Waters:
+    Number of atoms = 225  (anisotropic = 0)
+    B_iso: mean =  40.5  max =  75.6  min =  20.5
+
+============================= Geometry restraints =============================
+
+
+                        ----------Bond lengths----------                       
+
+  atoms                 ideal   model   delta   sigma   slack  residual   deviation
+   D 152  ASP  C      
+   D 154  GLU  N           1.33     2.97    -1.64  1.40e-02  1.37e+04  117.0*sigma
+
+  Min. delta:    0.000 (Z=  0.000)
+  Max. delta:    1.638 (Z=117.010)
+  Mean delta:    0.027 (Z=  1.744)
+
+                        ----------Bond angles----------                        
+
+  atoms                   ideal    model    delta   sigma  residual   deviation
+   D 152  ASP  O      
+   D 152  ASP  C      
+   D 154  GLU  N         123.00    86.67    36.33  1.60e+00  5.16e+02  22.7*sigma
+   D 152  ASP  C      
+   D 154  GLU  N      
+   D 154  GLU  CA        121.70   139.32   -17.62  1.80e+00  9.58e+01   9.8*sigma
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 154  GLU  N         116.20   134.72   -18.52  2.00e+00  8.58e+01   9.3*sigma
+   A  82  GLN  C      
+   A  82  GLN  CA     
+   A  82  GLN  CB        110.10   101.52     8.58  1.90e+00  2.04e+01   4.5*sigma
+   A  38  ASP  C      
+   A  38  ASP  CA     
+   A  38  ASP  CB        110.10   118.17    -8.07  1.90e+00  1.80e+01   4.2*sigma
+
+  Min. delta:    0.000 (Z=  0.000)
+  Max. delta:   36.328 (Z= 22.705)
+  Mean delta:    1.900 (Z=  0.900)
+
+                      ----------Dihedral angles----------                      
+
+  atoms                   ideal    model    delta   sigma  residual   deviation
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 154  GLU  N      
+   D 154  GLU  CA        180.00    73.60   106.40  5.00e+00  4.53e+02  21.3*sigma
+   D 196 BARG  CD     
+   D 196 BARG  NE     
+   D 196 BARG  CZ     
+   D 196 BARG  NH1         0.00   179.11  -179.11  1.00e+01  1.92e+02  17.9*sigma
+   D 196 DARG  CD     
+   D 196 DARG  NE     
+   D 196 DARG  CZ     
+   D 196 DARG  NH1         0.00   179.11  -179.11  1.00e+01  1.92e+02  17.9*sigma
+   A 196  ARG  CD     
+   A 196  ARG  NE     
+   A 196  ARG  CZ     
+   A 196  ARG  NH1         0.00   178.96  -178.96  1.00e+01  1.92e+02  17.9*sigma
+   C  70  ARG  CD     
+   C  70  ARG  NE     
+   C  70  ARG  CZ     
+   C  70  ARG  NH1         0.00  -178.68   178.68  1.00e+01  1.92e+02  17.9*sigma
+   A  32  GLU  CB     
+   A  32  GLU  CG     
+   A  32  GLU  CD     
+   A  32  GLU  OE1         0.00   179.13  -179.13  3.00e+01  2.13e+01   6.0*sigma
+   C 115  GLU  CB     
+   C 115  GLU  CG     
+   C 115  GLU  CD     
+   C 115  GLU  OE1         0.00  -177.56   177.56  3.00e+01  2.13e+01   5.9*sigma
+   D 207  ALA  CA     
+   D 207  ALA  C      
+   D 208  ASN  N      
+   D 208  ASN  CA        180.00   150.64    29.36  5.00e+00  3.45e+01   5.9*sigma
+   A  47  GLU  CB     
+   A  47  GLU  CG     
+   A  47  GLU  CD     
+   A  47  GLU  OE1         0.00   173.74  -173.74  3.00e+01  2.13e+01   5.8*sigma
+   B 112  GLU  CB     
+   B 112  GLU  CG     
+   B 112  GLU  CD     
+   B 112  GLU  OE1         0.00   172.31  -172.31  3.00e+01  2.12e+01   5.7*sigma
+   A  20  GLU  CB     
+   A  20  GLU  CG     
+   A  20  GLU  CD     
+   A  20  GLU  OE1         0.00   172.28  -172.28  3.00e+01  2.12e+01   5.7*sigma
+   C 112  GLU  CB     
+   C 112  GLU  CG     
+   C 112  GLU  CD     
+   C 112  GLU  OE1         0.00   171.67  -171.67  3.00e+01  2.12e+01   5.7*sigma
+   B 115  GLU  CB     
+   B 115  GLU  CG     
+   B 115  GLU  CD     
+   B 115  GLU  OE1         0.00  -169.41   169.41  3.00e+01  2.12e+01   5.6*sigma
+   A 112  GLU  CB     
+   A 112  GLU  CG     
+   A 112  GLU  CD     
+   A 112  GLU  OE1         0.00   166.51  -166.51  3.00e+01  2.10e+01   5.6*sigma
+   B 154  GLU  CB     
+   B 154  GLU  CG     
+   B 154  GLU  CD     
+   B 154  GLU  OE1         0.00   166.22  -166.22  3.00e+01  2.10e+01   5.5*sigma
+   B 106  GLU  CB     
+   B 106  GLU  CG     
+   B 106  GLU  CD     
+   B 106  GLU  OE1         0.00   165.07  -165.07  3.00e+01  2.10e+01   5.5*sigma
+   A 115  GLU  CB     
+   A 115  GLU  CG     
+   A 115  GLU  CD     
+   A 115  GLU  OE1         0.00  -163.82   163.82  3.00e+01  2.09e+01   5.5*sigma
+   B  47  GLU  CB     
+   B  47  GLU  CG     
+   B  47  GLU  CD     
+   B  47  GLU  OE1         0.00  -163.74   163.74  3.00e+01  2.09e+01   5.5*sigma
+   C 101  ASP  CA     
+   C 101  ASP  CB     
+   C 101  ASP  CG     
+   C 101  ASP  OD1         0.00  -138.95   108.95  2.00e+01  3.18e+01   5.4*sigma
+   D 106  GLU  CB     
+   D 106  GLU  CG     
+   D 106  GLU  CD     
+   D 106  GLU  OE1         0.00   162.26  -162.26  3.00e+01  2.08e+01   5.4*sigma
+   C 106  GLU  CB     
+   C 106  GLU  CG     
+   C 106  GLU  CD     
+   C 106  GLU  OE1         0.00   162.16  -162.16  3.00e+01  2.08e+01   5.4*sigma
+   B 188  GLU  CB     
+   B 188  GLU  CG     
+   B 188  GLU  CD     
+   B 188  GLU  OE1         0.00  -157.76   157.76  3.00e+01  2.05e+01   5.3*sigma
+   B  32  GLU  CB     
+   B  32  GLU  CG     
+   B  32  GLU  CD     
+   B  32  GLU  OE1         0.00   155.19  -155.19  3.00e+01  2.03e+01   5.2*sigma
+   A 125  GLU  CB     
+   A 125  GLU  CG     
+   A 125  GLU  CD     
+   A 125  GLU  OE1         0.00   153.47  -153.47  3.00e+01  2.02e+01   5.1*sigma
+   D 115  GLU  CB     
+   D 115  GLU  CG     
+   D 115  GLU  CD     
+   D 115  GLU  OE1         0.00  -152.25   152.25  3.00e+01  2.01e+01   5.1*sigma
+   A 164  ASP  CA     
+   A 164  ASP  CB     
+   A 164  ASP  CG     
+   A 164  ASP  OD1         0.00  -130.00   100.00  2.00e+01  2.82e+01   5.0*sigma
+   C 154  GLU  CB     
+   C 154  GLU  CG     
+   C 154  GLU  CD     
+   C 154  GLU  OE1         0.00   147.46  -147.46  3.00e+01  1.97e+01   4.9*sigma
+   B 207  ALA  CA     
+   B 207  ALA  C      
+   B 208  ASN  N      
+   B 208  ASN  CA        180.00   155.48    24.52  5.00e+00  2.41e+01   4.9*sigma
+   C 100  ASP  CA     
+   C 100  ASP  CB     
+   C 100  ASP  CG     
+   C 100  ASP  OD1         0.00   164.97   -94.97  2.00e+01  2.61e+01   4.7*sigma
+   B 127  SER  CA     
+   B 127  SER  C      
+   B 128  PRO  N      
+   B 128  PRO  CA        180.00   156.27    23.73  5.00e+00  2.25e+01   4.7*sigma
+   A  82  GLN  C      
+   A  82  GLN  N      
+   A  82  GLN  CA     
+   A  82  GLN  CB       -122.60  -110.74   -11.86  2.50e+00  2.25e+01   4.7*sigma
+   A 106  GLU  CB     
+   A 106  GLU  CG     
+   A 106  GLU  CD     
+   A 106  GLU  OE1         0.00   139.89  -139.89  3.00e+01  1.88e+01   4.7*sigma
+   A 100  ASP  CA     
+   A 100  ASP  CB     
+   A 100  ASP  CG     
+   A 100  ASP  OD1         0.00   158.89   -88.89  2.00e+01  2.35e+01   4.4*sigma
+   C 141  ILE  CA     
+   C 141  ILE  C      
+   C 142  HIS  N      
+   C 142  HIS  CA        180.00   158.36    21.64  5.00e+00  1.87e+01   4.3*sigma
+   C  42  LYS  CA     
+   C  42  LYS  C      
+   C  43  THR  N      
+   C  43  THR  CA        180.00   158.55    21.45  5.00e+00  1.84e+01   4.3*sigma
+   A 141  ILE  CA     
+   A 141  ILE  C      
+   A 142  HIS  N      
+   A 142  HIS  CA        180.00   158.80    21.20  5.00e+00  1.80e+01   4.2*sigma
+   D 125  GLU  CB     
+   D 125  GLU  CG     
+   D 125  GLU  CD     
+   D 125  GLU  OE1         0.00   124.57  -124.57  3.00e+01  1.67e+01   4.2*sigma
+   B 125  GLU  CB     
+   B 125  GLU  CG     
+   B 125  GLU  CD     
+   B 125  GLU  OE1         0.00   123.44  -123.44  3.00e+01  1.65e+01   4.1*sigma
+   D 188  GLU  CB     
+   D 188  GLU  CG     
+   D 188  GLU  CD     
+   D 188  GLU  OE1         0.00  -122.40   122.40  3.00e+01  1.64e+01   4.1*sigma
+   D 196 DARG  CG     
+   D 196 DARG  CD     
+   D 196 DARG  NE     
+   D 196 DARG  CZ         90.00   -28.84   -61.16  1.50e+01  1.64e+01   4.1*sigma
+   D 196 BARG  CG     
+   D 196 BARG  CD     
+   D 196 BARG  NE     
+   D 196 BARG  CZ         90.00   -28.84   -61.16  1.50e+01  1.64e+01   4.1*sigma
+
+  Min. delta:    0.001
+  Max. delta:  179.134
+  Mean delta:   18.670
+
+                       ----------Chiral volumes----------                      
+
+  All restrained atoms within 4.0 sigma of ideal values.
+
+  Min. delta:    0.000
+  Max. delta:    0.424
+  Mean delta:    0.113
+
+                       ----------Planar groups----------                       
+
+  atoms                 rms_deltas   delta_max    residual   deviation
+   D 152  ASP  CA     
+   D 152  ASP  C      
+   D 152  ASP  O      
+   D 154  GLU  N             0.168       0.133      282.62   6.6*sigma
+
+  Min. delta:    0.000
+  Max. delta:    0.168
+  Mean delta:    0.011
+
+============================ Molprobity validation ============================
+
+  
+  deviations from ideal values.
+    bond      :  0.027   1.638   5851
+    angle     :  1.900  36.328   7995
+    chirality :  0.113   0.424    948
+    planarity :  0.011   0.168   1044
+    dihedral  : 18.670 179.134   3533
+    min nonbonded distance : 1.850 
+    
+  molprobity statistics.
+    all-atom clashscore : 4.00
+    ramachandran plot:
+      outliers : 0.66  %
+      allowed  : 2.52  %
+      favored  : 96.81 %
+    rotamer outliers : 2.55 %
+    cbeta deviations : 0
+    peptide plane:
+      cis-proline     : 0.0
+      cis-general     : 0.0
+      twisted proline : 0.0
+      twisted general : 0.0
+
+                     ----------Asn/Gln/His flips----------                     
+
+   C 206  HIS
+   D 206  HIS
+   A 206  HIS
+   B 206  HIS
+   A  73  HIS
+   B  73  HIS
+   D 149  ASN
+   D 155  ASN
+   D 208  ASN
+
+=================================== Summary ===================================
+
+  Ramachandran outliers =   0.66 %
+                favored =  96.81 %
+  Rotamer outliers      =   2.55 %
+  C-beta deviations     =     1
+  Clashscore            =   4.00
+  RMS(bonds)            =   0.0275
+  RMS(angles)           =   1.90
+  MolProbity score      =   1.69
+  Resolution            =   1.96
+  R-work                =   0.2205
+  R-free                =   0.2631
+  Refinement program    = REFMAC
+
+Results written to molprobity.out
+Wrote script for Coot: molprobity_coot.py
+Wrote map coefficients to molprobity_maps.mtz
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<html> <!-- CCP4 HTML LOGFILE -->
+<hr>
+<!--SUMMARY_END--></FONT></B>
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<pre>
+ 
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ### CCP4 7.0.047: FFTBIG           version 7.0.047 :         ##
+ ###############################################################
+ User: unknown  Run date:  3/ 8/2018 Run time: 13:02:15 
+
+
+ Please reference: Collaborative Computational Project, Number 4. 2011.
+ "Overview of the CCP4 suite and current developments". Acta Cryst. D67, 235-242.
+ as well as any specific reference in the program write-up.
+
+<!--SUMMARY_END--></FONT></B>
+ Data line--- labin F1=FWT PHI=PHWT
+
+ OPENED INPUT MTZ FILE 
+ Logical Name: HKLIN   Filename: refine.mtz 
+
+ * Title:
+
+   Output mtz file from refmac
+
+ * Base dataset:
+
+        0 HKL_base
+          HKL_base
+          HKL_base
+
+ * Number of Datasets = 1
+
+ * Dataset ID, project/crystal/dataset names, cell dimensions, wavelength:
+
+        1 lb18145v79
+          xNUDT5Ax04621
+          SAD
+             48.9573   59.7331   79.7967   79.8209   81.8414   76.0335
+             0.91587
+
+ * Number of Columns = 17
+
+ * Number of Reflections = 61703
+
+ * Missing value set to NaN in input mtz file
+
+ * HISTORY for current MTZ file :
+
+
+ * Column Labels :
+
+ H K L FreeR_flag F SIGF FC PHIC FC_ALL PHIC_ALL FWT PHWT DELFWT PHDELWT FOM FC_ALL_LS PHIC_ALL_LS
+
+ * Column Types :
+
+ H H H I F Q F P F P F P F P W F P
+
+ * Associated datasets :
+
+ 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+ * Cell Dimensions : (obsolete - refer to dataset cell dimensions above)
+
+   48.9573   59.7331   79.7967   79.8209   81.8414   76.0335 
+
+ *  Resolution Range :
+
+    0.00016    0.26044     (     78.115 -      1.960 A )
+
+ * Sort Order :
+
+      1     2     3     0     0
+
+ * Space group = 'P 1' (number     1)
+
+ Map cell is set to:   48.96   59.73   79.80   79.82   81.84   76.03
+  FREE column NOT assigned
+
+
+ Coefficients used for Fourier calculation:-
+ *******************************************
+
+
+ Fourier synthesis: ( k1 * F1) exp( i PHI)
+
+    F1   =  FWT
+    PHI  =  PHWT                          
+
+
+
+ Resolution limits:     78.12     1.96
+ Scale & B for F1 :    1.00000  0.00000
+
+ *  F used = Scale * exp(- B * (sin theta/lambda)**2);  ** Scale and B applied to F BEFORE squaring for Patterson  **
+
+
+ *** No reflections excluded ***
+
+
+
+
+ Number of symmetry operations = 1 Space-group for FFT =   1  True space-group =   1 List terms gt     0
+
+ Axis order in map: fast=Z,  medium= X,  slow(section)= Y
+
+
+ ** The limits of the map have been set to those of
+ the unit cell:
+
+    Min X   Max X   Min Y   Max Y   Min Z   Max Z
+    0.000   1.000   0.000   1.000   0.000   1.000
+
+ (expressed in fractional coordinates and with x,y,z
+  referring to the unpermutated axes.)
+
+
+ Permutation of axes: (program=input)  x= X,  y= Y,  z= Z
+
+ Before permutation :
+           Maximum indices hkl ...................   25   30   41
+           Sampling intervals on xyz .............   76   90  120
+           Map limits in grid points on xyz ......    0   75       0   89       0  119
+
+ Binary map will be written to stream   1
+
+ Data is assumed to be unsorted
+ After permutation :
+           Maximum indices hkl ...................   25   30   41
+           Sampling intervals on xyz .............   76   90  120
+           Map limits in grid points on xyz ......    0   75       0   89       0  119
+
+
+
+
+
+
+                              Fourier synthesis for space-group P1
+
+  Buffer size =      834480
+
+
+
+  ****  Largest F Value *** Reflection   1  5  5        1422.48
+
+                                         Mean F           94.40
+
+      61702 Structure factors used out of 61703 on the input file
+
+ Logical Name: MAPOUT   Filename: 2fofc.map 
+
+File name for output map file on unit   1 : 2fofc.map
+logical name MAPOUT
+
+ F000 =    0.000E+00          V =    2.217E+05
+
+ Section axis is Y
+
+ Binary output has Z running fastest, X next
+  Section Y =   0 minimum rho =        -0.6517 at X =  69 Z =  79 maximum rho =         1.6751 at X =  47 Z = 104
+  Section Y =   1 minimum rho =        -0.6093 at X =  51 Z = 101 maximum rho =         1.6868 at X =  49 Z = 110
+  Section Y =   2 minimum rho =        -0.6250 at X =  43 Z =  99 maximum rho =         1.8104 at X =  52 Z = 103
+  Section Y =   3 minimum rho =        -0.6637 at X =   3 Z = 104 maximum rho =         1.5132 at X =  75 Z =  96
+  Section Y =   4 minimum rho =        -0.7052 at X =   4 Z = 103 maximum rho =         1.2832 at X =  68 Z =  90
+  Section Y =   5 minimum rho =        -0.6435 at X =  54 Z =  86 maximum rho =         1.4686 at X =  49 Z =  71
+  Section Y =   6 minimum rho =        -0.6463 at X =  54 Z =  81 maximum rho =         1.7607 at X =  62 Z = 106
+  Section Y =   7 minimum rho =        -0.5804 at X =  56 Z = 108 maximum rho =         1.6574 at X =  69 Z =  86
+  Section Y =   8 minimum rho =        -0.6301 at X =  43 Z =  89 maximum rho =         1.4933 at X =  74 Z =  90
+  Section Y =   9 minimum rho =        -0.6872 at X =  42 Z =  90 maximum rho =         1.3851 at X =  53 Z = 105
+  Section Y =  10 minimum rho =        -0.6420 at X =  42 Z =  91 maximum rho =         1.2624 at X =  53 Z =  73
+  Section Y =  11 minimum rho =        -0.6059 at X =  59 Z =  82 maximum rho =         1.4600 at X =  71 Z =  84
+  Section Y =  12 minimum rho =        -0.6129 at X =  69 Z =  92 maximum rho =         1.5347 at X =  61 Z =  84
+  Section Y =  13 minimum rho =        -0.6830 at X =  60 Z =  94 maximum rho =         1.3891 at X =  58 Z =  90
+  Section Y =  14 minimum rho =        -0.6853 at X =  59 Z =  93 maximum rho =         1.3142 at X =  49 Z =  82
+  Section Y =  15 minimum rho =        -0.6871 at X =  66 Z =  97 maximum rho =         1.5829 at X =  49 Z =  82
+  Section Y =  16 minimum rho =        -0.6247 at X =   9 Z =  46 maximum rho =         1.5153 at X =  58 Z =  84
+  Section Y =  17 minimum rho =        -0.5956 at X =  74 Z =  88 maximum rho =         1.4773 at X =  58 Z =  83
+  Section Y =  18 minimum rho =        -0.5832 at X =   2 Z =  85 maximum rho =         1.3717 at X =  70 Z = 105
+  Section Y =  19 minimum rho =        -0.6279 at X =  71 Z =  82 maximum rho =         1.3750 at X =  64 Z = 102
+  Section Y =  20 minimum rho =        -0.6016 at X =  69 Z =  82 maximum rho =         1.3104 at X =  61 Z =  83
+  Section Y =  21 minimum rho =        -0.5890 at X =  48 Z =  85 maximum rho =         1.4739 at X =   3 Z =  91
+  Section Y =  22 minimum rho =        -0.7007 at X =  48 Z =  84 maximum rho =         1.3676 at X =   3 Z =  91
+  Section Y =  23 minimum rho =        -0.6232 at X =  59 Z =  84 maximum rho =         1.3172 at X =  16 Z =  43
+  Section Y =  24 minimum rho =        -0.6587 at X =   5 Z = 100 maximum rho =         1.3401 at X =  15 Z =  42
+  Section Y =  25 minimum rho =        -0.6302 at X =   5 Z =  99 maximum rho =         1.4784 at X =  61 Z =  97
+  Section Y =  26 minimum rho =        -0.6214 at X =   5 Z =  99 maximum rho =         1.5355 at X =  51 Z = 101
+  Section Y =  27 minimum rho =        -0.6762 at X =  12 Z =  34 maximum rho =         1.3837 at X =  72 Z =  91
+  Section Y =  28 minimum rho =        -0.5761 at X =   6 Z = 100 maximum rho =         1.4320 at X =  36 Z =  45
+  Section Y =  29 minimum rho =        -0.5912 at X =  19 Z =  26 maximum rho =         1.2022 at X =  42 Z =  42
+  Section Y =  30 minimum rho =        -0.5740 at X =  41 Z =  50 maximum rho =         1.3867 at X =  16 Z =  57
+  Section Y =  31 minimum rho =        -0.6111 at X =  41 Z =  50 maximum rho =         1.3865 at X =  15 Z =  57
+  Section Y =  32 minimum rho =        -0.6189 at X =  17 Z =  49 maximum rho =         1.4427 at X =  22 Z =  56
+  Section Y =  33 minimum rho =        -0.5925 at X =  71 Z = 100 maximum rho =         1.3777 at X =   8 Z =  76
+  Section Y =  34 minimum rho =        -0.6147 at X =   6 Z =  68 maximum rho =         1.3296 at X =  17 Z =  55
+  Section Y =  35 minimum rho =        -0.5761 at X =  17 Z =  65 maximum rho =         1.3981 at X =   5 Z =  32
+  Section Y =  36 minimum rho =        -0.5726 at X =   8 Z =  73 maximum rho =         1.2704 at X =  12 Z =  51
+  Section Y =  37 minimum rho =        -0.6095 at X =  22 Z =  49 maximum rho =         1.2592 at X =  12 Z =  51
+  Section Y =  38 minimum rho =        -0.6057 at X =  36 Z =  31 maximum rho =         1.3046 at X =  14 Z =  67
+  Section Y =  39 minimum rho =        -0.5676 at X =  20 Z =  55 maximum rho =         1.4650 at X =  34 Z =  64
+  Section Y =  40 minimum rho =        -0.5656 at X =  16 Z =  69 maximum rho =         1.5110 at X =  10 Z =  47
+  Section Y =  41 minimum rho =        -0.5950 at X =   3 Z =  67 maximum rho =         1.2499 at X =  16 Z =  49
+  Section Y =  42 minimum rho =        -0.6034 at X =  17 Z =  61 maximum rho =         1.3642 at X =  12 Z =  61
+  Section Y =  43 minimum rho =        -0.6105 at X =  44 Z =  32 maximum rho =         1.4596 at X =  12 Z =  48
+  Section Y =  44 minimum rho =        -0.6265 at X =  18 Z =  70 maximum rho =         1.4400 at X =  12 Z =  48
+  Section Y =  45 minimum rho =        -0.6269 at X =  16 Z =  38 maximum rho =         1.3603 at X =  16 Z =  42
+  Section Y =  46 minimum rho =        -0.6185 at X =  12 Z =  51 maximum rho =         1.4292 at X =  24 Z =  61
+  Section Y =  47 minimum rho =        -0.6162 at X =  15 Z =  32 maximum rho =         1.2427 at X =  21 Z =  66
+  Section Y =  48 minimum rho =        -0.5748 at X =  10 Z =  53 maximum rho =         1.3766 at X =  14 Z =  38
+  Section Y =  49 minimum rho =        -0.6015 at X =   8 Z =  71 maximum rho =         1.7176 at X =  20 Z =  35
+  Section Y =  50 minimum rho =        -0.6202 at X =   7 Z =  71 maximum rho =         1.4353 at X =  22 Z =  28
+  Section Y =  51 minimum rho =        -0.6034 at X =  17 Z =  39 maximum rho =         1.4555 at X =  22 Z =  28
+  Section Y =  52 minimum rho =        -0.6374 at X =  13 Z =  47 maximum rho =         1.3232 at X =  13 Z =  63
+  Section Y =  53 minimum rho =        -0.5975 at X =  36 Z =  52 maximum rho =         1.5364 at X =  13 Z =  62
+  Section Y =  54 minimum rho =        -0.6468 at X =  22 Z =  63 maximum rho =         1.5083 at X =   6 Z =  62
+  Section Y =  55 minimum rho =        -0.6539 at X =  33 Z =  66 maximum rho =         1.9488 at X =  19 Z =  33
+  Section Y =  56 minimum rho =        -0.6415 at X =  32 Z =  67 maximum rho =         1.5261 at X =   5 Z =  68
+  Section Y =  57 minimum rho =        -0.6188 at X =   4 Z =  40 maximum rho =         1.3356 at X =   6 Z =  68
+  Section Y =  58 minimum rho =        -0.6230 at X =  22 Z =  55 maximum rho =         1.3596 at X =   0 Z =  62
+  Section Y =  59 minimum rho =        -0.5738 at X =   8 Z =  58 maximum rho =         1.5817 at X =  75 Z =  62
+  Section Y =  60 minimum rho =        -0.6006 at X =  17 Z =  61 maximum rho =         1.1647 at X =  15 Z =  32
+  Section Y =  61 minimum rho =        -0.7258 at X =  17 Z =  58 maximum rho =         1.3773 at X =  19 Z =  69
+  Section Y =  62 minimum rho =        -0.6888 at X =  16 Z =  58 maximum rho =         1.2441 at X =  19 Z =  69
+  Section Y =  63 minimum rho =        -0.6226 at X =   9 Z =  59 maximum rho =         1.3504 at X =  23 Z =  31
+  Section Y =  64 minimum rho =        -0.5495 at X =   5 Z =  68 maximum rho =         1.3522 at X =  20 Z =  64
+  Section Y =  65 minimum rho =        -0.6378 at X =   1 Z = 100 maximum rho =         1.1591 at X =  19 Z =  64
+  Section Y =  66 minimum rho =        -0.5707 at X =  10 Z =  43 maximum rho =         1.2487 at X =   5 Z =  72
+  Section Y =  67 minimum rho =        -0.5560 at X =  10 Z =  43 maximum rho =         1.3131 at X =  69 Z =  99
+  Section Y =  68 minimum rho =        -0.5563 at X =  17 Z =  24 maximum rho =         1.2795 at X =  68 Z =  89
+  Section Y =  69 minimum rho =        -0.5625 at X =  75 Z = 100 maximum rho =         1.3476 at X =  65 Z =  83
+  Section Y =  70 minimum rho =        -0.5972 at X =  64 Z =  95 maximum rho =         1.3095 at X =  72 Z = 102
+  Section Y =  71 minimum rho =        -0.5134 at X =  48 Z =  13 maximum rho =         1.2660 at X =  66 Z =  98
+  Section Y =  72 minimum rho =        -0.5382 at X =  63 Z =  83 maximum rho =         1.4342 at X =  72 Z = 101
+  Section Y =  73 minimum rho =        -0.5241 at X =  67 Z = 116 maximum rho =         1.3461 at X =  57 Z =  84
+  Section Y =  74 minimum rho =        -0.5386 at X =  66 Z = 115 maximum rho =         1.5297 at X =  72 Z =  97
+  Section Y =  75 minimum rho =        -0.6426 at X =  62 Z =  77 maximum rho =         1.5449 at X =   4 Z =  86
+  Section Y =  76 minimum rho =        -0.6251 at X =  67 Z =  91 maximum rho =         1.9429 at X =   4 Z =  86
+  Section Y =  77 minimum rho =        -0.6780 at X =  67 Z =  91 maximum rho =         1.4003 at X =   0 Z =  72
+  Section Y =  78 minimum rho =        -0.6234 at X =  58 Z =  85 maximum rho =         1.7458 at X =  69 Z = 111
+  Section Y =  79 minimum rho =        -0.6062 at X =  35 Z = 112 maximum rho =         1.4600 at X =  60 Z =  91
+  Section Y =  80 minimum rho =        -0.6351 at X =  52 Z =  87 maximum rho =         1.5847 at X =  74 Z =  91
+  Section Y =  81 minimum rho =        -0.6603 at X =  52 Z =  86 maximum rho =         1.6008 at X =  70 Z =  83
+  Section Y =  82 minimum rho =        -0.6475 at X =  72 Z = 109 maximum rho =         1.6092 at X =   4 Z = 109
+  Section Y =  83 minimum rho =        -0.6702 at X =  52 Z =  97 maximum rho =         1.5253 at X =   3 Z = 109
+  Section Y =  84 minimum rho =        -0.6391 at X =  52 Z =  97 maximum rho =         1.5772 at X =  67 Z = 102
+  Section Y =  85 minimum rho =        -0.6426 at X =  63 Z =  89 maximum rho =         1.4810 at X =  64 Z =  80
+  Section Y =  86 minimum rho =        -0.5932 at X =  16 Z = 112 maximum rho =         1.3426 at X =  63 Z =  80
+  Section Y =  87 minimum rho =        -0.6137 at X =  41 Z =  90 maximum rho =         1.3673 at X =  54 Z =  91
+  Section Y =  88 minimum rho =        -0.6301 at X =  51 Z = 101 maximum rho =         1.7204 at X =   1 Z = 104
+  Section Y =  89 minimum rho =        -0.6947 at X =  69 Z =  79 maximum rho =         1.9504 at X =   1 Z = 104
+
+
+ Overall maximum rho =          1.9504 on section Y =  89 at X =   1 Z = 104
+
+
+ Overall minimum rho =         -0.7258 on section Y =  61 at X =  17 Z =  58
+
+  Average density on this map is          0.00000001
+
+ Logical Name: MAPOUT   Filename: 2fofc.map 
+
+File name for input map file on unit   1 : 2fofc.map
+file size 3284304 ; logical name MAPOUT
+
+
+
+           Number of columns, rows, sections ...............  120   76   90
+           Map mode ........................................    2
+           Start and stop points on columns, rows, sections     0  119    0   75    0   89
+           Grid sampling on x, y, z ........................   76   90  120
+           Cell dimensions .................................   48.9573    59.7331    79.7967    79.8209    81.8414    76.0335
+           Fast, medium, slow axes .........................    Z    X    Y
+           Minimum density .................................    -0.72581
+           Maximum density .................................     1.95042
+           Mean density ....................................    -0.00000
+           Rms deviation from mean density .................     0.24422
+           Space-group .....................................    1
+           Number of titles ................................    1
+
+
+     Labels:                            
+   Map from fft
+
+
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+ FFTBIG:  Normal termination
+Times: User:       0.1s System:    0.0s Elapsed:     0:00  
+</pre>
+</html>
+<!--SUMMARY_END--></FONT></B>
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<html> <!-- CCP4 HTML LOGFILE -->
+<hr>
+<!--SUMMARY_END--></FONT></B>
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<pre>
+ 
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ### CCP4 7.0.047: FFTBIG           version 7.0.047 :         ##
+ ###############################################################
+ User: unknown  Run date:  3/ 8/2018 Run time: 13:02:15 
+
+
+ Please reference: Collaborative Computational Project, Number 4. 2011.
+ "Overview of the CCP4 suite and current developments". Acta Cryst. D67, 235-242.
+ as well as any specific reference in the program write-up.
+
+<!--SUMMARY_END--></FONT></B>
+ Data line--- labin F1=DELFWT PHI=PHDELWT
+
+ OPENED INPUT MTZ FILE 
+ Logical Name: HKLIN   Filename: refine.mtz 
+
+ * Title:
+
+   Output mtz file from refmac
+
+ * Base dataset:
+
+        0 HKL_base
+          HKL_base
+          HKL_base
+
+ * Number of Datasets = 1
+
+ * Dataset ID, project/crystal/dataset names, cell dimensions, wavelength:
+
+        1 lb18145v79
+          xNUDT5Ax04621
+          SAD
+             48.9573   59.7331   79.7967   79.8209   81.8414   76.0335
+             0.91587
+
+ * Number of Columns = 17
+
+ * Number of Reflections = 61703
+
+ * Missing value set to NaN in input mtz file
+
+ * HISTORY for current MTZ file :
+
+
+ * Column Labels :
+
+ H K L FreeR_flag F SIGF FC PHIC FC_ALL PHIC_ALL FWT PHWT DELFWT PHDELWT FOM FC_ALL_LS PHIC_ALL_LS
+
+ * Column Types :
+
+ H H H I F Q F P F P F P F P W F P
+
+ * Associated datasets :
+
+ 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+ * Cell Dimensions : (obsolete - refer to dataset cell dimensions above)
+
+   48.9573   59.7331   79.7967   79.8209   81.8414   76.0335 
+
+ *  Resolution Range :
+
+    0.00016    0.26044     (     78.115 -      1.960 A )
+
+ * Sort Order :
+
+      1     2     3     0     0
+
+ * Space group = 'P 1' (number     1)
+
+ Map cell is set to:   48.96   59.73   79.80   79.82   81.84   76.03
+  FREE column NOT assigned
+
+
+ Coefficients used for Fourier calculation:-
+ *******************************************
+
+
+ Fourier synthesis: ( k1 * F1) exp( i PHI)
+
+    F1   =  DELFWT
+    PHI  =  PHDELWT                       
+
+
+
+ Resolution limits:     78.12     1.96
+ Scale & B for F1 :    1.00000  0.00000
+
+ *  F used = Scale * exp(- B * (sin theta/lambda)**2);  ** Scale and B applied to F BEFORE squaring for Patterson  **
+
+
+ *** No reflections excluded ***
+
+
+
+
+ Number of symmetry operations = 1 Space-group for FFT =   1  True space-group =   1 List terms gt     0
+
+ Axis order in map: fast=Z,  medium= X,  slow(section)= Y
+
+
+ ** The limits of the map have been set to those of
+ the unit cell:
+
+    Min X   Max X   Min Y   Max Y   Min Z   Max Z
+    0.000   1.000   0.000   1.000   0.000   1.000
+
+ (expressed in fractional coordinates and with x,y,z
+  referring to the unpermutated axes.)
+
+
+ Permutation of axes: (program=input)  x= X,  y= Y,  z= Z
+
+ Before permutation :
+           Maximum indices hkl ...................   25   30   41
+           Sampling intervals on xyz .............   76   90  120
+           Map limits in grid points on xyz ......    0   75       0   89       0  119
+
+ Binary map will be written to stream   1
+
+ Data is assumed to be unsorted
+ After permutation :
+           Maximum indices hkl ...................   25   30   41
+           Sampling intervals on xyz .............   76   90  120
+           Map limits in grid points on xyz ......    0   75       0   89       0  119
+
+
+
+
+
+
+                              Fourier synthesis for space-group P1
+
+  Buffer size =      834480
+
+
+
+  ****  Largest F Value *** Reflection   3  0  2         843.51
+
+                                         Mean F           41.38
+
+      56445 Structure factors used out of 61703 on the input file
+
+ Logical Name: MAPOUT   Filename: fofc.map 
+
+File name for output map file on unit   1 : fofc.map
+logical name MAPOUT
+
+ F000 =    0.000E+00          V =    2.217E+05
+
+ Section axis is Y
+
+ Binary output has Z running fastest, X next
+  Section Y =   0 minimum rho =        -0.3277 at X =  20 Z =  40 maximum rho =         0.5312 at X =  75 Z =  62
+  Section Y =   1 minimum rho =        -0.3596 at X =  13 Z =  35 maximum rho =         0.4936 at X =  74 Z =  62
+  Section Y =   2 minimum rho =        -0.3288 at X =  68 Z =  30 maximum rho =         0.4001 at X =  59 Z =  30
+  Section Y =   3 minimum rho =        -0.3719 at X =   4 Z = 104 maximum rho =         0.4950 at X =  58 Z =  30
+  Section Y =   4 minimum rho =        -0.3974 at X =  68 Z = 101 maximum rho =         0.4165 at X =  47 Z =  33
+  Section Y =   5 minimum rho =        -0.3807 at X =  11 Z = 118 maximum rho =         0.4402 at X =  13 Z =  76
+  Section Y =   6 minimum rho =        -0.4191 at X =  11 Z = 118 maximum rho =         0.5113 at X =  14 Z =  32
+  Section Y =   7 minimum rho =        -0.3709 at X =  11 Z = 118 maximum rho =         0.5880 at X =  13 Z =  31
+  Section Y =   8 minimum rho =        -0.3343 at X =  30 Z =  67 maximum rho =         0.5882 at X =  13 Z =  31
+  Section Y =   9 minimum rho =        -0.3495 at X =  42 Z =  90 maximum rho =         0.4354 at X =  12 Z =  31
+  Section Y =  10 minimum rho =        -0.3109 at X =  21 Z =  21 maximum rho =         0.4442 at X =  63 Z = 114
+  Section Y =  11 minimum rho =        -0.3143 at X =   9 Z = 111 maximum rho =         0.3849 at X =   1 Z =  43
+  Section Y =  12 minimum rho =        -0.3242 at X =  74 Z =  45 maximum rho =         0.3894 at X =  32 Z =  99
+  Section Y =  13 minimum rho =        -0.3610 at X =  73 Z =  45 maximum rho =         0.5067 at X =  47 Z = 117
+  Section Y =  14 minimum rho =        -0.3326 at X =  17 Z =  49 maximum rho =         0.5498 at X =  47 Z = 117
+  Section Y =  15 minimum rho =        -0.3258 at X =   9 Z =  82 maximum rho =         0.5310 at X =  73 Z =  40
+  Section Y =  16 minimum rho =        -0.3500 at X =   8 Z =  29 maximum rho =         0.5142 at X =  66 Z =  65
+  Section Y =  17 minimum rho =        -0.3522 at X =  45 Z =  12 maximum rho =         0.4949 at X =  32 Z =  42
+  Section Y =  18 minimum rho =        -0.3360 at X =  72 Z =  56 maximum rho =         0.4885 at X =  55 Z =  35
+  Section Y =  19 minimum rho =        -0.3389 at X =  70 Z =  82 maximum rho =         0.4676 at X =  60 Z =  72
+  Section Y =  20 minimum rho =        -0.3154 at X =  20 Z =  60 maximum rho =         0.4121 at X =  50 Z =  79
+  Section Y =  21 minimum rho =        -0.2914 at X =  50 Z = 114 maximum rho =         0.5912 at X =  49 Z =  78
+  Section Y =  22 minimum rho =        -0.4155 at X =  48 Z =  84 maximum rho =         0.5361 at X =  28 Z =  38
+  Section Y =  23 minimum rho =        -0.3535 at X =  10 Z = 105 maximum rho =         0.4313 at X =   3 Z =  73
+  Section Y =  24 minimum rho =        -0.3216 at X =  48 Z =  77 maximum rho =         0.4193 at X =   1 Z =  53
+  Section Y =  25 minimum rho =        -0.3502 at X =  47 Z =  44 maximum rho =         0.4860 at X =  37 Z =  55
+  Section Y =  26 minimum rho =        -0.3706 at X =  65 Z =  48 maximum rho =         0.5504 at X =  24 Z =  40
+  Section Y =  27 minimum rho =        -0.3756 at X =   2 Z =  72 maximum rho =         0.4947 at X =  24 Z =  39
+  Section Y =  28 minimum rho =        -0.3293 at X =   1 Z =  72 maximum rho =         0.4715 at X =  22 Z =  72
+  Section Y =  29 minimum rho =        -0.3237 at X =  47 Z =  68 maximum rho =         0.5370 at X =  25 Z =  36
+  Section Y =  30 minimum rho =        -0.3534 at X =  47 Z =  68 maximum rho =         0.4923 at X =  26 Z =  35
+  Section Y =  31 minimum rho =        -0.3574 at X =   4 Z =  73 maximum rho =         0.3942 at X =  47 Z =  17
+  Section Y =  32 minimum rho =        -0.4732 at X =   4 Z =  73 maximum rho =         0.5179 at X =  38 Z =  39
+  Section Y =  33 minimum rho =        -0.4274 at X =   4 Z =  72 maximum rho =         0.5516 at X =  38 Z =  39
+  Section Y =  34 minimum rho =        -0.4119 at X =  65 Z =  18 maximum rho =         0.5219 at X =   2 Z =  74
+  Section Y =  35 minimum rho =        -0.3582 at X =  63 Z =  81 maximum rho =         0.4449 at X =   2 Z =  74
+  Section Y =  36 minimum rho =        -0.4096 at X =  52 Z =  13 maximum rho =         0.3410 at X =   2 Z =  42
+  Section Y =  37 minimum rho =        -0.4084 at X =  52 Z =  13 maximum rho =         0.4205 at X =  48 Z =  50
+  Section Y =  38 minimum rho =        -0.3511 at X =  23 Z =  25 maximum rho =         0.3999 at X =  75 Z =  72
+  Section Y =  39 minimum rho =        -0.3311 at X =  64 Z = 103 maximum rho =         0.5066 at X =  36 Z =  35
+  Section Y =  40 minimum rho =        -0.3431 at X =   2 Z =  99 maximum rho =         0.5035 at X =  36 Z =  35
+  Section Y =  41 minimum rho =        -0.3119 at X =  46 Z =  69 maximum rho =         0.3867 at X =  55 Z =  28
+  Section Y =  42 minimum rho =        -0.3241 at X =  17 Z =  61 maximum rho =         0.4279 at X =  55 Z =  28
+  Section Y =  43 minimum rho =        -0.3628 at X =  39 Z =  94 maximum rho =         0.3744 at X =  52 Z =  50
+  Section Y =  44 minimum rho =        -0.3845 at X =  10 Z =  18 maximum rho =         0.4487 at X =  51 Z =  50
+  Section Y =  45 minimum rho =        -0.3385 at X =  10 Z =  18 maximum rho =         0.4791 at X =  15 Z =  12
+  Section Y =  46 minimum rho =        -0.3821 at X =  46 Z =  49 maximum rho =         0.5099 at X =  15 Z =  12
+  Section Y =  47 minimum rho =        -0.3414 at X =  16 Z =  32 maximum rho =         0.3959 at X =  75 Z =  81
+  Section Y =  48 minimum rho =        -0.3390 at X =  16 Z =  32 maximum rho =         0.3926 at X =  73 Z =  91
+  Section Y =  49 minimum rho =        -0.3239 at X =   2 Z =  79 maximum rho =         0.5235 at X =  24 Z =  47
+  Section Y =  50 minimum rho =        -0.3218 at X =  30 Z =   3 maximum rho =         0.5354 at X =  24 Z =  47
+  Section Y =  51 minimum rho =        -0.3317 at X =  16 Z =  39 maximum rho =         0.3625 at X =  24 Z =  47
+  Section Y =  52 minimum rho =        -0.3809 at X =   7 Z =  98 maximum rho =         0.3191 at X =  32 Z =  39
+  Section Y =  53 minimum rho =        -0.3181 at X =  20 Z =  17 maximum rho =         0.4536 at X =   0 Z =  91
+  Section Y =  54 minimum rho =        -0.3304 at X =  67 Z =  81 maximum rho =         0.4425 at X =  24 Z =  45
+  Section Y =  55 minimum rho =        -0.3495 at X =  32 Z =  67 maximum rho =         0.4244 at X =  24 Z =  45
+  Section Y =  56 minimum rho =        -0.3632 at X =   0 Z =  81 maximum rho =         0.3570 at X =  41 Z =  28
+  Section Y =  57 minimum rho =        -0.4097 at X =   6 Z =  37 maximum rho =         0.4956 at X =  41 Z =  29
+  Section Y =  58 minimum rho =        -0.3711 at X =   0 Z = 116 maximum rho =         0.5372 at X =  41 Z =  29
+  Section Y =  59 minimum rho =        -0.3323 at X =  38 Z =  19 maximum rho =         0.4559 at X =  41 Z =  29
+  Section Y =  60 minimum rho =        -0.3450 at X =  44 Z =  21 maximum rho =         0.4609 at X =  60 Z =   0
+  Section Y =  61 minimum rho =        -0.3610 at X =  44 Z =  21 maximum rho =         0.5093 at X =   5 Z =  83
+  Section Y =  62 minimum rho =        -0.3978 at X =  22 Z =  24 maximum rho =         0.4490 at X =   5 Z =  83
+  Section Y =  63 minimum rho =        -0.2952 at X =  32 Z =  17 maximum rho =         0.3914 at X =  13 Z =  79
+  Section Y =  64 minimum rho =        -0.3345 at X =  40 Z =  15 maximum rho =         0.3872 at X =   7 Z =  82
+  Section Y =  65 minimum rho =        -0.3660 at X =   0 Z = 101 maximum rho =         0.4703 at X =   7 Z =  82
+  Section Y =  66 minimum rho =        -0.3316 at X =  42 Z =  14 maximum rho =         0.4295 at X =  52 Z =  84
+  Section Y =  67 minimum rho =        -0.3791 at X =  42 Z =  14 maximum rho =         0.3513 at X =  12 Z =  23
+  Section Y =  68 minimum rho =        -0.4309 at X =  27 Z =   0 maximum rho =         0.3705 at X =  61 Z =  67
+  Section Y =  69 minimum rho =        -0.3298 at X =  26 Z =   0 maximum rho =         0.4910 at X =   6 Z = 103
+  Section Y =  70 minimum rho =        -0.3702 at X =  63 Z =  95 maximum rho =         0.3988 at X =   6 Z = 103
+  Section Y =  71 minimum rho =        -0.3375 at X =  75 Z =  55 maximum rho =         0.4148 at X =  74 Z = 113
+  Section Y =  72 minimum rho =        -0.3141 at X =  63 Z =  69 maximum rho =         0.5398 at X =  74 Z = 112
+  Section Y =  73 minimum rho =        -0.3590 at X =  43 Z =  26 maximum rho =         0.5278 at X =  73 Z = 112
+  Section Y =  74 minimum rho =        -0.3369 at X =  43 Z =  26 maximum rho =         0.4895 at X =  56 Z = 104
+  Section Y =  75 minimum rho =        -0.3385 at X =  12 Z =  75 maximum rho =         0.5726 at X =  67 Z = 104
+  Section Y =  76 minimum rho =        -0.3214 at X =  53 Z = 117 maximum rho =         0.7317 at X =  67 Z = 104
+  Section Y =  77 minimum rho =        -0.3673 at X =  42 Z = 113 maximum rho =         0.6825 at X =  66 Z = 104
+  Section Y =  78 minimum rho =        -0.3358 at X =  14 Z =  60 maximum rho =         0.5007 at X =  65 Z = 104
+  Section Y =  79 minimum rho =        -0.3846 at X =  73 Z =  20 maximum rho =         0.5020 at X =   1 Z =  16
+  Section Y =  80 minimum rho =        -0.3667 at X =  42 Z =  72 maximum rho =         0.5322 at X =   0 Z =  15
+  Section Y =  81 minimum rho =        -0.3293 at X =  63 Z = 114 maximum rho =         0.3900 at X =   0 Z =  15
+  Section Y =  82 minimum rho =        -0.3792 at X =  32 Z =  31 maximum rho =         0.3987 at X =  65 Z =  64
+  Section Y =  83 minimum rho =        -0.3938 at X =  45 Z =  74 maximum rho =         0.4487 at X =  65 Z =  64
+  Section Y =  84 minimum rho =        -0.3480 at X =  57 Z = 112 maximum rho =         0.4396 at X =  60 Z =  95
+  Section Y =  85 minimum rho =        -0.3289 at X =  31 Z =  35 maximum rho =         0.5123 at X =   7 Z =  45
+  Section Y =  86 minimum rho =        -0.3539 at X =   1 Z =  77 maximum rho =         0.5020 at X =   7 Z =  45
+  Section Y =  87 minimum rho =        -0.4113 at X =  47 Z =  96 maximum rho =         0.4081 at X =   2 Z =  46
+  Section Y =  88 minimum rho =        -0.3600 at X =  47 Z =  96 maximum rho =         0.4600 at X =  61 Z =  58
+  Section Y =  89 minimum rho =        -0.3399 at X =  10 Z =  67 maximum rho =         0.4204 at X =  43 Z = 119
+
+
+ Overall maximum rho =          0.7317 on section Y =  76 at X =  67 Z = 104
+
+
+ Overall minimum rho =         -0.4732 on section Y =  32 at X =   4 Z =  73
+
+  Average density on this map is          0.00000002
+
+ Logical Name: MAPOUT   Filename: fofc.map 
+
+File name for input map file on unit   1 : fofc.map
+file size 3284304 ; logical name MAPOUT
+
+
+
+           Number of columns, rows, sections ...............  120   76   90
+           Map mode ........................................    2
+           Start and stop points on columns, rows, sections     0  119    0   75    0   89
+           Grid sampling on x, y, z ........................   76   90  120
+           Cell dimensions .................................   48.9573    59.7331    79.7967    79.8209    81.8414    76.0335
+           Fast, medium, slow axes .........................    Z    X    Y
+           Minimum density .................................    -0.47321
+           Maximum density .................................     0.73167
+           Mean density ....................................     0.00000
+           Rms deviation from mean density .................     0.09705
+           Space-group .....................................    1
+           Number of titles ................................    1
+
+
+     Labels:                            
+   Map from fft
+
+
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+ FFTBIG:  Normal termination
+Times: User:       0.1s System:    0.0s Elapsed:     0:00  
+</pre>
+</html>
+<!--SUMMARY_END--></FONT></B>
+hallo
+{'RefinementRfree': '0.25796', 'RefinementPDB_latest': '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.pdb', 'RefinementRcrystTraficLight': 'green', 'RefinementStatus': 'finished', 'RefinementRcryst': '0.21783', 'RefinementBoundConformation': '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0462/Refine_0001/refine_1.pdb', 'RefinementResolutionTL': 'green', 'RefinementRmsdBondsTL': 'green', 'RefinementRfreeTraficLight': 'green', 'RefinementRmsdBonds': '0.017', 'RefinementRmsdAnglesTL': 'green', 'RefinementSpaceGroup': 'P 1', 'RefinementRmsdAngles': '1.838', 'RefinementResolution': '1.96'}
+==> xce: updating mainTable of data source

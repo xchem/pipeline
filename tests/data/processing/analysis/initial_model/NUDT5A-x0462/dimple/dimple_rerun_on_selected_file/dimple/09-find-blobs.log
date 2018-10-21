@@ -1,0 +1,7 @@
+Searching for clusters in density map, using grid: Nuvw = (  80,  96, 128)
+Density std.dev: 0.244, cut-off: 0.195 e/A^3 (0.8 sigma)
+Protein mass center: xyz = (     -21.2,     8.165,    -30.79)
+3 clusters (with given criteria) found
+#0    243 grid points, score 63.64     ( -41.54,  17.05, -69.33)
+#1    160 grid points, score 51.81     ( -14.90, -16.27, -36.14)
+#2    125 grid points, score 51.46     ( -10.31, -10.19, -11.29)
