@@ -8,7 +8,7 @@ import pandas
 
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
     TransferNewDataFile
-from test_functions import run_luigi_worker
+from .test_functions import run_luigi_worker
 from xchem_db.models import *
 
 # task list:
