@@ -1,0 +1,357 @@
+CRYSTAL: NUDT5A-x0090 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-event_1_1-BDC_0.17_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0090-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0268 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-event_1_1-BDC_0.4_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0268-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0194 SITE: 1 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-event_2_1-BDC_0.34_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0194-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0239 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0239/NUDT5A-x0239-event_1_1-BDC_0.38_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0239/NUDT5A-x0239-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0239/NUDT5A-x0239-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0239-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0239/NUDT5A-x0239-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0147 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-event_1_1-BDC_0.29_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0147-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0274 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-event_1_1-BDC_0.64_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0274-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0201 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-event_1_1-BDC_0.48_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0201-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0278 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0278/NUDT5A-x0278-event_1_1-BDC_0.31_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0278/NUDT5A-x0278-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0278/NUDT5A-x0278-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0278-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0278/NUDT5A-x0278-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0158 SITE: 1 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-event_2_1-BDC_0.18_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0158-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0228 SITE: 1 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0228/NUDT5A-x0228-event_1_1-BDC_0.21_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0228/NUDT5A-x0228-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0228/NUDT5A-x0228-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0228-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0228/NUDT5A-x0228-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0268 SITE: 2 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-event_3_1-BDC_0.37_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0268-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0270 SITE: 2 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-event_2_1-BDC_0.29_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0270-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0078 SITE: 2 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-event_2_1-BDC_0.14_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0078-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0147 SITE: 2 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-event_2_1-BDC_0.28_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0147-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0147/NUDT5A-x0147-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0202 SITE: 2 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0202/NUDT5A-x0202-event_1_1-BDC_0.36_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0202/NUDT5A-x0202-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0202/NUDT5A-x0202-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0202-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0202/NUDT5A-x0202-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0201 SITE: 2 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-event_3_1-BDC_0.37_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0201-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0194 SITE: 2 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-event_1_1-BDC_0.38_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0194-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0158 SITE: 2 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-event_1_1-BDC_0.14_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0158-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0158/NUDT5A-x0158-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0274 SITE: 2 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-event_2_1-BDC_0.73_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0274-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0274/NUDT5A-x0274-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0080 SITE: 2 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-event_2_1-BDC_0.66_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0080-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0089 SITE: 2 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0089/NUDT5A-x0089-event_1_1-BDC_0.29_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0089/NUDT5A-x0089-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0089/NUDT5A-x0089-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0089-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0089/NUDT5A-x0089-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0194 SITE: 3 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-event_3_1-BDC_0.28_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0194-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0194/NUDT5A-x0194-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0204 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0204/NUDT5A-x0204-event_1_1-BDC_0.13_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0204/NUDT5A-x0204-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0204/NUDT5A-x0204-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0204-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0204/NUDT5A-x0204-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0268 SITE: 3 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-event_2_1-BDC_0.3_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0268-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0268/NUDT5A-x0268-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0078 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-event_1_1-BDC_0.17_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0078-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0101 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0101/NUDT5A-x0101-event_1_1-BDC_0.23_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0101/NUDT5A-x0101-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0101/NUDT5A-x0101-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0101-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0101/NUDT5A-x0101-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0213 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0213/NUDT5A-x0213-event_1_1-BDC_0.24_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0213/NUDT5A-x0213-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0213/NUDT5A-x0213-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0213-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0213/NUDT5A-x0213-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0209 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0209/NUDT5A-x0209-event_1_1-BDC_0.21_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0209/NUDT5A-x0209-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0209/NUDT5A-x0209-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0209-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0209/NUDT5A-x0209-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0080 SITE: 3 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-event_1_1-BDC_0.69_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0080-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0080/NUDT5A-x0080-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0201 SITE: 3 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-event_2_1-BDC_0.34_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0201-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0201/NUDT5A-x0201-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0078 SITE: 4 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-event_3_1-BDC_0.14_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0078-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0078/NUDT5A-x0078-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0270 SITE: 4 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-event_1_1-BDC_0.23_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0270-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0270/NUDT5A-x0270-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0088 SITE: 4 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0088/NUDT5A-x0088-event_1_1-BDC_0.17_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0088/NUDT5A-x0088-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0088/NUDT5A-x0088-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0088-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0088/NUDT5A-x0088-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0159 SITE: 5 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0159/NUDT5A-x0159-event_1_1-BDC_0.64_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0159/NUDT5A-x0159-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0159/NUDT5A-x0159-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0159-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0159/NUDT5A-x0159-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0097 SITE: 5 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-event_3_1-BDC_0.28_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0097-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0096 SITE: 6 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-event_2_1-BDC_0.16_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0096-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0185 SITE: 6 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-event_2_1-BDC_0.7_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0185-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0096 SITE: 6 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-event_1_1-BDC_0.13_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0096-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0096/NUDT5A-x0096-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0149 SITE: 6 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0149/NUDT5A-x0149-event_1_1-BDC_0.07_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0149/NUDT5A-x0149-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0149/NUDT5A-x0149-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0149-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0149/NUDT5A-x0149-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0097 SITE: 7 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-event_1_1-BDC_0.21_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0097-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0167 SITE: 7 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0167/NUDT5A-x0167-event_1_1-BDC_0.21_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0167/NUDT5A-x0167-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0167/NUDT5A-x0167-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0167-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0167/NUDT5A-x0167-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0090 SITE: 7 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-event_2_1-BDC_0.17_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0090-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0090/NUDT5A-x0090-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0185 SITE: 7 EVENT: 3
+FILES NOT FOUND FOR EVENT: 3
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-event_3_1-BDC_0.65_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0185-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0280 SITE: 8 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0280/NUDT5A-x0280-event_1_1-BDC_0.09_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0280/NUDT5A-x0280-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0280/NUDT5A-x0280-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0280-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0280/NUDT5A-x0280-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0129 SITE: 9 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-event_1_1-BDC_0.51_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0129-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0129 SITE: 9 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-event_2_1-BDC_0.49_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0129-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0129/NUDT5A-x0129-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0198 SITE: 10 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0198/NUDT5A-x0198-event_1_1-BDC_0.36_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0198/NUDT5A-x0198-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0198/NUDT5A-x0198-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0198-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0198/NUDT5A-x0198-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0185 SITE: 11 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-event_1_1-BDC_0.66_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0185-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0185/NUDT5A-x0185-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0178 SITE: 12 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0178/NUDT5A-x0178-event_1_1-BDC_0.26_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0178/NUDT5A-x0178-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0178/NUDT5A-x0178-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0178-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0178/NUDT5A-x0178-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0106 SITE: 13 EVENT: 1
+FILES NOT FOUND FOR EVENT: 1
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0106/NUDT5A-x0106-event_1_1-BDC_0.28_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0106/NUDT5A-x0106-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0106/NUDT5A-x0106-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0106-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0106/NUDT5A-x0106-pandda-model.pdb']
+[False, False, False, True, False]
+
+
+CRYSTAL: NUDT5A-x0097 SITE: 14 EVENT: 2
+FILES NOT FOUND FOR EVENT: 2
+EXPECTED: 
+['/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-event_2_1-BDC_0.33_map.native.ccp4', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-input.mtz', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/aligned_structures/NUDT5A-x0097-aligned.pdb', '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0097/NUDT5A-x0097-pandda-model.pdb']
+[False, False, False, True, False]
+
+
