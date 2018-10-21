@@ -1,0 +1,114 @@
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Checking the continuity of the protein backbone                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+No breaks in the backbone - hooray! (nothing needs to be done here)
+
+----------------------------------------------- *** ------------------------------------------------
+---                       Generating restraints for duplicated conformers                        ---
+----------------------------------------------- *** ------------------------------------------------
+
+Found 47 duplicated conformers consisting of 305 atoms
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                            refmac duplicate conformer restraints                             ---
+----------------------------------------------- *** ------------------------------------------------
+
+exte dist first chain A resi   28 alte A atom  N   second chain A resi   28 alte B atom  N   value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  CA  second chain A resi   28 alte B atom  CA  value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  C   second chain A resi   28 alte B atom  C   value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  O   second chain A resi   28 alte B atom  O   value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  CB  second chain A resi   28 alte B atom  CB  value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  CG  second chain A resi   28 alte B atom  CG  value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  CD1 second chain A resi   28 alte B atom  CD1 value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   28 alte A atom  CD2 second chain A resi   28 alte B atom  CD2 value 0.0 sigma 0.02 type 1
+exte dist first chain A resi   2...
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                            phenix duplicate conformer restraints                             ---
+----------------------------------------------- *** ------------------------------------------------
+
+refinement.geometry_restraints.edits {
+    bond {
+        action = *add
+        atom_selection_1 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'A' and name  N  
+        atom_selection_2 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'B' and name  N  
+        distance_ideal = 0.0
+        sigma = 0.02
+        slack = None
+    }
+    bond {
+        action = *add
+        atom_selection_1 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'A' and name  CA 
+        atom_selection_2 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'B' and name  CA 
+        distance_ideal = 0.0
+        sigma = 0.02
+        slack = None
+    }
+    bond {
+        action = *add
+        atom_selection_1 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'A' and name  C  
+        atom_selection_2 = chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'B' and name  C  
+        distance_ideal = 0.0
+ ...
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                           Generating occupancy-constrained groups                            ---
+----------------------------------------------- *** ------------------------------------------------
+
+Looking for ligands with resname DRG or FRG or LIG or UNK or UNL
+
+------------------------------------->>>
+
+Created 2 occupancy groups for overlapping conformers
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 refmac occupancy restraints                                  ---
+----------------------------------------------- *** ------------------------------------------------
+
+occupancy group id 1 chain A resi   28 alte A
+occupancy group id 1 chain A resi   29 alte A
+occupancy group id 1 chain A resi   30 alte A
+occupancy group id 1 chain A resi  162 alte A
+occupancy group id 1 chain A resi  163 alte A
+occupancy group id 1 chain A resi  164 alte A
+occupancy group id 1 chain A resi  165 alte A
+occupancy group id 1 chain A resi  166 alte A
+occupancy group id 1 chain A resi  466 alte A
+occupancy group id 1 chain B resi  408 alte A
+occupancy group id 1 chain B resi  435 alte A
+occupancy group id 1 chain B resi  451 alte A
+occupancy group id 2 chain A resi   28 alte B
+occupancy group id 2 chain A resi   29 alte B
+occupancy group id 2 chain A resi   30 alte B
+occupancy group id 2 chain A resi  162 alte B
+occupancy group id 2 chain A resi  163 alte B
+occupancy group id 2 chain A resi  164 alte B
+occupancy group id 2 chain A resi  165 alte B
+occupancy group id 2 chain A resi  166 alte B
+occupancy group id 2 chain A resi  466 alte B
+occupancy group id 2 chain B resi ...
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 phenix occupancy restraints                                  ---
+----------------------------------------------- *** ------------------------------------------------
+
+refinement.refine.occupancies {
+    constrained_group {
+        selection = (chain 'A' and resseq   28 and icode ' ' and resname 'TRP' and altid 'A') or \
+                    (chain 'A' and resseq   29 and icode ' ' and resname 'VAL' and altid 'A') or \
+                    (chain 'A' and resseq   30 and icode ' ' and resname 'LYS' and altid 'A') or \
+                    (chain 'A' and resseq  162 and icode ' ' and resname 'PRO' and altid 'A') or \
+                    (chain 'A' and resseq  163 and icode ' ' and resname 'GLY' and altid 'A') or \
+                    (chain 'A' and resseq  164 and icode ' ' and resname 'ASP' and altid 'A') or \
+                    (chain 'A' and resseq  165 and icode ' ' and resname 'GLY' and altid 'A') or \
+                    (chain 'A' and resseq  166 and icode ' ' and resname 'GLU' and altid 'A') or \
+                    (chain 'A' and resseq  466 and icode ' ' and resname 'HOH' and altid 'A') or \
+                    (chain 'B' and resseq  408 and ic...
+
