@@ -32,8 +32,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     date = datetime.datetime.now()
 
     # variables to check
-    findsoakdb_outfile = os.path.join('/pipeline', date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt'))
-    transfer_outfile = os.path.join('/pipeline', date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt'))
+    findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
+    transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
 
     @classmethod
     def setUpClass(cls):
