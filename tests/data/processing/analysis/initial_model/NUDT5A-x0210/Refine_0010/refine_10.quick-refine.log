@@ -1,0 +1,2381 @@
+Found existing refinement directories: 
+	Refine_0001
+	Refine_0002
+	Refine_0003
+	Refine_0004
+	Refine_0005
+	Refine_0006
+	Refine_0007
+	Refine_0008
+	Refine_0009
+
+Creating new output directory: Refine_0010
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Validating input parameters                                  ---
+----------------------------------------------- *** ------------------------------------------------
+
+Copying/linking files to refinement folder
+Real output file path prefixes: Refine_0010/refine_10
+Link output file path prefixes: refine
+
+----------------------------------------------- *** ------------------------------------------------
+---                     Preparing command line input for refinement program                      ---
+----------------------------------------------- *** ------------------------------------------------
+
+Program:
+	refmac5
+Command line arguments:
+	xyzin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/cootOut/Refine_10/multi-state-model.pdb
+	hklin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/NUDT5A-x0210.free.mtz
+	xyzout
+	Refine_0010/refine_10.pdb
+	hklout
+	Refine_0010/refine_10.mtz
+	libin
+	/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/Z52425517.cif
+Standard Input:
+	exte dist first chain A resi   24 alte A atom  N   second chain A resi   24 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte A atom  CA  second chain A resi   24 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte A atom  C   second chain A resi   24 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte A atom  O   second chain A resi   24 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte A atom  CB  second chain A resi   24 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte A atom  OG  second chain A resi   24 alte B atom  OG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  N   second chain A resi   24 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  CA  second chain A resi   24 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  C   second chain A resi   24 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  O   second chain A resi   24 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  CB  second chain A resi   24 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   24 alte C atom  OG  second chain A resi   24 alte D atom  OG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  N   second chain A resi   25 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  CA  second chain A resi   25 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  C   second chain A resi   25 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  O   second chain A resi   25 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  CB  second chain A resi   25 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  CG  second chain A resi   25 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  CD  second chain A resi   25 alte B atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  OE1 second chain A resi   25 alte B atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte A atom  OE2 second chain A resi   25 alte B atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  N   second chain A resi   25 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  CA  second chain A resi   25 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  C   second chain A resi   25 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  O   second chain A resi   25 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  CB  second chain A resi   25 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  CG  second chain A resi   25 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  CD  second chain A resi   25 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  OE1 second chain A resi   25 alte D atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   25 alte C atom  OE2 second chain A resi   25 alte D atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte A atom  N   second chain A resi   26 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte A atom  CA  second chain A resi   26 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte A atom  C   second chain A resi   26 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte A atom  O   second chain A resi   26 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte C atom  N   second chain A resi   26 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte C atom  CA  second chain A resi   26 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte C atom  C   second chain A resi   26 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   26 alte C atom  O   second chain A resi   26 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte A atom  N   second chain A resi   27 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte A atom  CA  second chain A resi   27 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte A atom  C   second chain A resi   27 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte A atom  O   second chain A resi   27 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte A atom  CB  second chain A resi   27 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte C atom  N   second chain A resi   27 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte C atom  CA  second chain A resi   27 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte C atom  C   second chain A resi   27 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte C atom  O   second chain A resi   27 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   27 alte C atom  CB  second chain A resi   27 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  N   second chain A resi   28 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CA  second chain A resi   28 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  C   second chain A resi   28 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  O   second chain A resi   28 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CB  second chain A resi   28 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CG  second chain A resi   28 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CD1 second chain A resi   28 alte B atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CD2 second chain A resi   28 alte B atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  NE1 second chain A resi   28 alte B atom  NE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CE2 second chain A resi   28 alte B atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CE3 second chain A resi   28 alte B atom  CE3 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CZ2 second chain A resi   28 alte B atom  CZ2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CZ3 second chain A resi   28 alte B atom  CZ3 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte A atom  CH2 second chain A resi   28 alte B atom  CH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  N   second chain A resi   28 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CA  second chain A resi   28 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  C   second chain A resi   28 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  O   second chain A resi   28 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CB  second chain A resi   28 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CG  second chain A resi   28 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CD1 second chain A resi   28 alte D atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CD2 second chain A resi   28 alte D atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  NE1 second chain A resi   28 alte D atom  NE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CE2 second chain A resi   28 alte D atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CE3 second chain A resi   28 alte D atom  CE3 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CZ2 second chain A resi   28 alte D atom  CZ2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CZ3 second chain A resi   28 alte D atom  CZ3 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   28 alte C atom  CH2 second chain A resi   28 alte D atom  CH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  N   second chain A resi   29 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  CA  second chain A resi   29 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  C   second chain A resi   29 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  O   second chain A resi   29 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  CB  second chain A resi   29 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  CG1 second chain A resi   29 alte B atom  CG1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte A atom  CG2 second chain A resi   29 alte B atom  CG2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  N   second chain A resi   29 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  CA  second chain A resi   29 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  C   second chain A resi   29 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  O   second chain A resi   29 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  CB  second chain A resi   29 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  CG1 second chain A resi   29 alte D atom  CG1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   29 alte C atom  CG2 second chain A resi   29 alte D atom  CG2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  N   second chain A resi   30 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  CA  second chain A resi   30 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  C   second chain A resi   30 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  O   second chain A resi   30 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  CB  second chain A resi   30 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  CG  second chain A resi   30 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  CD  second chain A resi   30 alte B atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  CE  second chain A resi   30 alte B atom  CE  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte A atom  NZ  second chain A resi   30 alte B atom  NZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  N   second chain A resi   30 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  CA  second chain A resi   30 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  C   second chain A resi   30 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  O   second chain A resi   30 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  CB  second chain A resi   30 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  CG  second chain A resi   30 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  CD  second chain A resi   30 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  CE  second chain A resi   30 alte D atom  CE  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   30 alte C atom  NZ  second chain A resi   30 alte D atom  NZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  N   second chain A resi   31 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  CA  second chain A resi   31 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  C   second chain A resi   31 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  O   second chain A resi   31 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  CB  second chain A resi   31 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  CG  second chain A resi   31 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  CD1 second chain A resi   31 alte B atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte A atom  CD2 second chain A resi   31 alte B atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  N   second chain A resi   31 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  CA  second chain A resi   31 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  C   second chain A resi   31 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  O   second chain A resi   31 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  CB  second chain A resi   31 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  CG  second chain A resi   31 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  CD1 second chain A resi   31 alte D atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi   31 alte C atom  CD2 second chain A resi   31 alte D atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  N   second chain A resi  164 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  CA  second chain A resi  164 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  C   second chain A resi  164 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  O   second chain A resi  164 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  CB  second chain A resi  164 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  CG  second chain A resi  164 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  OD1 second chain A resi  164 alte B atom  OD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte A atom  OD2 second chain A resi  164 alte B atom  OD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  N   second chain A resi  164 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  CA  second chain A resi  164 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  C   second chain A resi  164 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  O   second chain A resi  164 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  CB  second chain A resi  164 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  CG  second chain A resi  164 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  OD1 second chain A resi  164 alte D atom  OD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  164 alte C atom  OD2 second chain A resi  164 alte D atom  OD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte A atom  N   second chain A resi  165 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte A atom  CA  second chain A resi  165 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte A atom  C   second chain A resi  165 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte A atom  O   second chain A resi  165 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte C atom  N   second chain A resi  165 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte C atom  CA  second chain A resi  165 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte C atom  C   second chain A resi  165 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  165 alte C atom  O   second chain A resi  165 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  N   second chain A resi  166 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  CA  second chain A resi  166 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  C   second chain A resi  166 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  O   second chain A resi  166 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  CB  second chain A resi  166 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  CG  second chain A resi  166 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  CD  second chain A resi  166 alte B atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  OE1 second chain A resi  166 alte B atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte A atom  OE2 second chain A resi  166 alte B atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  N   second chain A resi  166 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  CA  second chain A resi  166 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  C   second chain A resi  166 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  O   second chain A resi  166 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  CB  second chain A resi  166 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  CG  second chain A resi  166 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  CD  second chain A resi  166 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  OE1 second chain A resi  166 alte D atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  166 alte C atom  OE2 second chain A resi  166 alte D atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  460 alte A atom  O   second chain A resi  460 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain A resi  466 alte A atom  O   second chain A resi  466 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  N   second chain B resi   46 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CA  second chain B resi   46 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  C   second chain B resi   46 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  O   second chain B resi   46 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CB  second chain B resi   46 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CG  second chain B resi   46 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CD1 second chain B resi   46 alte B atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CD2 second chain B resi   46 alte B atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  NE1 second chain B resi   46 alte B atom  NE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CE2 second chain B resi   46 alte B atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CE3 second chain B resi   46 alte B atom  CE3 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CZ2 second chain B resi   46 alte B atom  CZ2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CZ3 second chain B resi   46 alte B atom  CZ3 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte A atom  CH2 second chain B resi   46 alte B atom  CH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  N   second chain B resi   46 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CA  second chain B resi   46 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  C   second chain B resi   46 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  O   second chain B resi   46 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CB  second chain B resi   46 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CG  second chain B resi   46 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CD1 second chain B resi   46 alte D atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CD2 second chain B resi   46 alte D atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  NE1 second chain B resi   46 alte D atom  NE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CE2 second chain B resi   46 alte D atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CE3 second chain B resi   46 alte D atom  CE3 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CZ2 second chain B resi   46 alte D atom  CZ2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CZ3 second chain B resi   46 alte D atom  CZ3 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi   46 alte C atom  CH2 second chain B resi   46 alte D atom  CH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi  408 alte A atom  O   second chain B resi  408 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi  435 alte A atom  O   second chain B resi  435 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi  451 alte A atom  O   second chain B resi  451 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi  455 alte A atom  O   second chain B resi  455 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain B resi  457 alte A atom  O   second chain B resi  457 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte A atom  N   second chain C resi  157 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte A atom  CA  second chain C resi  157 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte A atom  C   second chain C resi  157 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte A atom  O   second chain C resi  157 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte A atom  CB  second chain C resi  157 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte C atom  N   second chain C resi  157 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte C atom  CA  second chain C resi  157 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte C atom  C   second chain C resi  157 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte C atom  O   second chain C resi  157 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  157 alte C atom  CB  second chain C resi  157 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  440 alte A atom  O   second chain C resi  440 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  446 alte A atom  O   second chain C resi  446 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  447 alte A atom  O   second chain C resi  447 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain C resi  453 alte A atom  O   second chain C resi  453 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  N   second chain D resi   14 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  CA  second chain D resi   14 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  C   second chain D resi   14 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  O   second chain D resi   14 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  CB  second chain D resi   14 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  CG  second chain D resi   14 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  CD  second chain D resi   14 alte B atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  CE  second chain D resi   14 alte B atom  CE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte A atom  NZ  second chain D resi   14 alte B atom  NZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  N   second chain D resi   14 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  CA  second chain D resi   14 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  C   second chain D resi   14 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  O   second chain D resi   14 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  CB  second chain D resi   14 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  CG  second chain D resi   14 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  CD  second chain D resi   14 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  CE  second chain D resi   14 alte D atom  CE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   14 alte C atom  NZ  second chain D resi   14 alte D atom  NZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  N   second chain D resi   15 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  CA  second chain D resi   15 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  C   second chain D resi   15 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  O   second chain D resi   15 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  CB  second chain D resi   15 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  CG  second chain D resi   15 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  CD  second chain D resi   15 alte B atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  OE1 second chain D resi   15 alte B atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte A atom  NE2 second chain D resi   15 alte B atom  NE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  N   second chain D resi   15 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  CA  second chain D resi   15 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  C   second chain D resi   15 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  O   second chain D resi   15 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  CB  second chain D resi   15 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  CG  second chain D resi   15 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  CD  second chain D resi   15 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  OE1 second chain D resi   15 alte D atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   15 alte C atom  NE2 second chain D resi   15 alte D atom  NE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  N   second chain D resi   16 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CA  second chain D resi   16 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  C   second chain D resi   16 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  O   second chain D resi   16 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CB  second chain D resi   16 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CG  second chain D resi   16 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CD1 second chain D resi   16 alte B atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CD2 second chain D resi   16 alte B atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CE1 second chain D resi   16 alte B atom  CE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CE2 second chain D resi   16 alte B atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  CZ  second chain D resi   16 alte B atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte A atom  OH  second chain D resi   16 alte B atom  OH  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  N   second chain D resi   16 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CA  second chain D resi   16 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  C   second chain D resi   16 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  O   second chain D resi   16 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CB  second chain D resi   16 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CG  second chain D resi   16 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CD1 second chain D resi   16 alte D atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CD2 second chain D resi   16 alte D atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CE1 second chain D resi   16 alte D atom  CE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CE2 second chain D resi   16 alte D atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  CZ  second chain D resi   16 alte D atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   16 alte C atom  OH  second chain D resi   16 alte D atom  OH  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  N   second chain D resi   28 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CA  second chain D resi   28 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  C   second chain D resi   28 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  O   second chain D resi   28 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CB  second chain D resi   28 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  N   second chain D resi   28 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CA  second chain D resi   28 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  C   second chain D resi   28 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  O   second chain D resi   28 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CB  second chain D resi   28 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  N   second chain D resi   28 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CA  second chain D resi   28 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  C   second chain D resi   28 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  O   second chain D resi   28 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte A atom  CB  second chain D resi   28 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  N   second chain D resi   28 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  CA  second chain D resi   28 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  C   second chain D resi   28 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  O   second chain D resi   28 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  CB  second chain D resi   28 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  N   second chain D resi   28 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  CA  second chain D resi   28 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  C   second chain D resi   28 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  O   second chain D resi   28 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte B atom  CB  second chain D resi   28 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  N   second chain D resi   28 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CA  second chain D resi   28 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  C   second chain D resi   28 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  O   second chain D resi   28 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CB  second chain D resi   28 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CG  second chain D resi   28 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CD1 second chain D resi   28 alte D atom  CD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CD2 second chain D resi   28 alte D atom  CD2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  NE1 second chain D resi   28 alte D atom  NE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CE2 second chain D resi   28 alte D atom  CE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CE3 second chain D resi   28 alte D atom  CE3 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CZ2 second chain D resi   28 alte D atom  CZ2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CZ3 second chain D resi   28 alte D atom  CZ3 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   28 alte C atom  CH2 second chain D resi   28 alte D atom  CH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  N   second chain D resi   51 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CA  second chain D resi   51 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  C   second chain D resi   51 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  O   second chain D resi   51 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CB  second chain D resi   51 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  N   second chain D resi   51 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CA  second chain D resi   51 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  C   second chain D resi   51 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  O   second chain D resi   51 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CB  second chain D resi   51 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  N   second chain D resi   51 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CA  second chain D resi   51 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  C   second chain D resi   51 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  O   second chain D resi   51 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte A atom  CB  second chain D resi   51 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  N   second chain D resi   51 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  CA  second chain D resi   51 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  C   second chain D resi   51 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  O   second chain D resi   51 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  CB  second chain D resi   51 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  N   second chain D resi   51 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  CA  second chain D resi   51 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  C   second chain D resi   51 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  O   second chain D resi   51 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte B atom  CB  second chain D resi   51 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  N   second chain D resi   51 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  CA  second chain D resi   51 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  C   second chain D resi   51 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  O   second chain D resi   51 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  CB  second chain D resi   51 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  CG  second chain D resi   51 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  CD  second chain D resi   51 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  NE  second chain D resi   51 alte D atom  NE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  CZ  second chain D resi   51 alte D atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  NH1 second chain D resi   51 alte D atom  NH1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   51 alte C atom  NH2 second chain D resi   51 alte D atom  NH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte A atom  N   second chain D resi   53 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte A atom  CA  second chain D resi   53 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte A atom  C   second chain D resi   53 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte A atom  O   second chain D resi   53 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte A atom  CB  second chain D resi   53 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte C atom  N   second chain D resi   53 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte C atom  CA  second chain D resi   53 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte C atom  C   second chain D resi   53 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte C atom  O   second chain D resi   53 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   53 alte C atom  CB  second chain D resi   53 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  N   second chain D resi   81 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CA  second chain D resi   81 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  C   second chain D resi   81 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  O   second chain D resi   81 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CB  second chain D resi   81 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  N   second chain D resi   81 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CA  second chain D resi   81 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  C   second chain D resi   81 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  O   second chain D resi   81 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CB  second chain D resi   81 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  N   second chain D resi   81 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CA  second chain D resi   81 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  C   second chain D resi   81 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  O   second chain D resi   81 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte A atom  CB  second chain D resi   81 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  N   second chain D resi   81 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  CA  second chain D resi   81 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  C   second chain D resi   81 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  O   second chain D resi   81 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  CB  second chain D resi   81 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  N   second chain D resi   81 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  CA  second chain D resi   81 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  C   second chain D resi   81 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  O   second chain D resi   81 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte B atom  CB  second chain D resi   81 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  N   second chain D resi   81 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  CA  second chain D resi   81 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  C   second chain D resi   81 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  O   second chain D resi   81 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  CB  second chain D resi   81 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  CG  second chain D resi   81 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  CD  second chain D resi   81 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  CE  second chain D resi   81 alte D atom  CE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi   81 alte C atom  NZ  second chain D resi   81 alte D atom  NZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte A atom  N   second chain D resi  114 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte A atom  CA  second chain D resi  114 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte A atom  C   second chain D resi  114 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte A atom  O   second chain D resi  114 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte A atom  CB  second chain D resi  114 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  N   second chain D resi  114 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  CA  second chain D resi  114 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  C   second chain D resi  114 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  O   second chain D resi  114 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  CB  second chain D resi  114 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  CG  second chain D resi  114 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  CD  second chain D resi  114 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  OE1 second chain D resi  114 alte D atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  114 alte C atom  OE2 second chain D resi  114 alte D atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  N   second chain D resi  154 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CA  second chain D resi  154 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  C   second chain D resi  154 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  O   second chain D resi  154 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CB  second chain D resi  154 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  N   second chain D resi  154 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CA  second chain D resi  154 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  C   second chain D resi  154 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  O   second chain D resi  154 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CB  second chain D resi  154 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  N   second chain D resi  154 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CA  second chain D resi  154 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  C   second chain D resi  154 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  O   second chain D resi  154 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte A atom  CB  second chain D resi  154 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  N   second chain D resi  154 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  CA  second chain D resi  154 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  C   second chain D resi  154 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  O   second chain D resi  154 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  CB  second chain D resi  154 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  N   second chain D resi  154 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  CA  second chain D resi  154 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  C   second chain D resi  154 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  O   second chain D resi  154 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte B atom  CB  second chain D resi  154 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  N   second chain D resi  154 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  CA  second chain D resi  154 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  C   second chain D resi  154 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  O   second chain D resi  154 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  CB  second chain D resi  154 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  CG  second chain D resi  154 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  CD  second chain D resi  154 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  OE1 second chain D resi  154 alte D atom  OE1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  154 alte C atom  OE2 second chain D resi  154 alte D atom  OE2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte A atom  N   second chain D resi  157 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte A atom  CA  second chain D resi  157 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte A atom  C   second chain D resi  157 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte A atom  O   second chain D resi  157 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte A atom  CB  second chain D resi  157 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte C atom  N   second chain D resi  157 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte C atom  CA  second chain D resi  157 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte C atom  C   second chain D resi  157 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte C atom  O   second chain D resi  157 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  157 alte C atom  CB  second chain D resi  157 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  N   second chain D resi  196 alte C atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CA  second chain D resi  196 alte C atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  C   second chain D resi  196 alte C atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  O   second chain D resi  196 alte C atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CB  second chain D resi  196 alte C atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CG  second chain D resi  196 alte C atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CD  second chain D resi  196 alte C atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NE  second chain D resi  196 alte C atom  NE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  CZ  second chain D resi  196 alte C atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NH1 second chain D resi  196 alte C atom  NH1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte A atom  NH2 second chain D resi  196 alte C atom  NH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  N   second chain D resi  196 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CA  second chain D resi  196 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  C   second chain D resi  196 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  O   second chain D resi  196 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CB  second chain D resi  196 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CG  second chain D resi  196 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CD  second chain D resi  196 alte D atom  CD  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NE  second chain D resi  196 alte D atom  NE  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  CZ  second chain D resi  196 alte D atom  CZ  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NH1 second chain D resi  196 alte D atom  NH1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  196 alte B atom  NH2 second chain D resi  196 alte D atom  NH2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte A atom  N   second chain D resi  207 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte A atom  CA  second chain D resi  207 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte A atom  C   second chain D resi  207 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte A atom  O   second chain D resi  207 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte A atom  CB  second chain D resi  207 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte C atom  N   second chain D resi  207 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte C atom  CA  second chain D resi  207 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte C atom  C   second chain D resi  207 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte C atom  O   second chain D resi  207 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  207 alte C atom  CB  second chain D resi  207 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  N   second chain D resi  208 alte B atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  CA  second chain D resi  208 alte B atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  C   second chain D resi  208 alte B atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  O   second chain D resi  208 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  CB  second chain D resi  208 alte B atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  CG  second chain D resi  208 alte B atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  OD1 second chain D resi  208 alte B atom  OD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte A atom  ND2 second chain D resi  208 alte B atom  ND2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  N   second chain D resi  208 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  CA  second chain D resi  208 alte D atom  CA  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  C   second chain D resi  208 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  O   second chain D resi  208 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  CB  second chain D resi  208 alte D atom  CB  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  CG  second chain D resi  208 alte D atom  CG  value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  OD1 second chain D resi  208 alte D atom  OD1 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  208 alte C atom  ND2 second chain D resi  208 alte D atom  ND2 value 0.0 sigma 0.02 type 1
+	exte dist first chain D resi  423 alte A atom  O   second chain D resi  423 alte B atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  N   second chain E resi    1 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C   second chain E resi    1 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  O   second chain E resi    1 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C1  second chain E resi    1 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C10 second chain E resi    1 alte D atom  C10 value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C2  second chain E resi    1 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C3  second chain E resi    1 alte D atom  C3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C4  second chain E resi    1 alte D atom  C4  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C5  second chain E resi    1 alte D atom  C5  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C6  second chain E resi    1 alte D atom  C6  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C7  second chain E resi    1 alte D atom  C7  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C8  second chain E resi    1 alte D atom  C8  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  C9  second chain E resi    1 alte D atom  C9  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  N1  second chain E resi    1 alte D atom  N1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  N2  second chain E resi    1 alte D atom  N2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  N3  second chain E resi    1 alte D atom  N3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    1 alte C atom  S   second chain E resi    1 alte D atom  S   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  N   second chain E resi    4 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C   second chain E resi    4 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  O   second chain E resi    4 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C1  second chain E resi    4 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C10 second chain E resi    4 alte D atom  C10 value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C2  second chain E resi    4 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C3  second chain E resi    4 alte D atom  C3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C4  second chain E resi    4 alte D atom  C4  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C5  second chain E resi    4 alte D atom  C5  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C6  second chain E resi    4 alte D atom  C6  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C7  second chain E resi    4 alte D atom  C7  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C8  second chain E resi    4 alte D atom  C8  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  C9  second chain E resi    4 alte D atom  C9  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  N1  second chain E resi    4 alte D atom  N1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  N2  second chain E resi    4 alte D atom  N2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  N3  second chain E resi    4 alte D atom  N3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    4 alte C atom  S   second chain E resi    4 alte D atom  S   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  N   second chain E resi    5 alte D atom  N   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C   second chain E resi    5 alte D atom  C   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  O   second chain E resi    5 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C1  second chain E resi    5 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C10 second chain E resi    5 alte D atom  C10 value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C2  second chain E resi    5 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C3  second chain E resi    5 alte D atom  C3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C4  second chain E resi    5 alte D atom  C4  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C5  second chain E resi    5 alte D atom  C5  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C6  second chain E resi    5 alte D atom  C6  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C7  second chain E resi    5 alte D atom  C7  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C8  second chain E resi    5 alte D atom  C8  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  C9  second chain E resi    5 alte D atom  C9  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  N1  second chain E resi    5 alte D atom  N1  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  N2  second chain E resi    5 alte D atom  N2  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  N3  second chain E resi    5 alte D atom  N3  value 0.0 sigma 0.02 type 1
+	exte dist first chain E resi    5 alte C atom  S   second chain E resi    5 alte D atom  S   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    1 alte C atom  O   second chain F resi    1 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    2 alte C atom  O   second chain F resi    2 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    3 alte C atom  O   second chain F resi    3 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    4 alte C atom  O   second chain F resi    4 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    5 alte C atom  O   second chain F resi    5 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    6 alte C atom  O   second chain F resi    6 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    7 alte C atom  O   second chain F resi    7 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi    8 alte C atom  O   second chain F resi    8 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   11 alte C atom  O   second chain F resi   11 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   12 alte C atom  O   second chain F resi   12 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   13 alte C atom  O   second chain F resi   13 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   14 alte C atom  O   second chain F resi   14 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   15 alte C atom  O   second chain F resi   15 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   16 alte C atom  O   second chain F resi   16 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   17 alte C atom  O   second chain F resi   17 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   18 alte C atom  O   second chain F resi   18 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   19 alte C atom  O   second chain F resi   19 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   20 alte C atom  O   second chain F resi   20 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   21 alte C atom  O   second chain F resi   21 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   22 alte C atom  O   second chain F resi   22 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   23 alte C atom  O   second chain F resi   23 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   24 alte C atom  O   second chain F resi   24 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   25 alte C atom  O   second chain F resi   25 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   26 alte C atom  O   second chain F resi   26 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   27 alte C atom  O   second chain F resi   27 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   28 alte C atom  O   second chain F resi   28 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   29 alte C atom  O   second chain F resi   29 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   30 alte C atom  O   second chain F resi   30 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   31 alte C atom  O   second chain F resi   31 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   32 alte C atom  O   second chain F resi   32 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   33 alte C atom  O   second chain F resi   33 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   34 alte C atom  O   second chain F resi   34 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain F resi   35 alte C atom  O   second chain F resi   35 alte D atom  O   value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    1 alte C atom  C1  second chain G resi    1 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    1 alte C atom  C2  second chain G resi    1 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    1 alte C atom  O1  second chain G resi    1 alte D atom  O1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    1 alte C atom  O2  second chain G resi    1 alte D atom  O2  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    2 alte C atom  C1  second chain G resi    2 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    2 alte C atom  C2  second chain G resi    2 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    2 alte C atom  O1  second chain G resi    2 alte D atom  O1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    2 alte C atom  O2  second chain G resi    2 alte D atom  O2  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    3 alte C atom  C1  second chain G resi    3 alte D atom  C1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    3 alte C atom  C2  second chain G resi    3 alte D atom  C2  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    3 alte C atom  O1  second chain G resi    3 alte D atom  O1  value 0.0 sigma 0.02 type 1
+	exte dist first chain G resi    3 alte C atom  O2  second chain G resi    3 alte D atom  O2  value 0.0 sigma 0.02 type 1
+	occupancy group id 1 chain D resi  423 alte A
+	occupancy group id 2 chain D resi  423 alte B
+	occupancy group id 3 chain E resi    1 alte C
+	occupancy group id 4 chain E resi    1 alte D
+	occupancy group alts complete 1 2 3 4
+	occupancy group id 5 chain C resi  157 alte A
+	occupancy group id 6 chain C resi  157 alte B
+	occupancy group id 7 chain C resi  157 alte C
+	occupancy group id 7 chain E resi    4 alte C
+	occupancy group id 8 chain C resi  157 alte D
+	occupancy group id 8 chain E resi    4 alte D
+	occupancy group alts complete 5 6 7 8
+	occupancy group id 9 chain A resi   24 alte A
+	occupancy group id 9 chain A resi   25 alte A
+	occupancy group id 9 chain A resi   26 alte A
+	occupancy group id 9 chain A resi   27 alte A
+	occupancy group id 9 chain A resi   28 alte A
+	occupancy group id 9 chain A resi   29 alte A
+	occupancy group id 9 chain A resi   30 alte A
+	occupancy group id 9 chain A resi   31 alte A
+	occupancy group id 9 chain A resi  164 alte A
+	occupancy group id 9 chain A resi  165 alte A
+	occupancy group id 9 chain A resi  166 alte A
+	occupancy group id 9 chain A resi  466 alte A
+	occupancy group id 9 chain B resi   46 alte A
+	occupancy group id 9 chain B resi  408 alte A
+	occupancy group id 9 chain B resi  435 alte A
+	occupancy group id 9 chain B resi  451 alte A
+	occupancy group id 10 chain A resi   24 alte B
+	occupancy group id 10 chain A resi   25 alte B
+	occupancy group id 10 chain A resi   26 alte B
+	occupancy group id 10 chain A resi   27 alte B
+	occupancy group id 10 chain A resi   28 alte B
+	occupancy group id 10 chain A resi   29 alte B
+	occupancy group id 10 chain A resi   30 alte B
+	occupancy group id 10 chain A resi   31 alte B
+	occupancy group id 10 chain A resi  164 alte B
+	occupancy group id 10 chain A resi  165 alte B
+	occupancy group id 10 chain A resi  166 alte B
+	occupancy group id 10 chain A resi  466 alte B
+	occupancy group id 10 chain B resi   46 alte B
+	occupancy group id 10 chain B resi  408 alte B
+	occupancy group id 10 chain B resi  435 alte B
+	occupancy group id 10 chain B resi  451 alte B
+	occupancy group id 11 chain A resi   24 alte C
+	occupancy group id 11 chain A resi   25 alte C
+	occupancy group id 11 chain A resi   26 alte C
+	occupancy group id 11 chain A resi   27 alte C
+	occupancy group id 11 chain A resi   28 alte C
+	occupancy group id 11 chain A resi   29 alte C
+	occupancy group id 11 chain A resi   30 alte C
+	occupancy group id 11 chain A resi   31 alte C
+	occupancy group id 11 chain A resi  164 alte C
+	occupancy group id 11 chain A resi  165 alte C
+	occupancy group id 11 chain A resi  166 alte C
+	occupancy group id 11 chain B resi   46 alte C
+	occupancy group id 11 chain E resi    5 alte C
+	occupancy group id 11 chain F resi    1 alte C
+	occupancy group id 11 chain F resi    2 alte C
+	occupancy group id 11 chain F resi   11 alte C
+	occupancy group id 11 chain F resi   13 alte C
+	occupancy group id 12 chain A resi   24 alte D
+	occupancy group id 12 chain A resi   25 alte D
+	occupancy group id 12 chain A resi   26 alte D
+	occupancy group id 12 chain A resi   27 alte D
+	occupancy group id 12 chain A resi   28 alte D
+	occupancy group id 12 chain A resi   29 alte D
+	occupancy group id 12 chain A resi   30 alte D
+	occupancy group id 12 chain A resi   31 alte D
+	occupancy group id 12 chain A resi  164 alte D
+	occupancy group id 12 chain A resi  165 alte D
+	occupancy group id 12 chain A resi  166 alte D
+	occupancy group id 12 chain B resi   46 alte D
+	occupancy group id 12 chain E resi    5 alte D
+	occupancy group id 12 chain F resi    1 alte D
+	occupancy group id 12 chain F resi    2 alte D
+	occupancy group id 12 chain F resi   11 alte D
+	occupancy group id 12 chain F resi   13 alte D
+	occupancy group alts complete 9 10 11 12
+	occupancy refine
+	    bref ISOT
+	
+	
+	
+	ncyc 10
+	weight AUTO
+	
+	
+	END
+------------------------------------->>>
+running refinement... (refmac5)
+
+----------------------------------------------- *** ------------------------------------------------
+---                                      Refinement output                                       ---
+----------------------------------------------- *** ------------------------------------------------
+
+output written to log file (1629 lines)
+
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<html> <!-- CCP4 HTML LOGFILE -->
+<hr>
+<!--SUMMARY_END--></FONT></B>
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+<pre>
+ 
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ### CCP4 7.0.047: Refmac          version 5.8.0189 : 21/09/17##
+ ###############################################################
+ User: unknown  Run date:  4/10/2018 Run time: 19:05:34 
+
+
+ Please reference: Collaborative Computational Project, Number 4. 2011.
+ "Overview of the CCP4 suite and current developments". Acta Cryst. D67, 235-242.
+ as well as any specific reference in the program write-up.
+
+<!--SUMMARY_END--></FONT></B>
+ $TEXT:Reference1: $$ Main reference $$ 
+   "REFMAC5 for the refinement of macromolecular crystal structures:"
+   G.N.Murshudov, P.Skubak, A.A.Lebedev, N.S.Pannu, R.A.Steiner, R.A.Nicholls, M.D.Winn, F.Long and A.A.Vagin,(2011) 
+   Acta Crystallogr. D67, 355-367
+
+ $$
+ $SUMMARY :Reference1:  $$ Refmac: $$
+ :TEXT:Reference1: $$
+
+ $TEXT:Reference2: $$ Secondary reference $$ 
+   "Refinement of Macromolecular Structures by the  Maximum-Likelihood Method:"
+   G.N. Murshudov, A.A.Vagin and E.J.Dodson,(1997)
+   Acta Crystallogr. D53, 240-255
+   EU  Validation contract: BIO2CT-92-0524
+
+ $$
+ $SUMMARY :Reference2:  $$ Refmac: $$
+ :TEXT:Reference2: $$
+
+  Data line--- occupancy group id 1 chain D resi  423 alte A
+  Data line--- occupancy group id 2 chain D resi  423 alte B
+  Data line--- occupancy group id 3 chain E resi    1 alte C
+  Data line--- occupancy group id 4 chain E resi    1 alte D
+  Data line--- occupancy group alts complete 1 2 3 4
+  Data line--- occupancy group id 5 chain C resi  157 alte A
+  Data line--- occupancy group id 6 chain C resi  157 alte B
+  Data line--- occupancy group id 7 chain C resi  157 alte C
+  Data line--- occupancy group id 7 chain E resi    4 alte C
+  Data line--- occupancy group id 8 chain C resi  157 alte D
+  Data line--- occupancy group id 8 chain E resi    4 alte D
+  Data line--- occupancy group alts complete 5 6 7 8
+  Data line--- occupancy group id 9 chain A resi   24 alte A
+  Data line--- occupancy group id 9 chain A resi   25 alte A
+  Data line--- occupancy group id 9 chain A resi   26 alte A
+  Data line--- occupancy group id 9 chain A resi   27 alte A
+  Data line--- occupancy group id 9 chain A resi   28 alte A
+  Data line--- occupancy group id 9 chain A resi   29 alte A
+  Data line--- occupancy group id 9 chain A resi   30 alte A
+  Data line--- occupancy group id 9 chain A resi   31 alte A
+  Data line--- occupancy group id 9 chain A resi  164 alte A
+  Data line--- occupancy group id 9 chain A resi  165 alte A
+  Data line--- occupancy group id 9 chain A resi  166 alte A
+  Data line--- occupancy group id 9 chain A resi  466 alte A
+  Data line--- occupancy group id 9 chain B resi   46 alte A
+  Data line--- occupancy group id 9 chain B resi  408 alte A
+  Data line--- occupancy group id 9 chain B resi  435 alte A
+  Data line--- occupancy group id 9 chain B resi  451 alte A
+  Data line--- occupancy group id 10 chain A resi   24 alte B
+  Data line--- occupancy group id 10 chain A resi   25 alte B
+  Data line--- occupancy group id 10 chain A resi   26 alte B
+  Data line--- occupancy group id 10 chain A resi   27 alte B
+  Data line--- occupancy group id 10 chain A resi   28 alte B
+  Data line--- occupancy group id 10 chain A resi   29 alte B
+  Data line--- occupancy group id 10 chain A resi   30 alte B
+  Data line--- occupancy group id 10 chain A resi   31 alte B
+  Data line--- occupancy group id 10 chain A resi  164 alte B
+  Data line--- occupancy group id 10 chain A resi  165 alte B
+  Data line--- occupancy group id 10 chain A resi  166 alte B
+  Data line--- occupancy group id 10 chain A resi  466 alte B
+  Data line--- occupancy group id 10 chain B resi   46 alte B
+  Data line--- occupancy group id 10 chain B resi  408 alte B
+  Data line--- occupancy group id 10 chain B resi  435 alte B
+  Data line--- occupancy group id 10 chain B resi  451 alte B
+  Data line--- occupancy group id 11 chain A resi   24 alte C
+  Data line--- occupancy group id 11 chain A resi   25 alte C
+  Data line--- occupancy group id 11 chain A resi   26 alte C
+  Data line--- occupancy group id 11 chain A resi   27 alte C
+  Data line--- occupancy group id 11 chain A resi   28 alte C
+  Data line--- occupancy group id 11 chain A resi   29 alte C
+  Data line--- occupancy group id 11 chain A resi   30 alte C
+  Data line--- occupancy group id 11 chain A resi   31 alte C
+  Data line--- occupancy group id 11 chain A resi  164 alte C
+  Data line--- occupancy group id 11 chain A resi  165 alte C
+  Data line--- occupancy group id 11 chain A resi  166 alte C
+  Data line--- occupancy group id 11 chain B resi   46 alte C
+  Data line--- occupancy group id 11 chain E resi    5 alte C
+  Data line--- occupancy group id 11 chain F resi    1 alte C
+  Data line--- occupancy group id 11 chain F resi    2 alte C
+  Data line--- occupancy group id 11 chain F resi   11 alte C
+  Data line--- occupancy group id 11 chain F resi   13 alte C
+  Data line--- occupancy group id 12 chain A resi   24 alte D
+  Data line--- occupancy group id 12 chain A resi   25 alte D
+  Data line--- occupancy group id 12 chain A resi   26 alte D
+  Data line--- occupancy group id 12 chain A resi   27 alte D
+  Data line--- occupancy group id 12 chain A resi   28 alte D
+  Data line--- occupancy group id 12 chain A resi   29 alte D
+  Data line--- occupancy group id 12 chain A resi   30 alte D
+  Data line--- occupancy group id 12 chain A resi   31 alte D
+  Data line--- occupancy group id 12 chain A resi  164 alte D
+  Data line--- occupancy group id 12 chain A resi  165 alte D
+  Data line--- occupancy group id 12 chain A resi  166 alte D
+  Data line--- occupancy group id 12 chain B resi   46 alte D
+  Data line--- occupancy group id 12 chain E resi    5 alte D
+  Data line--- occupancy group id 12 chain F resi    1 alte D
+  Data line--- occupancy group id 12 chain F resi    2 alte D
+  Data line--- occupancy group id 12 chain F resi   11 alte D
+  Data line--- occupancy group id 12 chain F resi   13 alte D
+  Data line--- occupancy group alts complete 9 10 11 12
+  Data line--- occupancy refine
+  Data line--- bref ISOT
+  Data line--- ncyc 10
+  Data line--- weight AUTO
+  Data line--- END
+
+ OPENED INPUT MTZ FILE 
+ Logical Name: HKLIN   Filename: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/NUDT5A-x0210.free.mtz 
+
+ LABIN FP=F SIGFP=SIGF FREE=FreeR_flag
+
+    ****                     Input and Default parameters#                      ****
+
+
+Input coordinate file.  Logical name - XYZIN actual file name  - /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/cootOut/Refine_10/multi-state-model.pdb
+Output coordinate file. Logical name - XYZOUT actual file name - Refine_0010/refine_10.pdb
+Input reflection file.  Logical name - HKLIN actual file name  - /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/NUDT5A-x0210.free.mtz
+Output reflection file. Logical name - HKLOUT actual file name - Refine_0010/refine_10.mtz
+
+Cell from mtz :    48.388    59.416    79.923    79.849    82.341    76.550
+Space group from mtz: number -    1; name - P 1
+
+  Refinement type                        : Restrained
+
+    ****                           Makecif parameters                           ****
+
+Dictionary files for restraints : /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/lib/data/monomers/mon*cif
+Parameters for new entry and VDW: /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/lib/data/monomers/ener_lib.cif
+User supplied dictionary entries: /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/NUDT5A-x0210/Z52425517.cif
+    Apart from amino acids and DNA/RNA all monomers will be checked to see if atom names and connectivity is correct
+    Hydrogens will be restored in their riding positions
+    Links between monomers will be checked. Only those links present in the coordinate file will be used
+    Standard sugar links will be analysed and used
+    For new ligands "ideal restraint" values will be taken from the energetic libary ener_lib.cif
+    Symmetry related links will be analysed and used
+    Cis peptides will be found and used automatically
+
+
+  Residual                               : Rice Maximum Likelihood for Fs
+
+    ****                    Least-square scaling parameters                     ****
+
+Overall scale
+Overall B value
+Overall anisotropic B with tr(B) = 0.0
+Constant bulk solvent in non protein region
+Probe radii for non-ions     1.200
+Probe radii for ions         0.800
+Shrinkage of the mask  by    0.800
+
+
+    ****                 Map sharpening parameters and methods                  ****
+
+No map sharpening will be performed
+
+  Method of minimisation                 : Sparse Matrix
+  Experimental sigmas used for weighting
+  Number of Bins and width:    20       0.0189
+  Refinement of individual isotropic Bfactors
+  Refinement resln        :    78.3056  1.6275
+  Estimated number of reflections :     155400
+  Free R exclusion - flag equals:     0
+  Auto weighting. An attempt
+  Refinement cycles       :    10
+  Scaling type                           :
+          Bulk solvent using using Babinet principle
+
+  Estimation of D/Sigma in resolution bins
+  using  free set of reflns with experimental sigmas
+  using  free set of reflns with experimental sigmas
+
+  Scaling and SigmaA resln:    78.3056  1.6275
+
+  Damping factors:     1.0000  1.0000  1.0000
+
+
+    ****                    Geometry restraints and weights                     ****
+
+
+                                              Sigma:
+ Bonding distances
+          Weight =  1.00
+
+ Bond angles
+          Weight =  1.00
+
+ Planar groups (all and main chain)
+          WEIGHT= 1.00 1.00
+
+ Chiral centers
+          Weight= 1.00
+
+ NON-BONDED CONTACTS
+          Overall weight                          =  1.00
+          Sigma for simple VDW                    =  0.20
+          Sigma for VDW trhough torsion angle     =  0.20
+          Sigma for HBOND                         =  0.20
+          Sigma for metal-ion                     =  0.20
+          Sigma for DUMMY and other atom          =  0.30
+          Distance for donor-accepetor = vdw1+vdw2+(-0.30)
+          Distance for acceptor - H    = vdw1+     ( 0.10)
+          VDW distance through torsion = vdw1+vdw2+(-0.30)
+          Distance for DUMMY-others    = vdw1+vdw2+(-0.70)
+
+ TORSION ANGLES
+          Weight= 1.00
+
+ THERMAL FACTORS
+          Weight= 1.00
+     Main chain bond (1-2 neighbour)          1.5A**2
+     Main chain angle (1-3 neighbour)         2.0A**2
+     Side chain bond                          3.0A**2
+     Side chain angle                         4.5A**2
+
+ RESTRAINTS AGAINST EXCESSIVE SHIFTS
+     Positional parameters                   0.00A
+     Thermal parameters                      0.00A
+     Occupancy parameters                    0.00
+
+ RADIUS OF CONFIDENCE
+     Positional parameters 0.00A
+     Thermal parameters    0.00A**2
+     Occupancy parameters  0.00
+
+Monitoring style is "MEDIUM". Complete information will be printed out in the
+first and last cycle. In all other cycles minimum information will be printed out
+Sigma cutoffs for printing out outliers
+If deviation of restraint parameter > alpha*sigma then information will be printed out
+Distance outliers      10.000
+Angle outliers         10.000
+Torsion outliers       10.000
+Chiral volume outliers 10.000
+Plane outliers         10.000
+Non-bonding outliers   10.000
+B value  outliers      10.000
+---------------------------------------------------------------
+
+ Input file :/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_mod
+  ------------------------------
+  ---  LIBRARY OF MONOMERS   ---
+ _lib_name         mon_lib
+ _lib_version      5.44
+ _lib_update       30/05/14
+  ------------------------------
+  WARNING: duplicated name of monomer LIG
+           Last entry will be used.
+  NUMBER OF MONOMERS IN THE LIBRARY          : 13535
+                with complete description    : 13535
+  NUMBER OF MODIFICATIONS                    :    63
+  NUMBER OF LINKS                            :    73
+  I am reading libraries. Please wait.
+      - energy parameters
+      - monomer"s description (links & mod )
+  Number of atoms    :    6778
+  Number of residues :    1045
+  Number of chains   :      26
+  I am reading library. Please wait.
+                mon_lib.cif
+  INFO:     link is found (not be used) dist=   2.030 ideal_dist=   2.180
+            ch:AAA  res:  96  ALA              at:O   .->ch:AaA  res: 301  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.033 ideal_dist=   2.180
+            ch:AAA  res: 116  GLU              at:OE2 .->ch:AaA  res: 301  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.361 ideal_dist=   2.180
+            ch:AAA  res: 116  GLU              at:OE2 .->ch:AbA  res: 302  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.057 ideal_dist=   2.180
+            ch:BBB  res:  96  ALA              at:O   .->ch:BbB  res: 302  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.010 ideal_dist=   2.180
+            ch:BBB  res: 116  GLU              at:OE2 .->ch:BbB  res: 302  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.073 ideal_dist=   2.180
+            ch:CCC  res:  96  ALA              at:O   .->ch:CcC  res: 303  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.092 ideal_dist=   2.180
+            ch:CCC  res: 116  GLU              at:OE2 .->ch:CcC  res: 303  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   1.803 ideal_dist=   1.513
+            ch:CCC  res: 158  PRO              at:CG  .->ch:EaE  res:   4  LIG              at:C   C
+  INFO:     link is found (not be used) dist=   1.803 ideal_dist=   1.513
+            ch:CCC  res: 158  PRO              at:CG  .->ch:EaE  res:   4  LIG              at:C   D
+  INFO:     link is found (not be used) dist=   2.082 ideal_dist=   2.670
+            ch:CbC  res: 302  MG               at:MG  .->ch:CcC  res: 303  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.111 ideal_dist=   2.180
+            ch:DDD  res:  96  ALA              at:O   .->ch:DaD  res: 301  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.444 ideal_dist=   2.180
+            ch:DDD  res: 112  GLU              at:OE2 .->ch:DbD  res: 302  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.027 ideal_dist=   2.180
+            ch:DDD  res: 116  GLU              at:OE2 .->ch:DaD  res: 301  MG               at:MG  .
+  INFO:     link is found (not be used) dist=   2.177 ideal_dist=   2.670
+            ch:DaD  res: 301  MG               at:MG  .->ch:DbD  res: 302  MG               at:MG  .
+  --------------------------------
+  --- title of input coord file ---
+
+  PDB_code:xxxx
+  PDB_name:----
+  PDB_date:XX-XXX-XX
+  --------------------------------
+  ATTENTION: atom:CG   GLU                21  AAA  is missing in the structure
+  ATTENTION: atom:CD   GLU                21  AAA  is missing in the structure
+  ATTENTION: atom:OE1  GLU                21  AAA  is missing in the structure
+  ATTENTION: atom:OE2  GLU                21  AAA  is missing in the structure
+  ATTENTION: atom:CG   LYS                27  AAA  is missing in the structure
+  ATTENTION: atom:CD   LYS                27  AAA  is missing in the structure
+  ATTENTION: atom:CE   LYS                27  AAA  is missing in the structure
+  ATTENTION: atom:NZ   LYS                27  AAA  is missing in the structure
+  ATTENTION: atom:CG   LYS                33  AAA  is missing in the structure
+  ATTENTION: atom:CD   LYS                33  AAA  is missing in the structure
+  ATTENTION: atom:CE   LYS                33  AAA  is missing in the structure
+  ATTENTION: atom:NZ   LYS                33  AAA  is missing in the structure
+  ATTENTION: atom:CG   LYS                55  AAA  is missing in the structure
+  ATTENTION: atom:CD   LYS                55  AAA  is missing in the structure
+  ATTENTION: atom:CE   LYS                55  AAA  is missing in the structure
+  ATTENTION: atom:NZ   LYS                55  AAA  is missing in the structure
+  ATTENTION: atom:CG   GLU                56  AAA  is missing in the structure
+  ATTENTION: atom:CD   GLU                56  AAA  is missing in the structure
+  ATTENTION: atom:OE1  GLU                56  AAA  is missing in the structure
+  ATTENTION: atom:OE2  GLU                56  AAA  is missing in the structure
+   ... and more ...
+  Number of chains                  :      26
+  Total number of monomers          :    1045
+  Number of atoms                   :   14228
+  Number of missing atoms           :     244
+  Number of rebuilt atoms           :    6289
+  Number of unknown atoms           :       0
+  Number of deleted atoms           :       0
+
+_refine.scat_method    'SG'
+_refine.scat_data_source  X-ray
+
+
+ loop_
+     _atom_type_symbol
+     _atom_type_scat_Cromer_Mann_a1
+     _atom_type_scat_Cromer_Mann_b1
+     _atom_type_scat_Cromer_Mann_a2
+     _atom_type_scat_Cromer_Mann_b2
+     _atom_type_scat_Cromer_Mann_a3
+     _atom_type_scat_Cromer_Mann_b3
+     _atom_type_scat_Cromer_Mann_a4
+     _atom_type_scat_Cromer_Mann_b4
+     _atom_type_scat_Cromer_Mann_c
+
+
+  N     12.2220   0.0057   3.1346   9.8933   2.0141  28.9975   1.1672   0.5826 -11.5379
+  C      2.3103  20.8439   1.0201  10.2075   1.5888   0.5687   0.8651  51.6512   0.2156
+  H      0.4930  10.5109   0.3229  26.1257   0.1402   3.1424   0.0408  57.7997   0.0030
+  O      3.0487  13.2771   2.2870   5.7011   1.5464   0.3239   0.8671  32.9089   0.2508
+  S      6.8353   1.4679   5.1507  22.2151   1.4233   0.2536   1.5702  56.1720   1.0205
+  MG     5.3968   2.8275   2.1641  79.2611   1.2216   0.3808   2.2973   7.1937   0.9203
+  CL    11.3317   0.0104   7.1156   1.1662   6.1854  18.5194   1.6270  47.7784  -9.2598
+
+
+
+--------------------------------------------------------------------------------
+ External restraints group   :            1
+ External restraints file    :input_keywords
+ Fail if one of the atoms involved in the restraints is missing in the pdb file
+ Use restraints for all defined atoms
+ Ignore restraints if abs(dmod-drest) >    50.000000     *sigma
+ Ignore retraints if input dist >   1.00000003E+32
+ Weight scale sigmas         :
+       scale bond(dist) sigma :   1.0000000    
+       scale angle sigma      :   1.0000000    
+       scale torsion sigma    :   1.0000000    
+       scale plane sigma      :   1.0000000    
+       scale chiral sigma     :   1.0000000    
+       scale interval sigma   :   1.0000000    
+ Weight min sigma            :   0.0000000    
+ Weight max sigma            :   100.00000    
+ GM parameter                :  1.99999996E-02
+ Number of distances         :         597
+ Number of angles            :           0
+ Number of torsions          :           0
+ Number of planes            :           0
+ Number of chirals           :           0
+ Number of intervals         :           0
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+                        Standard  External       All
+                Bonds:     12606       597     13203
+               Angles:     22906         0     22906
+              Chirals:      1024         0      1024
+               Planes:      2140         0      2140
+             Torsions:      5150         0      5150
+            Intervals:         0         0         0
+--------------------------------------------------------------------------------
+
+
+  Number of harmonic restraints       =            0
+  Number of atoms in special position =            0
+ -----------------------------------------------------
+
+
+    ****                           Info from mtz file                           ****
+
+FreeR flag                            0
+Number of "free" reflections       5359
+Number of   all  reflections     106345
+--------------------------------------------------------------------------------
+ Number of reflections in file     106384
+ Number of reflections read         106345
+
+
+######  TLS Group Definitions ######
+
+
+
+     CGMAT cycle number =      1
+
+    ****                          Bond angle outliers                           ****
+
+Bond angle deviations from the ideal >10.000Sigma will be monitored
+
+A     27 LYS HB3 A - A     27 LYS HB2 A mod.= 141.99 id.= 110.00 dev=-31.992 sig.=  3.000
+A     27 LYS HB3 B - A     27 LYS HB2 B mod.= 141.99 id.= 110.00 dev=-31.992 sig.=  3.000
+A     27 LYS HB3 C - A     27 LYS HB2 C mod.= 141.98 id.= 110.00 dev=-31.976 sig.=  3.000
+A     27 LYS HB3 D - A     27 LYS HB2 D mod.= 141.98 id.= 110.00 dev=-31.976 sig.=  3.000
+C    157 ARG HB3 A - C    157 ARG HB2 A mod.= 141.99 id.= 110.00 dev=-31.987 sig.=  3.000
+C    157 ARG HB3 B - C    157 ARG HB2 B mod.= 141.99 id.= 110.00 dev=-31.987 sig.=  3.000
+C    157 ARG HB3 C - C    157 ARG HB2 C mod.= 142.03 id.= 110.00 dev=-32.032 sig.=  3.000
+C    157 ARG HB3 D - C    157 ARG HB2 D mod.= 142.03 id.= 110.00 dev=-32.032 sig.=  3.000
+D     28 TRP HB3 A - D     28 TRP HB2 A mod.= 141.98 id.= 110.00 dev=-31.977 sig.=  3.000
+D     28 TRP HB3 B - D     28 TRP HB2 B mod.= 141.98 id.= 110.00 dev=-31.977 sig.=  3.000
+D     51 ARG HB3 A - D     51 ARG HB2 A mod.= 142.02 id.= 110.00 dev=-32.024 sig.=  3.000
+D     51 ARG HB3 B - D     51 ARG HB2 B mod.= 142.02 id.= 110.00 dev=-32.024 sig.=  3.000
+D     81 LYS HB3 A - D     81 LYS HB2 A mod.= 142.03 id.= 110.00 dev=-32.034 sig.=  3.000
+D     81 LYS HB3 B - D     81 LYS HB2 B mod.= 142.03 id.= 110.00 dev=-32.034 sig.=  3.000
+D    114 GLU HB3 A - D    114 GLU HB2 A mod.= 141.98 id.= 110.00 dev=-31.980 sig.=  3.000
+D    114 GLU HB3 B - D    114 GLU HB2 B mod.= 141.98 id.= 110.00 dev=-31.980 sig.=  3.000
+D    154 GLU HB3 A - D    154 GLU HB2 A mod.= 142.04 id.= 110.00 dev=-32.041 sig.=  3.000
+D    154 GLU HB3 B - D    154 GLU HB2 B mod.= 142.04 id.= 110.00 dev=-32.041 sig.=  3.000
+D    157 ARG HB3 A - D    157 ARG HB2 A mod.= 141.97 id.= 110.00 dev=-31.966 sig.=  3.000
+D    157 ARG HB3 B - D    157 ARG HB2 B mod.= 141.97 id.= 110.00 dev=-31.966 sig.=  3.000
+D    157 ARG HB3 C - D    157 ARG HB2 C mod.= 142.01 id.= 110.00 dev=-32.006 sig.=  3.000
+D    157 ARG HB3 D - D    157 ARG HB2 D mod.= 142.01 id.= 110.00 dev=-32.006 sig.=  3.000
+
+    ****                              VDW outliers                              ****
+
+VDW deviations from the ideal >10.000Sigma or dist <  1.000 will be monitored
+
+C    158 PRO HG2 . - E      4 LIG H   C mod.= 0.943 id.= 2.400 dev= -1.46 sig.= 0.20 sym.=  1  0  0  0 ncs   1 type =  1
+C    158 PRO HG2 . - E      4 LIG H   C mod.= 0.943 id.= 2.400 dev= -1.46 sig.= 0.20 sym.=  1  0  0  0 ncs  -1 type =  1
+C    158 PRO HG2 . - E      4 LIG H   D mod.= 0.943 id.= 2.400 dev= -1.46 sig.= 0.20 sym.=  1  0  0  0 ncs   1 type =  1
+C    158 PRO HG2 . - E      4 LIG H   D mod.= 0.943 id.= 2.400 dev= -1.46 sig.= 0.20 sym.=  1  0  0  0 ncs  -1 type =  1
+
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Weight matrix   0.24604328    
+ Actual weight    10.000000      is applied to the X-ray term
+Norm of X_ray positional gradient                29.8
+Norm of Geom. positional gradient                50.2
+Norm of X_ray B-factor gradient                  43.9
+Norm of Geom. B-factor gradient                  42.0
+Product of X_ray and Geom posit. gradients     -0.334E+08
+ Cosine of angle between them                      -0.583
+Product of X_ray and Geom B-fact gradients     -0.215E+08
+ Cosine of angle between them                      -0.915
+
+
+Residuals: XRAY=     0.3533E+07 GEOM=     0.4134E+05 TOTAL=     0.3575E+07
+ function value    3574764.3    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.000     0.020
+Bond angles  : refined atoms                   9081     1.871     1.988
+Bond angles  : others                         13825     4.038     3.000
+Torsion angles, period  1. refined              874     7.314     5.000
+Torsion angles, period  2. refined              261    36.963    24.598
+Torsion angles, period  3. refined              986    14.274    15.000
+Torsion angles, period  4. refined               34    15.767    15.000
+Chiral centres: refined atoms                  1024     0.116     0.200
+Planar groups: refined atoms                   8024     0.009     0.021
+Planar groups: others                          1290     0.009     0.020
+VDW repulsions: refined_atoms                  2496     0.213     0.200
+VDW repulsions.others                         11236     0.234     0.200
+VDW; torsion: refined_atoms                    6140     0.174     0.200
+VDW; torsion.others                            6144     0.105     0.200
+HBOND: refined_atoms                            636     0.156     0.200
+HBOND.others                                      4     0.058     0.200
+Metal-ion: refined_atoms                          4     0.262     0.200
+VDW repulsions: symmetry: refined_atoms          13     0.189     0.200
+VDW repulsions: symmetry: others                 45     0.178     0.200
+HBOND: symmetry: refined_atoms                    4     0.204     0.200
+M. chain bond B values: refined atoms          3744     3.448     4.107
+M. chain bond B values: others                 3712     3.463     4.107
+M. chain angle B values: refined atoms         4318     4.724     6.101
+M. chain angle B values: others                4319     4.723     6.102
+S. chain bond B values: refined atoms          3478     3.899     4.392
+S. chain bond B values: others                 3477     3.899     4.392
+S. chain angle B values: refined atoms         4763     5.700     6.419
+S. chain angle B values: others                4764     5.700     6.419
+Long range B values: refined atoms             7121     7.880    48.888
+Long range B values: others                    7122     7.880    48.889
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.186, B  =  -0.165
+Partial structure    1: scale =    0.403, B  =  59.622
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+    ****                Things for loggraph, R factor and others                ****
+
+
+$TABLE: Cycle    1. Rfactor analysis, F distribution v resln  :
+$GRAPHS:Cycle    1. <Rfactor> v. resln :N:1,6,7,11,12:
+:Cycle    1. <Fobs> and <Fc> v. resln :N:1,4,5,9,10:
+:Cycle    1. % observed v. resln :N:1,3:
+$$
+M(4SSQ/LL) NR_used %_obs M(Fo_used) M(Fc_used) Rf_used WR_used
+NR_free M(Fo_free) M(Fc_free) Rf_free   WR_free $$
+$$
+ 0.010    1091  95.41   314.9   317.5  0.19  0.25      53   309.7   309.5  0.18  0.22
+ 0.028    1982  95.70   220.9   241.8  0.22  0.27     110   218.1   227.3  0.28  0.33
+ 0.047    2577  95.74   274.4   274.1  0.15  0.19     119   301.2   299.2  0.17  0.20
+ 0.066    3047  95.84   235.8   215.0  0.18  0.21     155   250.0   227.7  0.20  0.24
+ 0.085    3378  94.23   176.6   156.2  0.21  0.22     151   170.7   153.0  0.26  0.28
+ 0.104    3789  95.17   127.5   117.9  0.21  0.22     208   128.6   118.7  0.24  0.25
+ 0.123    4087  95.02    92.6    90.7  0.21  0.21     247    89.5    86.5  0.26  0.26
+ 0.142    4406  95.80    70.2    69.8  0.21  0.21     246    75.4    72.0  0.26  0.25
+ 0.160    4678  95.05    60.7    60.0  0.20  0.20     259    60.0    58.2  0.26  0.25
+ 0.179    4977  95.27    49.1    49.0  0.22  0.20     244    52.1    49.7  0.29  0.27
+ 0.198    4506  81.83    42.7    41.8  0.22  0.20     204    44.1    43.3  0.27  0.25
+ 0.217    5487  95.29    35.3    34.6  0.22  0.20     302    38.6    39.0  0.28  0.26
+ 0.236    4725  78.75    29.5    28.9  0.24  0.22     249    29.3    27.9  0.31  0.29
+ 0.255    5925  95.34    23.9    23.8  0.25  0.22     336    24.4    24.2  0.29  0.27
+ 0.274    3670  56.90    19.3    18.8  0.29  0.27     188    20.4    19.6  0.30  0.28
+ 0.293    6335  95.29    16.4    15.5  0.31  0.30     343    16.7    16.2  0.33  0.32
+ 0.311    6545  95.34    13.7    12.5  0.34  0.33     366    13.0    11.5  0.35  0.35
+ 0.330    6794  95.59    11.8     9.9  0.36  0.36     340    11.8     9.8  0.38  0.38
+ 0.349    6867  94.91    11.0     8.8  0.39  0.40     374    11.2     9.3  0.39  0.40
+ 0.368    7077  94.33    10.4     7.5  0.43  0.44     370    10.5     8.1  0.43  0.44
+$$
+
+    ****                      Fom and SigmaA vs resolution                      ****
+
+ $TABLE: Cycle    1. FSC and  Fom(<cos(DelPhi)>-acentric, centric, overall v resln:
+ $GRAPHS:Cycle    1. M(Fom) v. resln :N:1,3,5,7,8,9,10,11,12:
+ $$
+ <4SSQ/LL> NREFa  FOMa  NREFc FOMc NREFall FOMall  SigmaA_Fc1 FSCfree  FSCwork CorrFoFcFree CorrFoFcWork$$
+ $$
+  0.0096   1091   0.907      0   0.000   1091   0.907  0.929  0.9602  0.9581  0.9115  0.9053
+  0.0285   1982   0.821      0   0.000   1982   0.821  0.867  0.8984  0.9283  0.8231  0.9038
+  0.0473   2577   0.902      0   0.000   2577   0.902  0.971  0.9635  0.9641  0.8996  0.9395
+  0.0662   3047   0.876      0   0.000   3047   0.876  1.032  0.9504  0.9507  0.8976  0.9185
+  0.0850   3378   0.833      0   0.000   3378   0.833  1.047  0.9102  0.9306  0.8265  0.9042
+  0.1039   3789   0.832      0   0.000   3789   0.832  1.008  0.9184  0.9299  0.8648  0.9039
+  0.1228   4087   0.820      0   0.000   4087   0.820  0.955  0.9023  0.9245  0.8202  0.9003
+  0.1416   4406   0.798      0   0.000   4406   0.798  0.933  0.9086  0.9158  0.8488  0.9006
+  0.1605   4678   0.811      0   0.000   4678   0.811  0.938  0.8993  0.9218  0.8384  0.9094
+  0.1793   4977   0.773      0   0.000   4977   0.773  0.917  0.8848  0.9044  0.8446  0.9077
+  0.1982   4506   0.767      0   0.000   4506   0.767  0.918  0.8808  0.8956  0.8778  0.9051
+  0.2171   5487   0.760      0   0.000   5487   0.760  0.908  0.8774  0.8865  0.8388  0.9115
+  0.2359   4725   0.752      0   0.000   4725   0.752  0.898  0.8455  0.8712  0.8124  0.9026
+  0.2548   5925   0.754      0   0.000   5925   0.754  0.868  0.8485  0.8544  0.8366  0.8937
+  0.2736   3670   0.658      0   0.000   3670   0.658  0.795  0.7662  0.7697  0.8577  0.8509
+  0.2925   6335   0.573      0   0.000   6335   0.573  0.736  0.6759  0.6787  0.7870  0.8309
+  0.3114   6545   0.468      0   0.000   6545   0.468  0.644  0.5319  0.5556  0.7776  0.7940
+  0.3302   6794   0.464      0   0.000   6794   0.464  0.637  0.4891  0.5091  0.7066  0.7680
+  0.3491   6867   0.333      0   0.000   6867   0.333  0.461  0.3829  0.3719  0.7297  0.7301
+  0.3679   7077   0.206      0   0.000   7077   0.206  0.293  0.2765  0.2622  0.6491  0.6850
+ $$
+Resolution limits                    =     78.306     1.628
+Number of used reflections           =      91943
+Percentage observed                  =    91.0319
+Percentage of free reflections       =     5.0244
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2499
+Average Fourier shell correlation    =     0.7425
+AverageFree Fourier shell correlation=     0.7315
+Overall weighted R factor            =     0.2249
+Free weighted R factor               =     0.2645
+Overall weighted R2 factor           =     0.2738
+Free weighted R2 factor              =     0.3187
+Average correlation coefficient      =     0.8505
+Overall correlation coefficient      =     0.9665
+Free correlation coefficient         =     0.9544
+Cruickshanks DPI for coordinate error=     0.1183
+DPI based on free R factor           =     0.1160
+Overall figure of merit              =     0.6499
+ML based su of positional parameters =     0.1304
+ML based su of thermal parameters    =     4.1101
+-----------------------------------------------------------------------------
+ Trying gamma equal    0.0000000    
+ Trying gamma equal   5.00000007E-02
+ Gamma decreased to   3.99999991E-02
+
+
+ fvalues    353347.34       41344.723       3563517.5       3574818.3    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.78718562E-02  3.78718562E-02  0.46212813      0.46212813      4.60713953E-02  4.60713953E-02  0.45392859      0.45392859      0.13227187      0.13227187      0.36772814      0.36772814    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.083
+Partial structure    1: scale =    0.404, B  =  59.556
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.15 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2495
+Average Fourier shell correlation    =     0.7336
+AverageFree Fourier shell correlation=     0.7221
+Average correlation coefficient      =     0.8513
+Overall figure of merit              =     0.6394
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      2
+
+ Weight matrix   0.23474267    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3565900.8    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.024
+Partial structure    1: scale =    0.403, B  =  59.522
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.55 B12 =  0.33 B13 =  1.15 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2495
+Average Fourier shell correlation    =     0.7307
+AverageFree Fourier shell correlation=     0.7190
+Average correlation coefficient      =     0.8512
+Overall figure of merit              =     0.6354
+-----------------------------------------------------------------------------
+ Trying gamma equal   3.99999991E-02
+ Gamma decreased to   3.09090894E-02
+
+
+ fvalues    353577.41       30126.980       3562785.3       3565901.0    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.69954742E-02  3.69954742E-02  0.46300453      0.46300453      5.47922589E-02  5.47922589E-02  0.44520772      0.44520772      0.13302201      0.13302201      0.36697796      0.36697796    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.011
+Partial structure    1: scale =    0.403, B  =  59.516
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.55 B12 =  0.32 B13 =  1.15 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7304
+AverageFree Fourier shell correlation=     0.7189
+Average correlation coefficient      =     0.8510
+Overall figure of merit              =     0.6350
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      3
+
+ Weight matrix   0.23444420    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3564708.8    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.068
+Partial structure    1: scale =    0.404, B  =  59.573
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7291
+AverageFree Fourier shell correlation=     0.7174
+Average correlation coefficient      =     0.8512
+Overall figure of merit              =     0.6339
+-----------------------------------------------------------------------------
+ Trying gamma equal   3.09090894E-02
+ Gamma decreased to   2.26446278E-02
+
+
+ fvalues    353767.38       27011.447       3563616.8       3564685.3    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.67074870E-02  3.67074870E-02  0.46329251      0.46329251      3.78963687E-02  3.78963687E-02  0.46210366      0.46210366      0.13345437      0.13345437      0.36654562      0.36654562    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.004     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.049
+Partial structure    1: scale =    0.404, B  =  59.567
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7295
+AverageFree Fourier shell correlation=     0.7179
+Average correlation coefficient      =     0.8511
+Overall figure of merit              =     0.6343
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      4
+
+ Weight matrix   0.23516738    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3563965.5    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.004     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.047
+Partial structure    1: scale =    0.404, B  =  59.520
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7285
+AverageFree Fourier shell correlation=     0.7168
+Average correlation coefficient      =     0.8511
+Overall figure of merit              =     0.6332
+-----------------------------------------------------------------------------
+ Trying gamma equal   2.26446278E-02
+ Gamma decreased to   1.51314801E-02
+
+
+ fvalues    353801.66       25955.240       3563492.8       3563971.8    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.65466326E-02  3.65466326E-02  0.46345338      0.46345338      3.59241292E-02  3.59241292E-02  0.46407586      0.46407586      0.13374525      0.13374525      0.36625475      0.36625475    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.004     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.005
+Partial structure    1: scale =    0.404, B  =  59.501
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7282
+AverageFree Fourier shell correlation=     0.7165
+Average correlation coefficient      =     0.8510
+Overall figure of merit              =     0.6327
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      5
+
+ Weight matrix   0.23516318    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3563092.0    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.004     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.035
+Partial structure    1: scale =    0.404, B  =  59.461
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7288
+AverageFree Fourier shell correlation=     0.7171
+Average correlation coefficient      =     0.8509
+Overall figure of merit              =     0.6334
+-----------------------------------------------------------------------------
+ Trying gamma equal   1.51314801E-02
+ Gamma decreased to   8.30134563E-03
+
+
+ fvalues    353761.03       25486.533       3562797.3       3563096.8    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.64796519E-02  3.64796519E-02  0.46352038      0.46352038      2.90249288E-02  2.90249288E-02  0.47097507      0.47097507      0.13395068      0.13395068      0.36604932      0.36604932    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.040
+Partial structure    1: scale =    0.404, B  =  59.422
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7283
+AverageFree Fourier shell correlation=     0.7167
+Average correlation coefficient      =     0.8509
+Overall figure of merit              =     0.6330
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      6
+
+ Weight matrix   0.23511353    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3562480.3    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.020
+Partial structure    1: scale =    0.404, B  =  59.382
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.33 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2141
+Free R factor                        =     0.2494
+Average Fourier shell correlation    =     0.7280
+AverageFree Fourier shell correlation=     0.7164
+Average correlation coefficient      =     0.8509
+Overall figure of merit              =     0.6326
+-----------------------------------------------------------------------------
+ Trying gamma equal   8.30134563E-03
+ Gamma decreased to   2.09213281E-03
+
+
+ fvalues    353730.66       25195.051       3562312.8       3562501.5    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.62998731E-02  3.62998731E-02  0.46370015      0.46370015      2.02881806E-02  2.02881806E-02  0.47971186      0.47971186      0.13410918      0.13410918      0.36589083      0.36589083    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.056
+Partial structure    1: scale =    0.404, B  =  59.330
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7285
+AverageFree Fourier shell correlation=     0.7167
+Average correlation coefficient      =     0.8508
+Overall figure of merit              =     0.6331
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      7
+
+ Weight matrix   0.23980007    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3563441.3    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.061
+Partial structure    1: scale =    0.404, B  =  59.351
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7286
+AverageFree Fourier shell correlation=     0.7169
+Average correlation coefficient      =     0.8508
+Overall figure of merit              =     0.6331
+-----------------------------------------------------------------------------
+ Trying gamma equal   2.09213281E-03
+ Gamma decreased to   9.99999975E-05
+
+
+ fvalues    353837.81       25045.051       3563310.0       3563423.0    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.60791422E-02  3.60791422E-02  0.46392086      0.46392086      1.45961363E-02  1.45961363E-02  0.48540384      0.48540384      0.13408965      0.13408965      0.36591035      0.36591035    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.023
+Partial structure    1: scale =    0.405, B  =  59.313
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.55 B12 =  0.33 B13 =  1.16 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7279
+AverageFree Fourier shell correlation=     0.7161
+Average correlation coefficient      =     0.8507
+Overall figure of merit              =     0.6324
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      8
+
+ Weight matrix   0.23740229    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3563892.8    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.003     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.076
+Partial structure    1: scale =    0.405, B  =  59.492
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.18
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7285
+AverageFree Fourier shell correlation=     0.7167
+Average correlation coefficient      =     0.8508
+Overall figure of merit              =     0.6331
+-----------------------------------------------------------------------------
+ Trying gamma equal   9.99999975E-05
+ Trying gamma equal   2.57579032E-02
+ Gamma decreased to   2.06263214E-02
+
+
+ fvalues    353893.44       24965.592       3563807.8       3563900.0    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Group occupances  3.59819159E-02  3.59819159E-02  0.46401808      0.46401808      1.11073079E-02  1.11073079E-02  0.48889270      0.48889270      0.13410673      0.13410673      0.36589330      0.36589330    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.015
+Partial structure    1: scale =    0.405, B  =  59.454
+Overall anisotropic scale factors
+   B11 =  3.35 B22 = -0.88 B33 = -1.54 B12 =  0.33 B13 =  1.15 B23 =  1.18
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7280
+AverageFree Fourier shell correlation=     0.7162
+Average correlation coefficient      =     0.8507
+Overall figure of merit              =     0.6324
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =      9
+
+ Weight matrix   0.23588224    
+ Actual weight    10.000000      is applied to the X-ray term
+
+
+ function value    3563237.8    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.038
+Partial structure    1: scale =    0.405, B  =  59.512
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.33 B13 =  1.16 B23 =  1.18
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2496
+Average Fourier shell correlation    =     0.7282
+AverageFree Fourier shell correlation=     0.7165
+Average correlation coefficient      =     0.8507
+Overall figure of merit              =     0.6327
+-----------------------------------------------------------------------------
+ Trying gamma equal   2.06263214E-02
+ Gamma decreased to   1.59612484E-02
+
+
+ fvalues    353834.09       24899.313       3563202.8       3563240.3    
+
+          ----Group occupancy refinement----
+
+    Number of occupancy groups      =           12
+    Number of occupancy constraints =            3
+    Number of strict constraints    =            3
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Group occupances  3.59601676E-02  3.59601676E-02  0.46403986      0.46403986      1.10658649E-02  1.10658649E-02  0.48893413      0.48893413      0.13416396      0.13416396      0.36583608      0.36583608    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+Bond angles  : refined atoms                   9081     1.864     1.988
+Bond angles  : others                         13825     1.025     3.000
+Torsion angles, period  1. refined              874     7.320     5.000
+Torsion angles, period  2. refined              261    36.712    24.598
+Torsion angles, period  3. refined              986    14.280    15.000
+Torsion angles, period  4. refined               34    15.593    15.000
+Chiral centres: refined atoms                  1024     0.115     0.200
+Planar groups: refined atoms                   8024     0.009     0.021
+Planar groups: others                          1290     0.002     0.020
+VDW repulsions: refined_atoms                  2496     0.202     0.200
+VDW repulsions.others                         11676     0.165     0.200
+VDW; torsion: refined_atoms                    6134     0.174     0.200
+VDW; torsion.others                            6652     0.080     0.200
+HBOND: refined_atoms                            636     0.156     0.200
+HBOND.others                                      4     0.014     0.200
+Metal-ion: refined_atoms                          4     0.271     0.200
+VDW repulsions: symmetry: refined_atoms          14     0.188     0.200
+VDW repulsions: symmetry: others                 47     0.172     0.200
+HBOND: symmetry: refined_atoms                    4     0.204     0.200
+M. chain bond B values: refined atoms          3744     3.443     4.100
+M. chain bond B values: others                 3712     3.457     4.100
+M. chain angle B values: refined atoms         4318     4.712     6.091
+M. chain angle B values: others                4319     4.711     6.091
+S. chain bond B values: refined atoms          3478     3.906     4.400
+S. chain bond B values: others                 3477     3.906     4.400
+S. chain angle B values: refined atoms         4763     5.705     6.425
+S. chain angle B values: others                4764     5.705     6.425
+Long range B values: refined atoms             7116     7.870    48.832
+Long range B values: others                    7117     7.870    48.834
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.016
+Partial structure    1: scale =    0.405, B  =  59.487
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.55 B12 =  0.33 B13 =  1.15 B23 =  1.17
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+    ****                Things for loggraph, R factor and others                ****
+
+
+$TABLE: Cycle   18. Rfactor analysis, F distribution v resln  :
+$GRAPHS:Cycle   18. <Rfactor> v. resln :N:1,6,7,11,12:
+:Cycle   18. <Fobs> and <Fc> v. resln :N:1,4,5,9,10:
+:Cycle   18. % observed v. resln :N:1,3:
+$$
+M(4SSQ/LL) NR_used %_obs M(Fo_used) M(Fc_used) Rf_used WR_used
+NR_free M(Fo_free) M(Fc_free) Rf_free   WR_free $$
+$$
+ 0.010    1091  95.41   314.2   316.2  0.19  0.25      53   309.0   308.8  0.18  0.23
+ 0.028    1982  95.70   220.4   241.2  0.22  0.27     110   217.6   226.8  0.28  0.33
+ 0.047    2577  95.74   273.8   273.7  0.15  0.19     119   300.5   298.4  0.17  0.21
+ 0.066    3047  95.84   235.3   215.0  0.18  0.21     155   249.5   227.6  0.20  0.23
+ 0.085    3378  94.23   176.2   156.2  0.21  0.22     151   170.4   152.7  0.26  0.28
+ 0.104    3789  95.17   127.2   117.8  0.21  0.22     208   128.3   118.2  0.24  0.25
+ 0.123    4087  95.02    92.4    90.4  0.21  0.21     247    89.3    86.4  0.26  0.26
+ 0.142    4406  95.80    70.1    69.5  0.21  0.21     246    75.3    71.8  0.26  0.25
+ 0.160    4678  95.05    60.5    59.8  0.20  0.20     259    59.8    57.9  0.26  0.25
+ 0.179    4977  95.27    49.0    48.8  0.22  0.20     244    52.0    49.5  0.29  0.27
+ 0.198    4506  81.83    42.6    41.6  0.22  0.21     204    44.0    43.2  0.27  0.25
+ 0.217    5487  95.29    35.2    34.5  0.22  0.20     302    38.6    38.8  0.28  0.26
+ 0.236    4725  78.75    29.4    28.7  0.24  0.22     249    29.2    27.8  0.31  0.29
+ 0.255    5925  95.34    23.8    23.7  0.24  0.22     336    24.4    24.1  0.29  0.27
+ 0.274    3670  56.90    19.2    18.8  0.29  0.27     188    20.3    19.5  0.30  0.28
+ 0.293    6335  95.29    16.4    15.4  0.31  0.30     343    16.6    16.0  0.33  0.32
+ 0.311    6545  95.34    13.7    12.4  0.34  0.33     366    13.0    11.5  0.35  0.35
+ 0.330    6794  95.59    11.7     9.9  0.36  0.36     340    11.7     9.7  0.38  0.38
+ 0.349    6867  94.91    11.0     8.8  0.39  0.40     374    11.1     9.3  0.39  0.40
+ 0.368    7077  94.33    10.3     7.4  0.43  0.44     370    10.5     8.0  0.43  0.44
+$$
+
+    ****                      Fom and SigmaA vs resolution                      ****
+
+ $TABLE: Cycle   18. FSC and  Fom(<cos(DelPhi)>-acentric, centric, overall v resln:
+ $GRAPHS:Cycle   18. M(Fom) v. resln :N:1,3,5,7,8,9,10,11,12:
+ $$
+ <4SSQ/LL> NREFa  FOMa  NREFc FOMc NREFall FOMall  SigmaA_Fc1 FSCfree  FSCwork CorrFoFcFree CorrFoFcWork$$
+ $$
+  0.0096   1091   0.910      0   0.000   1091   0.910  0.928  0.9611  0.9586  0.9103  0.9025
+  0.0285   1982   0.838      0   0.000   1982   0.838  0.867  0.9052  0.9342  0.8224  0.9031
+  0.0473   2577   0.910      0   0.000   2577   0.910  0.971  0.9647  0.9659  0.8978  0.9388
+  0.0662   3047   0.887      0   0.000   3047   0.887  1.032  0.9543  0.9543  0.9009  0.9186
+  0.0850   3378   0.842      0   0.000   3378   0.842  1.047  0.9136  0.9338  0.8270  0.9045
+  0.1039   3789   0.835      0   0.000   3789   0.835  1.008  0.9198  0.9310  0.8671  0.9042
+  0.1228   4087   0.822      0   0.000   4087   0.822  0.955  0.9038  0.9253  0.8217  0.9004
+  0.1416   4406   0.801      0   0.000   4406   0.801  0.933  0.9095  0.9169  0.8493  0.8998
+  0.1605   4678   0.809      0   0.000   4678   0.809  0.938  0.8980  0.9210  0.8389  0.9093
+  0.1793   4977   0.771      0   0.000   4977   0.771  0.917  0.8840  0.9034  0.8455  0.9076
+  0.1982   4506   0.769      0   0.000   4506   0.769  0.918  0.8817  0.8964  0.8772  0.9041
+  0.2171   5487   0.769      0   0.000   5487   0.769  0.908  0.8812  0.8904  0.8401  0.9112
+  0.2359   4725   0.748      0   0.000   4725   0.748  0.898  0.8436  0.8696  0.8139  0.9030
+  0.2548   5925   0.747      0   0.000   5925   0.747  0.863  0.8457  0.8508  0.8383  0.8941
+  0.2736   3670   0.600      0   0.000   3670   0.600  0.755  0.7290  0.7342  0.8604  0.8510
+  0.2925   6335   0.476      0   0.000   6335   0.476  0.657  0.5993  0.6030  0.7847  0.8316
+  0.3114   6545   0.379      0   0.000   6545   0.379  0.567  0.4489  0.4757  0.7782  0.7943
+  0.3302   6794   0.413      0   0.000   6794   0.413  0.600  0.4414  0.4660  0.7069  0.7696
+  0.3491   6867   0.334      0   0.000   6867   0.334  0.467  0.3849  0.3731  0.7311  0.7306
+  0.3679   7077   0.214      0   0.000   7077   0.214  0.308  0.2862  0.2716  0.6509  0.6848
+ $$
+Resolution limits                    =     78.306     1.628
+Number of used reflections           =      91943
+Percentage observed                  =    91.0319
+Percentage of free reflections       =     5.0244
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2497
+Average Fourier shell correlation    =     0.7282
+AverageFree Fourier shell correlation=     0.7165
+Overall weighted R factor            =     0.2252
+Free weighted R factor               =     0.2645
+Overall weighted R2 factor           =     0.2742
+Free weighted R2 factor              =     0.3187
+Average correlation coefficient      =     0.8506
+Overall correlation coefficient      =     0.9664
+Free correlation coefficient         =     0.9546
+Cruickshanks DPI for coordinate error=     0.1184
+DPI based on free R factor           =     0.1158
+Overall figure of merit              =     0.6327
+ML based su of positional parameters =     0.1331
+ML based su of thermal parameters    =     4.2167
+-----------------------------------------------------------------------------
+
+
+     CGMAT cycle number =     10
+
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Limits of asymmetric unit      : 1.00 1.00 1.00
+ Grid spacing to be used        :   108  126  176
+ Maximuum H,K,L                 :    30   37   50
+ Minimum acceptable grid spacing:    69   84  113
+ Weight matrix   0.24054272    
+ Actual weight    10.000000      is applied to the X-ray term
+Norm of X_ray positional gradient                29.3
+Norm of Geom. positional gradient                29.4
+Norm of X_ray B-factor gradient                  42.7
+Norm of Geom. B-factor gradient                  43.5
+Product of X_ray and Geom posit. gradients     -0.330E+08
+ Cosine of angle between them                      -0.998
+Product of X_ray and Geom B-fact gradients     -0.234E+08
+ Cosine of angle between them                      -0.988
+
+
+Residuals: XRAY=     0.3539E+07 GEOM=     0.2485E+05 TOTAL=     0.3563E+07
+ function value    3563427.0    
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+Bond angles  : refined atoms                   9081     1.864     1.988
+Bond angles  : others                         13825     1.025     3.000
+Torsion angles, period  1. refined              874     7.320     5.000
+Torsion angles, period  2. refined              261    36.712    24.598
+Torsion angles, period  3. refined              986    14.280    15.000
+Torsion angles, period  4. refined               34    15.593    15.000
+Chiral centres: refined atoms                  1024     0.115     0.200
+Planar groups: refined atoms                   8024     0.009     0.021
+Planar groups: others                          1290     0.002     0.020
+VDW repulsions: refined_atoms                  2496     0.202     0.200
+VDW repulsions.others                         11676     0.165     0.200
+VDW; torsion: refined_atoms                    6134     0.174     0.200
+VDW; torsion.others                            6652     0.080     0.200
+HBOND: refined_atoms                            636     0.156     0.200
+HBOND.others                                      4     0.014     0.200
+Metal-ion: refined_atoms                          4     0.271     0.200
+VDW repulsions: symmetry: refined_atoms          14     0.188     0.200
+VDW repulsions: symmetry: others                 47     0.172     0.200
+HBOND: symmetry: refined_atoms                    4     0.204     0.200
+M. chain bond B values: refined atoms          3744     3.443     4.100
+M. chain bond B values: others                 3712     3.457     4.100
+M. chain angle B values: refined atoms         4318     4.712     6.091
+M. chain angle B values: others                4319     4.711     6.091
+S. chain bond B values: refined atoms          3478     3.906     4.400
+S. chain bond B values: others                 3477     3.906     4.400
+S. chain angle B values: refined atoms         4763     5.705     6.425
+S. chain angle B values: others                4764     5.705     6.425
+Long range B values: refined atoms             7116     7.870    48.832
+Long range B values: others                    7117     7.870    48.834
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.188, B  =  -0.068
+Partial structure    1: scale =    0.406, B  =  59.647
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.18
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+    ****                Things for loggraph, R factor and others                ****
+
+
+$TABLE: Cycle   19. Rfactor analysis, F distribution v resln  :
+$GRAPHS:Cycle   19. <Rfactor> v. resln :N:1,6,7,11,12:
+:Cycle   19. <Fobs> and <Fc> v. resln :N:1,4,5,9,10:
+:Cycle   19. % observed v. resln :N:1,3:
+$$
+M(4SSQ/LL) NR_used %_obs M(Fo_used) M(Fc_used) Rf_used WR_used
+NR_free M(Fo_free) M(Fc_free) Rf_free   WR_free $$
+$$
+ 0.010    1091  95.41   314.4   316.1  0.19  0.25      53   309.2   308.7  0.18  0.23
+ 0.028    1982  95.70   220.5   241.3  0.22  0.27     110   217.7   226.9  0.28  0.33
+ 0.047    2577  95.74   274.0   273.9  0.15  0.19     119   300.7   298.5  0.17  0.21
+ 0.066    3047  95.84   235.5   215.2  0.18  0.21     155   249.6   227.7  0.20  0.23
+ 0.085    3378  94.23   176.3   156.3  0.21  0.22     151   170.5   152.8  0.26  0.28
+ 0.104    3789  95.17   127.3   117.8  0.21  0.22     208   128.4   118.3  0.24  0.25
+ 0.123    4087  95.02    92.5    90.5  0.21  0.21     247    89.4    86.5  0.26  0.26
+ 0.142    4406  95.80    70.1    69.6  0.21  0.21     246    75.3    71.9  0.26  0.25
+ 0.160    4678  95.05    60.6    59.9  0.20  0.20     259    59.9    58.0  0.26  0.25
+ 0.179    4977  95.27    49.0    48.8  0.22  0.20     244    52.0    49.6  0.29  0.27
+ 0.198    4506  81.83    42.6    41.7  0.22  0.21     204    44.1    43.3  0.27  0.25
+ 0.217    5487  95.29    35.2    34.6  0.22  0.20     302    38.6    38.9  0.28  0.26
+ 0.236    4725  78.75    29.4    28.8  0.24  0.22     249    29.3    27.9  0.31  0.29
+ 0.255    5925  95.34    23.9    23.8  0.24  0.22     336    24.4    24.2  0.29  0.27
+ 0.274    3670  56.90    19.3    18.8  0.29  0.27     188    20.3    19.6  0.30  0.28
+ 0.293    6335  95.29    16.4    15.4  0.31  0.30     343    16.7    16.1  0.33  0.32
+ 0.311    6545  95.34    13.7    12.4  0.34  0.33     366    13.0    11.5  0.35  0.35
+ 0.330    6794  95.59    11.8     9.9  0.36  0.36     340    11.7     9.7  0.38  0.38
+ 0.349    6867  94.91    11.0     8.8  0.39  0.40     374    11.1     9.3  0.39  0.40
+ 0.368    7077  94.33    10.4     7.5  0.43  0.44     370    10.5     8.0  0.43  0.44
+$$
+
+    ****                      Fom and SigmaA vs resolution                      ****
+
+ $TABLE: Cycle   19. FSC and  Fom(<cos(DelPhi)>-acentric, centric, overall v resln:
+ $GRAPHS:Cycle   19. M(Fom) v. resln :N:1,3,5,7,8,9,10,11,12:
+ $$
+ <4SSQ/LL> NREFa  FOMa  NREFc FOMc NREFall FOMall  SigmaA_Fc1 FSCfree  FSCwork CorrFoFcFree CorrFoFcWork$$
+ $$
+  0.0096   1091   0.910      0   0.000   1091   0.910  0.928  0.9611  0.9586  0.9102  0.9021
+  0.0285   1982   0.838      0   0.000   1982   0.838  0.867  0.9052  0.9342  0.8224  0.9031
+  0.0473   2577   0.910      0   0.000   2577   0.910  0.971  0.9647  0.9659  0.8977  0.9388
+  0.0662   3047   0.887      0   0.000   3047   0.887  1.032  0.9543  0.9542  0.9008  0.9185
+  0.0850   3378   0.842      0   0.000   3378   0.842  1.047  0.9136  0.9338  0.8271  0.9045
+  0.1039   3789   0.835      0   0.000   3789   0.835  1.008  0.9199  0.9311  0.8671  0.9042
+  0.1228   4087   0.822      0   0.000   4087   0.822  0.955  0.9039  0.9254  0.8217  0.9005
+  0.1416   4406   0.801      0   0.000   4406   0.801  0.933  0.9096  0.9170  0.8495  0.8999
+  0.1605   4678   0.809      0   0.000   4678   0.809  0.938  0.8981  0.9211  0.8389  0.9094
+  0.1793   4977   0.771      0   0.000   4977   0.771  0.917  0.8841  0.9035  0.8457  0.9077
+  0.1982   4506   0.769      0   0.000   4506   0.769  0.918  0.8818  0.8966  0.8771  0.9042
+  0.2171   5487   0.769      0   0.000   5487   0.769  0.908  0.8814  0.8906  0.8403  0.9113
+  0.2359   4725   0.749      0   0.000   4725   0.749  0.898  0.8438  0.8698  0.8140  0.9031
+  0.2548   5925   0.747      0   0.000   5925   0.747  0.863  0.8459  0.8510  0.8384  0.8942
+  0.2736   3670   0.600      0   0.000   3670   0.600  0.755  0.7292  0.7345  0.8605  0.8512
+  0.2925   6335   0.476      0   0.000   6335   0.476  0.657  0.5997  0.6033  0.7849  0.8318
+  0.3114   6545   0.382      0   0.000   6545   0.382  0.566  0.4512  0.4781  0.7784  0.7946
+  0.3302   6794   0.415      0   0.000   6794   0.415  0.599  0.4433  0.4674  0.7072  0.7698
+  0.3491   6867   0.335      0   0.000   6867   0.335  0.466  0.3851  0.3730  0.7314  0.7309
+  0.3679   7077   0.219      0   0.000   7077   0.219  0.318  0.2913  0.2764  0.6511  0.6852
+ $$
+Resolution limits                    =     78.306     1.628
+Number of used reflections           =      91943
+Percentage observed                  =    91.0319
+Percentage of free reflections       =     5.0244
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2497
+Average Fourier shell correlation    =     0.7290
+AverageFree Fourier shell correlation=     0.7172
+Overall weighted R factor            =     0.2252
+Free weighted R factor               =     0.2645
+Overall weighted R2 factor           =     0.2741
+Free weighted R2 factor              =     0.3186
+Average correlation coefficient      =     0.8508
+Overall correlation coefficient      =     0.9663
+Free correlation coefficient         =     0.9546
+Cruickshanks DPI for coordinate error=     0.1184
+DPI based on free R factor           =     0.1158
+Overall figure of merit              =     0.6336
+ML based su of positional parameters =     0.1319
+ML based su of thermal parameters    =     4.1537
+-----------------------------------------------------------------------------
+ Trying gamma equal   1.59612484E-02
+ Gamma decreased to   1.17202727E-02
+
+
+ fvalues    353859.75       24853.355       3563387.8       3563450.8    
+
+ LABOUT FreeR_flag=FreeR_flag F=F SIGF=SIGF FC=FC PHIC=PHIC FC_ALL=FC_ALL PHIC_ALL=PHIC_ALL FWT=FWT PHWT=PHWT DELFWT=DELFWT PHDELWT=PHDELWT FOM=FOM FC_ALL_LS=FC_ALL_LS PHIC_ALL_LS=PHIC_ALL_LS
+         -29          -9           4  0.61435443      1.26704825E-02  0.61434913    
+         -21          19           4  0.61435658      1.26704825E-02  0.61434913    
+          -8         -34           9  0.61435241      1.26704825E-02  0.61434913    
+          -4           0          47  0.61435229      1.26704825E-02  0.61434913    
+           5          29          36  0.61435401      1.26704825E-02  0.61434913    
+          14           8          46  0.61436498      1.26704825E-02  0.61434913    
+          22          30           6  0.61436212      1.26704825E-02  0.61434913    
+          24          10          34  0.61436290      1.26704825E-02  0.61434913    
+
+ WRITTEN OUTPUT MTZ FILE 
+ Logical Name: HKLOUT   Filename: Refine_0010/refine_10.mtz 
+
+
+
+
+-------------------------------------------------------------------------------
+             Restraint type              N restraints   Rms Delta   Av(Sigma)
+Bond distances: refined atoms                  7222     0.017     0.020
+Bond distances: others                         5981     0.002     0.020
+Bond angles  : refined atoms                   9081     1.863     1.988
+Bond angles  : others                         13825     1.025     3.000
+Torsion angles, period  1. refined              874     7.321     5.000
+Torsion angles, period  2. refined              261    36.645    24.598
+Torsion angles, period  3. refined              986    14.282    15.000
+Torsion angles, period  4. refined               34    15.552    15.000
+Chiral centres: refined atoms                  1024     0.115     0.200
+Planar groups: refined atoms                   8024     0.009     0.021
+Planar groups: others                          1290     0.002     0.020
+VDW repulsions: refined_atoms                  2502     0.202     0.200
+VDW repulsions.others                         11686     0.164     0.200
+VDW; torsion: refined_atoms                    6136     0.174     0.200
+VDW; torsion.others                            6686     0.080     0.200
+HBOND: refined_atoms                            634     0.156     0.200
+HBOND.others                                      4     0.014     0.200
+Metal-ion: refined_atoms                          4     0.268     0.200
+VDW repulsions: symmetry: refined_atoms          14     0.188     0.200
+VDW repulsions: symmetry: others                 47     0.172     0.200
+HBOND: symmetry: refined_atoms                    4     0.204     0.200
+M. chain bond B values: refined atoms          3744     3.442     4.099
+M. chain bond B values: others                 3712     3.457     4.099
+M. chain angle B values: refined atoms         4318     4.711     6.090
+M. chain angle B values: others                4319     4.710     6.090
+S. chain bond B values: refined atoms          3478     3.906     4.400
+S. chain bond B values: others                 3477     3.907     4.400
+S. chain angle B values: refined atoms         4763     5.705     6.424
+S. chain angle B values: others                4764     5.704     6.424
+Long range B values: refined atoms             7119     7.903    48.853
+Long range B values: others                    7120     7.903    48.854
+-------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+Overall               : scale =    1.189, B  =  -0.059
+Partial structure    1: scale =    0.407, B  =  59.732
+Overall anisotropic scale factors
+   B11 =  3.36 B22 = -0.88 B33 = -1.54 B12 =  0.34 B13 =  1.16 B23 =  1.18
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+    ****                Things for loggraph, R factor and others                ****
+
+
+$TABLE: Cycle   20. Rfactor analysis, F distribution v resln  :
+$GRAPHS:Cycle   20. <Rfactor> v. resln :N:1,6,7,11,12:
+:Cycle   20. <Fobs> and <Fc> v. resln :N:1,4,5,9,10:
+:Cycle   20. % observed v. resln :N:1,3:
+$$
+M(4SSQ/LL) NR_used %_obs M(Fo_used) M(Fc_used) Rf_used WR_used
+NR_free M(Fo_free) M(Fc_free) Rf_free   WR_free $$
+$$
+ 0.010    1091  95.41   314.3   315.8  0.19  0.25      53   309.1   308.5  0.18  0.23
+ 0.028    1982  95.70   220.5   241.2  0.22  0.27     110   217.7   226.8  0.28  0.33
+ 0.047    2577  95.74   273.9   273.8  0.15  0.19     119   300.6   298.5  0.17  0.21
+ 0.066    3047  95.84   235.4   215.1  0.18  0.21     155   249.6   227.7  0.20  0.23
+ 0.085    3378  94.23   176.3   156.2  0.21  0.22     151   170.4   152.8  0.26  0.28
+ 0.104    3789  95.17   127.2   117.8  0.21  0.22     208   128.4   118.3  0.24  0.25
+ 0.123    4087  95.02    92.5    90.5  0.21  0.21     247    89.3    86.5  0.26  0.26
+ 0.142    4406  95.80    70.1    69.6  0.21  0.21     246    75.3    71.9  0.26  0.25
+ 0.160    4678  95.05    60.6    59.9  0.20  0.20     259    59.8    58.0  0.26  0.25
+ 0.179    4977  95.27    49.0    48.8  0.22  0.20     244    52.0    49.6  0.29  0.27
+ 0.198    4506  81.83    42.6    41.7  0.22  0.21     204    44.0    43.3  0.27  0.25
+ 0.217    5487  95.29    35.2    34.6  0.22  0.20     302    38.6    38.9  0.28  0.26
+ 0.236    4725  78.75    29.4    28.8  0.24  0.22     249    29.3    27.9  0.31  0.29
+ 0.255    5925  95.34    23.9    23.8  0.24  0.22     336    24.4    24.2  0.29  0.27
+ 0.274    3670  56.90    19.2    18.8  0.29  0.27     188    20.3    19.6  0.30  0.28
+ 0.293    6335  95.29    16.4    15.4  0.31  0.30     343    16.7    16.1  0.33  0.32
+ 0.311    6545  95.34    13.7    12.4  0.34  0.33     366    13.0    11.5  0.35  0.35
+ 0.330    6794  95.59    11.8     9.9  0.36  0.36     340    11.7     9.7  0.38  0.38
+ 0.349    6867  94.91    11.0     8.8  0.39  0.40     374    11.1     9.3  0.39  0.40
+ 0.368    7077  94.33    10.3     7.5  0.43  0.44     370    10.5     8.0  0.43  0.44
+$$
+
+    ****                      Fom and SigmaA vs resolution                      ****
+
+ $TABLE: Cycle   20. FSC and  Fom(<cos(DelPhi)>-acentric, centric, overall v resln:
+ $GRAPHS:Cycle   20. M(Fom) v. resln :N:1,3,5,7,8,9,10,11,12:
+ $$
+ <4SSQ/LL> NREFa  FOMa  NREFc FOMc NREFall FOMall  SigmaA_Fc1 FSCfree  FSCwork CorrFoFcFree CorrFoFcWork$$
+ $$
+  0.0096   1091   0.910      0   0.000   1091   0.910  0.928  0.9612  0.9586  0.9101  0.9015
+  0.0285   1982   0.838      0   0.000   1982   0.838  0.867  0.9051  0.9341  0.8222  0.9031
+  0.0473   2577   0.910      0   0.000   2577   0.910  0.971  0.9647  0.9659  0.8977  0.9388
+  0.0662   3047   0.887      0   0.000   3047   0.887  1.032  0.9543  0.9543  0.9009  0.9186
+  0.0850   3378   0.842      0   0.000   3378   0.842  1.047  0.9136  0.9339  0.8272  0.9046
+  0.1039   3789   0.835      0   0.000   3789   0.835  1.008  0.9198  0.9310  0.8670  0.9042
+  0.1228   4087   0.822      0   0.000   4087   0.822  0.955  0.9039  0.9254  0.8219  0.9006
+  0.1416   4406   0.801      0   0.000   4406   0.801  0.933  0.9095  0.9169  0.8494  0.8999
+  0.1605   4678   0.809      0   0.000   4678   0.809  0.938  0.8981  0.9211  0.8389  0.9094
+  0.1793   4977   0.771      0   0.000   4977   0.771  0.917  0.8842  0.9035  0.8456  0.9077
+  0.1982   4506   0.769      0   0.000   4506   0.769  0.918  0.8819  0.8966  0.8770  0.9043
+  0.2171   5487   0.769      0   0.000   5487   0.769  0.908  0.8814  0.8906  0.8405  0.9113
+  0.2359   4725   0.749      0   0.000   4725   0.749  0.898  0.8436  0.8698  0.8138  0.9031
+  0.2548   5925   0.747      0   0.000   5925   0.747  0.863  0.8460  0.8510  0.8387  0.8943
+  0.2736   3670   0.600      0   0.000   3670   0.600  0.755  0.7292  0.7344  0.8607  0.8512
+  0.2925   6335   0.476      0   0.000   6335   0.476  0.657  0.5995  0.6031  0.7850  0.8317
+  0.3114   6545   0.379      0   0.000   6545   0.379  0.566  0.4489  0.4756  0.7784  0.7944
+  0.3302   6794   0.413      0   0.000   6794   0.413  0.600  0.4411  0.4656  0.7074  0.7698
+  0.3491   6867   0.334      0   0.000   6867   0.334  0.465  0.3841  0.3725  0.7313  0.7310
+  0.3679   7077   0.209      0   0.000   7077   0.209  0.301  0.2800  0.2658  0.6520  0.6853
+ $$
+Resolution limits                    =     78.306     1.628
+Number of used reflections           =      91943
+Percentage observed                  =    91.0319
+Percentage of free reflections       =     5.0244
+Overall R factor                     =     0.2142
+Free R factor                        =     0.2497
+Average Fourier shell correlation    =     0.7278
+AverageFree Fourier shell correlation=     0.7160
+Overall weighted R factor            =     0.2251
+Free weighted R factor               =     0.2645
+Overall weighted R2 factor           =     0.2741
+Free weighted R2 factor              =     0.3187
+Average correlation coefficient      =     0.8508
+Overall correlation coefficient      =     0.9663
+Free correlation coefficient         =     0.9546
+Cruickshanks DPI for coordinate error=     0.1184
+DPI based on free R factor           =     0.1158
+Overall figure of merit              =     0.6325
+ML based su of positional parameters =     0.1319
+ML based su of thermal parameters    =     4.1537
+-----------------------------------------------------------------------------
+  Time in seconds: CPU =       700.78
+             Elapsed =         768.00
+
+    ****           Things for loggraph, R factor and others vs cycle            ****
+
+
+$TABLE: Rfactor analysis, stats vs cycle  :
+$GRAPHS:<Rfactor> vs cycle :N:1,2,3:
+:FOM vs cycle :N:1,4:
+:-LL vs cycle :N:1,5:
+:-LLfree vs cycle :N:1,6:
+:Geometry vs cycle:N:1,7,8,9,10,11:
+$$
+    Ncyc    Rfact    Rfree     FOM      -LL     -LLfree  rmsBOND  zBOND rmsANGL  zANGL rmsCHIRAL $$
+$$
+       0   0.2141   0.2499   0.650      353342.   19082.3   0.0173  0.858   1.871  0.868   0.116
+       1   0.2142   0.2495   0.639      353500.   19094.7   0.0172  0.853   1.865  0.865   0.116
+       2   0.2142   0.2495   0.635      353577.   19096.7   0.0172  0.853   1.865  0.865   0.116
+       3   0.2141   0.2494   0.635      353562.   19094.8   0.0173  0.856   1.866  0.866   0.116
+       4   0.2141   0.2494   0.634      353770.   19106.2   0.0173  0.856   1.866  0.866   0.116
+       5   0.2141   0.2494   0.634      353739.   19104.5   0.0174  0.858   1.867  0.866   0.116
+       6   0.2141   0.2494   0.633      353801.   19107.6   0.0174  0.858   1.867  0.866   0.116
+       7   0.2141   0.2494   0.633      353792.   19106.5   0.0174  0.859   1.867  0.866   0.116
+       8   0.2141   0.2494   0.633      353761.   19105.3   0.0174  0.859   1.867  0.866   0.116
+       9   0.2141   0.2494   0.633      353768.   19105.8   0.0173  0.858   1.867  0.866   0.116
+      10   0.2141   0.2494   0.633      353729.   19103.5   0.0173  0.858   1.867  0.866   0.116
+      11   0.2142   0.2496   0.633      353802.   19107.7   0.0173  0.858   1.866  0.866   0.115
+      12   0.2142   0.2496   0.633      353840.   19109.6   0.0173  0.858   1.866  0.866   0.115
+      13   0.2142   0.2496   0.632      353734.   19104.3   0.0173  0.859   1.865  0.866   0.115
+      14   0.2142   0.2496   0.633      353893.   19113.0   0.0173  0.859   1.865  0.866   0.115
+      15   0.2142   0.2496   0.632      353815.   19108.5   0.0173  0.857   1.864  0.865   0.115
+      16   0.2142   0.2496   0.633      353834.   19110.1   0.0173  0.857   1.864  0.865   0.115
+      17   0.2142   0.2497   0.633      353742.   19105.1   0.0173  0.856   1.864  0.865   0.115
+      18   0.2142   0.2497   0.634      353857.   19111.6   0.0173  0.856   1.864  0.865   0.115
+      19   0.2142   0.2497   0.632      353881.   19112.8   0.0173  0.856   1.863  0.865   0.115
+ $$
+ $TEXT:Result: $$ Final results $$
+                      Initial    Final
+           R factor    0.2141   0.2142
+             R free    0.2499   0.2497
+     Rms BondLength    0.0173   0.0173
+      Rms BondAngle    1.8715   1.8631
+     Rms ChirVolume    0.1156   0.1153
+ $$
+ Harvest: NO PNAME_KEYWRD given - no deposit file created
+<B><FONT COLOR="#FF0000"><!--SUMMARY_BEGIN-->
+ Refmac:  End of Refmac_5.8.0189  
+Times: User:     733.4s System:    1.5s Elapsed:    37:42  
+</pre>
+</html>
+<!--SUMMARY_END--></FONT></B>
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                 Post-processing output files                                 ---
+----------------------------------------------- *** ------------------------------------------------
+
+
+----------------------------------------------- *** ------------------------------------------------
+---                                     linking output files                                     ---
+----------------------------------------------- *** ------------------------------------------------
+
+Linking refine.pdb -> Refine_0010/refine_10.pdb
+Linking refine.mtz -> Refine_0010/refine_10.mtz
+
+############################################## <~~~> ###############################################
+###                                    finished - refinement                                     ###
+############################################## <~~~> ###############################################
+
