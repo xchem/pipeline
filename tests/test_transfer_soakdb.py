@@ -130,6 +130,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': 0
                         }
 
         sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
