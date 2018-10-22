@@ -13,7 +13,7 @@ from xchem_db.models import *
 
 # task list:
 # + FindSoakDBFiles
-# - CheckFiles
+# + CheckFiles
 # + TransferAllFedIDsAndDatafiles
 # - TransferChangedDataFile
 # - TransferNewDataFile
@@ -115,7 +115,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         soakdb_rows.delete()
 
         check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_filepath=self.filepath))
-        output_file = CheckFiles.output(date=self.date, soakdb_filepath=self.filepath).path
+        output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
         self.assertTrue(check_files)
 
         # check the find files task has run (by output)
@@ -137,6 +137,42 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.remove(output_file)
         os.remove(self.transfer_outfile)
         os.remove(self.findsoakdb_outfile)
+
+    # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
+    # scenario: dump json into soakdb model to emulate existing record, check that status picked up as 1 (changed)
+    def test_check_files_changed(self):
+        # create mock entry in soakdb table to represent file with 0 modification date
+        soak_db_dump = {'filename': self.db,
+                        'modification_date': 0000000000000000,
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        }
+
+        SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_filepath=self.filepath))
+        output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
+        self.assertTrue(check_files)
+
+        # check the find files task has run (by output)
+        self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
+        # check that the fedid/transfer task has run (by output)
+        self.assertTrue(os.path.isfile(self.transfer_outfile))
+        # check the transfer task has run (by worker)
+        self.assertTrue(check_files)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.checkfiles_outfile)
+        # check that the status of the soakdb file has been set to 0
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
+
+        # make sure there's nothing in the soakdb_files table
+        soakdb_rows = SoakdbFiles.objects.all()
+        soakdb_rows.delete()
+
+        # remove output files
+        os.remove(output_file)
+        os.remove(self.transfer_outfile)
+        os.remove(self.findsoakdb_outfile)
+
 
     # def test_transfers(self):
     #     print('TESTING TRANSFERS: test_transfers')
