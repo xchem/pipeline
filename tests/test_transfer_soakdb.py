@@ -9,10 +9,9 @@ import datetime
 import pandas
 
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
-    TransferNewDataFile
+    TransferNewDataFile, transfer_file
 from .test_functions import run_luigi_worker
 from xchem_db.models import *
-from functions.db_functions import transfer_table, lab_translations
 
 # task list:
 # + FindSoakDBFiles
@@ -134,9 +133,12 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
                         }
 
-        SoakdbFiles.objects.get_or_create(**soak_db_dump)
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
 
-        transfer_table(translate_dict=lab_translations(), filename=self.db, model=Lab)
+        transfer_file(self.db)
+
+        sdb[0].status=None
+        sdb[0].save()
 
         # emulate soakdb task
         os.system('touch ' + self.findsoakdb_outfile)
