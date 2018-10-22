@@ -138,7 +138,7 @@ class CheckFiles(luigi.Task):
 
                 # if the file has changed since the db was last updated for the entry, change status to indicate this
                 if int(current_mod_date) > int(old_mod_date):
-                    update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
+                    update_status = SoakdbFiles.objects.get(id=id_number)
                     update_status.status = 1
                     update_status.save()
 

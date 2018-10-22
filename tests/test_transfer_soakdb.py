@@ -12,6 +12,7 @@ from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndD
     TransferNewDataFile
 from .test_functions import run_luigi_worker
 from xchem_db.models import *
+from functions.db_functions import transfer_table, lab_translations
 
 # task list:
 # + FindSoakDBFiles
@@ -125,6 +126,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: dump json into soakdb model to emulate existing record, check that status picked up as 1 (changed)
+    # NB: Checks that data has actually been transfered by looking for lab entry, so have to emulate that too
     def test_check_files_changed(self):
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
@@ -133,6 +135,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                         }
 
         SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        transfer_table(translate_dict=lab_translations(), filename=self.db, model=Lab)
 
         # emulate soakdb task
         os.system('touch ' + self.findsoakdb_outfile)
@@ -148,5 +152,5 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertTrue(check_files)
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.checkfiles_outfile)
-        # check that the status of the soakdb file has been set to 2 (changed)
-        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
+        # check that the status of the soakdb file has been set to 1 (changed)
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 1)
