@@ -45,7 +45,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         os.system('touch ' + self.tmp_file)
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
 
-        self.True(abs(modification_dates[0] - modification_dates[1]) <= 30)
+        self.AssertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
 
     def test_transfer_file(self):
         pass
