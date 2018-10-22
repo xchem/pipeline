@@ -13,10 +13,12 @@ from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndD
 from .test_functions import run_luigi_worker
 from xchem_db.models import *
 from functions.misc_functions import get_mod_date
+from functions.db_functions import soakdb_query
 
 # function list:
 # + misc_functions.get_mod_date
 # - luigi_classes.transfer_soakdb.transfer_file
+# - soakdb_query
 
 # task list:
 # + FindSoakDBFiles
@@ -33,10 +35,26 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
     # variables
     tmp_file = 'tmp.txt'
+    # filepath where test data is (in docker container) and filenames for soakdb
+    filepath = '/pipeline/tests/data/soakdb_files/'
+    db_file_name = 'soakDBDataFile.sqlite'
+    json_file_name = 'soakDBDataFile.json'
 
     @classmethod
     def setUpClass(cls):
-        pass
+        # remove any previous soakDB file
+        if os.path.isfile(os.path.join(cls.filepath, cls.db_file_name)):
+            os.remove(os.path.join(cls.filepath, cls.db_file_name))
+
+        # initialise db and json objects
+        cls.db = os.path.join(cls.filepath, cls.db_file_name)
+        cls.json_file = json.load(open(os.path.join(cls.filepath, cls.json_file_name)))
+
+        # write json to sqlite file
+        conn = sqlite3.connect(cls.db)
+        df = pandas.DataFrame.from_dict(json_file)
+        df.to_sql("mainTable", conn, if_exists='replace')
+        conn.close()
 
     def tearDown(self):
         pass
@@ -47,8 +65,24 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
         self.AssertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
 
+    def test_soakdb_query(self):
+        results = soakdb_query(self.db)
+        results_json = json.dump(results)
+        print(results_json)
+        print(self.json_file)
+
+        self.AssertEqual(results_json, self.json_file)
+
+    # NB: requires a soakdb object exists for the data file
     def test_transfer_file(self):
-        pass
+        soak_db_dump = {'filename': self.db,
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': 0
+                        }
+
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        transfer_file(self.db)
 
 
 class TestTransferSoakDBTasks(unittest.TestCase):
@@ -194,7 +228,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
-                        'modification_date': 0
+                        'modification_date': get_mod_date(self.db)
                         }
 
         sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
