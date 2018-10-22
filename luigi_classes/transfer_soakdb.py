@@ -68,7 +68,7 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class CheckFiles(luigi.Task):
-    date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    date = luigi.Parameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     def requires(self):
@@ -82,7 +82,7 @@ class CheckFiles(luigi.Task):
             return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
-        return luigi.LocalTarget('logs/checked_files/files_' + str(self.date) + '.checked')
+        return luigi.LocalTarget(self.date.strftime('logs/checked_files/files_%Y%m%d%H.checked'))
 
     @transaction.atomic
     def run(self):

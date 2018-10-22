@@ -34,6 +34,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     # variables to check
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
+    checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
 
     @classmethod
     def setUpClass(cls):
@@ -107,10 +108,36 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.remove(self.findsoakdb_outfile)
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
-    # def test_check_files(self):
-    #     check_files = run_luigi_worker(CheckFiles())
-    #     self.assertTrue(check_files)
-    #
+    # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
+    def test_check_files(self):
+        # make sure there's nothing in the soakdb_files table
+        soakdb_rows = SoakdbFiles.objects.all()
+        soakdb_rows.delete()
+
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_filepath=self.filepath))
+        output_file = CheckFiles.output(date=self.date, soakdb_filepath=self.filepath).path
+        self.assertTrue(check_files)
+
+        # check the find files task has run (by output)
+        self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
+        # check that the fedid/transfer task has run (by output)
+        self.assertTrue(os.path.isfile(self.transfer_outfile))
+        # check the transfer task has run (by worker)
+        self.assertTrue(check_files)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.checkfiles_outfile)
+        # check that the status of the soakdb file has been set to 0
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
+
+        # make sure there's nothing in the soakdb_files table
+        soakdb_rows = SoakdbFiles.objects.all()
+        soakdb_rows.delete()
+
+        # remove output files
+        os.remove(output_file)
+        os.remove(self.transfer_outfile)
+        os.remove(self.findsoakdb_outfile)
+
     # def test_transfers(self):
     #     print('TESTING TRANSFERS: test_transfers')
     #     find_file = run_luigi_worker(FindSoakDBFiles(
