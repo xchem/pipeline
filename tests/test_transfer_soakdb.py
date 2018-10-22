@@ -108,7 +108,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
     def test_check_files(self):
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_file_path=self.filepath))
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
         self.assertTrue(check_files)
 
@@ -140,7 +140,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate transfer task
         os.system('touch ' + self.transfer_outfile)
 
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_file_path=self.filepath))
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
         self.assertTrue(check_files)
 
