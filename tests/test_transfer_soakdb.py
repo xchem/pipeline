@@ -14,6 +14,10 @@ from .test_functions import run_luigi_worker
 from xchem_db.models import *
 from functions.misc_functions import get_mod_date
 
+# function list:
+# + misc_functions.get_mod_date
+# - luigi_classes.transfer_soakdb.transfer_file
+
 # task list:
 # + FindSoakDBFiles
 # + CheckFiles
@@ -43,6 +47,9 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
         self.True(abs(modification_dates[0] - modification_dates[1]) <= 30)
 
+    def test_transfer_file(self):
+        pass
+
 
 class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
@@ -58,7 +65,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
     checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
     modification_date = get_mod_date(os.path.join(filepath, db_file_name))
-    newfile_outfile = str(db + '_' + str(modification_date) + '.transferred')
+    newfile_outfile = str(os.path.join(filepath, db_file_name) + '_' + str(modification_date) + '.transferred')
 
     @classmethod
     def setUpClass(cls):
