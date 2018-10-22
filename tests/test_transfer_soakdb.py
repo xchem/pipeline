@@ -41,7 +41,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         os.system('touch ' + self.tmp_file)
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
 
-        self.assertEqual(modification_dates[0], modification_dates[1])
+        self.assertAlmostEqual(modification_dates[0], modification_dates[1])
 
 
 class TestTransferSoakDBTasks(unittest.TestCase):
