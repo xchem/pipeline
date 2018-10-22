@@ -144,6 +144,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate soakdb task
         os.system('touch ' + self.findsoakdb_outfile)
 
+        with open(self.findsoakdb_outfile, 'w') as f:
+            f.write(self.db)
+
         # emulate transfer task
         os.system('touch ' + self.transfer_outfile)
 
