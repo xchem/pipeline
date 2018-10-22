@@ -84,7 +84,6 @@ class CheckFiles(luigi.Task):
     def output(self):
         return luigi.LocalTarget(self.date.strftime('logs/checked_files/files_%Y%m%d%H.checked'))
 
-    @transaction.atomic
     def run(self):
         soakdb = SoakdbFiles.objects.all()
 
