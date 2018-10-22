@@ -25,6 +25,25 @@ from functions.misc_functions import get_mod_date
 # - CheckUploadedFiles
 
 
+class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
+
+    # variables
+    tmp_file = 'tmp.txt'
+
+    @classmethod
+    def setUpClass(cls):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_mod_date(self):
+        os.system('touch ' + self.tmp_file)
+        modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
+
+        self.assertEqual(modification_dates[0], modification_dates[1])
+
+
 class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
     filepath = '/pipeline/tests/data/soakdb_files/'
