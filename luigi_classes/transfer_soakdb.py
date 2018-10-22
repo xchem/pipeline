@@ -177,7 +177,7 @@ class CheckFiles(luigi.Task):
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
     # date parameter for daily run - needs to be changed
-    date = luigi.DateParameter(default=datetime.datetime.now())
+    date = luigi.Parameter(default=datetime.datetime.now())
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
 
     # needs a list of soakDB files from the same day
