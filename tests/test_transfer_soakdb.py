@@ -57,8 +57,21 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.makedirs('/pipeline/logs/transfer_logs')
 
     @classmethod
-    def tearDownClass(cls):
-        pass
+    def tearDown(self):
+        output_files = [self.findsoakdb_outfile, self.transfer_outfile, self.checkfiles_outfile]
+
+        for f in output_files:
+            if os.path.isfile(f):
+                os.remove(f)
+
+        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
+
+        for m in models:
+            try:
+                m.objects.all().delete()
+            except:
+                continue
 
     # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
@@ -76,15 +89,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check the text in the output file is as expected
         self.assertEqual(output_text, self.db)
 
-        # delete files created by the test
-        os.remove(output_file)
-
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles
     def test_transfer_fedids_files(self):
-
-        # make sure there's nothing in the soakdb_files table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
 
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
@@ -99,20 +105,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.transfer_outfile)
 
-        # make sure there's nothing in the soakdb_files table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
-
-        # remove output files
-        os.remove(output_file)
-        os.remove(self.findsoakdb_outfile)
-
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
     def test_check_files(self):
-        # make sure there's nothing in the soakdb_files table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
 
         check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
@@ -128,15 +123,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 0
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
-
-        # make sure there's nothing in the soakdb_files table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
-
-        # remove output files
-        os.remove(output_file)
-        os.remove(self.transfer_outfile)
-        os.remove(self.findsoakdb_outfile)
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: dump json into soakdb model to emulate existing record, check that status picked up as 1 (changed)
@@ -165,16 +151,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
-
-        # make sure there's nothing in the soakdb_files table
-        soakdb_rows = SoakdbFiles.objects.all()
-        soakdb_rows.delete()
-
-        # remove output files
-        os.remove(output_file)
-        os.remove(self.transfer_outfile)
-        os.remove(self.findsoakdb_outfile)
-
 
     # def test_transfers(self):
     #     print('TESTING TRANSFERS: test_transfers')
