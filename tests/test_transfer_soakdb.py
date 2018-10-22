@@ -12,13 +12,14 @@ from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndD
     TransferNewDataFile, transfer_file
 from .test_functions import run_luigi_worker
 from xchem_db.models import *
+from functions.misc_functions import get_mod_date
 
 # task list:
 # + FindSoakDBFiles
 # + CheckFiles
 # + TransferAllFedIDsAndDatafiles
 # - TransferChangedDataFile
-# - TransferNewDataFile
+# + TransferNewDataFile
 # - StartTransfers
 # - CheckFileUpload
 # - CheckUploadedFiles
@@ -37,6 +38,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
     checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
+    modification_date = get_mod_date(os.path.join(filepath, db_file_name))
+    newfile_outfile = str(db + '_' + str(modification_date) + '.transferred')
 
     @classmethod
     def setUpClass(cls):
@@ -138,7 +141,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         transfer_file(self.db)
 
         sdb[0].status = None
-        sdb[0].modification_date = 000000
         sdb[0].save()
 
         # emulate soakdb task
@@ -160,3 +162,41 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 1 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 1)
+
+    # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
+    def test_transfer_changed_datafile(self):
+        # create mock entry in soakdb table to represent file with 0 modification date
+        soak_db_dump = {'filename': self.db,
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': 0
+                        }
+
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        transfer_file(self.db)
+
+        sdb[0].status = 1
+        sdb[0].save()
+
+        # emulate soakdb task
+        os.system('touch ' + self.findsoakdb_outfile)
+
+        with open(self.findsoakdb_outfile, 'w') as f:
+            f.write(self.db)
+
+        # emulate transfer task
+        os.system('touch ' + self.transfer_outfile)
+
+        # emulate check files
+        os.system('touch ' + self.checkfiles_outfile)
+
+        transfer_new = run_luigi_worker(TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath))
+        output_file = TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
+        self.assertTrue(transfer_new)
+
+        # check the transfer task has run (by worker)
+        self.assertTrue(transfer_new)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.newfile_outfile)
+        # check that the status of the soakdb file has been set to 2 (changed)
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
