@@ -149,19 +149,21 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         SoakdbFiles.objects.get_or_create(**soak_db_dump)
 
+        # emulate soakdb task
+        os.system('touch ' + self.findsoakdb_outfile)
+
+        # emulate transfer task
+        os.system('touch ' + self.transfer_outfile)
+
         check_files = run_luigi_worker(CheckFiles(date=self.date, soakdb_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soakdb_filepath=self.filepath).output().path
         self.assertTrue(check_files)
 
-        # check the find files task has run (by output)
-        self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
-        # check that the fedid/transfer task has run (by output)
-        self.assertTrue(os.path.isfile(self.transfer_outfile))
         # check the transfer task has run (by worker)
         self.assertTrue(check_files)
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.checkfiles_outfile)
-        # check that the status of the soakdb file has been set to 0
+        # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
 
         # make sure there's nothing in the soakdb_files table
