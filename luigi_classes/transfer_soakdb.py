@@ -156,7 +156,7 @@ class CheckFiles(luigi.Task):
                 # get the id to update
                 id_number = soakdb_query[0].id
                 # update the relevant status to 0, indicating it as a new file
-                update_status = SoakdbFiles.objects.select_for_update().get(id=id_number)
+                update_status = SoakdbFiles.objects.get(id=id_number)
                 update_status.status = 0
                 update_status.save()
 
@@ -164,7 +164,7 @@ class CheckFiles(luigi.Task):
         lab = list(Lab.objects.all())
         if not lab:
             # this is to set all file statuses to 0 (new file)
-            soakdb = SoakdbFiles.objects.select_for_update().all()
+            soakdb = SoakdbFiles.objects.all()
             for filename in soakdb:
                 filename.status = 0
                 filename.save()
