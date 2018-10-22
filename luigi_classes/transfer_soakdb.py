@@ -152,7 +152,7 @@ class CheckFiles(luigi.Task):
                 # add the proposal to proposal
                 db_functions.pop_proposals(proposal)
                 # retrieve the new db entry
-                soakdb_query = list(SoakdbFiles.objects.select_for_update().filter(filename=filename_clean))
+                soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
                 # get the id to update
                 id_number = soakdb_query[0].id
                 # update the relevant status to 0, indicating it as a new file
