@@ -45,10 +45,9 @@ class TestFindLogs(unittest.TestCase):
         self.assertTrue(find_paths)
         self.assertTrue(
             '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/database/'
-            in open(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
+            in open(FindSearchPaths(soak_db_filepath=self.sdb_filepath,
                                     date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read())
-        data = FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
-                                    date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read()
+        data = open(FindSearchPaths(soak_db_filepath=self.sdb_filepath, date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read()
         with open('tmp_find_paths_output.csv', 'w') as f:
             f.write(data)
 
