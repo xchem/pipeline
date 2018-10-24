@@ -99,9 +99,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
     checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
-    modification_date = get_mod_date(os.path.join(filepath, db_file_name))
-    print(str('mdate: ' + modification_date))
-    newfile_outfile = str(os.path.join(filepath, db_file_name) + '_' + str(modification_date) + '.transferred')
+
 
     @classmethod
     def setUpClass(cls):
@@ -118,6 +116,11 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         df = pandas.DataFrame.from_dict(json_file)
         df.to_sql("mainTable", conn, if_exists='replace')
         conn.close()
+
+        cls.modification_date = get_mod_date(os.path.join(cls.filepath, cls.db_file_name))
+        print(str('mdate: ' + cls.modification_date))
+        newfile_outfile = str(os.path.join(cls.filepath, cls.db_file_name)
+                              + '_' + str(cls.modification_date) + '.transferred')
 
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
