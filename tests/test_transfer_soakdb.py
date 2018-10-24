@@ -202,6 +202,12 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.transfer_outfile)
 
+        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
+
+        for m in models:
+            m.objects.all().delete()
+
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
@@ -222,6 +228,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 0
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
+
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
@@ -262,9 +269,13 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the status of the soakdb file has been set to 1 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 1)
 
-        print('\n')
+        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
 
-        self.tearDown()
+        for m in models:
+            m.objects.all().delete()
+
+        print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
     def test_transfer_changed_datafile(self):
@@ -305,7 +316,12 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.newfile_outfile)
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
-        print('\n')
 
-        self.tearDown()
+        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
+
+        for m in models:
+            m.objects.all().delete()
+            
+        print('\n')
 
