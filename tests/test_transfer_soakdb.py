@@ -264,6 +264,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         print('\n')
 
+        self.tearDown()
+
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
     def test_transfer_changed_datafile(self):
         print('test_transfer_changed_datafile')
@@ -304,4 +306,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
         print('\n')
+
+        self.tearDown()
 
