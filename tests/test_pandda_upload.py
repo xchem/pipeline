@@ -44,11 +44,14 @@ class TestFindLogs(unittest.TestCase):
                                                       date_time=self.date.strftime("%Y%m%d%H")))
 
         self.assertTrue(find_paths)
-        self.assertTrue(
-            '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/database/soakDBDataFile.sqlite'
-            in open(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
-                                    date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read())
+        # self.assertTrue(
+        #     '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/database/soakDBDataFile.sqlite'
+        #     in open(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
+        #                             date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read())
 
+        with open(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
+                                  date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r') as f:
+            print(f.read())
 
 
     # def test_find_pandda_logs(self):
