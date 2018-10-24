@@ -1,7 +1,19 @@
 sudo: required
+env:
+    global:
+        CC_TEST_REPORTER_ID=a26c0fd57d06e8e2dd6bb51e00550f80d786a791ef308b6e850a87b95f03d041
 services: docker
+before_install:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
 install: docker build -t pipeline .
 script: docker run pipeline:latest /bin/bash -c "./run_services.sh"
+# Pipe the coverage data to Code Climate
+after_script:
+  - ./cc-test-reporter format-coverage --prefix /pipeline -t simplecov -o coverage/codeclimate.backend.json coverage/backend/.resultset.json # Format backend coverage
+  - ./cc-test-reporter format-coverage --prefix /pipeline -t lcov -o coverage/codeclimate.frontend.json coverage/frontend/lcov.info  # Format frontend coverage
+  - ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 2                  # Sum both coverage parts into coverage/codeclimate.json
+  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then ./cc-test-reporter upload-coverage; fi  # Upload coverage/codeclimate.json
 deploy:
   provider: pypi
   user: abradle
