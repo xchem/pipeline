@@ -56,6 +56,13 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         df.to_sql("mainTable", conn, if_exists='replace')
         conn.close()
 
+    @classmethod
+    def tearDownClass(cls):
+        pass
+
+    def setUp(self):
+        pass
+
     def tearDown(self):
         pass
 
@@ -143,6 +150,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # create log directories
         os.removedirs('/pipeline/logs/soakDBfiles')
         os.removedirs('/pipeline/logs/transfer_logs')
+
+    def setUp(self):
+        pass
 
     def tearDown(self):
         output_files = [self.findsoakdb_outfile, self.transfer_outfile, self.checkfiles_outfile]
