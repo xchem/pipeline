@@ -12,7 +12,7 @@ from .test_functions import run_luigi_worker
 class TestFindLogs(unittest.TestCase):
     date = datetime.datetime.now()
     search_path = '/pipeline/tests/data/*'
-    sdb_filepath = '/pipeline/tests/data/processing/'
+    sdb_filepath = '/pipeline/tests/data/database/'
     db_file_name = 'soakDBDataFile.sqlite'
     db = os.path.join(sdb_filepath, db_file_name)
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
@@ -45,7 +45,7 @@ class TestFindLogs(unittest.TestCase):
 
         self.assertTrue(find_paths)
         self.assertTrue(
-            '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/processing/soakDBDataFile.sqlite'
+            '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/database/soakDBDataFile.sqlite'
             in open(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath, self.db_file_name),
                                     date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read())
 

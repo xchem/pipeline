@@ -329,7 +329,7 @@ class FindSearchPaths(luigi.Task):
 
         for path in paths:
             if 'database' not in path:
-                search_path = path.split('processing')
+                raise Exception('DATABASE not in soakDB file path - please fix!')
             else:
                 search_path = path.split('database')
             if len(search_path) > 1:
