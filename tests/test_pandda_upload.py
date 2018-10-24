@@ -16,6 +16,7 @@ class TestFindLogs(unittest.TestCase):
     db_file_name = 'soakDBDataFile.sqlite'
     db = os.path.join(sdb_filepath, db_file_name)
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
+    find_sp_outfile = '/pipeline/tests/data/find_paths.csv'
 
     @classmethod
     def setUpClass(cls):
@@ -47,13 +48,12 @@ class TestFindLogs(unittest.TestCase):
             '0,/pipeline/tests/data/database/soakDBDataFile.sqlite,/pipeline/tests/data/,/pipeline/tests/data/database/'
             in open(FindSearchPaths(soak_db_filepath=self.sdb_filepath,
                                     date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read())
-        data = open(FindSearchPaths(soak_db_filepath=self.sdb_filepath, date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r').read()
-        with open('tmp_find_paths_output.csv', 'w') as f:
-            f.write(data)
 
-        # with open(FindSearchPaths(soak_db_filepath=self.sdb_filepath,
-        #                           date_time=self.date.strftime("%Y%m%d%H")).output().path, 'r') as f:
-        #     print(f.read())
+    def test_find_pandda_info_function(self):
+        search_path = '/pipeline/tests/data/'
+        print(pf.find_log_files(search_path))
+
+
 
 
     # def test_find_pandda_logs(self):
