@@ -12,7 +12,6 @@ setup_django()
 import datetime
 import luigi
 import pandas as pd
-from django.db import transaction
 
 from functions import db_functions
 from functions import misc_functions
