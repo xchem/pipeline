@@ -294,8 +294,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         transfer_new = run_luigi_worker(TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath))
         output_file = TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
-        self.assertTrue(transfer_new)
 
+        # check the task output exists
+        self.assertTrue(os.path.isfile(output_file))
         # check the transfer task has run (by worker)
         self.assertTrue(transfer_new)
         # check that the transfer task output is as expected
