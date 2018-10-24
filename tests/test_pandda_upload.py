@@ -36,6 +36,9 @@ class TestFindLogs(unittest.TestCase):
         with open(self.findsoakdb_outfile, 'w') as f:
             f.write(self.db)
 
+        with open(self.findsoakdb_outfile, 'r') as f:
+            print(f.read())
+
         find_paths = run_luigi_worker(FindSearchPaths(soak_db_filepath=os.path.join(self.sdb_filepath,
                                                                                     self.db_file_name),
                                                       date_time=self.date.strftime("%Y%m%d%H")))
