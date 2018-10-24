@@ -54,7 +54,8 @@ class TestFindLogs(unittest.TestCase):
         search_path = '/pipeline/tests/data/'
         file_list = pf.find_log_files(search_path).split('\n')
         self.assertTrue(sorted(file_list) ==
-                        sorted(filter('', glob.glob('/pipeline/tests/data/processing/analysis/panddas/logs/*.log'))))
+                        sorted(list(filter(
+                            '', glob.glob('/pipeline/tests/data/processing/analysis/panddas/logs/*.log')))))
 
 
 
