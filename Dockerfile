@@ -12,7 +12,7 @@ EXPOSE 8082
 #RUN touch /coverage.xml
 
 RUN adduser postgres
-RUN chown postgres /coverage.xml
+#RUN chown postgres /coverage.xml
 
 # create a 'pipeline' directory, and add everything from the current repo into it
 RUN mkdir /pipeline
