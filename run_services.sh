@@ -9,4 +9,4 @@ createdb test_xchem
 python manage.py makemigrations xchem_db
 python manage.py migrate xchem_db
 coverage run -m unittest -v tests/test_transfer_soakdb.py
-coverage xml -o /coverage.xml
+coverage xml -o coverage.xml

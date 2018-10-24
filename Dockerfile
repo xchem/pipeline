@@ -9,7 +9,7 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 5432
 EXPOSE 8082
 
-RUN touch /coverage.xml
+#RUN touch /coverage.xml
 
 RUN adduser postgres
 RUN chown postgres /coverage.xml
