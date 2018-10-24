@@ -107,7 +107,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
     checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
 
-
     @classmethod
     def setUpClass(cls):
         # remove any previous soakDB file
@@ -133,6 +132,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.makedirs('/pipeline/logs/soakDBfiles')
         os.makedirs('/pipeline/logs/transfer_logs')
 
+    @classmethod
     def tearDownClass(cls):
         # create log directories
         os.remove('/pipeline/logs/soakDBfiles')
