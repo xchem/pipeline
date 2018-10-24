@@ -79,7 +79,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
             if key not in self.json_file[0]:
                 print('key: ' + str(key) + ' not found')
             else:
-                self.assertEqual(results_json[0][key], self.json_file[0][key])
+                self.assertEqual(results_list[0][key], self.json_file[0][key])
 
     # NB: requires a soakdb object exists for the data file
     # def test_transfer_file(self):
