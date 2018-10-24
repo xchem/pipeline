@@ -20,6 +20,7 @@ RUN adduser postgres
 
 # change permissions on all files needed (tmp needed by postgres later)
 RUN chown -R postgres /pipeline/
+RUN mkdir /tmp
 RUN chown -R postgres /tmp
 
 # move django settings to correct file name
