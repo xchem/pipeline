@@ -9,12 +9,16 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 5432
 EXPOSE 8082
 
+RUN touch /coverage.xml
+
 RUN adduser postgres
-RUN chown -R postgres /
-USER postgres
+RUN chown postrges /coverage.xml
+#USER postgres
 
 # create a 'pipeline' directory, and add everything from the current repo into it
 RUN mkdir /pipeline
+RUN chown -R /pipeline postgres
+USER postgres
 WORKDIR /pipeline
 COPY . /pipeline/
 RUN chmod 777 /pipeline/run_services.sh
