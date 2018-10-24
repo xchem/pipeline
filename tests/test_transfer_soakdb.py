@@ -5,6 +5,7 @@ import unittest
 import sqlite3
 import json
 import datetime
+import shutil
 
 import pandas
 
@@ -148,7 +149,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         # remove log directories
-        os.removedirs('/pipeline/logs/')
+        shutil.rmtree('/pipeline/logs/')
 
     def setUp(self):
         pass
