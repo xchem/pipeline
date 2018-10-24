@@ -149,10 +149,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                   Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
 
         for m in models:
-            try:
                 m.objects.all().delete()
-            except:
-                continue
 
     # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
