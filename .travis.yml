@@ -9,8 +9,8 @@ before_install:
 install: docker build -t pipeline .
 script: docker run pipeline:latest /bin/bash -c "./run_services.sh"
 # Pipe the coverage data to Code Climate
-after_script:
-  - ./cc-test-reporter after-build -p /pipeline -t coverage.py --exit-code $TRAVIS_TEST_RESULT
+#after_script:
+#  - ./cc-test-reporter after-build -p /pipeline -t coverage.py --exit-code $TRAVIS_TEST_RESULT
 deploy:
   provider: pypi
   user: abradle
