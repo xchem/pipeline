@@ -189,6 +189,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles
     def test_transfer_fedids_files(self):
         print('test_transfer_fedids_files')
+        print(Crystal.objects.all())
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
                                                                   soak_db_filepath=self.filepath))
@@ -202,11 +203,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.transfer_outfile)
 
-        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
-                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
-
-        for m in models:
-            m.objects.all().delete()
+        print(Crystal.objects.all())
 
         print('\n')
 
@@ -214,6 +211,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
     def test_check_files(self):
         print('test_check_files')
+        print(Crystal.objects.all())
         check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
         self.assertTrue(check_files)
@@ -228,7 +226,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 0
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
-
+        print(Crystal.objects.all())
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
@@ -236,6 +234,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     # NB: Checks that data has actually been transfered by looking for lab entry, so have to emulate that too
     def test_check_files_changed(self):
         print('test_check_files_changed')
+        print(Crystal.objects.all())
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -268,18 +267,13 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 1 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 1)
-
-        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
-                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
-
-        for m in models:
-            m.objects.all().delete()
-
+        print(Crystal.objects.all())
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
     def test_transfer_changed_datafile(self):
         print('test_transfer_changed_datafile')
+        print(Crystal.objects.all())
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -316,12 +310,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.newfile_outfile)
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
-
-        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
-                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
-
-        for m in models:
-            m.objects.all().delete()
-            
+        print(Crystal.objects.all())
         print('\n')
 
