@@ -272,13 +272,13 @@ class TransferChangedDataFile(luigi.Task):
                                     obj.delete()
                         hit.delete()
 
-            else:
-                print('MAIN TABLE DOES NOT EXIST!')
-
             soakdb_query.delete()
 
             out, err, proposal = db_functions.pop_soakdb(self.data_file)
             db_functions.pop_proposals(proposal)
+
+        else:
+            print('MAIN TABLE DOES NOT EXIST!')
 
         transfer_file(self.data_file)
 
