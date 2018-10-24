@@ -328,7 +328,10 @@ class FindSearchPaths(luigi.Task):
         soak_db_files = []
 
         for path in paths:
-            search_path = path.split('database')
+            if 'database' not in path:
+                search_path = path.split('processing')
+            else:
+                search_path = path.split('database')
             if len(search_path) > 1:
                 search_paths.append(search_path[0])
                 soak_db_files.append(str('database' + search_path[1]))
