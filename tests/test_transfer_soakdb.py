@@ -64,7 +64,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
         print(modification_dates)
 
-        self.AssertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
+        self.assertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
 
     def test_soakdb_query(self):
         results = soakdb_query(self.db)
@@ -72,7 +72,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         print(results_json)
         print(self.json_file)
 
-        self.AssertEqual(results_json, self.json_file)
+        self.assertEqual(results_json, self.json_file)
 
     # NB: requires a soakdb object exists for the data file
     # def test_transfer_file(self):
