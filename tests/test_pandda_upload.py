@@ -25,7 +25,7 @@ class TestFindLogs(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        shutil.rmtree('/pipeline/logs')
 
     # tasks: FindSoakDBFiles -> FindSearchPaths
     def test_find_search_paths(self):
