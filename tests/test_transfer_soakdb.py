@@ -68,7 +68,8 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
     def test_soakdb_query(self):
         results = soakdb_query(self.db)
-        results_json = json.dumps(results)
+        results_list = [dict(ix) for ix in results]
+        results_json = json.dumps(results_list)
         print(results_json)
         print(self.json_file)
 
