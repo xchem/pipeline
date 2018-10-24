@@ -8,4 +8,4 @@ pg_ctl -D db_files -l logfile start
 createdb test_xchem
 python manage.py makemigrations xchem_db
 python manage.py migrate xchem_db
-coverage run python -m unittest -v tests/test_transfer_soakdb.py
+coverage run -m unittest -v tests/test_transfer_soakdb.py
