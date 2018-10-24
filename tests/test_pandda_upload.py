@@ -19,7 +19,8 @@ class TestFindLogs(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        pass
+        # create log directories
+        os.makedirs('/pipeline/logs/soakDBfiles')
 
     @classmethod
     def tearDownClass(cls):
