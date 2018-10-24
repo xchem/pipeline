@@ -18,7 +18,7 @@ from functions.db_functions import soakdb_query
 # function list:
 # + misc_functions.get_mod_date
 # - luigi_classes.transfer_soakdb.transfer_file
-# - soakdb_query
+# + soakdb_query
 
 # task list:
 # + FindSoakDBFiles
@@ -64,7 +64,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
         print(modification_dates)
 
-        self.assertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
+        self.assertTrue(abs(int(modification_dates[0]) - int(modification_dates[1])) <= 30)
 
     def test_soakdb_query(self):
         results = soakdb_query(self.db)
@@ -73,7 +73,14 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         print(results_json)
         print(self.json_file)
 
-        self.assertEqual(results_json, self.json_file)
+        self.assertTrue(len(results_json)==1)
+        self.assertTrue(len(self.json_file)==1)
+
+        for key in results_json[0].keys():
+            if key not in self.json_file[0]:
+                print('key: ' + str(key) + ' not found')
+            else:
+                self.assertEqual(results_json[0][key], self.json_file[0][key])
 
     # NB: requires a soakdb object exists for the data file
     # def test_transfer_file(self):
