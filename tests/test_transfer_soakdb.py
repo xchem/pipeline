@@ -52,7 +52,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
         # write json to sqlite file
         conn = sqlite3.connect(cls.db)
-        df = pandas.DataFrame.from_dict(json_file)
+        df = pandas.DataFrame.from_dict(cls.json_file)
         df.to_sql("mainTable", conn, if_exists='replace')
         conn.close()
 
@@ -62,6 +62,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
     def test_mod_date(self):
         os.system('touch ' + self.tmp_file)
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
+        print(modification_dates)
 
         self.AssertTrue(abs(modification_dates[0] - modification_dates[1]) <= 30)
 
@@ -99,6 +100,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     transfer_outfile = date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt')
     checkfiles_outfile = date.strftime('logs/checked_files/files_%Y%m%d%H.checked')
     modification_date = get_mod_date(os.path.join(filepath, db_file_name))
+    print(str('mdate: ' + modification_date))
     newfile_outfile = str(os.path.join(filepath, db_file_name) + '_' + str(modification_date) + '.transferred')
 
     @classmethod
