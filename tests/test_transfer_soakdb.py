@@ -60,13 +60,16 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         pass
 
     def test_mod_date(self):
+        print('test_mod_date')
         os.system('touch ' + self.tmp_file)
         modification_dates = [datetime.datetime.now().strftime('%Y%m%d%H%M%S'), get_mod_date(self.tmp_file)]
         print(modification_dates)
 
         self.assertTrue(abs(int(modification_dates[0]) - int(modification_dates[1])) <= 30)
+        print('\n')
 
     def test_soakdb_query(self):
+        print('test_soakdb_query')
         results = soakdb_query(self.db)
         results_list = [dict(ix) for ix in results]
         print(results_list)
@@ -81,6 +84,8 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
             else:
                 print('checking ' + str(key) + '...')
                 self.assertEqual(results_list[0][key], self.json_file[0][key])
+
+        print('\n')
 
     # NB: requires a soakdb object exists for the data file
     # def test_transfer_file(self):
@@ -154,6 +159,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
     # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
+        print('test_findsoakdb')
         # Run the FindSoakDBFiles task
         find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.filepath, date=self.date))
         # find the output file according to the task
@@ -168,8 +174,11 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check the text in the output file is as expected
         self.assertEqual(output_text, self.db)
 
+        print('\n')
+
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles
     def test_transfer_fedids_files(self):
+        print('test_transfer_fedids_files')
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
                                                                   soak_db_filepath=self.filepath))
@@ -183,9 +192,12 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.transfer_outfile)
 
+        print('\n')
+
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
     def test_check_files(self):
+        print('test_check_files')
         check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
         output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
         self.assertTrue(check_files)
@@ -200,11 +212,13 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 0
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
+        print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: dump json into soakdb model to emulate existing record, check that status picked up as 1 (changed)
     # NB: Checks that data has actually been transfered by looking for lab entry, so have to emulate that too
     def test_check_files_changed(self):
+        print('test_check_files_changed')
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -238,8 +252,11 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the status of the soakdb file has been set to 1 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 1)
 
+        print('\n')
+
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
     def test_transfer_changed_datafile(self):
+        print('test_transfer_changed_datafile')
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -275,3 +292,5 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.newfile_outfile)
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
+        print('\n')
+
