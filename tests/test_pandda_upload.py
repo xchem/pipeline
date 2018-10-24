@@ -52,7 +52,7 @@ class TestFindLogs(unittest.TestCase):
 
     def test_find_pandda_info_function(self):
         search_path = '/pipeline/tests/data/'
-        file_list = pf.find_log_files(search_path).rstrip()
+        file_list = pf.find_log_files(search_path).split('\n')
 
         self.assertTrue(file_list.sorted() ==
                         glob.glob('/pipeline/tests/data/processing/analysis/panddas/logs/*.log').sorted())
