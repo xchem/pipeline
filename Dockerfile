@@ -17,7 +17,7 @@ RUN chown postgres /coverage.xml
 
 # create a 'pipeline' directory, and add everything from the current repo into it
 RUN mkdir /pipeline
-RUN chown -R /pipeline postgres
+RUN chown -R postgres /pipeline
 USER postgres
 WORKDIR /pipeline
 COPY . /pipeline/
