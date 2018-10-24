@@ -1,6 +1,7 @@
 import os
 import shutil
 import unittest
+import glob
 
 import datetime
 
@@ -51,7 +52,10 @@ class TestFindLogs(unittest.TestCase):
 
     def test_find_pandda_info_function(self):
         search_path = '/pipeline/tests/data/'
-        print(pf.find_log_files(search_path))
+        file_list = pf.find_log_files(search_path).rstrip()
+
+        self.assertTrue(file_list.sorted() ==
+                        glob.glob('/pipeline/tests/data/processing/analysis/panddas/logs/*.log').sorted())
 
 
 
