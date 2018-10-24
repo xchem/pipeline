@@ -69,14 +69,13 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
     def test_soakdb_query(self):
         results = soakdb_query(self.db)
         results_list = [dict(ix) for ix in results]
-        results_json = json.dumps(results_list)
-        print(results_json)
+        print(results_list)
         print(self.json_file)
 
-        self.assertTrue(len(results_json)==1)
+        self.assertTrue(len(results_list)==1)
         self.assertTrue(len(self.json_file)==1)
 
-        for key in results_json[0].keys():
+        for key in results_list[0].keys():
             if key not in self.json_file[0]:
                 print('key: ' + str(key) + ' not found')
             else:
