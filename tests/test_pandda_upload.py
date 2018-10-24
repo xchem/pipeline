@@ -6,7 +6,7 @@ import datetime
 
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import *
-from test_functions import run_luigi_worker
+from .test_functions import run_luigi_worker
 
 
 class TestFindLogs(unittest.TestCase):
