@@ -231,7 +231,7 @@ class TransferChangedDataFile(luigi.Task):
 
         if maint_exists == 1:
             soakdb_query = SoakdbFiles.objects.get(filename=self.data_file)
-
+            print(soakdb_query)
             # for pandda file finding
             split_path = self.data_file.split('database')
             search_path = split_path[0]
