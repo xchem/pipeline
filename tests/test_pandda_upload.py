@@ -12,7 +12,7 @@ from .test_functions import run_luigi_worker
 class TestFindLogs(unittest.TestCase):
     date = datetime.datetime.now()
     search_path = '/pipeline/tests/data/*'
-    sdb_filepath = '/pipeline/tests/data/soakdb_files/'
+    sdb_filepath = '/pipeline/tests/data/processing/'
     db_file_name = 'soakDBDataFile.sqlite'
     db = os.path.join(sdb_filepath, db_file_name)
     findsoakdb_outfile = date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt')
