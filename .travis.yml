@@ -10,7 +10,8 @@ install: docker build -t pipeline .
 script: docker run pipeline:latest /bin/bash -c "./run_services.sh"
 # Pipe the coverage data to Code Climate
 after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - coverage xml
+  - if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
 deploy:
   provider: pypi
   user: abradle
