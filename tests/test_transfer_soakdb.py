@@ -135,8 +135,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         # create log directories
-        os.remove('/pipeline/logs/soakDBfiles')
-        os.remove('/pipeline/logs/transfer_logs')
+        os.removedirs('/pipeline/logs/soakDBfiles')
+        os.removedirs('/pipeline/logs/transfer_logs')
 
     def tearDown(self):
         output_files = [self.findsoakdb_outfile, self.transfer_outfile, self.checkfiles_outfile]
