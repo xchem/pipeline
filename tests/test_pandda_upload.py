@@ -1,13 +1,11 @@
-import os
+import glob
 import shutil
 import unittest
-import glob
-
-import datetime
 
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import *
 from .test_functions import run_luigi_worker
+from xchem_db.models import PanddaRun, PanddaAnalysis
 
 
 class TestFindLogs(unittest.TestCase):
@@ -28,6 +26,10 @@ class TestFindLogs(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree('/pipeline/logs')
+
+    def tearDown(self):
+        PanddaRun.objects.all().delete()
+        PanddaAnalysis.objects.all().delete()
 
     # tasks: FindSoakDBFiles -> FindSearchPaths
     def test_find_search_paths(self):
@@ -78,7 +80,31 @@ class TestFindLogs(unittest.TestCase):
         self.assertEqual(Error, False)
 
     def test_add_pandda_run(self):
-        pass
+        log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
+        pver = '0.2.12-dev'
+        input_dir = '/pipeline/tests/data/processing/analysis/initial_model/*'
+        output_dir = '/pipeline/tests/data/processing/analysis/panddas'
+        sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
+        events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
+
+        add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
+                                                pver=pver,
+                                                input_dir=input_dir,
+                                                output_dir=output_dir,
+                                                sites_file=sites_file,
+                                                events_file=events_file))
+
+        outfile = AddPanddaRun(log_file=log_file,
+                               pver=pver,
+                               input_dir=input_dir,
+                               output_dir=output_dir,
+                               sites_file=sites_file,
+                               events_file=events_file).output().path
+
+        self.assertTrue(add_run)
+        self.assertTrue(os.path.isfile(outfile))
+
+
 
 
     # def test_find_pandda_logs(self):
