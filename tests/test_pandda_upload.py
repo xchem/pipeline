@@ -106,6 +106,12 @@ class TestFindLogs(unittest.TestCase):
 
         os.remove(outfile)
 
+    def test_add_pandda_sites(self):
+        pass
+
+    def test_add_pandda_events(self):
+        pass
+
 
 
 
