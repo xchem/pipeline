@@ -124,5 +124,7 @@ class TestFindLogs(unittest.TestCase):
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
         soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
 
+        pass
+
     def test_add_pandda_events(self):
         pass
