@@ -78,6 +78,7 @@ class TestFindLogs(unittest.TestCase):
         self.assertEqual(Error, False)
 
     def test_add_pandda_run(self):
+        pass
 
 
     # def test_find_pandda_logs(self):
