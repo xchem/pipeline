@@ -107,7 +107,7 @@ class TestFindLogs(unittest.TestCase):
 
         pandda_run_out = PanddaRun.objects.all()
 
-        self.assertTrue(len(pandda_run_out == 1))
+        self.assertTrue(len(pandda_run_out[0] == 1))
 
         p = pandda_run_out.values()[0]
 
