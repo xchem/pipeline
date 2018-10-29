@@ -62,20 +62,23 @@ class TestFindLogs(unittest.TestCase):
         pver, input_dir, output_dir, sites_file, events_file, Error = pf.get_files_from_log(log_file)
 
         # 0.2.12-dev
-        # /dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/*
-        # /dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas
+        # /pipeline/tests/data/processing/analysis/initial_model/*
+        # /pipeline/tests/data/processing/analysis/panddas
         # /pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
         # /pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
         # False
 
         self.assertEqual(pver, '0.2.12-dev')
-        self.assertEqual(input_dir, '/dls/labxchem/data/2018/lb18145-71/processing/analysis/initial_model/*')
-        self.assertEqual(output_dir, '/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas')
+        self.assertEqual(input_dir, '/pipeline/tests/data/processing/analysis/initial_model/*')
+        self.assertEqual(output_dir, '/pipeline/tests/data/processing/analysis/panddas')
         self.assertEqual(sites_file,
                          '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv')
         self.assertEqual(events_file,
                          '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv')
         self.assertEqual(Error, False)
+
+    def test_add_pandda_run(self):
+
 
     # def test_find_pandda_logs(self):
     #     find_logs = run_luigi_worker(FindPanddaLogs(
