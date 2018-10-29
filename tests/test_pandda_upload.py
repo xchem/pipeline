@@ -1,7 +1,7 @@
 import glob
 import shutil
 import unittest
-
+from django.forms.models import model_to_dict
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import *
 from .test_functions import run_luigi_worker
@@ -87,6 +87,14 @@ class TestFindLogs(unittest.TestCase):
         sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
 
+        expected_dict = {'input_dir': '/pipeline/tests/data/processing/analysis/initial_model/*',
+                         # ignore this for now
+                         # 'pandda_analysis': '',
+                         'pandda_log': '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log',
+                         'pandda_version': '0.2.12-dev',
+                         'sites_file': '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv',
+                         'events_file': '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'}
+
         add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
                                                 pver=pver,
                                                 input_dir=input_dir,
@@ -101,13 +109,29 @@ class TestFindLogs(unittest.TestCase):
                                sites_file=sites_file,
                                events_file=events_file).output().path
 
+        pandda_run_out = PanddaRun.objects.all()
+
+        self.assertTrue(len(pandda_run_out == 1))
+
+        p = model_to_dict(pandda_run_out[0])
+
+        self.assertDictEqual(p, expected_dict)
+
         self.assertTrue(add_run)
         self.assertTrue(os.path.isfile(outfile))
 
         os.remove(outfile)
 
     def test_add_pandda_sites(self):
-        pass
+        log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
+        output_dir = '/pipeline/tests/data/processing/analysis/panddas'
+        input_dir = '/pipeline/tests/data/processing/analysis/initial_model/*'
+        pver = '0.2.12-dev'
+        sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
+        events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
+        soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
+
+
 
     def test_add_pandda_events(self):
         pass

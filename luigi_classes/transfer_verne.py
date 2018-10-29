@@ -56,7 +56,6 @@ class TransferDirectory(luigi.Task):
                     sftp.stat(str(self.remote_root + f_path))
                 except FileNotFoundError:
                     sftp.mkdir(str(self.remote_root + f_path))
-                    #mode=775)
 
         # set up scp protocol and recursively push the directories across
         scp = SCPClient(ssh.get_transport())
@@ -229,12 +228,12 @@ class TransferByTargetList(luigi.Task):
     def run(self):
         outfiles = [p.path for p in self.input()]
 
-        for f in outfiles:
+        for o in outfiles:
             print(int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')))
-            print(int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')))
+            print(int(datetime.datetime.strptime(get_mod_date(o), '%Y%m%d%H%M%S').strftime('%Y%m%d%H%M')))
 
             if int(datetime.datetime.strptime(self.timestamp, '%Y-%m-%dT%H').strftime('%Y%m%d%H%M')) - \
-                    int(datetime.datetime.strptime(get_mod_date(f), ('%Y%m%d%H%M%S')).strftime('%Y%m%d%H%M')) <= 130:
+                    int(datetime.datetime.strptime(get_mod_date(o), '%Y%m%d%H%M%S').strftime('%Y%m%d%H%M')) <= 130:
                 with self.output().open('w') as f:
                     f.write('')
 

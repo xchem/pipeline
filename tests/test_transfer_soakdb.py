@@ -1,18 +1,19 @@
-import os
-import unittest
-import sqlite3
 import json
-import datetime
+import os
 import shutil
+import sqlite3
+import unittest
 
+import datetime
 import pandas
 
+from functions.db_functions import soakdb_query
+from functions.misc_functions import get_mod_date
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
     TransferNewDataFile, transfer_file
-from .test_functions import run_luigi_worker
 from xchem_db.models import *
-from functions.misc_functions import get_mod_date
-from functions.db_functions import soakdb_query
+from .test_functions import run_luigi_worker
+
 
 # function list:
 # + misc_functions.get_mod_date
@@ -81,8 +82,8 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         print(results_list)
         print(self.json_file)
 
-        self.assertTrue(len(results_list)==1)
-        self.assertTrue(len(self.json_file)==1)
+        self.assertTrue(len(results_list) == 1)
+        self.assertTrue(len(self.json_file) == 1)
 
         for key in results_list[0].keys():
             if key not in self.json_file[0].keys():
@@ -138,7 +139,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         cls.modification_date = get_mod_date(os.path.join(cls.filepath, cls.db_file_name))
         print(str('mdate: ' + cls.modification_date))
         cls.newfile_outfile = str(os.path.join(cls.filepath, cls.db_file_name)
-                              + '_' + str(cls.modification_date) + '.transferred')
+                                  + '_' + str(cls.modification_date) + '.transferred')
 
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
