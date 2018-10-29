@@ -56,6 +56,7 @@ class TestFindLogs(unittest.TestCase):
         globbed = [x for x in glob.glob('/pipeline/tests/data/processing/analysis/panddas/logs/*.log') if x != '']
         self.assertTrue(sorted(file_list) == sorted(globbed))
 
+    # requires mock outfile, as paths don't exist in test environment
     def test_get_files_from_log_function(self):
         log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
         pver, input_dir, output_dir, sites_file, events_file, Error = pf.get_files_from_log(log_file)

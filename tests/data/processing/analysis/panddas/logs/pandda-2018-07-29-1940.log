@@ -30849,16 +30849,16 @@ Datasets that will not be analysed: 198
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                      Running Grid Setup                                      ###
@@ -36357,33 +36357,33 @@ Datasets that will not be analysed: 198
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                     Generating summary graphs for non-rejected datasets                      ###
 ############################################## <~~~> ###############################################
 
 -> crystal variables and data quality histograms
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_rfactors.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_global_rmsd_to_ref.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_axes.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_angles.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_volumes.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_rfactors.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_global_rmsd_to_ref.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_axes.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_angles.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_cell_volumes.png
 -> writing wilson plots of input and scaled data
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_unscaled_wilson_rmsds.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_scaled_wilson_rmsds.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_unscaled_wilson_plots.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_scaled_wilson_plots.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_unscaled_wilson_rmsds.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_scaled_wilson_rmsds.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_unscaled_wilson_plots.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/dataset_summary_graphs/dataset_scaled_wilson_plots.png
 
 ############################################## <~~~> ###############################################
 ###                             Generating individual dataset graphs                             ###
@@ -37079,8 +37079,8 @@ After Truncation - Reflections per dataset: 131550
 After Truncation - Resolution Range: 1.50533853299-1.52032277033
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.52A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.52A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.52A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.52A-truncated_data_wilson_plot.png
 
 ############################################## <~~~> ###############################################
 ###                   Performing statistical density characterisation at 1.52A                   ###
@@ -37788,16 +37788,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -37868,8 +37868,8 @@ After Truncation - Reflections per dataset: 118480
 After Truncation - Resolution Range: 1.52982160737-1.57432433604
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.57A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.57A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.57A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.57A-truncated_data_wilson_plot.png
 
 ############################################## <~~~> ###############################################
 ###                   Performing statistical density characterisation at 1.57A                   ###
@@ -38718,16 +38718,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -38802,8 +38802,8 @@ After Truncation - Reflections per dataset: 107384
 After Truncation - Resolution Range: 1.60689024329-1.62322605277
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.62A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.62A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.62A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.62A-truncated_data_wilson_plot.png
 
 ############################################## <~~~> ###############################################
 ###                   Performing statistical density characterisation at 1.62A                   ###
@@ -40028,16 +40028,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -40096,8 +40096,8 @@ After Truncation - Reflections per dataset: 96100
 After Truncation - Resolution Range: 1.66583165437-1.67418100669
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.67A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.67A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.67A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.67A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 74 electron density maps @ 1.67A
 ------------------------------------->>>
@@ -41175,16 +41175,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -41238,8 +41238,8 @@ After Truncation - Reflections per dataset: 88764
 After Truncation - Resolution Range: 1.69986948048-1.72572217674
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.72A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.72A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.72A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.72A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 50 electron density maps @ 1.72A
 ------------------------------------->>>
@@ -42047,16 +42047,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -42109,8 +42109,8 @@ After Truncation - Reflections per dataset: 82772
 After Truncation - Resolution Range: 1.74812392668-1.77538730209
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.77A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.77A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.77A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.77A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 41 electron density maps @ 1.77A
 ------------------------------------->>>
@@ -42941,16 +42941,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -42998,8 +42998,8 @@ After Truncation - Reflections per dataset: 76535
 After Truncation - Resolution Range: 1.80113177764-1.81346291804
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.82A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.82A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.82A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.82A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 18 electron density maps @ 1.82A
 ------------------------------------->>>
@@ -43340,16 +43340,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -43397,8 +43397,8 @@ After Truncation - Reflections per dataset: 70617
 After Truncation - Resolution Range: 1.82185159663-1.87520832031
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.87A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.87A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.87A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.87A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 16 electron density maps @ 1.87A
 ------------------------------------->>>
@@ -43728,16 +43728,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -43784,8 +43784,8 @@ After Truncation - Reflections per dataset: 64430
 After Truncation - Resolution Range: 1.89702132412-1.91981752589
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.92A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.92A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.92A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.92A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 11 electron density maps @ 1.92A
 ------------------------------------->>>
@@ -44024,16 +44024,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -44080,8 +44080,8 @@ After Truncation - Reflections per dataset: 61030
 After Truncation - Resolution Range: 1.92327844917-1.96781339216
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.97A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.97A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.97A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/1.97A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 11 electron density maps @ 1.97A
 ------------------------------------->>>
@@ -44417,16 +44417,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -44475,8 +44475,8 @@ After Truncation - Reflections per dataset: 54306
 After Truncation - Resolution Range: 1.99981237076-2.01866570944
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.02A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.02A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.02A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.02A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 22 electron density maps @ 2.02A
 ------------------------------------->>>
@@ -44945,16 +44945,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -44999,8 +44999,8 @@ After Truncation - Reflections per dataset: 54140
 After Truncation - Resolution Range: 2.02992291205-2.04460704657
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.07A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.07A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.07A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.07A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 4 electron density maps @ 2.07A
 ------------------------------------->>>
@@ -45199,16 +45199,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -45253,8 +45253,8 @@ After Truncation - Reflections per dataset: 50298
 After Truncation - Resolution Range: 2.09910329189-2.10117104589
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.12A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.12A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.12A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.12A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 2 electron density maps @ 2.12A
 ------------------------------------->>>
@@ -45383,16 +45383,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -45437,8 +45437,8 @@ After Truncation - Reflections per dataset: 46213
 After Truncation - Resolution Range: 2.14997415066-2.16311251675
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.17A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.17A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.17A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.17A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 4 electron density maps @ 2.17A
 ------------------------------------->>>
@@ -45596,16 +45596,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -45650,8 +45650,8 @@ After Truncation - Reflections per dataset: 43536
 After Truncation - Resolution Range: 2.20824792674-2.20949163559
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.22A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.22A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.22A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.22A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 2 electron density maps @ 2.22A
 ------------------------------------->>>
@@ -45852,16 +45852,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -45906,8 +45906,8 @@ After Truncation - Reflections per dataset: 39667
 After Truncation - Resolution Range: 2.26160397657-2.27882895265
 
 -> Writing truncated data plots
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.32A-truncated_data_resolutions.png
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.32A-truncated_data_wilson_plot.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.32A-truncated_data_resolutions.png
+	/pipeline/tests/data/processing/analysis/panddas/analyses/map_analysis_summary_graphs/2.32A-truncated_data_wilson_plot.png
 ------------------------------------->>>
 Loading 2 electron density maps @ 2.32A
 ------------------------------------->>>
@@ -46014,16 +46014,16 @@ Deleting old images:
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 
 ############################################## <~~~> ###############################################
 ###                                                                                              ###
@@ -46768,16 +46768,16 @@ Writing final output files
 
 ------------------------------------->>>
 Writing Dataset + Dataset Map Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_maps.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_masks.csv
 ------------------------------------->>>
 Writing COMBINED Dataset Summary CSV
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/all_datasets_info_combined.csv
 ------------------------------------->>>
 Writing Event+Site Summary CSVs
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-	/dls/labxchem/data/2018/lb18145-71/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
+	/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
 ------------------------------------->>>
 Datasets analysed at each resolution:
 ==================>                                                    39  1.52

@@ -1,5 +1,3 @@
-# DO NOT RUN IN PRODUCTION ENVIRONMENT!
-
 import os
 import unittest
 import sqlite3
