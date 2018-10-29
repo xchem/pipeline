@@ -105,7 +105,12 @@ class TestFindLogs(unittest.TestCase):
                                sites_file=sites_file,
                                events_file=events_file).output().path
 
+        self.assertTrue(add_run)
+        self.assertTrue(os.path.isfile(outfile))
+
         pandda_run_out = PanddaRun.objects.all()
+
+        print(pandda_run_out)
 
         self.assertTrue(len(pandda_run_out[0] == 1))
 
@@ -113,8 +118,7 @@ class TestFindLogs(unittest.TestCase):
 
         self.assertDictEqual(p, expected_dict)
 
-        self.assertTrue(add_run)
-        self.assertTrue(os.path.isfile(outfile))
+
 
         os.remove(outfile)
 
