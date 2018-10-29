@@ -120,8 +120,6 @@ class TestFindLogs(unittest.TestCase):
 
         self.assertDictEqual(p, expected_dict)
 
-
-
         os.remove(outfile)
 
     def test_add_pandda_sites(self):
