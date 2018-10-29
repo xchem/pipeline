@@ -132,7 +132,11 @@ class TestFindLogs(unittest.TestCase):
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
         soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
 
-        pass
+        add_sites = run_luigi_worker(AddPanddaSites(log_file=log_file, output_dir=output_dir, input_dir=input_dir,
+                                                    pver=pver, sites_file=sites_file, events_file=events_file,
+                                                    soakdb_filename=soakdb_filename))
+
+        self.assertTrue(add_sites)
 
     def test_add_pandda_events(self):
         pass
