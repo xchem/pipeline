@@ -4,6 +4,9 @@ import shutil
 import sqlite3
 import unittest
 
+import setup_django
+setup_django.setup_django()
+
 import datetime
 import pandas
 
@@ -13,7 +16,6 @@ from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndD
     TransferNewDataFile, transfer_file
 from xchem_db.models import *
 from .test_functions import run_luigi_worker
-
 
 # function list:
 # + misc_functions.get_mod_date

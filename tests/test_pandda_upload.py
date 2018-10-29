@@ -2,6 +2,9 @@ import glob
 import shutil
 import unittest
 
+import setup_django
+setup_django.setup_django()
+
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import *
 from .test_functions import run_luigi_worker
