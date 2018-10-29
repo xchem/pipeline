@@ -110,7 +110,7 @@ class TestFindLogs(unittest.TestCase):
         self.assertTrue(add_run)
         self.assertTrue(os.path.isfile(outfile))
 
-        pandda_run_out = PanddaRun.objects.all()
+        pandda_run_out = PanddaRun.objects.all().defer('pandda_analysis_id', 'id')
 
         print(pandda_run_out)
 
