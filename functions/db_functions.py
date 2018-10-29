@@ -284,7 +284,7 @@ def transfer_table(translate_dict, filename, model):
         compound_smiles = row['CompoundSMILES']
         crystal_name = row['CrystalName']
         target = row['ProteinName']
-        if not target or target == 'None':
+        if not target or target=='None':
             try:
                 target = str(row['CrystalName']).split('-')[0]
             except:

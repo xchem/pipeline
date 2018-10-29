@@ -160,10 +160,10 @@ class TestTransferSoakDBTasks(unittest.TestCase):
             if os.path.isfile(f):
                 os.remove(f)
 
-        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+        mods = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
                   Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
 
-        for m in models:
+        for m in mods:
                 m.objects.all().delete()
 
     # tasks: FindSoakDBFiles
