@@ -1,7 +1,7 @@
 import glob
 import shutil
 import unittest
-from django.forms.models import model_to_dict
+
 import functions.pandda_functions as pf
 from luigi_classes.transfer_pandda import *
 from .test_functions import run_luigi_worker
@@ -63,13 +63,6 @@ class TestFindLogs(unittest.TestCase):
         log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
         pver, input_dir, output_dir, sites_file, events_file, Error = pf.get_files_from_log(log_file)
 
-        # 0.2.12-dev
-        # /pipeline/tests/data/processing/analysis/initial_model/*
-        # /pipeline/tests/data/processing/analysis/panddas
-        # /pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv
-        # /pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv
-        # False
-
         self.assertEqual(pver, '0.2.12-dev')
         self.assertEqual(input_dir, '/pipeline/tests/data/processing/analysis/initial_model/*')
         self.assertEqual(output_dir, '/pipeline/tests/data/processing/analysis/panddas')
@@ -87,13 +80,13 @@ class TestFindLogs(unittest.TestCase):
         sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
 
-        expected_dict = {'input_dir': '/pipeline/tests/data/processing/analysis/initial_model/*',
+        expected_dict = {'input_dir': input_dir,
                          # ignore this for now
                          # 'pandda_analysis': '',
-                         'pandda_log': '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log',
-                         'pandda_version': '0.2.12-dev',
-                         'sites_file': '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv',
-                         'events_file': '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'}
+                         'pandda_log': log_file,
+                         'pandda_version': pver,
+                         'sites_file': sites_file,
+                         'events_file': events_file}
 
         add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
                                                 pver=pver,
@@ -113,7 +106,7 @@ class TestFindLogs(unittest.TestCase):
 
         self.assertTrue(len(pandda_run_out == 1))
 
-        p = model_to_dict(pandda_run_out[0])
+        p = pandda_run_out.values()[0]
 
         self.assertDictEqual(p, expected_dict)
 
@@ -130,8 +123,6 @@ class TestFindLogs(unittest.TestCase):
         sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
         soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
-
-
 
     def test_add_pandda_events(self):
         pass
