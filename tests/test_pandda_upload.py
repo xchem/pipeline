@@ -110,11 +110,11 @@ class TestFindLogs(unittest.TestCase):
         self.assertTrue(add_run)
         self.assertTrue(os.path.isfile(outfile))
 
-        pandda_run_out = PanddaRun.objects.all().defer('pandda_analysis_id', 'id')
+        pandda_run_out = PanddaRun.objects.all()
 
         print(pandda_run_out)
 
-        p = pandda_run_out.values()[0]
+        p = pandda_run_out.values()[0].defer('pandda_analysis_id', 'id')
 
         self.assertDictEqual(p, expected_dict)
 
