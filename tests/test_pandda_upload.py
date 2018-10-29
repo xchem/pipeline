@@ -101,10 +101,10 @@ class TestFindLogs(unittest.TestCase):
                                sites_file=sites_file,
                                events_file=events_file).output().path
 
-        print(outfile)
-
         self.assertTrue(add_run)
         self.assertTrue(os.path.isfile(outfile))
+
+        os.remove(outfile)
 
 
 
