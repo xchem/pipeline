@@ -75,6 +75,7 @@ class TestFindLogs(unittest.TestCase):
                          '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv')
         self.assertEqual(Error, False)
 
+    # tasks: AddPanddaRun
     def test_add_pandda_run(self):
         log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
         pver = '0.2.12-dev'
@@ -123,6 +124,7 @@ class TestFindLogs(unittest.TestCase):
 
         os.remove(outfile)
 
+    # tasks: AddPanddaRun -> AddPanddaSites
     def test_add_pandda_sites(self):
         log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
         output_dir = '/pipeline/tests/data/processing/analysis/panddas'
@@ -138,5 +140,6 @@ class TestFindLogs(unittest.TestCase):
 
         self.assertTrue(add_sites)
 
+    # tasks: AddPanddaRun -> AddPanddaSites -> AddPanddaEvents
     def test_add_pandda_events(self):
         pass
