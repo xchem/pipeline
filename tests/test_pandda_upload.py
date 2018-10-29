@@ -114,8 +114,6 @@ class TestFindLogs(unittest.TestCase):
 
         print(pandda_run_out)
 
-        self.assertTrue(len(pandda_run_out[0] == 1))
-
         p = pandda_run_out.values()[0]
 
         self.assertDictEqual(p, expected_dict)
