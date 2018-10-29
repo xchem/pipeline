@@ -114,7 +114,10 @@ class TestFindLogs(unittest.TestCase):
 
         print(pandda_run_out)
 
-        p = pandda_run_out.values()[0].defer('pandda_analysis_id', 'id')
+        p = pandda_run_out.values()[0]
+
+        p.pop('pandda_analysis_id', None)
+        p.pop('id', None)
 
         self.assertDictEqual(p, expected_dict)
 
