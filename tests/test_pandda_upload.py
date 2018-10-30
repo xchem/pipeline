@@ -181,12 +181,12 @@ class TestFindLogs(unittest.TestCase):
                     print('checking site ' + str(site.site))
                     print(site.site_aligned_centroid_x)
                     print(e['site_aligned_centroid_x'])
-                    self.assertTrue(site.site_aligned_centroid_x == e['site_aligned_centroid_x'])
-                    self.assertTrue(site.site_aligned_centroid_y == e['site_aligned_centroid_y'])
-                    self.assertTrue(site.site_aligned_centroid_z == e['site_aligned_centroid_z'])
-                    self.assertTrue(site.site_native_centroid_x == e['site_native_centroid_x'])
-                    self.assertTrue(site.site_native_centroid_y == e['site_native_centroid_y'])
-                    self.assertTrue(site.site_native_centroid_z == e['site_native_centroid_z'])
+                    self.assertAlmostEqual(site.site_aligned_centroid_x, e['site_aligned_centroid_x'])
+                    self.assertAlmostEqual(site.site_aligned_centroid_y, e['site_aligned_centroid_y'])
+                    self.assertAlmostEqual(site.site_aligned_centroid_z, e['site_aligned_centroid_z'])
+                    self.assertAlmostEqual(site.site_native_centroid_x, e['site_native_centroid_x'])
+                    self.assertAlmostEqual(site.site_native_centroid_y, e['site_native_centroid_y'])
+                    self.assertAlmostEqual(site.site_native_centroid_z, e['site_native_centroid_z'])
 
     # tasks: AddPanddaRun -> AddPanddaSites -> AddPanddaEvents
     def test_add_pandda_events(self):
