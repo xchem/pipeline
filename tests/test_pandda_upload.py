@@ -138,7 +138,53 @@ class TestFindLogs(unittest.TestCase):
                                                     pver=pver, sites_file=sites_file, events_file=events_file,
                                                     soakdb_filename=soakdb_filename))
 
+        # pandda_run = PanddaRun.objects.get(pandda_version=pver, input_dir=input_dir, output_dir=output_dir,
+        #                                    sites_file=sites_file, events_file=events_file)
+
+        expected_dict_list = [{'site': 1,
+                               'site_aligned_centroid_x': 52.909413898078185,
+                               'site_aligned_centroid_y': 20.337635571713246,
+                               'site_aligned_centroid_z': 74.14146271183921,
+                               'site_native_centroid_x': -15.008586101921821,
+                               'site_native_centroid_y': -13.92636442828675,
+                               'site_native_centroid_z': -9.229537288160785},
+                              {'site': 2,
+                               'site_aligned_centroid_x': 44.62633606595177,
+                               'site_aligned_centroid_y': 61.57702270198425,
+                               'site_aligned_centroid_z': 30.21147546335008,
+                               'site_native_centroid_x': -23.291663934048238,
+                               'site_native_centroid_y': 27.313022701984252,
+                               'site_native_centroid_z': -53.15952453664991},
+                              {'site': 3,
+                               'site_aligned_centroid_x': 63.82825288518422,
+                               'site_aligned_centroid_y': 39.14411041241565,
+                               'site_aligned_centroid_z': 83.73403465162072,
+                               'site_native_centroid_x': -4.089747114815786,
+                               'site_native_centroid_y': 4.880110412415654,
+                               'site_native_centroid_z': 0.36303465162072257},
+                              {'site': 4,
+                               'site_aligned_centroid_x': 35.824162276595246,
+                               'site_aligned_centroid_y': 41.70498907010381,
+                               'site_aligned_centroid_z': 21.66540760968199,
+                               'site_native_centroid_x': -32.09383772340476,
+                               'site_native_centroid_y': 7.440989070103811,
+                               'site_native_centroid_z': -61.705592390318}
+                              ]
+
         self.assertTrue(add_sites)
+
+        pandda_sites = PanddaSite.objects.all()
+
+        for site in pandda_sites:
+            for e in expected_dict_list:
+                if site.site == e['site']:
+                    print('checking site ' + str(site.site))
+                    self.assertTrue(site.site_aligned_centroid_x == e['site_aligned_centroid_x'])
+                    self.assertTrue(site.site_aligned_centroid_y == e['site_aligned_centroid_y'])
+                    self.assertTrue(site.site_aligned_centroid_z == e['site_aligned_centroid_z'])
+                    self.assertTrue(site.site_native_centroid_x == e['site_native_centroid_x'])
+                    self.assertTrue(site.site_native_centroid_y == e['site_native_centroid_y'])
+                    self.assertTrue(site.site_native_centroid_z == e['site_native_centroid_z'])
 
     # tasks: AddPanddaRun -> AddPanddaSites -> AddPanddaEvents
     def test_add_pandda_events(self):
