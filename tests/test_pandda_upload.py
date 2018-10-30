@@ -138,9 +138,6 @@ class TestFindLogs(unittest.TestCase):
                                                     pver=pver, sites_file=sites_file, events_file=events_file,
                                                     soakdb_filename=soakdb_filename))
 
-        # pandda_run = PanddaRun.objects.get(pandda_version=pver, input_dir=input_dir, output_dir=output_dir,
-        #                                    sites_file=sites_file, events_file=events_file)
-
         expected_dict_list = [{'site': 1,
                                'site_aligned_centroid_x': 52.909413898078185,
                                'site_aligned_centroid_y': 20.337635571713246,
@@ -187,6 +184,9 @@ class TestFindLogs(unittest.TestCase):
                     self.assertAlmostEqual(site.site_native_centroid_x, e['site_native_centroid_x'])
                     self.assertAlmostEqual(site.site_native_centroid_y, e['site_native_centroid_y'])
                     self.assertAlmostEqual(site.site_native_centroid_z, e['site_native_centroid_z'])
+
+        os.remove('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.sites.done')
+        os.remove('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.run.done')
 
     # tasks: AddPanddaRun -> AddPanddaSites -> AddPanddaEvents
     def test_add_pandda_events(self):
