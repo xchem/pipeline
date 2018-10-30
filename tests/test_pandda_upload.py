@@ -177,10 +177,10 @@ class TestFindLogs(unittest.TestCase):
 
         for site in pandda_sites:
             for e in expected_dict_list:
-                print(site.site)
-                print(e['site'])
                 if site.site == e['site']:
                     print('checking site ' + str(site.site))
+                    print(site.site_aligned_centroid_x)
+                    print(e['site_aligned_centroid_x'])
                     self.assertTrue(site.site_aligned_centroid_x == e['site_aligned_centroid_x'])
                     self.assertTrue(site.site_aligned_centroid_y == e['site_aligned_centroid_y'])
                     self.assertTrue(site.site_aligned_centroid_z == e['site_aligned_centroid_z'])
