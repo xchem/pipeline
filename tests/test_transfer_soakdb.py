@@ -151,6 +151,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         shutil.copy(cls.db, '/pipeline/tests/data/processing/database/')
 
+        cls.db = os.path.join('/pipeline/tests/data/processing/database/', cls.db_file_name)
+
     @classmethod
     def tearDownClass(cls):
         # remove log directories
