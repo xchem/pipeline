@@ -15,7 +15,18 @@ import pandas as pd
 
 from functions import db_functions
 from functions import misc_functions
+from functions.pandda_functions import *
 from xchem_db.models import *
+
+from dateutil.parser import parse
+
+
+def is_date(string):
+    try:
+        parse(string)
+        return True
+    except ValueError:
+        return False
 
 
 def transfer_file(data_file):
@@ -235,15 +246,26 @@ class TransferChangedDataFile(luigi.Task):
             split_path = self.data_file.split('database')
             search_path = split_path[0]
             sdb_file = str('database' + split_path[1])
-            # soakdb_filepath = self.soak_db_filepath
 
             # remove pandda data transfer done file
             if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
                 os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
-            # .sites.done
-            # .events.done
-            # .run.done
+            log_files = find_log_files(search_path)
+
+            for log in log_files:
+                if os.path.isfile(str(log + '.run.done')):
+                    os.removedirs(str(log + '.run.done'))
+                if os.path.isfile(str(log + '.sites.done')):
+                    os.removedirs(str(log + '.sites.done'))
+                if os.path.isfile(str(log + '.events.done')):
+                    os.removedirs(str(log + '.events.done'))
+
+            find_logs_out_files = glob.glob(str(search_path + '*.txt'))
+
+            for f in find_logs_out_files:
+                if is_date(f.replace(search_path,'').replace('.txt', '')):
+                    os.removedirs(f)
 
             crystals = Crystal.objects.filter(visit=soakdb_query)
 
