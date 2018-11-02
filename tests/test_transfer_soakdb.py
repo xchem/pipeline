@@ -13,7 +13,8 @@ import pandas
 from functions.db_functions import soakdb_query
 from functions.misc_functions import get_mod_date
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
-    TransferNewDataFile, transfer_file
+    TransferNewDataFile, transfer_file, TransferChangedDataFile
+from luigi_classes.transfer_pandda import AddPanddaRun
 from xchem_db.models import *
 from .test_functions import run_luigi_worker
 
@@ -300,8 +301,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate check files
         os.system('touch ' + self.checkfiles_outfile)
 
-        transfer_new = run_luigi_worker(TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath))
-        output_file = TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.filepath))
+        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
 
         # check the task output exists
         self.assertTrue(os.path.isfile(output_file))
@@ -313,4 +314,24 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
         print(Crystal.objects.all())
         print('\n')
+
+    def test_pandda_deleted_changed_file(self):
+        log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
+        pver = '0.2.12-dev'
+        input_dir = '/pipeline/tests/data/processing/analysis/initial_model/*'
+        output_dir = '/pipeline/tests/data/processing/analysis/panddas'
+        sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
+        events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
+
+        add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
+                                                pver=pver,
+                                                input_dir=input_dir,
+                                                output_dir=output_dir,
+                                                sites_file=sites_file,
+                                                events_file=events_file))
+
+        pass
+
+
+
 
