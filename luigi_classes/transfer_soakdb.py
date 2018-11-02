@@ -236,6 +236,7 @@ class TransferChangedDataFile(luigi.Task):
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
+        print(self.data_file)
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
 
@@ -252,6 +253,7 @@ class TransferChangedDataFile(luigi.Task):
                 os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
             log_files = find_log_files(search_path)
+            print(log_files)
 
             for log in log_files:
                 if os.path.isfile(str(log + '.run.done')):
