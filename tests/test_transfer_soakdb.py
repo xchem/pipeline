@@ -367,8 +367,13 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate check files
         os.system('touch ' + self.checkfiles_outfile)
 
-        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
         output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath).output().path
+
+        if os.path.isfile(output_file):
+            os.remove(output_file)
+            
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
+
 
         # check the task output exists
         self.assertTrue(os.path.isfile(output_file))
