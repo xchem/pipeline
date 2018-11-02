@@ -14,7 +14,7 @@ from functions.db_functions import soakdb_query
 from functions.misc_functions import get_mod_date
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
     TransferNewDataFile, transfer_file, TransferChangedDataFile
-from luigi_classes.transfer_pandda import AddPanddaRun
+from luigi_classes.transfer_pandda import AddPanddaRun, AddPanddaSites
 from xchem_db.models import *
 from .test_functions import run_luigi_worker
 
@@ -328,6 +328,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         output_dir = '/pipeline/tests/data/processing/analysis/panddas'
         sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
         events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
+        soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
 
         add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
                                                 pver=pver,
@@ -336,8 +337,53 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                                                 sites_file=sites_file,
                                                 events_file=events_file))
 
-        pass
+        add_sites = run_luigi_worker(AddPanddaSites(log_file=log_file, output_dir=output_dir, input_dir=input_dir,
+                                                    pver=pver, sites_file=sites_file, events_file=events_file,
+                                                    soakdb_filename=soakdb_filename))
 
+        print(Crystal.objects.all())
+        # create mock entry in soakdb table to represent file with 0 modification date
+        soak_db_dump = {'filename': self.db,
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': self.date.strftime("%Y%m%d%H%M%S")
+                        }
+
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        transfer_file(self.db)
+
+        sdb[0].status = 1
+        sdb[0].save()
+
+        # emulate soakdb task
+        os.system('touch ' + self.findsoakdb_outfile)
+
+        with open(self.findsoakdb_outfile, 'w') as f:
+            f.write(self.db)
+
+        # emulate transfer task
+        os.system('touch ' + self.transfer_outfile)
+
+        # emulate check files
+        os.system('touch ' + self.checkfiles_outfile)
+
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
+        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath).output().path
+
+        # check the task output exists
+        self.assertTrue(os.path.isfile(output_file))
+        # check the transfer task has run (by worker)
+        self.assertTrue(transfer_new)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.newfile_outfile)
+        # check that the status of the soakdb file has been set to 2 (changed)
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
+        print(Crystal.objects.all())
+        print('\n')
+
+        self.assertTrue(os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.run.done')==False)
+        self.assertTrue(
+            os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.sites.done')==False)
 
 
 
