@@ -252,7 +252,7 @@ class TransferChangedDataFile(luigi.Task):
             if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
                 os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
-            log_files = find_log_files(search_path)
+            log_files = find_log_files(search_path).rsplit()
             print(log_files)
 
             for log in log_files:
