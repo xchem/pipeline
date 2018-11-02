@@ -111,7 +111,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
 class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
-    filepath = '/pipeline/tests/data/soakdb_files/'
+    filepath = '/pipeline/tests/data/processing/database'
     db_file_name = 'soakDBDataFile.sqlite'
     json_file_name = 'soakDBDataFile.json'
 
