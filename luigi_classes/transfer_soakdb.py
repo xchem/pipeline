@@ -256,6 +256,7 @@ class TransferChangedDataFile(luigi.Task):
             print(log_files)
 
             for log in log_files:
+                print(str(log + '.run.done'))
                 if os.path.isfile(str(log + '.run.done')):
                     os.removedirs(str(log + '.run.done'))
                 if os.path.isfile(str(log + '.sites.done')):
