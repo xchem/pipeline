@@ -142,8 +142,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         cls.modification_date = get_mod_date(os.path.join(cls.filepath, cls.db_file_name))
         print(str('mdate: ' + cls.modification_date))
-        cls.newfile_outfile = str(os.path.join(cls.filepath, cls.db_file_name)
-                                  + '_' + str(cls.modification_date) + '.transferred')
+
 
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
@@ -152,6 +151,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         shutil.copy(cls.db, '/pipeline/tests/data/processing/database/')
 
         cls.db = os.path.join('/pipeline/tests/data/processing/database/', cls.db_file_name)
+
+        cls.newfile_outfile = str(cls.db + '_' + str(cls.modification_date) + '.transferred')
 
     @classmethod
     def tearDownClass(cls):
