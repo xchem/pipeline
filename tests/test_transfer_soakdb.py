@@ -111,7 +111,8 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
 class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
-    filepath = '/pipeline/tests/data/processing/database'
+    filepath = '/pipeline/tests/data/soakdb_files/'
+    db_filepath = '/pipeline/tests/data/processing/database/'
     db_file_name = 'soakDBDataFile.sqlite'
     json_file_name = 'soakDBDataFile.json'
 
@@ -148,6 +149,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         os.makedirs('/pipeline/logs/soakDBfiles')
         os.makedirs('/pipeline/logs/transfer_logs')
 
+        shutil.copy(cls.db, '/pipeline/tests/data/processing/database/')
+
     @classmethod
     def tearDownClass(cls):
         # remove log directories
@@ -173,9 +176,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     def test_findsoakdb(self):
         print('test_findsoakdb')
         # Run the FindSoakDBFiles task
-        find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.filepath, date=self.date))
+        find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.db_filepath, date=self.date))
         # find the output file according to the task
-        output_file = FindSoakDBFiles(filepath=self.filepath).output().path
+        output_file = FindSoakDBFiles(filepath=self.db_filepath).output().path
         # read the output file from the task
         output_text = open(output_file, 'r').read().rstrip()
 
@@ -194,9 +197,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         print(Crystal.objects.all())
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
-                                                                  soak_db_filepath=self.filepath))
+                                                                  soak_db_filepath=self.db_filepath))
 
-        output_file = TransferAllFedIDsAndDatafiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        output_file = TransferAllFedIDsAndDatafiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
 
         # check the find files task has run (by output)
         self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
@@ -214,8 +217,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     def test_check_files(self):
         print('test_check_files')
         print(Crystal.objects.all())
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
-        output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.db_filepath))
+        output_file = CheckFiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
         self.assertTrue(check_files)
 
         # check the find files task has run (by output)
@@ -259,8 +262,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate transfer task
         os.system('touch ' + self.transfer_outfile)
 
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
-        output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.db_filepath))
+        output_file = CheckFiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
         self.assertTrue(check_files)
 
         # check the transfer task has run (by worker)
@@ -301,8 +304,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate check files
         os.system('touch ' + self.checkfiles_outfile)
 
-        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.filepath))
-        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
+        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath).output().path
 
         # check the task output exists
         self.assertTrue(os.path.isfile(output_file))
