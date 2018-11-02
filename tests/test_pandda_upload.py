@@ -115,7 +115,7 @@ class TestFindLogs(unittest.TestCase):
 
         print(pandda_run_out)
 
-        p = pandda_run_out.values()
+        p = pandda_run_out[0].values()
 
         p.pop('pandda_analysis_id', None)
         p.pop('id', None)
