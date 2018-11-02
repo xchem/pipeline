@@ -258,17 +258,17 @@ class TransferChangedDataFile(luigi.Task):
             for log in log_files:
                 print(str(log + '.run.done'))
                 if os.path.isfile(str(log + '.run.done')):
-                    os.removedirs(str(log + '.run.done'))
+                    os.remove(str(log + '.run.done'))
                 if os.path.isfile(str(log + '.sites.done')):
-                    os.removedirs(str(log + '.sites.done'))
+                    os.remove(str(log + '.sites.done'))
                 if os.path.isfile(str(log + '.events.done')):
-                    os.removedirs(str(log + '.events.done'))
+                    os.remove(str(log + '.events.done'))
 
             find_logs_out_files = glob.glob(str(search_path + '*.txt'))
 
             for f in find_logs_out_files:
                 if is_date(f.replace(search_path,'').replace('.txt', '')):
-                    os.removedirs(f)
+                    os.remove(f)
 
             crystals = Crystal.objects.filter(visit=soakdb_query)
 
