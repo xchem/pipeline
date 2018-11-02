@@ -329,5 +329,5 @@ def get_lig_interactions(strucid, ligand, outfile):
         try:
             json.dump(json_string, f)
         except:
-            outfile=None
+            outfile = None
     return outfile

@@ -1,12 +1,13 @@
+import glob
+import os
+
+import datetime
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 
-from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles, PanddaEvent, ProasisHits, ProasisOut
-from functions.misc_functions import get_mod_date
 from functions.db_functions import check_file_status
-import datetime
-import os
-import glob
+from functions.misc_functions import get_mod_date
+from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles, PanddaEvent, ProasisHits, ProasisOut
 
 
 def targets(request):
@@ -82,8 +83,6 @@ def get_crystal_info(request):
     crystals = Crystal.objects.filter(target__target_name=submission)
 
     data = []
-
-
 
     for crys in crystals:
         refinements = Refinement.objects.filter(crystal_name=crys, outcome__gte=4)

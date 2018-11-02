@@ -15,7 +15,18 @@ import pandas as pd
 
 from functions import db_functions
 from functions import misc_functions
+from functions.pandda_functions import *
 from xchem_db.models import *
+
+from dateutil.parser import parse
+
+
+def is_date(string):
+    try:
+        parse(string)
+        return True
+    except ValueError:
+        return False
 
 
 def transfer_file(data_file):
@@ -225,6 +236,7 @@ class TransferChangedDataFile(luigi.Task):
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
+        print(self.data_file)
         # delete all fields from soakdb filename
         maint_exists = db_functions.check_table_sqlite(self.data_file, 'mainTable')
 
@@ -235,15 +247,28 @@ class TransferChangedDataFile(luigi.Task):
             split_path = self.data_file.split('database')
             search_path = split_path[0]
             sdb_file = str('database' + split_path[1])
-            # soakdb_filepath = self.soak_db_filepath
 
             # remove pandda data transfer done file
             if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
                 os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
-            # .sites.done
-            # .events.done
-            # .run.done
+            log_files = find_log_files(search_path).rsplit()
+            print(log_files)
+
+            for log in log_files:
+                print(str(log + '.run.done'))
+                if os.path.isfile(str(log + '.run.done')):
+                    os.remove(str(log + '.run.done'))
+                if os.path.isfile(str(log + '.sites.done')):
+                    os.remove(str(log + '.sites.done'))
+                if os.path.isfile(str(log + '.events.done')):
+                    os.remove(str(log + '.events.done'))
+
+            find_logs_out_files = glob.glob(str(search_path + '*.txt'))
+
+            for f in find_logs_out_files:
+                if is_date(f.replace(search_path,'').replace('.txt', '')):
+                    os.remove(f)
 
             crystals = Crystal.objects.filter(visit=soakdb_query)
 

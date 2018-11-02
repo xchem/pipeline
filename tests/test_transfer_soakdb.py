@@ -1,20 +1,22 @@
-# DO NOT RUN IN PRODUCTION ENVIRONMENT!
-
-import os
-import unittest
-import sqlite3
 import json
-import datetime
+import os
 import shutil
+import sqlite3
+import unittest
 
+import setup_django
+setup_django.setup_django()
+
+import datetime
 import pandas
 
-from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
-    TransferNewDataFile, transfer_file
-from .test_functions import run_luigi_worker
-from xchem_db.models import *
-from functions.misc_functions import get_mod_date
 from functions.db_functions import soakdb_query
+from functions.misc_functions import get_mod_date
+from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
+    TransferNewDataFile, transfer_file, TransferChangedDataFile
+from luigi_classes.transfer_pandda import AddPanddaRun, AddPanddaSites
+from xchem_db.models import *
+from .test_functions import run_luigi_worker
 
 # function list:
 # + misc_functions.get_mod_date
@@ -83,8 +85,8 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         print(results_list)
         print(self.json_file)
 
-        self.assertTrue(len(results_list)==1)
-        self.assertTrue(len(self.json_file)==1)
+        self.assertTrue(len(results_list) == 1)
+        self.assertTrue(len(self.json_file) == 1)
 
         for key in results_list[0].keys():
             if key not in self.json_file[0].keys():
@@ -110,6 +112,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 class TestTransferSoakDBTasks(unittest.TestCase):
     # filepath where test data is (in docker container) and filenames for soakdb
     filepath = '/pipeline/tests/data/soakdb_files/'
+    db_filepath = '/pipeline/tests/data/processing/database/'
     db_file_name = 'soakDBDataFile.sqlite'
     json_file_name = 'soakDBDataFile.json'
 
@@ -139,12 +142,17 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         cls.modification_date = get_mod_date(os.path.join(cls.filepath, cls.db_file_name))
         print(str('mdate: ' + cls.modification_date))
-        cls.newfile_outfile = str(os.path.join(cls.filepath, cls.db_file_name)
-                              + '_' + str(cls.modification_date) + '.transferred')
+
 
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
         os.makedirs('/pipeline/logs/transfer_logs')
+
+        shutil.copy(cls.db, '/pipeline/tests/data/processing/database/')
+
+        cls.db = os.path.join('/pipeline/tests/data/processing/database/', cls.db_file_name)
+
+        cls.newfile_outfile = str(cls.db + '_' + str(cls.modification_date) + '.transferred')
 
     @classmethod
     def tearDownClass(cls):
@@ -155,25 +163,25 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         pass
 
     def tearDown(self):
-        output_files = [self.findsoakdb_outfile, self.transfer_outfile, self.checkfiles_outfile]
+        output_files = [self.findsoakdb_outfile, self.transfer_outfile, self.checkfiles_outfile, self.newfile_outfile]
 
         for f in output_files:
             if os.path.isfile(f):
                 os.remove(f)
 
-        models = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
+        mods = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
                   Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
 
-        for m in models:
+        for m in mods:
                 m.objects.all().delete()
 
     # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
         print('test_findsoakdb')
         # Run the FindSoakDBFiles task
-        find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.filepath, date=self.date))
+        find_file = run_luigi_worker(FindSoakDBFiles(filepath=self.db_filepath, date=self.date))
         # find the output file according to the task
-        output_file = FindSoakDBFiles(filepath=self.filepath).output().path
+        output_file = FindSoakDBFiles(filepath=self.db_filepath).output().path
         # read the output file from the task
         output_text = open(output_file, 'r').read().rstrip()
 
@@ -192,9 +200,9 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         print(Crystal.objects.all())
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
-                                                                  soak_db_filepath=self.filepath))
+                                                                  soak_db_filepath=self.db_filepath))
 
-        output_file = TransferAllFedIDsAndDatafiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        output_file = TransferAllFedIDsAndDatafiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
 
         # check the find files task has run (by output)
         self.assertTrue(os.path.isfile(self.findsoakdb_outfile))
@@ -212,8 +220,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
     def test_check_files(self):
         print('test_check_files')
         print(Crystal.objects.all())
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
-        output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.db_filepath))
+        output_file = CheckFiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
         self.assertTrue(check_files)
 
         # check the find files task has run (by output)
@@ -257,8 +265,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate transfer task
         os.system('touch ' + self.transfer_outfile)
 
-        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.filepath))
-        output_file = CheckFiles(date=self.date, soak_db_filepath=self.filepath).output().path
+        check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.db_filepath))
+        output_file = CheckFiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
         self.assertTrue(check_files)
 
         # check the transfer task has run (by worker)
@@ -299,8 +307,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # emulate check files
         os.system('touch ' + self.checkfiles_outfile)
 
-        transfer_new = run_luigi_worker(TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath))
-        output_file = TransferNewDataFile(data_file=self.db, soak_db_filepath=self.filepath).output().path
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
+        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath).output().path
 
         # check the task output exists
         self.assertTrue(os.path.isfile(output_file))
@@ -312,4 +320,75 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
         print(Crystal.objects.all())
         print('\n')
+
+    def test_pandda_deleted_changed_file(self):
+        log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
+        pver = '0.2.12-dev'
+        input_dir = '/pipeline/tests/data/processing/analysis/initial_model/*'
+        output_dir = '/pipeline/tests/data/processing/analysis/panddas'
+        sites_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv'
+        events_file = '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv'
+        soakdb_filename = '/pipeline/tests/data/database/soakDBDataFile.sqlite'
+
+        add_run = run_luigi_worker(AddPanddaRun(log_file=log_file,
+                                                pver=pver,
+                                                input_dir=input_dir,
+                                                output_dir=output_dir,
+                                                sites_file=sites_file,
+                                                events_file=events_file))
+
+        add_sites = run_luigi_worker(AddPanddaSites(log_file=log_file, output_dir=output_dir, input_dir=input_dir,
+                                                    pver=pver, sites_file=sites_file, events_file=events_file,
+                                                    soakdb_filename=soakdb_filename))
+
+        print(Crystal.objects.all())
+        # create mock entry in soakdb table to represent file with 0 modification date
+        soak_db_dump = {'filename': self.db,
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': self.date.strftime("%Y%m%d%H%M%S")
+                        }
+
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
+
+        transfer_file(self.db)
+
+        sdb[0].status = 1
+        sdb[0].save()
+
+        # emulate soakdb task
+        os.system('touch ' + self.findsoakdb_outfile)
+
+        with open(self.findsoakdb_outfile, 'w') as f:
+            f.write(self.db)
+
+        # emulate transfer task
+        os.system('touch ' + self.transfer_outfile)
+
+        # emulate check files
+        os.system('touch ' + self.checkfiles_outfile)
+
+        output_file = TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath).output().path
+
+        if os.path.isfile(output_file):
+            os.remove(output_file)
+
+        transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
+
+
+        # check the task output exists
+        self.assertTrue(os.path.isfile(output_file))
+        # check the transfer task has run (by worker)
+        self.assertTrue(transfer_new)
+        # check that the transfer task output is as expected
+        self.assertEqual(output_file, self.newfile_outfile)
+        # check that the status of the soakdb file has been set to 2 (changed)
+        self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
+        print(Crystal.objects.all())
+        print('\n')
+
+        self.assertTrue(os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.run.done')==False)
+        self.assertTrue(
+            os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.sites.done')==False)
+
+
 
