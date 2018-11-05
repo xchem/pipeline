@@ -22,18 +22,18 @@ class CutOutEvent(luigi.Task):
     def run(self):
         # convert to pdbqt with obabel
         obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('mol', 'pdb')
+        obConv.SetInAndOutFormats('mol2', 'pdb')
         mol = openbabel.OBMol()
 
         # read pdb and write pdbqt
         obConv.ReadFile(mol, self.mol_file)
-        obConv.WriteFile(mol, self.mol_file.replace('.mol', '.pdb'))
+        obConv.WriteFile(mol, self.mol_file.replace('.mol2', '.pdb'))
 
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s
             end
         eof
-        ''' % (self.mapin, self.mapout, self.mol_file.replace('.mol', '.pdb'), str(self.border))
+        ''' % (self.mapin, self.mapout, self.mol_file.replace('.mol2', '.pdb'), str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
