@@ -1,4 +1,5 @@
 import luigi
+import os
 import subprocess
 
 
@@ -9,6 +10,12 @@ class CutOutEvent(luigi.Task):
     mapout = luigi.Parameter()
     xyzin = luigi.Parameter()
     border = luigi.Parameter(default='6')
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.directory, self.mapout))
 
 
     def run(self):
@@ -21,9 +28,6 @@ class CutOutEvent(luigi.Task):
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
-        print(out)
-        print(err)
-        print(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'))
 
         if '(mapmask) - normal termination' not in out:
             raise Exception('mapmask failed!')
