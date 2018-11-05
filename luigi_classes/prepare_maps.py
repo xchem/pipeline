@@ -18,7 +18,7 @@ class CutOutEvent(luigi.Task):
         eof
         ''' % (self.mapin, self.mapout, self.xyzin)
 
-        process = subprocess.Popen(str(self.ssh_command + '"' + 'cd ' + self.directory + ';' + mapmask + '"'),
+        process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
         print(out)
