@@ -9,14 +9,15 @@ class CutOutEvent(luigi.Task):
     mapin = luigi.Parameter()
     mapout = luigi.Parameter()
     xyzin = luigi.Parameter()
+    border = luigi.Parameter(default='12')
 
 
     def run(self):
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-            border 12
+            border %s
             end
         eof
-        ''' % (self.mapin, self.mapout, self.xyzin)
+        ''' % (self.mapin, self.mapout, self.xyzin, str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
