@@ -24,3 +24,6 @@ class CutOutEvent(luigi.Task):
         print(out)
         print(err)
         print(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'))
+
+        if '(mapmask) - normal termination' not in out:
+            raise Exception('mapmask failed!')
