@@ -23,6 +23,7 @@ class CutOutEvent(luigi.Task):
         out, err = process.communicate()
         print(out)
         print(err)
+        print(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'))
 
         if err:
             raise Exception(err)
