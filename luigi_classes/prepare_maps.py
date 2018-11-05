@@ -1,5 +1,4 @@
 import luigi
-import os
 import subprocess
 
 
@@ -9,7 +8,7 @@ class CutOutEvent(luigi.Task):
     mapin = luigi.Parameter()
     mapout = luigi.Parameter()
     xyzin = luigi.Parameter()
-    border = luigi.Parameter(default='12')
+    border = luigi.Parameter(default='6')
 
 
     def run(self):
@@ -24,3 +23,6 @@ class CutOutEvent(luigi.Task):
         out, err = process.communicate()
         print(out)
         print(err)
+
+        if err:
+            raise Exception(err)
