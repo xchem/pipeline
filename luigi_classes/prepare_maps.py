@@ -7,9 +7,9 @@ import openbabel
 class CutOutEvent(luigi.Task):
     ssh_command = 'ssh uzw12877@nx.diamond.ac.uk'
     directory = luigi.Parameter()
-    mol_file = luigi.Parameter()
+    mapin = luigi.Parameter()
     mapout = luigi.Parameter()
-    xyzin = luigi.Parameter()
+    mol_file = luigi.Parameter()
     border = luigi.Parameter(default='6')
 
     def requires(self):
@@ -33,7 +33,7 @@ class CutOutEvent(luigi.Task):
             border %s
             end
         eof
-        ''' % (self.mol_file.replace('.mol', '.pdb'), self.mapout, self.xyzin, str(self.border))
+        ''' % (self.mapin, self.mapout, self.mol_file.replace('.mol', '.pdb'), str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
