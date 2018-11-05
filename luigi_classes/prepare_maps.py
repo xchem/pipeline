@@ -17,5 +17,5 @@ class CutOutEvent(luigi.Task):
         eof
         ''' % (self.mapin, self.mapout, self.xyzin)
 
-        os.system(str(self.ssh_command + ' && ' + 'cd ' + self.directory + ' && ' + mapmask))
+        os.system(str(self.ssh_command + '"' + 'cd ' + self.directory + ';' + mapmask + '"'))
         print(mapmask)
