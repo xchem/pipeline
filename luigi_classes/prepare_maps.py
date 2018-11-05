@@ -13,6 +13,6 @@ class CutOutEvent(luigi.Task):
             border 12
             end
         eof
-        ''' .format(self.mapin, self.mapout, self.xyzin)
+        ''' % (self.mapin, self.mapout, self.xyzin)
 
         print(mapmask)
