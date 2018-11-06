@@ -27,7 +27,7 @@ class CutOutEvent(luigi.Task):
 
         # read pdb and write pdbqt
         obConv.ReadFile(mol, os.path.join(self.directory, self.mol_file))
-        obConv.WriteFile(mol, os.path.join(self.directory, self.mol_file.replace('.mol', '.pdb')))
+        obConv.WriteFile(mol, os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
 
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s
@@ -39,7 +39,7 @@ class CutOutEvent(luigi.Task):
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
 
-        os.remove(os.path.join(self.directory, self.mol_file.replace('.mol', '.pdb')))
+        os.remove(os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
 
         if '(mapmask) - normal termination' not in out:
             raise Exception('mapmask failed!')
