@@ -39,7 +39,7 @@ class CutOutEvent(luigi.Task):
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
 
-        os.remove(os.path.join(self.directory, self.mol_file.replace('.mol', '.pdb')))
+        os.remove(os.path.join(self.directory, self.mol_file.replace('.mol2', '.pdb')))
 
         if '(mapmask) - normal termination' not in out:
             raise Exception('mapmask failed!')
