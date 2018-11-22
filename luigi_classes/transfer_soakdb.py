@@ -294,7 +294,7 @@ class TransferChangedDataFile(luigi.Task):
                                     for f in delete_files:
                                         if os.path.isfile(os.path.join(obj.root, obj.start, f)):
                                             os.remove(os.path.join(obj.root, obj.start, f))
-                                    obj.delete()
+                                obj.delete()
                         hit.delete()
 
             soakdb_query.delete()
