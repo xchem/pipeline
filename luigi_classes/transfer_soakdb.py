@@ -292,8 +292,8 @@ class TransferChangedDataFile(luigi.Task):
                                 if obj.root:
                                     delete_files = ['verne.transferred', 'PROPOSALS', 'VISITS', 'visits_proposals.done']
                                     for f in delete_files:
-                                    if os.path.isfile(os.path.join(obj.root, obj.start, f)):
-                                        os.remove(os.path.join(obj.root, obj.start, f))
+                                        if os.path.isfile(os.path.join(obj.root, obj.start, f)):
+                                            os.remove(os.path.join(obj.root, obj.start, f))
                                     obj.delete()
                         hit.delete()
 
