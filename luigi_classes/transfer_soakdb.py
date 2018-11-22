@@ -290,11 +290,10 @@ class TransferChangedDataFile(luigi.Task):
                         if ProasisOut.objects.filter(proasis=hit).exists:
                             for obj in ProasisOut.objects.filter(proasis=hit):
                                 if obj.root:
-                                    pth = os.path.join(obj.root, obj.start)
-                                    if os.path.isdir(pth):
-                                        shutil.rmtree(pth)
-                                    if os.path.isfile(os.path.join(obj.root, obj.start, 'verne.transferred')):
-                                        os.remove(os.path.join(obj.root, obj.start, 'verne.transferred'))
+                                    delete_files = ['verne.transferred', 'PROPOSALS', 'VISITS', 'visits_proposals.done']
+                                    for f in delete_files:
+                                    if os.path.isfile(os.path.join(obj.root, obj.start, f)):
+                                        os.remove(os.path.join(obj.root, obj.start, f))
                                     obj.delete()
                         hit.delete()
 
