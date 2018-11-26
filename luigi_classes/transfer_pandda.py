@@ -58,19 +58,35 @@ class AddPanddaSites(luigi.Task):
 
             print('Adding pandda site: ' + str(site))
 
-            pandda_site = PanddaSite.objects.get_or_create(pandda_run=run, site=site,
-                                                           site_aligned_centroid_x=aligned_centroid[
-                                                               0],
-                                                           site_aligned_centroid_y=aligned_centroid[
-                                                               1],
-                                                           site_aligned_centroid_z=aligned_centroid[
-                                                               2],
-                                                           site_native_centroid_x=native_centroid[
-                                                               0],
-                                                           site_native_centroid_y=native_centroid[
-                                                               1],
-                                                           site_native_centroid_z=native_centroid[
-                                                               2])[0]
+            try:
+                pandda_site = PanddaSite.objects.get_or_create(pandda_run=run, site=site,
+                                                               site_aligned_centroid_x=aligned_centroid[
+                                                                   0],
+                                                               site_aligned_centroid_y=aligned_centroid[
+                                                                   1],
+                                                               site_aligned_centroid_z=aligned_centroid[
+                                                                   2],
+                                                               site_native_centroid_x=native_centroid[
+                                                                   0],
+                                                               site_native_centroid_y=native_centroid[
+                                                                   1],
+                                                               site_native_centroid_z=native_centroid[
+                                                                   2])[0]
+            except IntegrityError:
+                pandda_site = PanddaSite.objects.get(pandda_run=run, site=site).update(
+                    site_aligned_centroid_x=aligned_centroid[
+                        0],
+                    site_aligned_centroid_y=aligned_centroid[
+                        1],
+                    site_aligned_centroid_z=aligned_centroid[
+                        2],
+                    site_native_centroid_x=native_centroid[
+                        0],
+                    site_native_centroid_y=native_centroid[
+                        1],
+                    site_native_centroid_z=native_centroid[
+                        2])
+
             pandda_site.save()
 
         with self.output().open('w') as f:
