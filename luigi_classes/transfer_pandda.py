@@ -48,7 +48,7 @@ class AddPanddaSites(luigi.Task):
         return luigi.LocalTarget(str(self.log_file + '.sites.done'))
 
     def run(self):
-        run = PanddaRun.objects.get(pandda_log=self.log_file)
+        run = PanddaRun.objects.get(pandda_log=str(self.log_file).rstrip())
         sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
 
         for i in range(0, len(sites_frame['site_idx'])):
