@@ -750,6 +750,19 @@ class UploadHit(luigi.Task):
                 proasis_bound_pdb = altconf_pdb_file
                 title = str(crystal_name + '_alt_' + self.altconf.replace(' ', ''))
 
+            elif unique_ligands[0][1:][0] != ' ':
+                lig = unique_ligands[0][1:]
+                newlines = ''
+                for line in open(proasis_bound_pdb, 'r'):
+                    if lig in line:
+                        line = line.replace(lig, str(' ' + lig[1:]))
+                    newlines += line
+
+                with open(proasis_bound_pdb.replace('.pdb', '_proasis.pdb'), 'w') as f:
+                    f.write(newlines)
+
+                proasis_bound_pdb = proasis_bound_pdb.replace('.pdb', '_proasis.pdb')
+
             # see /usr/local/Proasis2/utils/submitStructure.py for explanation
             submit_to_proasis = str("/usr/local/Proasis2/utils/submitStructure.py -d 'admin' -f " + "'" +
                                     str(proasis_bound_pdb) + "' -l '" + lig_string + "' -m " +
