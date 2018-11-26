@@ -5,6 +5,8 @@ import datetime
 import luigi
 import pandas as pd
 
+from django.db import IntegrityError
+
 from functions import pandda_functions
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 from xchem_db.models import *
