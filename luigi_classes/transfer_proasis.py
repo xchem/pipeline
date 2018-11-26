@@ -751,7 +751,7 @@ class UploadHit(luigi.Task):
                 title = str(crystal_name + '_alt_' + self.altconf.replace(' ', ''))
 
             elif unique_ligands[0][1:][0] != ' ':
-                lig = unique_ligands[0][1:]
+                lig = unique_ligands[0]
                 newlines = ''
                 for line in open(proasis_bound_pdb, 'r'):
                     if lig in line:
