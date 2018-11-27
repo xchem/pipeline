@@ -722,7 +722,8 @@ class UploadHit(luigi.Task):
             title = crystal_name
 
             # if there's an alternate conformation
-            if self.altconf:
+            # ignore for phenix refinements - weird
+            if self.altconf and 'PHENIX refinement' not in open(proasis_bound_pdb, 'r').read():
                 # set name for altconf pdb file
                 altconf_pdb_file = str(proasis_crystal_directory + proasis_bound_pdb.split('/')[-1].replace(
                     '.pdb', str('_' + self.altconf.replace(' ', '') + '.pdb')))
