@@ -92,7 +92,6 @@ class InitDBEntries(luigi.Task):
                                 # ligands identified by 'LIG', with preceeding '.' for alt conf letter
                                 lig_string = re.search(r".LIG.......", line).group()
                                 # just use lig string instead of separating into list items (to handle altconfs)
-                                # TODO: This has changed from a list of ['LIG','RES','ID'] to string. Check usage
                                 ligand_list.append(lig_string)
                             except:
                                 continue

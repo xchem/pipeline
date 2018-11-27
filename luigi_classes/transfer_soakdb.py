@@ -285,7 +285,7 @@ class TransferChangedDataFile(luigi.Task):
                                                                '_' + hit.modification_date + '*'))):
                             os.remove(path)
                         if os.path.isdir(proasis_crystal_directory):
-                            shutil.rmtree(os.path.join(proasis_crystal_directory))
+                            shutil.rmtree(os.path.join(proasis_crystal_directory), ignore_errors=True)
 
                         if ProasisOut.objects.filter(proasis=hit).exists:
                             for obj in ProasisOut.objects.filter(proasis=hit):
