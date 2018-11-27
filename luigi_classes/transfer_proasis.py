@@ -86,7 +86,8 @@ class InitDBEntries(luigi.Task):
                     pdb_file = open(bound_conf, 'r')
                     ligand_list = []
                     for line in pdb_file:
-                        if "LIG" in line:
+                        # ignore LIG in link for strange phenix format
+                        if "LIG" in line and 'LINK' not in line:
                             try:
                                 # ligands identified by 'LIG', with preceeding '.' for alt conf letter
                                 lig_string = re.search(r".LIG.......", line).group()
