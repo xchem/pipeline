@@ -337,7 +337,7 @@ class PanddaEventStats(models.Model):
     r_free = models.FloatField(blank=True, null=True)
     r_work = models.FloatField(blank=True, null=True)
     ref_rmsd = models.FloatField(blank=True, null=True)
-    wilson_scaled = models.FloatField(blank=True, null=True)
+    wilson_scaled_b = models.FloatField(blank=True, null=True)
     wilson_scaled_ln_dev = models.FloatField(blank=True, null=True)
     wilson_scaled_ln_dev_z = models.FloatField(blank=True, null=True)
     wilson_scaled_ln_rmsd = models.FloatField(blank=True, null=True)

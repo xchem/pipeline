@@ -202,6 +202,26 @@ class AddPanddaEvents(luigi.Task):
             f.write('')
 
 
+class AddPanddaEventStats(luigi.Task):
+    log_file = luigi.Parameter()
+    output_dir = luigi.Parameter()
+    input_dir = luigi.Parameter()
+    pver = luigi.Parameter()
+    sites_file = luigi.Parameter()
+    events_file = luigi.Parameter()
+    sdbfile = luigi.Parameter()
+
+    def requires(self):
+        return AddPanddaEvents(log_file=self.log_file, output_dir=self.output_dir, input_dir=self.input_dir,
+                               pver=self.pver, sites_file=self.sites_file, events_file=self.events_file,
+                               sdbfile=self.sdbfile)
+
+    def output(self):
+        return luigi.LocalTarget(str(self.log_file + '.events.stats.done'))
+
+    def run(self):
+        pass
+
 class AddPanddaRun(luigi.Task):
     log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
