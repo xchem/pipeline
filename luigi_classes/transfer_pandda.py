@@ -177,6 +177,13 @@ class AddPanddaEvents(luigi.Task):
 
                     pandda_event.save()
 
+                    event_stats_dict = pandda_functions.translate_event_stats(self.events_file, i)
+                    event_stats_dict['event'] = pandda_event
+
+                    pandda_event_stats = AddPanddaEventStats.objects.get_or_create(**event_stats_dict)[0]
+
+                    pandda_event_stats.save()
+
                     crystal.status = Crystal.PANDDA
                     crystal.save()
 
