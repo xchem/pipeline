@@ -293,6 +293,10 @@ class PanddaSite(models.Model):
         unique_together = ('pandda_run', 'site')
 
 
+class PanddaSiteStats(models.Model):
+    pass
+
+
 class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
@@ -315,6 +319,59 @@ class PanddaEvent(models.Model):
     class Meta:
         db_table = 'pandda_event'
         unique_together = ('site', 'event', 'crystal', 'pandda_run')
+
+
+class PanddaEventStats(models.Model):
+    event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
+    one_minus_bdc = models.FloatField(blank=True, null=True)
+    cluster_size = models.IntegerField(blank=True, null=True)
+    glob_corr_av_map = models.FloatField(blank=True, null=True)
+    glob_corr_mean_map = models.FloatField(blank=True, null=True)
+    loc_corr_av_map = models.FloatField(blank=True, null=True)
+    loc_corr_mean_map = models.FloatField(blank=True, null=True)
+    z_mean = models.FloatField(blank=True, null=True)
+    z_peak = models.FloatField(blank=True, null=True)
+    b_factor_scaled = models.FloatField(blank=True, null=True)
+    high_res = models.FloatField(blank=True, null=True)
+    low_res = models.FloatField(blank=True, null=True)
+    r_free = models.FloatField(blank=True, null=True)
+    r_work = models.FloatField(blank=True, null=True)
+    ref_rmsd = models.FloatField(blank=True, null=True)
+    wilson_scaled = models.FloatField(blank=True, null=True)
+    wilson_scaled_ln_dev = models.FloatField(blank=True, null=True)
+    wilson_scaled_ln_dev_z = models.FloatField(blank=True, null=True)
+    wilson_scaled_ln_rmsd = models.FloatField(blank=True, null=True)
+    wilson_scaled_ln_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_scaled_below_four_rmsd = models.FloatField(blank=True, null=True)
+    wilson_scaled_below_four_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_scaled_above_four_rmsd = models.FloatField(blank=True, null=True)
+    wilson_scaled_above_four_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_scaled_rmsd_all = models.FloatField(blank=True, null=True)
+    wilson_scaled_rmsd_all_z = models.FloatField(blank=True, null=True)
+    wilson_unscaled = models.FloatField(blank=True, null=True)
+    wilson_unscaled_ln_dev = models.FloatField(blank=True, null=True)
+    wilson_unscaled_ln_dev_z = models.FloatField(blank=True, null=True)
+    wilson_unscaled_ln_rmsd = models.FloatField(blank=True, null=True)
+    wilson_unscaled_ln_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_unscaled_below_four_rmsd = models.FloatField(blank=True, null=True)
+    wilson_unscaled_below_four_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_unscaled_above_four_rmsd = models.FloatField(blank=True, null=True)
+    wilson_unscaled_above_four_rmsd_z = models.FloatField(blank=True, null=True)
+    wilson_unscaled_rmsd_all = models.FloatField(blank=True, null=True)
+    wilson_unscaled_rmsd_all_z = models.FloatField(blank=True, null=True)
+    resolution = models.FloatField(blank=True, null=True)
+    map_uncertainty = models.FloatField(blank=True, null=True)
+    obs_map_mean = models.FloatField(blank=True, null=True)
+    obs_map_rms = models.FloatField(blank=True, null=True)
+    z_map_kurt = models.FloatField(blank=True, null=True)
+    z_map_mean = models.FloatField(blank=True, null=True)
+    z_map_skew = models.FloatField(blank=True, null=True)
+    z_map_std = models.FloatField(blank=True, null=True)
+    scl_map_mean = models.FloatField(blank=True, null=True)
+    scl_map_rms = models.FloatField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'pandda_event_stats'
 
 
 class ProasisPandda(models.Model):
