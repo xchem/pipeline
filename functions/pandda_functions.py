@@ -168,7 +168,7 @@ def translate_event_stats(event_csv, csv_row):
         'local_correlation_to_mean_map': 'loc_corr_mean_map',
         'z_mean': 'z_mean',
         'z_peak': 'z_peak',
-        'applied_b_factor_scaled': 'b_factor_scaled',
+        'applied_b_factor_scaling': 'b_factor_scaled',
         'high_resolution': 'high_res',
         'low_resolution': 'low_res',
         'r_free': 'r_free',
