@@ -909,11 +909,11 @@ class UploadHits(luigi.Task):
 
 
 class WriteBlackLists(luigi.Task):
-    date = luigi.DateParameter(default=datetime.datetime.now())
+    date = luigi.Parameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
 
     def requires(self):
-        return UploadHits(date=self.date, hit_directory=self.hit_directory)
+        pass
 
     def output(self):
         return luigi.LocalTarget('logs/blacklists.done')
