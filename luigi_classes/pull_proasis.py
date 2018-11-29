@@ -271,6 +271,18 @@ class CreateMolTwoFile(luigi.Task):
         return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.mol2')
 
     def run(self):
+
+        def obconv_method(self):
+            obConv = openbabel.OBConversion()
+            obConv.SetInAndOutFormats('mol', 'mol2')
+            # blank mol for ob
+            mol = openbabel.OBMol()
+            # read pdb and write mol
+            obConv.ReadFile(mol, self.input().path)
+            obConv.WriteFile(mol, self.output().path)
+            proasis_out.mol2 = self.output().path.split('/')[-1]
+            proasis_out.save()
+
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
@@ -287,15 +299,7 @@ class CreateMolTwoFile(luigi.Task):
 
         boron_matches = rd_mol.HasSubstructMatch(boron)
         if boron_matches:
-            obConv = openbabel.OBConversion()
-            obConv.SetInAndOutFormats('mol', 'mol2')
-            # blank mol for ob
-            mol = openbabel.OBMol()
-            # read pdb and write mol
-            obConv.ReadFile(mol, self.input().path)
-            obConv.WriteFile(mol, self.output().path)
-            proasis_out.mol2 = self.output().path.split('/')[-1]
-            proasis_out.save()
+            obconv_method(self)
 
         else:
             # get charge from mol file
@@ -308,7 +312,7 @@ class CreateMolTwoFile(luigi.Task):
             out, err = process.communicate()
             out = out.decode('ascii')
             if 'Error' in out:
-                raise Exception(out)
+                obconv_method(self)
             else:
                 print(out)
                 print(err)

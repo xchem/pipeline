@@ -32,24 +32,6 @@ def find_log_files(path):
 
 
 def get_files_from_log(log):
-    # return blank strings if info not found - to be handled in task:
-    #
-    # if Error:
-    #     with open(self.output().path, 'a') as f:
-    #         f.write('Error found in log file, will not run...')
-    #     raise Exception('Error found in log file, will not run...')
-    #
-    # if '0.1.' in pver:
-    #     with open(self.output().path, 'a') as f:
-    #         f.write('Pandda analyse run with old version (' + pver + '), please rerun!')
-    #     raise Exception('Pandda analyse run with old version (' + pver + '), please rerun!')
-    #
-    # if sites_file == '':
-    #     raise Exception('No sites file found in log: log=' + str(self.log_file) + ' pandda_version=' + pver)
-    #
-    # if events_file == '':
-    #     raise Exception('No events file found in log: log=' + str(self.log_file) + ' pandda_version=' + pver)
-    
     pver = ''
     input_dir = ''
     output_dir = ''
@@ -103,23 +85,6 @@ def get_sites_from_events(events_file):
         bdc.append(str(events_frame['1-BDC'][i]))
 
     return crystals, events, sites, bdc
-
-
-# def centroid_from_sites(sites_list, sites_file):
-#     # get dataframe from sites file
-#     sites_frame = pd.read_csv(sites_file)
-#
-#     # get indicies of sites from sites list, to decide where to pull centroids from
-#     indicies = [i for i, x in enumerate(sites_frame['site_idx']) if x in sites_list]
-#     sites = [x for i, x in enumerate(sites_frame['site_idx']) if x in sites_list]
-#     native_centroids = []
-#     aligned_centroids = []
-#
-#     for ind in indicies:
-#         native_centroids.append(sites_frame['native_centroid'][ind])
-#         aligned_centroids.append(sites_frame['centroid'][ind])
-#
-#     return native_centroids, aligned_centroids, indicies, sites
 
 
 def get_file_names(BDC, crystal, input_dir, output_dir, event):
@@ -191,3 +156,63 @@ def find_ligand_site_event(nx, ny, nz, ex, ey, ez, lig_strings, pandda_model_pat
     lig_centroid = lig_centres[ind]
 
     return ligand, lig_centroid, min_dist, event_displacement
+
+
+def translate_event_stats(event_csv, csv_row):
+    pandda_event_stats_trans = {
+        '1-BDC': 'one_minus_bdc',
+        'cluster_size': 'cluster_size',
+        'global_correlation_to_average_map': 'glob_corr_av_map',
+        'global_correlation_to_mean_map': 'glob_corr_mean_map',
+        'local_correlation_to_average_map': 'loc_corr_av_map',
+        'local_correlation_to_mean_map': 'loc_corr_mean_map',
+        'z_mean': 'z_mean',
+        'z_peak': 'z_peak',
+        'applied_b_factor_scaling': 'b_factor_scaled',
+        'high_resolution': 'high_res',
+        'low_resolution': 'low_res',
+        'r_free': 'r_free',
+        'r_work': 'r_work',
+        'rmsd_to_reference': 'ref_rmsd',
+        'scaled_wilson_B': 'wilson_scaled_b',
+        'scaled_wilson_ln_dev': 'wilson_scaled_ln_dev',
+        'scaled_wilson_ln_dev_z': 'wilson_scaled_ln_dev_z',
+        'scaled_wilson_ln_rmsd': 'wilson_scaled_ln_rmsd',
+        'scaled_wilson_ln_rmsd_z': 'wilson_scaled_ln_rmsd_z',
+        'scaled_wilson_rmsd_<4A': 'wilson_scaled_below_four_rmsd',
+        'scaled_wilson_rmsd_<4A_z': 'wilson_scaled_below_four_rmsd_z',
+        'scaled_wilson_rmsd_>4A': 'wilson_scaled_above_four_rmsd',
+        'scaled_wilson_rmsd_>4A_z': 'wilson_scaled_above_four_rmsd_z',
+        'scaled_wilson_rmsd_all': 'wilson_scaled_rmsd_all',
+        'scaled_wilson_rmsd_all_z': 'wilson_scaled_rmsd_all_z',
+        'unscaled_wilson_B': 'wilson_unscaled',
+        'unscaled_wilson_ln_dev': 'wilson_unscaled_ln_dev',
+        'unscaled_wilson_ln_dev_z': 'wilson_unscaled_ln_dev_z',
+        'unscaled_wilson_ln_rmsd': 'wilson_unscaled_ln_rmsd',
+        'unscaled_wilson_ln_rmsd_z': 'wilson_unscaled_ln_rmsd_z',
+        'unscaled_wilson_rmsd_<4A': 'wilson_unscaled_below_four_rmsd',
+        'unscaled_wilson_rmsd_<4A_z': 'wilson_unscaled_below_four_rmsd_z',
+        'unscaled_wilson_rmsd_>4A': 'wilson_unscaled_above_four_rmsd',
+        'unscaled_wilson_rmsd_>4A_z': 'wilson_unscaled_above_four_rmsd_z',
+        'unscaled_wilson_rmsd_all': 'wilson_unscaled_rmsd_all',
+        'unscaled_wilson_rmsd_all_z': 'wilson_unscaled_rmsd_all_z',
+        'analysed_resolution': 'resolution',
+        'map_uncertainty': 'map_uncertainty',
+        'obs_map_mean': 'obs_map_mean',
+        'obs_map_rms': 'obs_map_rms',
+        'z_map_kurt': 'z_map_kurt',
+        'z_map_mean': 'z_map_mean',
+        'z_map_skew': 'z_map_skew',
+        'z_map_std': 'z_map_std',
+        'scl_map_mean': 'scl_map_mean',
+        'scl_map_rms': 'scl_map_rms'
+    }
+
+    event_frame = pd.DataFrame.from_csv(event_csv)
+
+    out_dict = {}
+
+    for key in pandda_event_stats_trans.keys():
+        out_dict[pandda_event_stats_trans[key]] = event_frame[key][csv_row]
+
+    return out_dict
