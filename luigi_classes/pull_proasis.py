@@ -79,6 +79,8 @@ class GetCurated(luigi.Task):
                 self.output().path.split('/')[-1]), ''))[1:]
 
             proasis_out.save()
+        else:
+            raise Exception('no curated pdb file found!')
 
 
 class CreateApo(luigi.Task):
