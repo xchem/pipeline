@@ -200,7 +200,7 @@ def translate_event_stats(event_csv, csv_row):
         'map_uncertainty': 'map_uncertainty',
         'obs_map_mean': 'obs_map_mean',
         'obs_map_rms': 'obs_map_rms',
-        'z_map_kurt	': 'z_map_kurt',
+        'z_map_kurt': 'z_map_kurt',
         'z_map_mean': 'z_map_mean',
         'z_map_skew': 'z_map_skew',
         'z_map_std': 'z_map_std',
