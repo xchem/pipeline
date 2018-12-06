@@ -295,6 +295,7 @@ class TransferChangedDataFile(luigi.Task):
                                         if os.path.isfile(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-1]),
                                                                        f)):
                                             os.remove(os.path.join(obj.root, obj.start, f))
+                                    shutil.rmtree(os.path.join(obj.root, obj.start))
                                 obj.delete()
                         hit.delete()
 
