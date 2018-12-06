@@ -10,7 +10,7 @@ class CutOutEvent(luigi.Task):
     mapin = luigi.Parameter()
     mapout = luigi.Parameter()
     mol_file = luigi.Parameter()
-    border = luigi.Parameter(default='6')
+    border = luigi.Parameter(default='12')
 
     def requires(self):
         pass
@@ -38,8 +38,6 @@ class CutOutEvent(luigi.Task):
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
-
-        # os.remove(os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
 
         if '(mapmask) - normal termination' not in out:
             raise Exception('mapmask failed!')
