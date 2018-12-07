@@ -8,7 +8,6 @@ class CutOutEvent(luigi.Task):
     ssh_command = 'ssh uzw12877@nx.diamond.ac.uk'
     directory = luigi.Parameter()
     mapin = luigi.Parameter()
-    mapout = luigi.Parameter()
     mol_file = luigi.Parameter()
     border = luigi.Parameter(default='12')
 
@@ -16,16 +15,17 @@ class CutOutEvent(luigi.Task):
         pass
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(self.directory, self.mapout))
-
+        return luigi.LocalTarget(os.path.join(self.directory, self.mol_file.replace('.mol', '_pandda.map')))
 
     def run(self):
-        # convert to pdbqt with obabel
+        mapout = self.mol_file.replace('.mol', '_pandda.map')
+
+        # convert to pdb with obabel
         obConv = openbabel.OBConversion()
         obConv.SetInAndOutFormats('mol', 'pdb')
         mol = openbabel.OBMol()
 
-        # read pdb and write pdbqt
+        # read mol and write pdb
         obConv.ReadFile(mol, os.path.join(self.directory, self.mol_file))
         obConv.WriteFile(mol, os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
 
@@ -33,7 +33,7 @@ class CutOutEvent(luigi.Task):
             border %s
             end
         eof
-        ''' % (self.mapin, self.mapout, self.mol_file.replace('.mol', '.pdb'), str(self.border))
+        ''' % (self.mapin, mapout, self.mol_file.replace('.mol', '_mol.pdb'), str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + self.directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
