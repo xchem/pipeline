@@ -25,7 +25,7 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     target_name = proasis_hit.crystal_name.target.target_name
 
     return luigi.LocalTarget(os.path.join(
-        hit_directory,  # /dls/science/groups/proasis/LabXChem
+        hit_directory,
         target_name.upper(),  # /TARGET
         str(crystal_name + '_' + str(ligid)),  # /CRYSTAL_N
         str(crystal_name + str('_' + str(ligid) + extension))  # /CRYSTAL_N<extension>
@@ -208,6 +208,71 @@ class CreateMolFile(luigi.Task):
         obConv.WriteFile(mol, self.output().path)
         # add mol file to proasis out entry
         proasis_out.mol = self.output().path.split('/')[-1]
+        proasis_out.save()
+
+
+class CutOutEvent(luigi.Task):
+    # standard parameters
+    hit_directory = luigi.Parameter()
+    crystal_id = luigi.Parameter()
+    refinement_id = luigi.Parameter()
+    ligand = luigi.Parameter()
+    ligid = luigi.Parameter()
+    altconf = luigi.Parameter()
+
+    # cutting specific parameters
+    ssh_command = 'ssh uzw12877@nx.diamond.ac.uk'
+    mapin = luigi.Parameter()
+    border = luigi.Parameter(default='12')
+
+    def requires(self):
+        return CreateMolFile(
+            hit_directory=self.hit_directory, crystal_id=self.crystal_id, refinement_id=self.refinement_id,
+            ligand=self.ligand, ligid=self.ligid, altconf=self.altconf
+        )
+
+    def output(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_pandda.map')
+
+    def run(self):
+        proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
+                                              refinement_id=self.refinement_id,
+                                              altconf=self.altconf)
+        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
+                                             crystal=proasis_hit.crystal_name,
+                                             ligand=self.ligand,
+                                             ligid=self.ligid)
+
+        directory = '/'.join(self.output().path.split('/')[:-1])
+
+        # convert to pdb with obabel
+        obConv = openbabel.OBConversion()
+        obConv.SetInAndOutFormats('mol', 'pdb')
+        mol = openbabel.OBMol()
+
+        # read mol and write pdb
+        obConv.ReadFile(mol, self.input().path)
+        obConv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
+
+        # use mapmask to cut out event map in reference to ligand (mol)
+        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+            border %s
+            end
+        eof
+        ''' % (self.mapin, self.output().path, self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
+
+        process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
+                                   shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        out, err = process.communicate()
+
+        if '(mapmask) - normal termination' not in out:
+            raise Exception('mapmask failed!')
+
+        # proasis_out.event = self.output().path.split('/')[-1]
+        proasis_out.pmap = self.output().path.split('/')[-1]
         proasis_out.save()
 
 
@@ -516,6 +581,7 @@ class GetOutFiles(luigi.Task):
         ligids = []
         alts = []
         hit_dirs = []
+        maps = []
 
         # for each hit in the list
         for h in proasis_hits:
@@ -524,6 +590,9 @@ class GetOutFiles(luigi.Task):
             # set ligid to 0 - auto assigned by increments of one for each group
             ligid = 0
 
+            # pandda events to cut out and upload
+            event_group = PanddaEvent.ojbects.filter(crystal=h.crystal_name)
+
             # for each hit in the group (all altconfs)
             for hit in hit_group:
                 # turn ligand list into actual list
@@ -531,6 +600,12 @@ class GetOutFiles(luigi.Task):
 
                 # for each lig in that list
                 for ligand in ligands:
+                    for event in event_group:
+                        if event.lig_id.rstrip() == ligand.rstrip():
+                            # get map in for cutting event map
+                            maps.append(event.pandda_event_map_native)
+                        else:
+                            maps.append('')
                     # increase ligand id by 1
                     ligid += 1
                     # get or create the proasis out object before pulling begins
@@ -590,7 +665,13 @@ class GetOutFiles(luigi.Task):
                            refinement_id=r,
                            ligand=l,
                            ligid=lid, altconf=a)
-                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)]
+                for (c, r, l, lid, a, h) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs)], \
+               [CutOutEvent(hit_directory=h,
+                            crystal_id=c,
+                            refinement_id=r,
+                            ligand=l,
+                            ligid=lid, altconf=a, mapin=m)
+                for (c, r, l, lid, a, h, m) in zip(crys_ids, ref_ids, ligs, ligids, alts, hit_dirs, maps) if m]
 
     def run(self):
         with self.output().open('w') as f:
