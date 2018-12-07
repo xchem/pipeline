@@ -308,6 +308,7 @@ class PanddaEvent(models.Model):
     lig_dist_event = models.FloatField(blank=True, null=True)
     lig_id = models.TextField(blank=True, null=True)
     pandda_event_map_native = models.TextField(blank=True, null=True)
+    pandda_event_map_cut = models.TextField(blank=True, null=True)
     pandda_model_pdb = models.TextField(blank=True, null=True)
     pandda_input_mtz = models.TextField(blank=True, null=True)
     pandda_input_pdb = models.TextField(blank=True, null=True)
