@@ -293,10 +293,6 @@ class PanddaSite(models.Model):
         unique_together = ('pandda_run', 'site')
 
 
-class PanddaSiteStats(models.Model):
-    pass
-
-
 class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
