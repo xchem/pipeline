@@ -591,7 +591,7 @@ class GetOutFiles(luigi.Task):
             ligid = 0
 
             # pandda events to cut out and upload
-            event_group = PanddaEvent.ojbects.filter(crystal=h.crystal_name)
+            event_group = PanddaEvent.objects.filter(crystal=h.crystal_name)
 
             # for each hit in the group (all altconfs)
             for hit in hit_group:
