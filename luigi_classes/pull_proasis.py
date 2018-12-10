@@ -284,7 +284,7 @@ class CutOutEvent(luigi.Task):
             else:
                 raise Exception('multiple CRYST lines found...')
 
-            file_out = cryst_line + lig_lines + '\nEND'
+            file_out = cryst_line + lig_lines + 'END'
 
             with open(self.input().path.replace('.mol', '_mol.pdb'), 'w') as f:
                 f.write(file_out)
