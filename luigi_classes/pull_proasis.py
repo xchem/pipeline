@@ -600,12 +600,14 @@ class GetOutFiles(luigi.Task):
 
                 # for each lig in that list
                 for ligand in ligands:
+                    lig_event_found = False
                     for event in event_group:
                         if event.lig_id.rstrip() == ligand.rstrip():
                             # get map in for cutting event map
                             maps.append(event.pandda_event_map_native)
-                        else:
-                            maps.append('')
+                            lig_event_found = True
+                    if not lig_event_found:
+                        maps.append('')
                     # increase ligand id by 1
                     ligid += 1
                     # get or create the proasis out object before pulling begins
