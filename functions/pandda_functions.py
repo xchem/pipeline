@@ -213,6 +213,7 @@ def translate_event_stats(event_csv, csv_row):
     out_dict = {}
 
     for key in pandda_event_stats_trans.keys():
-        out_dict[pandda_event_stats_trans[key]] = event_frame[key][csv_row]
+        if out_dict[pandda_event_stats_trans[key]]:
+            out_dict[pandda_event_stats_trans[key]] = event_frame[key][csv_row]
 
     return out_dict
