@@ -269,7 +269,7 @@ class CutOutEvent(luigi.Task):
         out, err = process.communicate()
 
         if '(mapmask) - normal termination' not in out.decode('ascii'):
-            raise Exception('mapmask failed!')
+            raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]
