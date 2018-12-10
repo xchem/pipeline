@@ -602,7 +602,7 @@ class GetOutFiles(luigi.Task):
                 for ligand in ligands:
                     lig_event_found = False
                     for event in event_group:
-                        if event.lig_id.strip() == ligand.strip():
+                        if event.lig_id.strip() == ligand.strip() and not lig_event_found:
                             # get map in for cutting event map
                             maps.append(event.pandda_event_map_native)
                             lig_event_found = True
