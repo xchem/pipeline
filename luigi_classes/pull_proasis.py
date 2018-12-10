@@ -257,6 +257,20 @@ class CutOutEvent(luigi.Task):
         obConv.ReadFile(mol, self.input().path)
         obConv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
 
+        cryst_lines = [x for x in open(os.path.join(proasis_out.root,
+                                                    proasis_out.start,
+                                                    proasis_out.curated), 'r').readlines() if 'CRYST' in x]
+
+        if len(cryst_lines) == 1:
+            cryst_line = cryst_lines[0]
+        else:
+            raise Exception('multiple CRYST lines found...')
+
+        with open(self.input().path.replace('.mol', '_mol.pdb'), 'r+') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(cryst_line.rstrip('\r\n') + '\n' + content)
+
         # use mapmask to cut out event map in reference to ligand (mol)
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s
@@ -269,41 +283,7 @@ class CutOutEvent(luigi.Task):
         out, err = process.communicate()
 
         if '(mapmask) - normal termination' not in out.decode('ascii'):
-            cryst_lines = [x for x in open(os.path.join(proasis_out.root,
-                                                        proasis_out.start,
-                                                        proasis_out.curated), 'r').readlines() if 'CRYST' in x]
-
-            lig_lines = ''
-
-            for l in open(os.path.join(proasis_out.root, proasis_out.start, proasis_out.curated), 'r').readlines():
-                if proasis_out.ligand in l:
-                    lig_lines += l
-
-            if len(cryst_lines) == 1:
-                cryst_line = cryst_lines[0]
-            else:
-                raise Exception('multiple CRYST lines found...')
-
-            file_out = cryst_line + lig_lines
-
-            with open(self.input().path.replace('.mol', '_mol.pdb'), 'w') as f:
-                f.write(file_out)
-
-                # use mapmask to cut out event map in reference to ligand (mol)
-                mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                        border %s
-                        end
-                    eof
-                    ''' % (self.mapin, self.output().path, self.input().path.replace('.mol', '_mol.pdb'),
-                           str(self.border))
-
-                process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
-                                           shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                out, err = process.communicate()
-
-                if '(mapmask) - normal termination' not in out.decode('ascii'):
-
-                    raise Exception(str('mapmask failed:' + out.decode('ascii')))
+            raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]
