@@ -268,7 +268,7 @@ class CutOutEvent(luigi.Task):
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         out, err = process.communicate()
 
-        if '(mapmask) - normal termination' not in out:
+        if '(mapmask) - normal termination' not in out.decode('ascii'):
             raise Exception('mapmask failed!')
 
         # proasis_out.event = self.output().path.split('/')[-1]
