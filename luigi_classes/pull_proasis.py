@@ -257,7 +257,9 @@ class CutOutEvent(luigi.Task):
         obConv.ReadFile(mol, self.input().path)
         obConv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
 
-        cryst_lines = [x for x in open(proasis_out.curated, 'r').readlines() if 'CRYST' in x]
+        cryst_lines = [x for x in open(os.path.join(proasis_out.root,
+                                                    proasis_out.start,
+                                                    proasis_out.curated), 'r').readlines() if 'CRYST' in x]
 
         if len(cryst_lines) == 1:
             cryst_line = cryst_lines[0]
