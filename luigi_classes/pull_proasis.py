@@ -257,6 +257,18 @@ class CutOutEvent(luigi.Task):
         obConv.ReadFile(mol, self.input().path)
         obConv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
 
+        cryst_lines = [x for x in open(proasis_out.curated, 'r').readlines() if 'CRYST' in x]
+
+        if len(cryst_lines) == 1:
+            cryst_line = cryst_lines[0]
+        else:
+            raise Exception('multiple CRYST lines found...')
+
+        with open(self.input().path.replace('.mol', '_mol.pdb'), 'r+') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(cryst_line.rstrip('\r\n') + '\n' + content)
+
         # use mapmask to cut out event map in reference to ligand (mol)
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s
