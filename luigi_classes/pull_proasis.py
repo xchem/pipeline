@@ -643,6 +643,7 @@ class GetOutFiles(luigi.Task):
                         hit_directory = ''
 
                     hit_dirs.append(hit_directory)
+        print(maps)
 
         return [CreateMolTwoFile(hit_directory=h,
                                  crystal_id=c,
