@@ -269,7 +269,33 @@ class CutOutEvent(luigi.Task):
         out, err = process.communicate()
 
         if '(mapmask) - normal termination' not in out.decode('ascii'):
-            raise Exception(str('mapmask failed:' + out.decode('ascii')))
+            print('Initial attempt failed. Converting to P1')
+            mapmask = '''module load ccp4 && mapmask mapin %s mapout %s << eof
+                xyzlim cell 
+                pad 0.0
+                symmetry 1
+                end
+            eof''' % (self.mapin, self.mapin.replace('.ccp4', '_P1.ccp4'))
+
+            process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
+                                       shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            out, err = process.communicate()
+
+            if '(mapmask) - normal termination' not in out.decode('ascii'):
+                raise Exception(str('Conversion to P1 failed: ' + out.decode('ascii')))
+
+            mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                        border %s
+                        end
+                    eof
+                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path,
+                           self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
+
+            process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
+                                       shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            out, err = process.communicate()
+            if '(mapmask) - normal termination' not in out.decode('ascii'):
+                raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]
