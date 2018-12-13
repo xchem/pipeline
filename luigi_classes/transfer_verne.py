@@ -114,19 +114,28 @@ class TransferVisitAndProposalFiles(luigi.Task):
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
 
+        # get paths for visit and proposal files
         visit_proposal_file = [os.path.join(self.out_dir, 'VISITS'), os.path.join(self.out_dir, 'PROPOSALS')]
 
+        # construct a list of open targets from input text file
         open_targets = [x.rstrip().upper() for x in open(self.open_target_list, 'r').readlines()]
 
+        # for each of the visit/proposal files
         for f in visit_proposal_file:
+            # if the file exists (it should)
             if os.path.isfile(f):
+                # if the target is an open one
                 if self.target_name.upper() in open_targets:
+                    # open the file and write 'OPEN' to it
                     with open(f, 'w') as a:
                         a.write('OPEN')
+                        # wait a second for the I/O to complete
                         time.sleep(1)
                 scp = SCPClient(ssh.get_transport())
                 print('/'.join(self.remote_directory.split('/')[:-2]))
+                # put the file over to verne
                 scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-2]))
+                # close the scp connection
                 scp.close()
             else:
                 break
