@@ -1,4 +1,5 @@
 import os
+import time
 
 import datetime
 import luigi
@@ -122,6 +123,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
                 if self.target_name.upper() in open_targets:
                     with open(f, 'w') as a:
                         a.write('OPEN')
+                        time.sleep(1)
                 scp = SCPClient(ssh.get_transport())
                 print('/'.join(self.remote_directory.split('/')[:-2]))
                 scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-2]))
