@@ -90,7 +90,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
     timestamp = luigi.Parameter()
     target_file = luigi.Parameter()
     target_name = luigi.Parameter()
-    open_target_list = VerneConfig.open_target_list
+    open_target_list = VerneConfig().open_target_list
 
     def requires(self):
         print(self.local_directory)
