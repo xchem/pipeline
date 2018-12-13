@@ -90,7 +90,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
     timestamp = luigi.Parameter()
     target_file = luigi.Parameter()
     target_name = luigi.Parameter()
-    open_targets_list = VerneConfig.open_target_list
+    open_target_list = VerneConfig.open_target_list
 
     def requires(self):
         print(self.local_directory)
@@ -115,7 +115,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
 
         visit_proposal_file = [os.path.join(self.out_dir, 'VISITS'), os.path.join(self.out_dir, 'PROPOSALS')]
 
-        open_targets = [x.rstrip() for x in open(self.open_targets_list, 'r').readlines()]
+        open_targets = [x.rstrip() for x in open(self.open_target_list, 'r').readlines()]
 
         for f in visit_proposal_file:
             if os.path.isfile(f):
