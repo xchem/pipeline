@@ -131,8 +131,11 @@ class TransferVisitAndProposalFiles(luigi.Task):
                     time.sleep(1)
                 sftp = ssh.open_sftp()
                 print(str('REMOTE: ' + os.path.join(remote_location, f.split('/')[-1])))
-                sftp.remove(os.path.join(remote_location, f.split('/')[-1]))
-                sftp.close()
+                try:
+                    sftp.remove(os.path.join(remote_location, f.split('/')[-1]))
+                    sftp.close()
+                except:
+                    continue
             # if the file exists (it should)
             if os.path.isfile(f):
                 scp = SCPClient(ssh.get_transport())
