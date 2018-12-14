@@ -136,7 +136,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
                 scp = SCPClient(ssh.get_transport())
                 print('/'.join(self.remote_directory.split('/')[:-2]))
                 # put the file over to verne
-                scp.put(f, remote_path='/'.join(self.remote_directory.split('/')[:-2]))
+                scp.put(f, remote_path=os.path.join(self.remote_directory, self.local_directory.split('/')[-1]))
                 # close the scp connection
                 scp.close()
             else:
