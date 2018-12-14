@@ -289,7 +289,7 @@ class CutOutEvent(luigi.Task):
                         border %s
                         end
                     eof
-                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path.replace('gz', ''),
+                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path.replace('.gz', ''),
                            self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
 
             process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
