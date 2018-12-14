@@ -130,7 +130,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
                     # wait a second for the I/O to complete
                     time.sleep(1)
                 sftp = ssh.open_sftp()
-                print(os.path.join(remote_location, f.split('/')[-1]))
+                print(str('REMOTE: ' + os.path.join(remote_location, f.split('/')[-1])))
                 sftp.remove(os.path.join(remote_location, f.split('/')[-1]))
                 sftp.close()
             # if the file exists (it should)
