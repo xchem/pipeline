@@ -122,6 +122,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
 
         # for each of the visit/proposal files
         for f in visit_proposal_file:
+            remote_location = os.path.join(self.remote_directory, self.target_name.upper())
             if self.target_name.upper() in open_targets:
                 # open the file and write 'OPEN' to it
                 with open(f, 'w') as a:
@@ -129,14 +130,14 @@ class TransferVisitAndProposalFiles(luigi.Task):
                     # wait a second for the I/O to complete
                     time.sleep(1)
                 sftp = ssh.open_sftp()
-                sftp.remove(str('/'.join(self.remote_directory.split('/')[:-2]) + '/' + '/'.join(f.split('/')[-2])))
+
+                sftp.remove(os.path.join(remote_location, f.split('/')[-1]))
                 sftp.close()
             # if the file exists (it should)
             if os.path.isfile(f):
                 scp = SCPClient(ssh.get_transport())
-                print('/'.join(self.remote_directory.split('/')[:-2]))
                 # put the file over to verne
-                scp.put(f, remote_path=os.path.join(self.remote_directory, self.local_directory.split('/')[-1]))
+                scp.put(f, remote_location=remote_location)
                 # close the scp connection
                 scp.close()
             else:
