@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import gzip
 
 import setup_django
 
@@ -235,7 +236,7 @@ class CutOutEvent(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
 
-        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_pandda.map')
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_pandda.map.gz')
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
@@ -262,7 +263,7 @@ class CutOutEvent(luigi.Task):
             border %s
             end
         eof
-        ''' % (self.mapin, self.output().path, self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
+        ''' % (self.mapin, self.output().path.replace('.gz', ''), self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -288,7 +289,7 @@ class CutOutEvent(luigi.Task):
                         border %s
                         end
                     eof
-                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path,
+                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path.replace('gz', ''),
                            self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
 
             process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
@@ -296,6 +297,8 @@ class CutOutEvent(luigi.Task):
             out, err = process.communicate()
             if '(mapmask) - normal termination' not in out.decode('ascii'):
                 raise Exception(str('mapmask failed:' + out.decode('ascii')))
+
+        os.system(str('gzip ' + self.output().path.replace('.gz', '')))
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]

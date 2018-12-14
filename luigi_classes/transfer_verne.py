@@ -122,15 +122,14 @@ class TransferVisitAndProposalFiles(luigi.Task):
 
         # for each of the visit/proposal files
         for f in visit_proposal_file:
+            if self.target_name.upper() in open_targets:
+                # open the file and write 'OPEN' to it
+                with open(f, 'w') as a:
+                    a.write('OPEN')
+                    # wait a second for the I/O to complete
+                    time.sleep(1)
             # if the file exists (it should)
             if os.path.isfile(f):
-                # if the target is an open one
-                if self.target_name.upper() in open_targets:
-                    # open the file and write 'OPEN' to it
-                    with open(f, 'w') as a:
-                        a.write('OPEN')
-                        # wait a second for the I/O to complete
-                        time.sleep(1)
                 scp = SCPClient(ssh.get_transport())
                 print('/'.join(self.remote_directory.split('/')[:-2]))
                 # put the file over to verne
@@ -138,7 +137,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
                 # close the scp connection
                 scp.close()
             else:
-                break
+                raise Exception('No visit/proposal file!')
 
         with self.output().open('w') as o:
             o.write('')
