@@ -298,7 +298,10 @@ class CutOutEvent(luigi.Task):
             if '(mapmask) - normal termination' not in out.decode('ascii'):
                 raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
-        os.system(str('gzip ' + self.output().path.replace('.gz', '')))
+        process = subprocess.Popen(str('gzip ' + self.output().path.replace('.gz', '')), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        out, err = process.communicate()
+        if err:
+            raise Exception(err)
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]
