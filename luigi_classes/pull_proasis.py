@@ -51,7 +51,7 @@ class GetCurated(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
 
-        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.pdb')
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_bound.pdb')
 
     def run(self):
         # get the proasis out object created in the kick off task
