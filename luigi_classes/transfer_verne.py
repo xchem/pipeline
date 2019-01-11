@@ -6,6 +6,9 @@ import luigi
 from paramiko import SSHClient
 from scp import SCPClient
 
+from rdkit import Chem
+from rdkit.Chem import AllChem
+
 import setup_django
 from functions.misc_functions import get_mod_date
 
@@ -14,6 +17,61 @@ setup_django.setup_django()
 from .config_classes import VerneConfig
 from xchem_db.models import *
 from luigi_classes.pull_proasis import GetOutFiles, CreateProposalVisitFiles
+
+
+class GenerateLigandResults(luigi.Task):
+    target = luigi.Parameter()
+    directory = luigi.Parameter()
+    sdf_file = luigi.Parameter(default='all_ligs.sdf')
+
+    def requires(self):
+        pass
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(self.directory, self.sdf_file))
+
+    def run(self):
+        # Get all project crystals from target name
+        crystals = Crystal.objects.filter(target__target_name=self.target)
+
+        # create empty object to hold molecules
+        mols = []
+
+        # for each crystal
+        for c in crystals:
+            # get relevant objects and set smiles string for ligand
+            lab = Lab.objects.get(crystal_name=c)
+            refinement = Refinement.objects.get(crystal_name=c)
+            smiles = c.compound.smiles
+
+            # create rdkit molecule object from smiles
+            m = Chem.MolFromSmiles(smiles)
+
+            # set molecule properties to be written to combined sdf
+            m.SetProp('_Name', str(c.crystal_name))
+            m.SetProp('Smiles', str(smiles))
+            m.SetProp('SoakStatus', str(lab.soak_status))
+            m.SetProp('MountStatus', str(lab.mounting_result))
+            m.SetProp('RefinementStatus', str(refinement.status))
+            m.SetProp('HarvestStatus', str(lab.harvest_status))
+            m.SetProp('LibraryName', str(lab.library_name))
+            m.SetProp('LibraryPlate', str(lab.library_plate))
+            m.SetProp('SoakVolume', str(lab.soak_vol))
+            m.SetProp('SoakTime', str(lab.soak_time))
+            m.SetProp('SolventFraction', str(lab.solv_frac))
+            m.SetProp('StockConcentration', str(lab.stock_conc))
+            m.SetProp('RefinementOutcomeNum', str(refinement.outcome))
+
+            # compute arbritrary 2D coordinates for each ligand
+            AllChem.Compute2DCoords(m)
+
+            # append current molecule to mol holder
+            mols.append(m)
+
+        # set sdf writer, and write all molecules out
+        w = Chem.SDWriter(self.output().path)
+        for m in mols:
+            w.write(m)
 
 
 class TransferDirectory(luigi.Task):
