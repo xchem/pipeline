@@ -411,11 +411,12 @@ class TransferPandda(luigi.Task):
 
 
 class AnnotateEvents(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     soakdb_filename = luigi.Parameter()
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
-        TransferPandda()
+        TransferPandda(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
 
     def output(self):
         mod_date = misc_functions.get_mod_date(self.soakdb_filename)
