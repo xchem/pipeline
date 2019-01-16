@@ -313,7 +313,7 @@ class PanddaEvent(models.Model):
     pandda_input_mtz = models.TextField(blank=True, null=True)
     pandda_input_pdb = models.TextField(blank=True, null=True)
     ligand_confidence_inspect = models.TextField(blank=True, null=True)
-    ligand_confidence_str = models.TextField(blank=True, null=True)
+    ligand_confidence = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'pandda_event'
