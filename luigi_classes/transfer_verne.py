@@ -62,7 +62,7 @@ class GenerateLigandResults(luigi.Task):
             m.SetProp('StockConcentration', str(lab.stock_conc))
             m.SetProp('RefinementOutcomeNum', str(refinement.outcome))
 
-            # compute arbritrary 2D coordinates for each ligand
+            # compute arbitrary 2D coordinates for each ligand
             AllChem.Compute2DCoords(m)
 
             # append current molecule to mol holder
