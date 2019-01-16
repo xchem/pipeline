@@ -1,10 +1,10 @@
 import os
+import sqlite3
 import traceback
 
 import datetime
 import luigi
 import pandas as pd
-
 from django.db import IntegrityError
 
 from functions import pandda_functions
@@ -404,6 +404,71 @@ class TransferPandda(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(str('logs/search_paths/search_paths_' + str(self.date_time) + '_transferred.txt'))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class AnnotateEvents(luigi.Task):
+    soakdb_filename = luigi.Parameter()
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+    def requires(self):
+        TransferPandda()
+
+    def output(self):
+        return luigi.LocalTarget(str(self.soakdb_filename + '.events'))
+
+    def run(self):
+        events = PanddaEvent.objects.filter(crystal__visit__filename=self.soakdb_filename)
+
+        conn = sqlite3.connect(self.soakdb_filename)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        for e in events:
+
+            c.execute(
+                "select PANDDA_site_confidence, PANDDA_site_InspectConfidence from panddaTable where "
+                "CrystalName = ? and PANDDA_site_index = ? and PANDDA_site_event_index = ?",
+                (e.crystal.crystal_name, e.site.site, e.event)
+            )
+
+            results = c.fetchall()
+
+            if len(results) == 1:
+                e.ligand_confidence_int = results[0]['PANDDA_site_InspectConfidence']
+                e.ligand_confidence_str = results[0]['PANDDA_site_confidence']
+                e.save()
+
+            elif len(results) == 0:
+                raise Exception('No annotation found for event!')
+
+            elif len(results) > 1:
+                raise Exception('too many events found in soakdb!')
+
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class AnnotateAllEvents(luigi.Task):
+    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+
+    def requires(self):
+        in_file = FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time).output().path
+        print(in_file)
+        if not os.path.isfile(in_file):
+            return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
+        else:
+            frame = pd.DataFrame.from_csv(in_file)
+            return [AnnotateEvents(soakdb_filename=sdbfile) for
+                    search_path, filepath, sdbfile in list(
+                    zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
+
+    def output(self):
+        return luigi.LocalTarget(str('logs/event_annotations/event_annotations_' + str(self.date_time) + '.txt'))
 
     def run(self):
         with self.output().open('w') as f:
