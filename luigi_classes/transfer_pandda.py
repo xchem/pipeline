@@ -443,9 +443,6 @@ class AnnotateEvents(luigi.Task):
                 e.ligand_confidence = results[0]['PANDDA_site_confidence']
                 e.save()
 
-            elif len(results) == 0:
-                raise Exception('No annotation found for event!')
-
             elif len(results) > 1:
                 raise Exception('too many events found in soakdb!')
 
