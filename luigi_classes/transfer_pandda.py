@@ -419,7 +419,7 @@ class AnnotateEvents(luigi.Task):
 
     def output(self):
         mod_date = misc_functions.get_mod_date(self.soakdb_filename)
-        return luigi.LocalTarget(str(self.soakdb_filename + '_' + mod_date + '_.events'))
+        return luigi.LocalTarget(str(self.soakdb_filename + '_' + mod_date + '.events'))
 
     def run(self):
         events = PanddaEvent.objects.filter(crystal__visit__filename=self.soakdb_filename)
@@ -441,6 +441,7 @@ class AnnotateEvents(luigi.Task):
             if len(results) == 1:
                 e.ligand_confidence_inspect = results[0]['PANDDA_site_InspectConfidence']
                 e.ligand_confidence = results[0]['PANDDA_site_confidence']
+                e.ligand_confidence_source = 'SD'
                 e.save()
 
             elif len(results) > 1:
