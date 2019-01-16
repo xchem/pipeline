@@ -430,16 +430,16 @@ class AnnotateEvents(luigi.Task):
         for e in events:
 
             c.execute(
-                "select PANDDA_site_confidence, PANDDA_site_InspectConfidence from panddaTable where CrystalName = ? "
-                "and PANDDA_site_x like ?",
-                (e.crystal.crystal_name,
-                 str(str(e.event_centroid_x).split('.')[0] + '.' + str(e.event_centroid_x).split('.')[1][0:2] + '%'),)
+                "select PANDDA_site_confidence, PANDDA_site_InspectConfidence from panddaTable where "
+                "CrystalName = ? and PANDDA_site_index = ? and PANDDA_site_event_index = ?",
+                (e.crystal.crystal_name, e.site.site, e.event)
             )
 
             results = c.fetchall()
 
             if len(results) == 1:
-                e.ligand_confidence = results[0]['PANDDA_site_confidence']
+                e.ligand_confidence_int = results[0]['PANDDA_site_InspectConfidence']
+                e.ligand_confidence_str = results[0]['PANDDA_site_confidence']
                 e.save()
 
             elif len(results) == 0:
