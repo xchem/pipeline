@@ -439,8 +439,8 @@ class AnnotateEvents(luigi.Task):
             results = c.fetchall()
 
             if len(results) == 1:
-                e.ligand_confidence_int = results[0]['PANDDA_site_InspectConfidence']
-                e.ligand_confidence_str = results[0]['PANDDA_site_confidence']
+                e.ligand_confidence_inspect = results[0]['PANDDA_site_InspectConfidence']
+                e.ligand_confidence = results[0]['PANDDA_site_confidence']
                 e.save()
 
             elif len(results) == 0:
