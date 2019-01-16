@@ -228,9 +228,15 @@ class AnnotateEvents(luigi.Task):
         c = conn.cursor()
 
         for e in events:
+
             c.execute("select PANDDA_site_confidence, PANDDA_site_InspectConfidence from panddaTable where CrystalName = ? and PANDDA_site_x like ?",
                 (e.crystal.crystal_name, str(str(e.event_centroid_x).split('.')[0] + '.' + str(e.event_centroid_x).split('.')[1][0:2] + '%'),))
+
             results = c.fetchall()
+
+            if len(results)==1:
+                e.ligand_confidence = results[0]['PANDDA_site_confidence']
+                e.save()
 
 
 class AddPanddaRun(luigi.Task):
