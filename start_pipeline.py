@@ -4,7 +4,7 @@ setup_django()
 
 import luigi
 import datetime
-from luigi_classes.transfer_pandda import TransferPandda
+from luigi_classes.transfer_pandda import AnnotateAllEvents, TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
 from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
@@ -21,6 +21,7 @@ class StartPipeline(luigi.WrapperTask):
 
     def requires(self):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+                 AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
@@ -33,7 +34,7 @@ class StartPipeline(luigi.WrapperTask):
                 pass
         yield StartTransfers()
         yield AddProjects()
-        yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
+        yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         yield GetOutFiles()
