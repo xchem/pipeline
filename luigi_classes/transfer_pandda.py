@@ -7,7 +7,7 @@ import luigi
 import pandas as pd
 from django.db import IntegrityError
 
-from functions import pandda_functions
+from functions import pandda_functions, misc_functions
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 from xchem_db.models import *
 from xchem_db.models import PanddaRun
@@ -418,7 +418,8 @@ class AnnotateEvents(luigi.Task):
         TransferPandda()
 
     def output(self):
-        return luigi.LocalTarget(str(self.soakdb_filename + '.events'))
+        mod_date = misc_functions.get_mod_date(self.soakdb_filename)
+        return luigi.LocalTarget(str(self.soakdb_filename + '_' + mod_date + '_.events'))
 
     def run(self):
         events = PanddaEvent.objects.filter(crystal__visit__filename=self.soakdb_filename)
