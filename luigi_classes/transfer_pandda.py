@@ -1,5 +1,6 @@
 import os
 import traceback
+import sqlite3
 
 import datetime
 import luigi
@@ -207,6 +208,29 @@ class AddPanddaEvents(luigi.Task):
 
         with self.output().open('w') as f:
             f.write('')
+
+
+class AnnotateEvents(luigi.Task):
+    soakdb_filename = luigi.Parameter()
+    target_name = luigi.Parameter()
+
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        events = PanddaEvent.objects.filter(crystal__target__target_name=self.target_name)
+
+        conn = sqlite3.connect(self.soakdb_filename)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        for e in events:
+            c.execute("select PANDDA_site_confidence, PANDDA_site_InspectConfidence from panddaTable where CrystalName = ? and PANDDA_site_x like ?",
+                (e.crystal.crystal_name, str(str(e.event_centroid_x).split('.')[0] + '.' + str(e.event_centroid_x).split('.')[1][0:2] + '%'),))
+            results = c.fetchall()
 
 
 class AddPanddaRun(luigi.Task):
