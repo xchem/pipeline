@@ -315,6 +315,19 @@ class PanddaEvent(models.Model):
     ligand_confidence_inspect = models.TextField(blank=True, null=True)
     ligand_confidence = models.TextField(blank=True, null=True)
 
+    # model types
+    NONE = 'NA'
+    SOAKDB = 'SD'
+    FRAGSPECT = 'FS'
+
+    CHOICES = (
+        (NONE, 'none'),
+        (SOAKDB, 'soak_db'),
+        (FRAGSPECT, 'fragspect')
+    )
+
+    ligand_confidence_source = models.CharField(choices=CHOICES, max_length=2, default=NONE)
+
     class Meta:
         db_table = 'pandda_event'
         unique_together = ('site', 'event', 'crystal', 'pandda_run')
