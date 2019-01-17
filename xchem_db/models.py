@@ -14,6 +14,7 @@ class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'target'
 
 
@@ -21,6 +22,7 @@ class Compounds(models.Model):
     smiles = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'compounds'
 
 
@@ -28,6 +30,7 @@ class Reference(models.Model):
     reference_pdb = models.CharField(max_length=255, null=True, default='not_assigned', unique=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'reference'
 
 
@@ -37,6 +40,7 @@ class Proposals(models.Model):
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'proposals'
 
 
@@ -48,6 +52,7 @@ class SoakdbFiles(models.Model):
     status = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'soakdb_files'
 
 
@@ -76,6 +81,7 @@ class Crystal(models.Model):
     status = models.CharField(choices=CHOICES, max_length=2, default=PREPROCESSING)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'crystal'
         unique_together = ('crystal_name', 'visit', 'compound')
 
@@ -126,6 +132,7 @@ class DataProcessing(models.Model):
     unit_cell_vol = models.FloatField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'data_processing'
 
 
@@ -139,6 +146,7 @@ class Dimple(models.Model):
     reference = models.ForeignKey(Reference, blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'dimple'
         unique_together = ('pdb_path', 'mtz_path')
 
@@ -164,6 +172,7 @@ class Lab(models.Model):
     visit = models.TextField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'lab'
 
 
@@ -196,6 +205,7 @@ class Refinement(models.Model):
     status = models.TextField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'refinement'
 
 
@@ -214,6 +224,7 @@ class ProasisHits(models.Model):
     added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'proasis_hits'
         unique_together = ('refinement', 'crystal_name', 'altconf')
 
@@ -236,6 +247,7 @@ class LigandEdstats(models.Model):
     strucid = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'ligand_edstats'
         unique_together = ('crystal_name', 'ligand', 'strucid')
 
@@ -245,6 +257,7 @@ class ProasisLeads(models.Model):
     strucid = models.CharField(max_length=255, blank=True, null=True, unique=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'proasis_leads'
 
 
@@ -252,6 +265,7 @@ class PanddaAnalysis(models.Model):
     pandda_dir = models.CharField(max_length=255, unique=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_analysis'
 
 
@@ -264,6 +278,7 @@ class PanddaRun(models.Model):
     events_file = models.TextField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_run'
 
 
@@ -274,6 +289,7 @@ class PanddaStatisticalMap(models.Model):
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_statistical_map'
         unique_together = ('resolution_from', 'resolution_to', 'pandda_run')
 
@@ -289,6 +305,7 @@ class PanddaSite(models.Model):
     site_native_centroid_z = models.FloatField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_site'
         unique_together = ('pandda_run', 'site')
 
@@ -329,6 +346,7 @@ class PanddaEvent(models.Model):
     ligand_confidence_source = models.CharField(choices=CHOICES, max_length=2, default=NONE)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_event'
         unique_together = ('site', 'event', 'crystal', 'pandda_run')
 
@@ -383,6 +401,7 @@ class PanddaEventStats(models.Model):
     scl_map_rms = models.FloatField(blank=True, null=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'pandda_event_stats'
 
 
@@ -394,6 +413,7 @@ class ProasisPandda(models.Model):
     model_pdb = models.TextField(blank=False, null=False)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'proasis_pandda'
         unique_together = ('crystal', 'hit', 'event')
 
@@ -425,6 +445,7 @@ class ProasisOut(models.Model):
     added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        app_label = 'xchem-data'
         db_table = 'proasis_out'
         unique_together = ('crystal', 'proasis', 'ligand', 'ligid')
 
