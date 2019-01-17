@@ -425,7 +425,6 @@ def check_table_sqlite(filename, tablename):
     return results
 
 
-@transaction.atomic
 def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
@@ -448,7 +447,6 @@ def pop_soakdb(database_file):
     return out, err, proposal
 
 
-@transaction.atomic
 def pop_proposals(proposal_number):
     # get proposal number from shell
     proc = subprocess.Popen(str('getent group ' + str(proposal_number)), stdout=subprocess.PIPE, shell=True)
@@ -459,7 +457,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.select_for_update().get_or_create(proposal=proposal_number)[0]
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
