@@ -34,6 +34,7 @@ class StartPipeline(luigi.WrapperTask):
                 pass
         yield StartTransfers()
         yield AddProjects()
+        yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
         yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
