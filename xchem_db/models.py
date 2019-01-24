@@ -41,9 +41,8 @@ class Reference(models.Model):
 class Proposals(models.Model):
     # TODO - can we refactor this for title
     proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
-    # number = models.IntegerField(max_length=10, blank=True, null=True)
+    number = models.IntegerField(max_length=10, blank=True, null=True)
     fedids = models.TextField(blank=True, null=True)
-    balls = models.TextField(blank=True, null=True)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
