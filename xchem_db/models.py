@@ -37,7 +37,7 @@ class Reference(models.Model):
 class Proposals(models.Model):
     # TODO - can we refactor this for title
     proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
-    number = models.IntegerField(max_length=10, blank=False, null=False)
+    number = models.IntegerField(max_length=10, blank=True, null=True)
     fedids = models.TextField(blank=True, null=True)
 
     class Meta:
