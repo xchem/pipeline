@@ -39,6 +39,7 @@ class Proposals(models.Model):
     proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
     # number = models.IntegerField(max_length=10, blank=True, null=True)
     fedids = models.TextField(blank=True, null=True)
+    balls = models.TextField(blank=True, null=True)
 
     class Meta:
         app_label = 'xchem_db'
