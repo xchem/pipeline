@@ -431,7 +431,7 @@ def pop_soakdb(database_file):
     try:
         visit = database_file.split('/')[5]
         proposal = visit.split('-')[0]
-        proposal_number = int(proposal[2:])
+        # proposal_number = int(proposal[2:])
     except:
         proposal = 'lb13385'
         print('WARNING: USING DEFAULT PROPOSAL FOR TESTS')
@@ -443,7 +443,7 @@ def pop_soakdb(database_file):
     # add info to soakdbfiles table
     soakdb_entry = models.SoakdbFiles.objects.get_or_create(modification_date=modification_date, filename=database_file,
                                                             proposal=models.Proposals.objects.get_or_create(
-                                                                proposal=proposal)[0], visit=visit, number=proposal_number)[0]
+                                                                proposal=proposal)[0], visit=visit)[0]
     soakdb_entry.save()
     return out, err, proposal
 
@@ -458,7 +458,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)[0]
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number, number=int(proposal_number[2:]))[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
