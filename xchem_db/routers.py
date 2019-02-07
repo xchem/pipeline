@@ -34,5 +34,4 @@ class AuthRouter:
         database.
         """
         if app_label == 'xchem_db':
-            return db == 'xchem_db'
-        return False
+            return False
