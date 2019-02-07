@@ -1,7 +1,14 @@
 from rest_framework import serializers
 
 from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
+
+
+class ProposalsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Proposals
+        fields = ("proposal", "title", "fedids",)
 
 
 class TargetSerializer(serializers.ModelSerializer):
@@ -253,4 +260,59 @@ class ProasisOutSerializer(serializers.ModelSerializer):
             "ppdb",
             "pjson",
             "pmtz",
+        )
+
+
+class PanddaEventStatsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PanddaEventStats
+        fields = (
+            'event',
+            'one_minus_bdc',
+            'cluster_size',
+            'glob_corr_av_map',
+            'glob_corr_mean_map',
+            'loc_corr_av_map',
+            'loc_corr_mean_map',
+            'z_mean',
+            'z_peak',
+            'b_factor_scaled',
+            'high_res',
+            'low_res',
+            'r_free',
+            'r_work',
+            'ref_rmsd',
+            'wilson_scaled_b',
+            'wilson_scaled_ln_dev',
+            'wilson_scaled_ln_dev_z',
+            'wilson_scaled_ln_rmsd',
+            'wilson_scaled_ln_rmsd_z',
+            'wilson_scaled_below_four_rmsd',
+            'wilson_scaled_below_four_rmsd_z',
+            'wilson_scaled_above_four_rmsd',
+            'wilson_scaled_above_four_rmsd_z',
+            'wilson_scaled_rmsd_all',
+            'wilson_scaled_rmsd_all_z',
+            'wilson_unscaled',
+            'wilson_unscaled_ln_dev',
+            'wilson_unscaled_ln_dev_z',
+            'wilson_unscaled_ln_rmsd',
+            'wilson_unscaled_ln_rmsd_z',
+            'wilson_unscaled_below_four_rmsd',
+            'wilson_unscaled_below_four_rmsd_z',
+            'wilson_unscaled_above_four_rmsd',
+            'wilson_unscaled_above_four_rmsd_z',
+            'wilson_unscaled_rmsd_all',
+            'wilson_unscaled_rmsd_all_z',
+            'resolution',
+            'map_uncertainty',
+            'obs_map_mean',
+            'obs_map_rms',
+            'z_map_kurt',
+            'z_map_mean',
+            'z_map_skew',
+            'z_map_std',
+            'scl_map_mean',
+            'scl_map_rms',
         )
