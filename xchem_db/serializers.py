@@ -323,33 +323,36 @@ class PanddaEventStatsSerializer(serializers.ModelSerializer):
 
 class FragspectSerializer(serializers.ModelSerializer):
     site_number = serializers.SerializerMethodField()
-    event_number = serializers.SerializerMethodField()
-    # codes = serializers.SerializerMethodField()
-    lig_id = serializers.SerializerMethodField()
-    target_name = serializers.SerializerMethodField()
-    smiles = serializers.SerializerMethodField()
-    # pandda_model_found = serializers.SerializerMethodField()
-    # resolution = serializers.SerializerMethodField()
-    space_group = serializers.SerializerMethodField()
-    unit_cell = serializers.SerializerMethodField()
+    # event_number = serializers.SerializerMethodField()
+    # # codes = serializers.SerializerMethodField()
+    # lig_id = serializers.SerializerMethodField()
+    # target_name = serializers.SerializerMethodField()
+    # smiles = serializers.SerializerMethodField()
+    # # pandda_model_found = serializers.SerializerMethodField()
+    # # resolution = serializers.SerializerMethodField()
+    # space_group = serializers.SerializerMethodField()
+    # unit_cell = serializers.SerializerMethodField()
 
     def get_site_number(self, obj):
-        return [e.site.site for e in PanddaEvent.objects.filter(crystal=obj)]
+        ret_lst = []
+        for o in obj:
+            ret_lst.append([e.event for e in PanddaEvent.objects.filter(crystal=o)])
+        return ret_lst
 
-    def get_event_number(self, obj):
-        return [e.event for e in PanddaEvent.objects.filter(crystal=obj)]
-
-    # def get_code(self, obj):
-    #     pass
-
-    def get_lig_id(self, obj):
-        return [e.lig_id for e in PanddaEvent.objects.filter(crystal=obj)]
-
-    def get_target_name(self, obj):
-        return [e.crystal.target.target_name for e in PanddaEvent.objects.filter(crystal=obj)]
-
-    def get_smiles(self, obj):
-        return [e.crystal.compound.smiles for e in PanddaEvent.objects.filter(crystal=obj)]
+    # def get_event_number(self, obj):
+    #     return [e.event for e in PanddaEvent.objects.filter(crystal=obj)]
+    #
+    # # def get_code(self, obj):
+    # #     pass
+    #
+    # def get_lig_id(self, obj):
+    #     return [e.lig_id for e in PanddaEvent.objects.filter(crystal=obj)]
+    #
+    # def get_target_name(self, obj):
+    #     return [e.crystal.target.target_name for e in PanddaEvent.objects.filter(crystal=obj)]
+    #
+    # def get_smiles(self, obj):
+    #     return [e.crystal.compound.smiles for e in PanddaEvent.objects.filter(crystal=obj)]
 
     # def get_pandda_model_found(self, obj):
     #     pass
@@ -372,10 +375,10 @@ class FragspectSerializer(serializers.ModelSerializer):
         Model = Crystal
         fields = (
             'site_number',
-            'event_number',
-            'lig_id',
-            'target_name',
-            'smiles',
+            # 'event_number',
+            # 'lig_id',
+            # 'target_name',
+            # 'smiles',
             # 'resolution',
             # 'spacegroup',
             # 'unit_cell',
