@@ -335,7 +335,6 @@ class FragspectEventView(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
         fields = (
-            'crystal',
             'site',
             'event',
             'lig_id',
@@ -348,7 +347,7 @@ class FragspectCrystalView(serializers.ModelSerializer):
     crystal = serializers.SerializerMethodField()
     target = serializers.SerializerMethodField()
     smiles = serializers.SerializerMethodField()
-    events = serializers.SerializerMethodField()
+    events = FragspectEventView(many=True, readonly=True)
 
     def get_crystal(self, obj):
         return obj.crystal_name.crystal_name
@@ -359,18 +358,18 @@ class FragspectCrystalView(serializers.ModelSerializer):
     def get_smiles(self, obj):
         return obj.crystal_name.compound.smiles
 
-    def get_events(self, obj):
-        event_list = []
-        for e in PanddaEvent.objects.filter(crystal=obj.crystal_name):
-            event_list.append(
-                {'event': e.event,
-                 'site': e.site.site,
-                 'lig_id': e.lig_id,
-                 'ligand_confidence_inspect': e.ligand_confidence_inspect,
-                 'ligand_confidence': e.ligand_confidence
-                 }
-            )
-        return event_list
+    # def get_events(self, obj):
+    #     event_list = []
+    #     for e in PanddaEvent.objects.filter(crystal=obj.crystal_name):
+    #         event_list.append(
+    #             {'event': e.event,
+    #              'site': e.site.site,
+    #              'lig_id': e.lig_id,
+    #              'ligand_confidence_inspect': e.ligand_confidence_inspect,
+    #              'ligand_confidence': e.ligand_confidence
+    #              }
+    #         )
+    #     return event_list
 
     class Meta:
         model = Refinement
