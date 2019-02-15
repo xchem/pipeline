@@ -345,12 +345,23 @@ class FragspectEventView(serializers.ModelSerializer):
 
 
 class FragspectCrystalView(serializers.ModelSerializer):
+    crystal = serializers.SerializerMethodField()
+
+    def get_crystal(self, obj):
+        return obj.crystal_name.crystal_name
+
+    def get_target(self, obj):
+        return obj.crystal_name.target.target_name
+
+    def get_smiles(self, obj):
+        return obj.crystal_name.compound.smiles
+
     class Meta:
         model = Refinement
         fields = (
-            'crystal_name__crystal_name',
-            'crystal_name__target__target_name'
-            'crystal_name__compound__smiles',
+            'crystal',
+            'target'
+            'smiles',
             'res',
             'lig_confidence',
             'spacegroup',
