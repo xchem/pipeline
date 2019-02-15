@@ -370,7 +370,7 @@ class FragspectCrystalView(serializers.ModelSerializer):
                  'ligand_confidence': e.ligand_confidence
                  }
             )
-        return event_list
+        return str(event_list)
 
     class Meta:
         model = Refinement
