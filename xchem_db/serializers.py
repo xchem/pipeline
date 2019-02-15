@@ -321,65 +321,47 @@ class PanddaEventStatsSerializer(serializers.ModelSerializer):
         )
 
 
-class FragspectSerializer(serializers.ModelSerializer):
-    site_number = serializers.SerializerMethodField()
-    # event_number = serializers.SerializerMethodField()
-    # # codes = serializers.SerializerMethodField()
-    # lig_id = serializers.SerializerMethodField()
-    # target_name = serializers.SerializerMethodField()
-    # smiles = serializers.SerializerMethodField()
-    # # pandda_model_found = serializers.SerializerMethodField()
-    # # resolution = serializers.SerializerMethodField()
-    # space_group = serializers.SerializerMethodField()
-    # unit_cell = serializers.SerializerMethodField()
+# class FragspectCrystalView(serializers.ModelSerializer):
+#     class Meta:
+#         model = Crystal
+#         fields = (
+#             'crystal_name',
+#             'target',
+#             'compound__smiles',
+#         )
 
-    def get_site_number(self, obj):
-        ret_lst = []
-        for o in obj:
-            ret_lst.append([e.event for e in PanddaEvent.objects.filter(crystal=o)])
-        return ret_lst
 
-    # def get_event_number(self, obj):
-    #     return [e.event for e in PanddaEvent.objects.filter(crystal=obj)]
-    #
-    # # def get_code(self, obj):
-    # #     pass
-    #
-    # def get_lig_id(self, obj):
-    #     return [e.lig_id for e in PanddaEvent.objects.filter(crystal=obj)]
-    #
-    # def get_target_name(self, obj):
-    #     return [e.crystal.target.target_name for e in PanddaEvent.objects.filter(crystal=obj)]
-    #
-    # def get_smiles(self, obj):
-    #     return [e.crystal.compound.smiles for e in PanddaEvent.objects.filter(crystal=obj)]
-
-    # def get_pandda_model_found(self, obj):
-    #     pass
-
-    # def get_resolution(self, obj):
-    #     try:
-    #         return [PanddaEventStats.objects.get(event=e).resolution for e in PanddaEvent.objects.filter(crystal=obj)]
-    #     except:
-
-    #
-    # def get_space_group(self, obj):
-    #     return [DataProcessing.objects.get(crystal_name=e.crystal).spacegroup
-    #             for e in PanddaEvent.objects.filter(crystal=obj)]
-    #
-    # def get_unit_cell(self, obj):
-    #     return [DataProcessing.objects.get(crystal_name=e.crystal).unit_cell
-    #             for e in PanddaEvent.objects.filter(crystal=obj)]
-
+class FragspectEventView(serializers.ModelSerializer):
     class Meta:
-        Model = Crystal
+        model = PanddaEvent
         fields = (
-            'site_number',
-            # 'event_number',
-            # 'lig_id',
-            # 'target_name',
-            # 'smiles',
-            # 'resolution',
-            # 'spacegroup',
-            # 'unit_cell',
+            'crystal',
+            'site',
+            'event',
+            'lig_id',
+            'ligand_confidence_inspect',
+            'ligand_confidence',
         )
+
+
+class FragspectCrystalView(serializers.ModelSerializer):
+    class Meta:
+        model = Refinement
+        fields = (
+            'crystal_name__crystal_name',
+            'crystal_name__target__target_name'
+            'crystal_name__compound__smiles',
+            'res',
+            'lig_confidence',
+            'spacegroup',
+            'outcome',
+        )
+
+
+# class FragspecctCompoundView(serializers.ModelSerializer):
+#     class Meta:
+#         model = Compounds
+#         fields = (
+#             'smiles'
+#         )
+
