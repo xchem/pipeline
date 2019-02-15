@@ -360,7 +360,7 @@ class FragspectCrystalView(serializers.ModelSerializer):
         model = Refinement
         fields = (
             'crystal',
-            'target'
+            'target',
             'smiles',
             'res',
             'lig_confidence',
