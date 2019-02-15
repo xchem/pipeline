@@ -4,7 +4,7 @@ from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProc
     PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
 from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSerializer, SoakdbFilesSerializer, \
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
-    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer
+    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer, FragspectCrystalView
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
@@ -211,3 +211,10 @@ class ProasisOutView(viewsets.ReadOnlyModelViewSet):
         "root",
         'start',
     )
+
+
+class FragspectTestCrystalView(viewsets.ReadOnlyModelViewSet):
+    queryset = Refinement.objects.filter()
+    serializer_class = FragspectCrystalView
+    filter_fields = ('crystal_name__target__target_name',)
+
