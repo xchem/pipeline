@@ -346,6 +346,8 @@ class FragspectEventView(serializers.ModelSerializer):
 
 class FragspectCrystalView(serializers.ModelSerializer):
     crystal = serializers.SerializerMethodField()
+    target = serializers.SerializerMethodField()
+    smiles = serializers.SerializerMethodField()
 
     def get_crystal(self, obj):
         return obj.crystal_name.crystal_name
