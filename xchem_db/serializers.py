@@ -344,7 +344,7 @@ class FragspectEventView(serializers.ModelSerializer):
         )
 
 
-class FragspectCrystalView(serializers.ModelSerializer):
+class FragspectCrystalSerializer(serializers.ModelSerializer):
     crystal = serializers.SerializerMethodField()
     target = serializers.SerializerMethodField()
     smiles = serializers.SerializerMethodField()
@@ -369,15 +369,7 @@ class FragspectCrystalView(serializers.ModelSerializer):
              }
             for e in PanddaEvent.objects.filter(crystal=obj.crystal_name)
         ]
-        # for e in PanddaEvent.objects.filter(crystal=obj.crystal_name):
-        #     event_list.append(
-        #         {'event': e.event,
-        #          'site': e.site.site,
-        #          'lig_id': e.lig_id,
-        #          'ligand_confidence_inspect': e.ligand_confidence_inspect,
-        #          'ligand_confidence': e.ligand_confidence
-        #          }
-        #     )
+
         return event_list
 
     class Meta:
