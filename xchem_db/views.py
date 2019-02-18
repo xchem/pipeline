@@ -215,7 +215,7 @@ class ProasisOutView(viewsets.ReadOnlyModelViewSet):
 
 
 class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
-    queryset = Refinement.objects.filter().select_related('crystal_name')
+    queryset = Refinement.objects.filter().prefetch_related('crystal_name')
     serializer_class = FragspectCrystalSerializer
     filter_fields = ('crystal_name__target__target_name',)
 
