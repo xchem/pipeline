@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
+from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, \
+    Refinement, PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
 
 
 class ProposalsSerializer(serializers.ModelSerializer):
@@ -321,16 +321,6 @@ class PanddaEventStatsSerializer(serializers.ModelSerializer):
         )
 
 
-# class FragspectCrystalView(serializers.ModelSerializer):
-#     class Meta:
-#         model = Crystal
-#         fields = (
-#             'crystal_name',
-#             'target',
-#             'compound__smiles',
-#         )
-
-
 class FragspectEventView(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
@@ -384,12 +374,4 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             'outcome',
             'events',
         )
-
-
-# class FragspecctCompoundView(serializers.ModelSerializer):
-#     class Meta:
-#         model = Compounds
-#         fields = (
-#             'smiles'
-#         )
 
