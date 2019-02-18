@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
+from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, \
+    Refinement, PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
 
 
 class ProposalsSerializer(serializers.ModelSerializer):
@@ -321,16 +321,6 @@ class PanddaEventStatsSerializer(serializers.ModelSerializer):
         )
 
 
-# class FragspectCrystalView(serializers.ModelSerializer):
-#     class Meta:
-#         model = Crystal
-#         fields = (
-#             'crystal_name',
-#             'target',
-#             'compound__smiles',
-#         )
-
-
 class FragspectEventView(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
@@ -344,7 +334,7 @@ class FragspectEventView(serializers.ModelSerializer):
         )
 
 
-class FragspectCrystalView(serializers.ModelSerializer):
+class FragspectCrystalSerializer(serializers.ModelSerializer):
     crystal = serializers.SerializerMethodField()
     target = serializers.SerializerMethodField()
     smiles = serializers.SerializerMethodField()
@@ -369,15 +359,7 @@ class FragspectCrystalView(serializers.ModelSerializer):
              }
             for e in PanddaEvent.objects.filter(crystal=obj.crystal_name)
         ]
-        # for e in PanddaEvent.objects.filter(crystal=obj.crystal_name):
-        #     event_list.append(
-        #         {'event': e.event,
-        #          'site': e.site.site,
-        #          'lig_id': e.lig_id,
-        #          'ligand_confidence_inspect': e.ligand_confidence_inspect,
-        #          'ligand_confidence': e.ligand_confidence
-        #          }
-        #     )
+
         return event_list
 
     class Meta:
@@ -392,12 +374,4 @@ class FragspectCrystalView(serializers.ModelSerializer):
             'outcome',
             'events',
         )
-
-
-# class FragspecctCompoundView(serializers.ModelSerializer):
-#     class Meta:
-#         model = Compounds
-#         fields = (
-#             'smiles'
-#         )
 

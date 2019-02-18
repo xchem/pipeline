@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 from xchem_db.views import TargetView, CompoundsView, ReferenceView, SoakdbFilesView, CrystalView, DataProcessingView, \
     DimpleView, LabView, RefinementView, PanddaAnalysisView, PanddaRunView, PanddaSiteView, PanddaEventView, \
-    ProasisOutView, FragspectTestCrystalView
+    ProasisOutView, FragspectCrystalView
 
 # from rest_framework_swagger.views import get_swagger_view
 
@@ -25,7 +25,7 @@ router.register(r'pandda_run', PanddaRunView)
 router.register(r'pandda_site', PanddaSiteView)
 router.register(r'pandda_event', PanddaEventView)
 router.register(r'proasis_out', ProasisOutView)
-router.register(r'fragspect', FragspectTestCrystalView)
+router.register(r'fragspect', FragspectCrystalView)
 
 # schema_view = get_swagger_view(title='Pipeline API')
 
