@@ -357,7 +357,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
              'ligand_confidence_inspect': e.ligand_confidence_inspect,
              'ligand_confidence': e.ligand_confidence
              }
-            for e in PanddaEvent.objects.filter(crystal=obj.crystal_name)
+            for e in PanddaEvent.objects.filter(crystal=obj.crystal_name).prefetch_related('crystal', 'event', 'site')
         ]
 
         return event_list
