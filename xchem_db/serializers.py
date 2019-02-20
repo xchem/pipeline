@@ -385,8 +385,11 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     #     return None
 
     def get_crystal_status(self, obj):
-        refinement = Refinement.objects.get(crystal_name=obj.crystal)
-        return refinement.outcome
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.outcome
+        except:
+            return 'unknown'
 
     # def get_event_status(self, obj):
     #     return obj.
@@ -395,15 +398,21 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
         return obj.ligand_confidence
 
     def get_crystal_resolution(self, obj):
-        refinement = Refinement.objects.get(crystal_name=obj.crystal)
-        return refinement.res
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.res
+        except:
+            return 'unknown'
 
     def get_smiles(self, obj):
         return obj.crystal.compound.smiles
 
     def get_spacegroup(self, obj):
-        refinement = Refinement.objects.get(crystal_name=obj.crystal)
-        return refinement.spacegroup
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.spacegroup
+        except:
+            return 'unknown'
 
     # def get_cell_dimensions(self, obj):
     #
