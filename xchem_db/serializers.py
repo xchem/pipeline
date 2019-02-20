@@ -335,43 +335,109 @@ class FragspectEventView(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
+
     crystal = serializers.SerializerMethodField()
-    target = serializers.SerializerMethodField()
+    site_number = serializers.SerializerMethodField()
+    event_number = serializers.SerializerMethodField()
+    # code = serializers.SerializerMethodField()
+    # lig_id = serializers.SerializerMethodField()
+    target_name = serializers.SerializerMethodField()
+    event_map_info = serializers.SerializerMethodField()
+    # sigmaa_map_info = serializers.SerializerMethodField()
+    # spider_plot_info = serializers.SerializerMethodField()
+    # two_d_density_map = serializers.SerializerMethodField()
+    crystal_status = serializers.SerializerMethodField()
+    # event_status = serializers.SerializerMethodField()
+    confidence = serializers.SerializerMethodField()
+    crystal_resolution = serializers.SerializerMethodField()
     smiles = serializers.SerializerMethodField()
-    events = serializers.SerializerMethodField()
+    space_group = serializers.SerializerMethodField()
+    # cell_dimensions = serializers.SerializerMethodField()
+    # cell_angles = serializers.SerializerMethodField()
+    # event_comment = serializers.SerializerMethodField()
+    # interesting = serializers.SerializerMethodField()
 
     def get_crystal(self, obj):
-        return obj.crystal_name.crystal_name
+        return obj.crystal.crystal_name
 
-    def get_target(self, obj):
-        return obj.crystal_name.target.target_name
+    def get_site_number(self, obj):
+        return obj.site.site
+
+    def get_event_number(self, obj):
+        return obj.event
+
+    # def get_code(self, obj):
+    #     return None
+
+    def get_target_name(self, obj):
+        return obj.crystal.target.target_name
+
+    def get_event_map_info(self, obj):
+        return obj.pandda_event_map_native
+
+    # def get_sigmaa_map_info(self, obj):
+    #     return None
+    #
+    # def get_spider_plot_info(self, obj):
+    #     return None
+    #
+    # def get_two_d_density_map(self, obj):
+    #     return None
+
+    def get_crystal_status(self, obj):
+        refinement = Refinement.objects.get(crystal_name=obj.crystal)
+        return refinement.outcome
+
+    # def get_event_status(self, obj):
+    #     return obj.
+
+    def get_confidence(self, obj):
+        return obj.ligand_confidence
+
+    def get_crystal_resolution(self, obj):
+        refinement = Refinement.objects.get(crystal_name=obj.crystal)
+        return refinement.res
 
     def get_smiles(self, obj):
-        return obj.crystal_name.compound.smiles
+        return obj.crystal.compound.smiles
 
-    def get_events(self, obj):
-        event_list = [
-            {'event': e.event,
-             'site': e.site.site,
-             'lig_id': e.lig_id,
-             'ligand_confidence_inspect': e.ligand_confidence_inspect,
-             'ligand_confidence': e.ligand_confidence
-             }
-            for e in PanddaEvent.objects.filter(crystal=obj.crystal_name).select_related('crystal', 'site')
-        ]
+    def get_spacegroup(self, obj):
+        refinement = Refinement.objects.get(crystal_name=obj.crystal)
+        return refinement.spacegroup
 
-        return event_list
+    # def get_cell_dimensions(self, obj):
+    #
+
+    # def get_cell_angles(self, obj):
+    #     return None
+
+    # def get_event_comment(self, obj):
+    #     return None
+    #
+    # def get_interesting(self, obj):
+    #     return None
 
     class Meta:
-        model = Refinement
+        model = PanddaEvent
         fields = (
             'crystal',
-            'target',
+            'site_number',
+            'event_number',
+            # 'code',
+            'lig_id',
+            'target_name',
+            'event_map_info',
+            # 'sigmaa_map_info',
+            # 'spider_plot_info',
+            # 'two_d_density_map',
+            'crystal_status',
+            # 'event_status',
+            'confidence',
+            'crystal_resolution',
             'smiles',
-            'res',
-            'lig_confidence',
-            'spacegroup',
-            'outcome',
-            'events',
+            'space_group',
+            # 'cell_dimensions',
+            # 'cell_angles',
+            # 'event_comment'
+            # 'interesting',
         )
-
