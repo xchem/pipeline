@@ -350,6 +350,7 @@ class PanddaEvent(models.Model):
     pandda_input_pdb = models.TextField(blank=True, null=True)
     ligand_confidence_inspect = models.TextField(blank=True, null=True)
     ligand_confidence = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
 
     # model types
     NONE = 'NA'
