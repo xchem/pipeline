@@ -336,6 +336,9 @@ class FragspectEventView(serializers.ModelSerializer):
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
 
+    # refinement = RefinementSerializer(read_only=True, source='crystal_name')
+    # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
+
     crystal = serializers.SerializerMethodField()
     site_number = serializers.SerializerMethodField()
     event_number = serializers.SerializerMethodField()
@@ -352,9 +355,9 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     crystal_resolution = serializers.SerializerMethodField()
     smiles = serializers.SerializerMethodField()
     spacegroup = serializers.SerializerMethodField()
-    # cell_dimensions = serializers.SerializerMethodField()
+    cell = serializers.SerializerMethodField()
     # cell_angles = serializers.SerializerMethodField()
-    # event_comment = serializers.SerializerMethodField()
+    event_comment = serializers.SerializerMethodField()
     # interesting = serializers.SerializerMethodField()
 
     def get_crystal(self, obj):
@@ -414,14 +417,19 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
         except:
             return 'unknown'
 
-    # def get_cell_dimensions(self, obj):
-    #
+    def get_cell(self, obj):
+        try:
+            dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
+            return dataproc.unit_cell
+        except:
+            return 'unknown'
+
 
     # def get_cell_angles(self, obj):
     #     return None
 
-    # def get_event_comment(self, obj):
-    #     return None
+    def get_event_comment(self, obj):
+        return obj.comment
     #
     # def get_interesting(self, obj):
     #     return None
