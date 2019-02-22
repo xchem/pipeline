@@ -388,8 +388,9 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     #     return None
 
     def get_crystal_status(self, obj):
-        if self.refinement:
-            return self.refinement.outcome
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.outcome
         except:
             return 'unknown'
 
