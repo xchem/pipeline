@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
     PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
@@ -220,5 +220,7 @@ class ProasisOutView(viewsets.ReadOnlyModelViewSet):
 class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
     queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site', 'refinement', 'data_proc')
     serializer_class = FragspectCrystalSerializer
-    filter_fields = ('crystal__target__target_name',)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('crystal__target__target_name',)
+    # filter_fields = ('crystal__target__target_name',)
 
