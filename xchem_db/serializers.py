@@ -434,6 +434,8 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
         fields = (
+            'refinement',
+            'data_proc',
             'crystal',
             'site_number',
             'event_number',
