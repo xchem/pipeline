@@ -335,14 +335,9 @@ class FragspectEventView(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-    try:
-        refinement = RefinementSerializer(read_only=True, source='crystal_name')
-    except:
-        refinement = []
-    try:
-        data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
-    except:
-        data_proc = []
+
+    # refinement = RefinementSerializer(read_only=True, source='crystal_name')
+    # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
 
     crystal = serializers.SerializerMethodField()
     site_number = serializers.SerializerMethodField()
@@ -392,10 +387,11 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # def get_two_d_density_map(self, obj):
     #     return None
 
-    def get_crystal_status(self):
-        if self.refinement:
-            return self.refinement.outcome
-        else:
+    def get_crystal_status(self, obj):
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.outcome
+        except:
             return 'unknown'
 
     # def get_event_status(self, obj):
@@ -404,25 +400,28 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     def get_confidence(self, obj):
         return obj.ligand_confidence
 
-    def get_crystal_resolution(self):
-        if self.refinement:
-            return self.refinement.res
-        else:
+    def get_crystal_resolution(self, obj):
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.res
+        except:
             return 'unknown'
 
     def get_smiles(self, obj):
         return obj.crystal.compound.smiles
 
-    def get_spacegroup(self):
-        if self.refinement:
-            return self.refinement.spacegroup
-        else:
+    def get_spacegroup(self, obj):
+        try:
+            refinement = Refinement.objects.get(crystal_name=obj.crystal)
+            return refinement.spacegroup
+        except:
             return 'unknown'
 
     def get_cell(self, obj):
-        if self.data_proc:
-            return data_proc.unit_cell
-        else:
+        try:
+            dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
+            return dataproc.unit_cell
+        except:
             return 'unknown'
 
     def get_event_comment(self, obj):
@@ -434,8 +433,6 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
         fields = (
-            'refinement',
-            'data_proc',
             'crystal',
             'site_number',
             'event_number',
