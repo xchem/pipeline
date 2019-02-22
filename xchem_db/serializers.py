@@ -334,50 +334,52 @@ class FragspectEventView(serializers.ModelSerializer):
         )
 
 
+class FilteredListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(crystal_name=self.request.crystal)
+        return super(FilteredListSerializer, self).to_representation(data)
+
+
+class FragRefSerializer(serializers.ModelSerializer):
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = Refinement
+
+
+class FragDataProcSerializer(serializers.ModelSerializer):
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = DataProcessing
+
+
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-
-    # refinement = RefinementSerializer(read_only=True, source='crystal_name')
-    # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
-
-    crystal = serializers.SerializerMethodField()
+    refinement = FragRefSerializer(read_only=True)
+    data_proc = FragDataProcSerializer(read_only=True)
+    crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
-    event_number = serializers.SerializerMethodField()
+    event_number = serializers.IntegerField(source='event')
     # code = serializers.SerializerMethodField()
     # lig_id = serializers.SerializerMethodField()
-    target_name = serializers.SerializerMethodField()
-    event_map_info = serializers.SerializerMethodField()
+    target_name = serializers.CharField(source='crystal.target.target_name')
+    event_map_info = serializers.Charfield(source='pandda_event_map_native')
     # sigmaa_map_info = serializers.SerializerMethodField()
     # spider_plot_info = serializers.SerializerMethodField()
     # two_d_density_map = serializers.SerializerMethodField()
-    crystal_status = serializers.SerializerMethodField()
+    # crystal_status = serializers.SerializerMethodField()
     # event_status = serializers.SerializerMethodField()
-    confidence = serializers.SerializerMethodField()
-    crystal_resolution = serializers.SerializerMethodField()
-    smiles = serializers.SerializerMethodField()
+    confidence = serializers.CharField(source='ligand_confidence')
+    # crystal_resolution = serializers.SerializerMethodField()
+    smiles = serializers.CharField(source='crystal.compound.smiles')
     spacegroup = serializers.SerializerMethodField()
-    cell = serializers.SerializerMethodField()
+    # cell = serializers.SerializerMethodField()
     # cell_angles = serializers.SerializerMethodField()
-    event_comment = serializers.SerializerMethodField()
+    event_comment = serializers.CharField(source='comment')
     # interesting = serializers.SerializerMethodField()
 
-    def get_crystal(self, obj):
-        return obj.crystal.crystal_name
-
-    # def get_site_number(self, obj):
-    #     return obj.site.site
-
-    def get_event_number(self, obj):
-        return obj.event
 
     # def get_code(self, obj):
     #     return None
-
-    def get_target_name(self, obj):
-        return obj.crystal.target.target_name
-
-    def get_event_map_info(self, obj):
-        return obj.pandda_event_map_native
-
+    #
     # def get_sigmaa_map_info(self, obj):
     #     return None
     #
@@ -387,52 +389,42 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # def get_two_d_density_map(self, obj):
     #     return None
 
-    def get_crystal_status(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.outcome
-        except:
-            return 'unknown'
-
-    # def get_event_status(self, obj):
-    #     return obj.
-
-    def get_confidence(self, obj):
-        return obj.ligand_confidence
-
-    def get_crystal_resolution(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.res
-        except:
-            return 'unknown'
-
-    def get_smiles(self, obj):
-        return obj.crystal.compound.smiles
-
-    def get_spacegroup(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.spacegroup
-        except:
-            return 'unknown'
-
-    def get_cell(self, obj):
-        try:
-            dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
-            return dataproc.unit_cell
-        except:
-            return 'unknown'
-
-    def get_event_comment(self, obj):
-        return obj.comment
+    # def get_crystal_status(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.outcome
+    #     except:
+    #         return 'unknown'
     #
-    # def get_interesting(self, obj):
-    #     return None
+    # def get_crystal_resolution(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.res
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_spacegroup(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.spacegroup
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_cell(self, obj):
+    #     try:
+    #         dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
+    #         return dataproc.unit_cell
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_event_comment(self, obj):
+    #     return obj.comment
 
     class Meta:
         model = PanddaEvent
         fields = (
+            'refinement',
+            'data_proc',
             'crystal',
             'site_number',
             'event_number',
@@ -443,13 +435,13 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             # 'sigmaa_map_info',
             # 'spider_plot_info',
             # 'two_d_density_map',
-            'crystal_status',
+            # 'crystal_status',
             # 'event_status',
             'confidence',
-            'crystal_resolution',
+            # 'crystal_resolution',
             'smiles',
-            'spacegroup',
-            'cell',
+            # 'spacegroup',
+            # 'cell',
             'event_comment'
             # 'interesting',
         )
