@@ -218,7 +218,7 @@ class ProasisOutView(viewsets.ReadOnlyModelViewSet):
 
 
 class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site')
+    queryset = PanddaEvent.objects.filter()
     serializer_class = FragspectCrystalSerializer
     filter_fields = ('crystal__target__target_name',)
 
