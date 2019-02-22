@@ -336,7 +336,7 @@ class FragspectEventView(serializers.ModelSerializer):
 
 class FilteredListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        data = data.filter(crystal_name=self.context['request'].crystal)
+        data = data.filter(crystal_name=self.request.crystal)
         return super(FilteredListSerializer, self).to_representation(data)
 
 
@@ -355,8 +355,8 @@ class FragDataProcSerializer(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-    refinement = FragRefSerializer()
-    data_proc = FragDataProcSerializer()
+    # refinement = FragRefSerializer()
+    # data_proc = FragDataProcSerializer()
 
     crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
@@ -373,7 +373,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     confidence = serializers.CharField(source='ligand_confidence')
     # crystal_resolution = serializers.SerializerMethodField()
     smiles = serializers.CharField(source='crystal.compound.smiles')
-    # spacegroup = serializers.CharField(source=refinement.data["spacegroup"])
+    spacegroup = serializers.CharField(source='current_refinement.spacegroup')
     # cell = serializers.SerializerMethodField()
     # cell_angles = serializers.SerializerMethodField()
     event_comment = serializers.CharField(source='comment')
