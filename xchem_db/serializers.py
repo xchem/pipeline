@@ -336,7 +336,7 @@ class FragspectEventView(serializers.ModelSerializer):
 
 class FilteredListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        data = data.filter(crystal_name=self.request.crystal)
+        data = data.filter(crystal_name=self.context['request'].crystal)
         return super(FilteredListSerializer, self).to_representation(data)
 
 
