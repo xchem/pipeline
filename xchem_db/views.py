@@ -7,6 +7,9 @@ from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSeriali
     PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer, \
     FragspectCrystalSerializer
 
+from django.http import StreamingHttpResponse
+from rest_framework.decorators import detail_route
+
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
     """
@@ -218,4 +221,7 @@ class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
     queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site')
     serializer_class = FragspectCrystalSerializer
     filter_fields = ('crystal__target__target_name',)
+
+
+    # return StreamingHttpResponse(response)
 
