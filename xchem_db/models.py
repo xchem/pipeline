@@ -473,3 +473,47 @@ class ProasisOut(models.Model):
         db_table = 'proasis_out'
         unique_together = ('crystal', 'proasis', 'ligand', 'ligid')
 
+class Occupancy(models.Model):
+
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    refine_log = model.TextField(blank=True, null=True)
+    all_occupancy = model.NumpyArrayField(models.FloatField())
+    occupancy = model.FloatField(blank=True, null=True)
+    occupancy_group = model.IntegerField(blank=True, null=True)
+    complete_group = model.TextField(blank=True, null=True)
+    resid = model.IntegerField(blank=True, null=True)
+    alte = model.CharField(max_length=1, blank=True, null=True)
+    state = model.CharField(max_length=7, blank=True, null=True)
+    resname = model.CharField(max_length=3, blank=True, null=True)
+    comment = model.TextField(blank=True, null=True)
+    edited = models.DateTimeField(auto_now=True)
+    added = models.DateTimeField(auto_now_add=True)
+
+class ConvergenceRefinement(Refinement):
+
+    """ Refinement with more cycles to convergence
+
+    Notes
+    ------------------------------
+
+    Inheritance
+
+    https://godjango.com/blog/django-abstract-base-class-multi-table-inheritance/"""
+
+    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    success = models.BooleanField(null=True)
+    cycles = model.IntegerField(null=True, blank=True)
+    error = model.TextField(blank=True, null=True)
+
+class ConvergenceOccupancy(Occupancy):
+
+    refinement = models.ForeignKey(ConvergenceOccupancy, on_delete=models.CASCADE)
+
+class NonSuperposedRefinement(Refinement):
+
+    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+
+class NonSuperposedOccupancy(Occupancy):
+
+    refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE)
