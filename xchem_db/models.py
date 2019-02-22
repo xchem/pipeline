@@ -13,7 +13,7 @@ import os
 
 
 class Target(models.Model):
-    target_name = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
 
     class Meta:
         app_label = 'xchem_db'
@@ -21,7 +21,7 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    smiles = models.CharField(max_length=255, blank=True, null=True, unique=True, db_index=True)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
@@ -40,7 +40,7 @@ class Reference(models.Model):
 
 class Proposals(models.Model):
     # TODO - can we refactor this for title
-    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True)
+    proposal = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
     title = models.CharField(max_length=10, blank=True, null=True)
     fedids = models.TextField(blank=True, null=True)
 
@@ -64,7 +64,7 @@ class SoakdbFiles(models.Model):
 
 
 class Crystal(models.Model):
-    crystal_name = models.CharField(max_length=255, blank=False, null=False)
+    crystal_name = models.CharField(max_length=255, blank=False, null=False, db_index=True)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
@@ -314,7 +314,7 @@ class PanddaStatisticalMap(models.Model):
 
 class PanddaSite(models.Model):
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-    site = models.IntegerField(blank=True, null=True)
+    site = models.IntegerField(blank=True, null=True, db_index=True)
     site_aligned_centroid_x = models.FloatField(blank=True, null=True)
     site_aligned_centroid_y = models.FloatField(blank=True, null=True)
     site_aligned_centroid_z = models.FloatField(blank=True, null=True)
@@ -333,7 +333,7 @@ class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
-    event = models.IntegerField(blank=True, null=True)
+    event = models.IntegerField(blank=True, null=True, db_index=True)
     event_centroid_x = models.FloatField(blank=True, null=True)
     event_centroid_y = models.FloatField(blank=True, null=True)
     event_centroid_z = models.FloatField(blank=True, null=True)
