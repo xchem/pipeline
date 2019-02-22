@@ -340,7 +340,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
 
     crystal = serializers.SerializerMethodField()
-    site_number = serializers.SerializerMethodField()
+    site_number = serializers.SerializerMethodField(source='site.site')
     event_number = serializers.SerializerMethodField()
     # code = serializers.SerializerMethodField()
     # lig_id = serializers.SerializerMethodField()
@@ -363,8 +363,8 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     def get_crystal(self, obj):
         return obj.crystal.crystal_name
 
-    def get_site_number(self, obj):
-        return obj.site.site
+    # def get_site_number(self, obj):
+    #     return obj.site.site
 
     def get_event_number(self, obj):
         return obj.event
@@ -388,9 +388,8 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     #     return None
 
     def get_crystal_status(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.outcome
+        if self.refinement:
+            return self.refinement.outcome
         except:
             return 'unknown'
 
