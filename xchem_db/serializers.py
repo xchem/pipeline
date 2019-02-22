@@ -355,8 +355,8 @@ class FragDataProcSerializer(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-    refinement = FragRefSerializer(read_only=True, data=self.data)
-    data_proc = FragDataProcSerializer(read_only=True, data=self.data)
+    refinement = FragRefSerializer(read_only=True, data=data)
+    data_proc = FragDataProcSerializer(read_only=True, data=data)
 
     crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
