@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
     PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
@@ -6,6 +6,9 @@ from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSeriali
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
     PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer, \
     FragspectCrystalSerializer
+
+from django.http import StreamingHttpResponse
+from rest_framework.decorators import detail_route
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):
@@ -215,7 +218,7 @@ class ProasisOutView(viewsets.ReadOnlyModelViewSet):
 
 
 class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
-    queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site')
+    queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site', 'refinement', 'data_proc')
     serializer_class = FragspectCrystalSerializer
-    filter_fields = ('crystal__target__target_name',)
+    filter_fields = {'crystal__target__target_name': ['iexact']}
 
