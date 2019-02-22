@@ -335,8 +335,8 @@ class FragspectEventView(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-    refinement = serializers.ListField()
-    data_proc = serializers.ListField()
+    refinement = serializers.SerializerMethodField()
+    data_proc = serializers.SerializerMethodField()
     crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
     event_number = serializers.IntegerField(source='event')
