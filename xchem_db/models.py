@@ -366,7 +366,7 @@ class PanddaEvent(models.Model):
     ligand_confidence_source = models.CharField(choices=CHOICES, max_length=2, default=NONE)
 
     def current_refinement(self):
-        return Refinement.objects.get_or_create(crystal_name=self.crystal)
+        return Refinement.objects.get_or_create(crystal_name=self.crystal)[0]
 
 
     class Meta:
