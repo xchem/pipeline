@@ -361,7 +361,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # code = serializers.SerializerMethodField()
     # lig_id = serializers.SerializerMethodField()
     target_name = serializers.CharField(source='crystal.target.target_name')
-    event_map_info = serializers.Charfield(source='pandda_event_map_native')
+    event_map_info = serializers.CharField(source='pandda_event_map_native')
     # sigmaa_map_info = serializers.SerializerMethodField()
     # spider_plot_info = serializers.SerializerMethodField()
     # two_d_density_map = serializers.SerializerMethodField()
