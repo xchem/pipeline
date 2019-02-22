@@ -10,7 +10,6 @@ from django.db import IntegrityError
 from functions import pandda_functions, misc_functions
 from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
 from xchem_db.models import *
-from xchem_db.models import PanddaRun
 
 
 class FindPanddaLogs(luigi.Task):
@@ -157,6 +156,8 @@ class AddPanddaEvents(luigi.Task):
                     pandda_event = PanddaEvent.objects.get_or_create(
                         crystal=crystal,
                         site=site,
+                        refinement=Refinement.objects.get_or_create(crystal_name=crystal)[0],
+                        data_proc=DataProcessing.objects.get_or_create(crystal_name=crystal)[0],
                         pandda_run=run,
                         event=events_frame['event_idx'][i],
                         event_centroid_x=events_frame['x'][i],
