@@ -443,7 +443,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             'confidence',
             # 'crystal_resolution',
             'smiles',
-            # 'spacegroup',
+            'spacegroup',
             # 'cell',
             'event_comment'
             # 'interesting',
