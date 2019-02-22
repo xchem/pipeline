@@ -368,6 +368,9 @@ class PanddaEvent(models.Model):
     def current_refinement(self):
         return Refinement.objects.get_or_create(crystal_name=self.crystal)[0]
 
+    def current_dataproc(self):
+        return DataProcessing.objects.get_or_create(crystal_name=self.crystal)[0]
+
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
