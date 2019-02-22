@@ -373,7 +373,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     confidence = serializers.CharField(source='ligand_confidence')
     # crystal_resolution = serializers.SerializerMethodField()
     smiles = serializers.CharField(source='crystal.compound.smiles')
-    spacegroup = serializers.CharField(source=refinement.data['spacegroup'])
+    # spacegroup = serializers.CharField(source=refinement.data['spacegroup'])
     # cell = serializers.SerializerMethodField()
     # cell_angles = serializers.SerializerMethodField()
     event_comment = serializers.CharField(source='comment')
@@ -443,7 +443,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             'confidence',
             # 'crystal_resolution',
             'smiles',
-            'spacegroup',
+            # 'spacegroup',
             # 'cell',
             'event_comment'
             # 'interesting',
