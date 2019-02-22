@@ -340,7 +340,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
 
     crystal = serializers.SerializerMethodField()
-    site_number = serializers.SerializerMethodField(source='site.site')
+    site_number = serializers.IntegerField(source='site.site')
     event_number = serializers.SerializerMethodField()
     # code = serializers.SerializerMethodField()
     # lig_id = serializers.SerializerMethodField()
