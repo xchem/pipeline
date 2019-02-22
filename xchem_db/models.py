@@ -332,8 +332,8 @@ class PanddaSite(models.Model):
 class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
-    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, null=True)
-    data_proc = models.ForeignKey(DataProcessing, on_delete=models.CASCADE, null=True)
+    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    data_proc = models.ForeignKey(DataProcessing, on_delete=models.CASCADE)
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     event = models.IntegerField(blank=True, null=True, db_index=True)
     event_centroid_x = models.FloatField(blank=True, null=True)
