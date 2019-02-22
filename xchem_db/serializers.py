@@ -340,14 +340,12 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     site_number = serializers.IntegerField(source='site.site')
     event_number = serializers.IntegerField(source='event')
     # code = serializers.SerializerMethodField()
-    # lig_id = serializers.SerializerMethodField()
     target_name = serializers.CharField(source='crystal.target.target_name')
     event_map_info = serializers.CharField(source='pandda_event_map_native')
     # sigmaa_map_info = serializers.SerializerMethodField()
     # spider_plot_info = serializers.SerializerMethodField()
     # two_d_density_map = serializers.SerializerMethodField()
     crystal_status = serializers.CharField(source='refinement.outcome')
-    # event_status = serializers.SerializerMethodField()
     confidence = serializers.CharField(source='ligand_confidence')
     crystal_resolution = serializers.CharField(source='refinement.res')
     smiles = serializers.CharField(source='crystal.compound.smiles')
@@ -358,8 +356,6 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     class Meta:
         model = PanddaEvent
         fields = (
-            # 'refinement',
-            # 'data_proc',
             'crystal',
             'site_number',
             'event_number',
@@ -371,7 +367,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             # 'spider_plot_info',
             # 'two_d_density_map',
             'crystal_status',
-            # 'event_status',
+            'event_status',
             'confidence',
             'crystal_resolution',
             'smiles',
