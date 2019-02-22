@@ -335,8 +335,10 @@ class FragspectEventView(serializers.ModelSerializer):
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-    refinement = serializers.SerializerMethodField()
-    data_proc = serializers.SerializerMethodField()
+
+    self.refinement = obj.current_refinement
+    self.dataproc = obj.current_dataproc
+
     crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
     event_number = serializers.IntegerField(source='event')
@@ -358,17 +360,17 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     event_comment = serializers.CharField(source='comment')
     # interesting = serializers.SerializerMethodField()
 
-    def get_refinement(self, obj):
-        return obj.current_refinement
-
-    def get_data_proc(self, obj):
-        return obj.current_dataproc
+    # def get_refinement(self, obj):
+    #     return obj.current_refinement
+    #
+    # def get_data_proc(self, obj):
+    #     return obj.current_dataproc
 
     class Meta:
         model = PanddaEvent
         fields = (
-            'refinement',
-            'data_proc',
+            # 'refinement',
+            # 'data_proc',
             'crystal',
             'site_number',
             'event_number',
