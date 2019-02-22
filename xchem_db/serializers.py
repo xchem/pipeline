@@ -129,6 +129,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     spacegroup = serializers.CharField(source='refinement.spacegroup')
     cell = serializers.CharField(source='data_proc.unit_cell')
     event_comment = serializers.CharField(source='comment')
+    event_status = serializers.IntegerField(source='status')
 
     class Meta:
         model = PanddaEvent
