@@ -334,11 +334,27 @@ class FragspectEventView(serializers.ModelSerializer):
         )
 
 
+class FilteredListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.filter(crystal_name=self.request.crystal)
+        return super(FilteredListSerializer, self).to_representation(data)
+
+
+class FragRefSerializer(serializers.ModelSerializer):
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = Refinement
+
+
+class FragDataProcSerializer(serializers.ModelSerializer):
+    class Meta:
+        list_serializer_class = FilteredListSerializer
+        model = DataProcessing
+
+
 class FragspectCrystalSerializer(serializers.ModelSerializer):
-
-    # refinement = RefinementSerializer(read_only=True, source='crystal_name')
-    # data_proc = DataProcessingSerializer(read_only=True, source='crystal_name')
-
+    refinement = FragRefSerializer(read_only=True)
+    data_proc = FragDataProcSerializer(read_only=True)
     crystal = serializers.CharField(source='crystal.crystal_name')
     site_number = serializers.IntegerField(source='site.site')
     event_number = serializers.IntegerField(source='event')
@@ -349,13 +365,13 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # sigmaa_map_info = serializers.SerializerMethodField()
     # spider_plot_info = serializers.SerializerMethodField()
     # two_d_density_map = serializers.SerializerMethodField()
-    crystal_status = serializers.SerializerMethodField()
+    # crystal_status = serializers.SerializerMethodField()
     # event_status = serializers.SerializerMethodField()
     confidence = serializers.CharField(source='ligand_confidence')
-    crystal_resolution = serializers.SerializerMethodField()
+    # crystal_resolution = serializers.SerializerMethodField()
     smiles = serializers.CharField(source='crystal.compound.smiles')
     spacegroup = serializers.SerializerMethodField()
-    cell = serializers.SerializerMethodField()
+    # cell = serializers.SerializerMethodField()
     # cell_angles = serializers.SerializerMethodField()
     event_comment = serializers.CharField(source='comment')
     # interesting = serializers.SerializerMethodField()
@@ -373,40 +389,42 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     # def get_two_d_density_map(self, obj):
     #     return None
 
-    def get_crystal_status(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.outcome
-        except:
-            return 'unknown'
-
-    def get_crystal_resolution(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.res
-        except:
-            return 'unknown'
-
-    def get_spacegroup(self, obj):
-        try:
-            refinement = Refinement.objects.get(crystal_name=obj.crystal)
-            return refinement.spacegroup
-        except:
-            return 'unknown'
-
-    def get_cell(self, obj):
-        try:
-            dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
-            return dataproc.unit_cell
-        except:
-            return 'unknown'
-
-    def get_event_comment(self, obj):
-        return obj.comment
+    # def get_crystal_status(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.outcome
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_crystal_resolution(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.res
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_spacegroup(self, obj):
+    #     try:
+    #         refinement = Refinement.objects.get(crystal_name=obj.crystal)
+    #         return refinement.spacegroup
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_cell(self, obj):
+    #     try:
+    #         dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
+    #         return dataproc.unit_cell
+    #     except:
+    #         return 'unknown'
+    #
+    # def get_event_comment(self, obj):
+    #     return obj.comment
 
     class Meta:
         model = PanddaEvent
         fields = (
+            'refinement',
+            'data_proc',
             'crystal',
             'site_number',
             'event_number',
@@ -417,13 +435,13 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             # 'sigmaa_map_info',
             # 'spider_plot_info',
             # 'two_d_density_map',
-            'crystal_status',
+            # 'crystal_status',
             # 'event_status',
             'confidence',
-            'crystal_resolution',
+            # 'crystal_resolution',
             'smiles',
-            'spacegroup',
-            'cell',
+            # 'spacegroup',
+            # 'cell',
             'event_comment'
             # 'interesting',
         )
