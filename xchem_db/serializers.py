@@ -420,10 +420,9 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             return 'unknown'
 
     def get_cell(self, obj):
-        try:
-            dataproc = DataProcessing.objects.get(crystal_name=obj.crystal)
-            return dataproc.unit_cell
-        except:
+        if self.data_proc:
+            return data_proc.unit_cell
+        else:
             return 'unknown'
 
     def get_event_comment(self, obj):
