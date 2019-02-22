@@ -332,6 +332,8 @@ class PanddaSite(models.Model):
 class PanddaEvent(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     site = models.ForeignKey(PanddaSite, on_delete=models.CASCADE)
+    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, null=True)
+    data_proc = models.ForeignKey(DataProcessing, on_delete=models.CASCADE, null=True)
     pandda_run = models.ForeignKey(PanddaRun, on_delete=models.CASCADE)
     event = models.IntegerField(blank=True, null=True, db_index=True)
     event_centroid_x = models.FloatField(blank=True, null=True)
@@ -365,11 +367,11 @@ class PanddaEvent(models.Model):
 
     ligand_confidence_source = models.CharField(choices=CHOICES, max_length=2, default=NONE)
 
-    def current_refinement(self):
-        return Refinement.objects.get_or_create(crystal_name=self.crystal)[0]
-
-    def current_dataproc(self):
-        return DataProcessing.objects.get_or_create(crystal_name=self.crystal)[0]
+    # def current_refinement(self):
+    #     return Refinement.objects.get_or_create(crystal_name=self.crystal)[0]
+    #
+    # def current_dataproc(self):
+    #     return DataProcessing.objects.get_or_create(crystal_name=self.crystal)[0]
 
 
     class Meta:
