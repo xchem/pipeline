@@ -344,12 +344,14 @@ class FragRefSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = Refinement
+        fields = '__all__'
 
 
 class FragDataProcSerializer(serializers.ModelSerializer):
     class Meta:
         list_serializer_class = FilteredListSerializer
         model = DataProcessing
+        fields = '__all__'
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
