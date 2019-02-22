@@ -377,6 +377,6 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             'smiles',
             'spacegroup',
             'cell',
-            'event_comment'
+            'event_comment',
             'interesting',
         )
