@@ -353,6 +353,7 @@ class PanddaEvent(models.Model):
     ligand_confidence_inspect = models.TextField(blank=True, null=True)
     ligand_confidence = models.TextField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
+    interesting = models.BooleanField()
 
     # model types
     NONE = 'NA'
@@ -366,13 +367,6 @@ class PanddaEvent(models.Model):
     )
 
     ligand_confidence_source = models.CharField(choices=CHOICES, max_length=2, default=NONE)
-
-    # def current_refinement(self):
-    #     return Refinement.objects.get_or_create(crystal_name=self.crystal)[0]
-    #
-    # def current_dataproc(self):
-    #     return DataProcessing.objects.get_or_create(crystal_name=self.crystal)[0]
-
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
