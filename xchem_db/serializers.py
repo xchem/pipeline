@@ -353,15 +353,7 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
     smiles = serializers.CharField(source='crystal.compound.smiles')
     spacegroup = serializers.CharField(source='refinement.spacegroup')
     cell = serializers.CharField(source='data_proc.unit_cell')
-    # cell_angles = serializers.SerializerMethodField()
     event_comment = serializers.CharField(source='comment')
-    # interesting = serializers.SerializerMethodField()
-
-    # def get_refinement(self, obj):
-    #     return obj.current_refinement
-    #
-    # def get_data_proc(self, obj):
-    #     return obj.current_dataproc
 
     class Meta:
         model = PanddaEvent
@@ -386,5 +378,5 @@ class FragspectCrystalSerializer(serializers.ModelSerializer):
             'spacegroup',
             'cell',
             'event_comment'
-            # 'interesting',
+            'interesting',
         )

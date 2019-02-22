@@ -222,6 +222,3 @@ class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
     serializer_class = FragspectCrystalSerializer
     filter_fields = ('crystal__target__target_name',)
 
-
-    # return StreamingHttpResponse(response)
-
