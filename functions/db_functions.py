@@ -3,7 +3,6 @@ import re
 import sqlite3
 import subprocess
 
-import numpy
 import pandas as pd
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
