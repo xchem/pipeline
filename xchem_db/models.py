@@ -513,7 +513,7 @@ class ConvergenceRefinement(Refinement):
 
 class ConvergenceOccupancy(Occupancy):
 
-    refinement = models.ForeignKey(ConvergenceOccupancy, on_delete=models.CASCADE)
+    refinement = models.ForeignKey(ConvergenceRefinement, on_delete=models.CASCADE)
 
 class NonSuperposedRefinement(Refinement):
 
