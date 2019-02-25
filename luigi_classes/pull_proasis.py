@@ -1,13 +1,12 @@
 import glob
 import json
-import os
 import shutil
 import subprocess
-import gzip
 
 import setup_django
 
 setup_django.setup_django()
+
 import datetime
 import luigi
 import openbabel
