@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets
 
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
     PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
@@ -6,9 +6,6 @@ from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSeriali
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
     PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer, \
     FragspectCrystalSerializer
-
-from django.http import StreamingHttpResponse
-from rest_framework.decorators import detail_route
 
 
 class TargetView(viewsets.ReadOnlyModelViewSet):

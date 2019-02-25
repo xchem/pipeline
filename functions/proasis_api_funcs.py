@@ -166,10 +166,10 @@ def get_struc_map(strucid, out_dir, mtype):
         mtz_zipped = filename.split('/')[-1]
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
         process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
-        out = out.decode('ascii')
-        if err:
-            err = err.decode('ascii')
+        _, _ = process.communicate()
+        # out = out.decode('ascii')
+        # if err:
+        #     err = err.decode('ascii')
         saved_to = str(mtz_zipped.replace('.gz', ''))
     else:
         saved_to = None
@@ -187,10 +187,10 @@ def get_struc_pdb(strucid, outfile):
 
     command_string = ('touch ' + outfile)
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-    out = out.decode('ascii')
-    if err:
-        err = err.decode('ascii')
+    _, _ = process.communicate()
+    # out = out.decode('ascii')
+    # if err:
+    #     err = err.decode('ascii')
 
     with open(outfile, 'a') as f:
         try:
@@ -249,10 +249,10 @@ def get_struc_file(strucid, outfile, ftype):
 
     command_string = ('touch ' + outfile)
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
+    out, _ = process.communicate()
     out = out.decode('ascii')
-    if err:
-        err = err.decode('ascii')
+    # if err:
+        # err = err.decode('ascii')
 
     print(out)
 

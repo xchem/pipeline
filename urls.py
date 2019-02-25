@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from rest_framework_swagger.views import get_swagger_view
+import debug_toolbar
 
 schema_view = get_swagger_view(title='Pipeline API')
 
@@ -23,5 +24,6 @@ urlpatterns = [
     url(r'^$', schema_view),
     url(r"^admin/", admin.site.urls),
     url(r"^api/", include("api.urls")),
-    url(r"^overview/", include("overview.urls"))
+    url(r"^overview/", include("overview.urls")), 
+    url(r"__debug__/", include(debug_toolbar.urls))
 ]
