@@ -246,11 +246,7 @@ class TransferChangedDataFile(luigi.Task):
             # for pandda file finding
             split_path = self.data_file.split('database')
             search_path = split_path[0]
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> d0968a5069c120b856aff3408d392acaf52c003a
             # remove pandda data transfer done file
             if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
                 os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
