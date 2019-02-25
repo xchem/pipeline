@@ -506,7 +506,7 @@ class ConvergenceRefinement(Refinement):
 
     https://godjango.com/blog/django-abstract-base-class-multi-table-inheritance/"""
 
-    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
     success = models.NullBooleanField(null=True)
     cycles = models.IntegerField(null=True, blank=True)
     error = models.TextField(blank=True, null=True)
