@@ -8,112 +8,112 @@ class ProposalsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Proposals
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class TargetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Target
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class CompoundsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Compounds
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class ReferenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Reference
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class SoakdbFilesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SoakdbFiles
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class CrystalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crystal
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class DataProcessingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DataProcessing
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class DimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dimple
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class LabSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lab
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class RefinementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Refinement
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class PanddaAnalysisSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaAnalysis
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class PanddaRunSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaRun
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class PanddaSiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaSite
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class PanddaEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaEvent
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class ProasisOutSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProasisOut
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class PanddaEventStatsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaEventStats
-        fields = fields = ('__all__',)
+        fields = ('__all__',)
 
 
 class FragspectCrystalSerializer(serializers.ModelSerializer):
