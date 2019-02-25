@@ -521,4 +521,4 @@ class NonSuperposedRefinement(Refinement):
 
 class NonSuperposedOccupancy(Occupancy):
 
-    refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE)
+    nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE)
