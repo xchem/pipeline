@@ -517,8 +517,8 @@ class ConvergenceOccupancy(Occupancy):
 
 class NonSuperposedRefinement(Refinement):
 
-    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
 
 class NonSuperposedOccupancy(Occupancy):
 
-    nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE)
+    nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE, related_name='+')
