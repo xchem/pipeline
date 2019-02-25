@@ -481,16 +481,16 @@ class Occupancy(models.Model):
 
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
-    refine_log = model.TextField(blank=True, null=True)
-    all_occupancy = model.NumpyArrayField(models.FloatField())
-    occupancy = model.FloatField(blank=True, null=True)
-    occupancy_group = model.IntegerField(blank=True, null=True)
-    complete_group = model.TextField(blank=True, null=True)
-    resid = model.IntegerField(blank=True, null=True)
-    alte = model.CharField(max_length=1, blank=True, null=True)
-    state = model.CharField(max_length=7, blank=True, null=True)
-    resname = model.CharField(max_length=3, blank=True, null=True)
-    comment = model.TextField(blank=True, null=True)
+    refine_log = models.TextField(blank=True, null=True)
+    all_occupancy = models.NumpyArrayField(models.FloatField())
+    occupancy = models.FloatField(blank=True, null=True)
+    occupancy_group = models.IntegerField(blank=True, null=True)
+    complete_group = models.TextField(blank=True, null=True)
+    resid = models.IntegerField(blank=True, null=True)
+    alte = models.CharField(max_length=1, blank=True, null=True)
+    state = models.CharField(max_length=7, blank=True, null=True)
+    resname = models.CharField(max_length=3, blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
     edited = models.DateTimeField(auto_now=True)
     added = models.DateTimeField(auto_now_add=True)
 
@@ -507,8 +507,8 @@ class ConvergenceRefinement(Refinement):
 
     orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
     success = models.BooleanField(null=True)
-    cycles = model.IntegerField(null=True, blank=True)
-    error = model.TextField(blank=True, null=True)
+    cycles = models.IntegerField(null=True, blank=True)
+    error = models.TextField(blank=True, null=True)
 
 class ConvergenceOccupancy(Occupancy):
 
