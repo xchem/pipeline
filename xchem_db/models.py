@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 import os
 
@@ -482,7 +483,7 @@ class Occupancy(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
     refine_log = models.TextField(blank=True, null=True)
-    all_occupancy = models.NumpyArrayField(models.FloatField())
+    all_occupancy = ArrayField(models.FloatField())
     occupancy = models.FloatField(blank=True, null=True)
     occupancy_group = models.IntegerField(blank=True, null=True)
     complete_group = models.TextField(blank=True, null=True)
