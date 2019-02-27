@@ -5,23 +5,9 @@ setup_django.setup_django()
 from paramiko import SSHClient
 from scp import SCPClient
 import os
-import time
 import datetime
 
 from xchem_db.models import PanddaEvent
-
-# # hidden parameters in luigi.cfg
-# username = VerneConfig().username
-# hostname = VerneConfig().hostname
-# remote_root = VerneConfig().remote_root
-#
-# # normal parameters
-# remote_directory = luigi.Parameter()
-# local_directory = luigi.Parameter()
-# timestamp = luigi.Parameter()
-# target_file = luigi.Parameter()
-# target_name = luigi.Parameter()
-
 
 def transfer_file(host_dict, file_dict):
     # create SSH client with paramiko and connect with system host keys
@@ -46,12 +32,34 @@ def transfer_file(host_dict, file_dict):
 
     # set up scp protocol and recursively push the directories across
     scp = SCPClient(ssh.get_transport())
-    scp.put(file_dict['local_directory'], recursive=True, remote_path=file_dict['remote_directory'])
+    scp.put(file_dict['local_file'], recursive=True, remote_path=file_dict['remote_directory'])
     scp.close()
 
+
 events = PanddaEvent.objects.filter(crystal__target__target_name='NUDT7A_Crude')
+
 timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H')
 remote_root = '/data/fs-input/django_data'
-host_dict = {'hostname': '192.168.160.15', 'username': 'centos'}
-file_dict = {'remote_directory': os.path.join(remote_root, timestamp), 'remote_root': remote_root}
+
+host_dict = {'hostname': '', 'username': ''}
+
+for e in events:
+    if e.pandda_event_map_native and e.refinement.bound_conf:
+        name = '_'.join([e.crystal.crystal_name, str(e.site.site), str(e.event)])
+        remote_map = name + '_pandda.map'
+        remote_pdb = name + '_bound.pdb'
+
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, remote_map),
+            'remote_root': remote_root,
+            'local_file': e.pandda_event_map_native
+        })
+
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, remote_pdb),
+            'remote_root': remote_root,
+            'local_file': e.pandda_event_map_native
+        })
+
+
 
