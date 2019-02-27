@@ -31,9 +31,9 @@ def transfer_file(host_dict, file_dict):
                 sftp.mkdir(str(file_dict['remote_root'] + f_path))
 
     # set up scp protocol and recursively push the directories across
-    scp = SCPClient(ssh.get_transport())
-    scp.put(file_dict['local_file'], recursive=True, remote_path=file_dict['remote_directory'])
-    scp.close()
+    # scp = SCPClient(ssh.get_transport())
+    sftp.put(file_dict['local_file'], recursive=True, remote_path=file_dict['remote_directory'])
+    # scp.close()
 
 
 events = PanddaEvent.objects.filter(crystal__target__target_name='NUDT7A_Crude')
