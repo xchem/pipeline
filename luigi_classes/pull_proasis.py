@@ -235,7 +235,7 @@ class CutOutEvent(luigi.Task):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
 
-        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_pandda.map.gz')
+        return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '_pandda.map')
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
@@ -288,7 +288,7 @@ class CutOutEvent(luigi.Task):
                         border %s
                         end
                     eof
-                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path.replace('.gz', ''),
+                    ''' % (self.mapin.replace('.ccp4', '_P1.ccp4'), self.output().path,
                            self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
 
             process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
@@ -297,10 +297,10 @@ class CutOutEvent(luigi.Task):
             if '(mapmask) - normal termination' not in out.decode('ascii'):
                 raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
-        process = subprocess.Popen(str('gzip ' + self.output().path.replace('.gz', '')), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        out, err = process.communicate()
-        if err:
-            raise Exception(err)
+        # process = subprocess.Popen(str('gzip ' + self.output().path.replace('.gz', '')), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        # out, err = process.communicate()
+        # if err:
+        #     raise Exception(err)
 
         # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]

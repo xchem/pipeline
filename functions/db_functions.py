@@ -457,7 +457,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number, number=int(proposal_number[2:]))[0]
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number, title=int(proposal_number[2:]))[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 
