@@ -356,8 +356,8 @@ class PanddaEvent(models.Model):
     comment = models.TextField(blank=True, null=True)
     interesting = models.BooleanField()
     event_status = models.IntegerField(blank=True, null=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     # model types
     NONE = 'NA'

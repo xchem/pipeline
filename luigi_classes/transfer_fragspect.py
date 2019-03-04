@@ -3,6 +3,7 @@ import datetime
 
 import luigi
 from paramiko import SSHClient
+import django.utils.timezone
 
 from xchem_db.models import PanddaEvent, Target, Proposals, Crystal
 from .config_classes import VerneConfig
@@ -96,7 +97,7 @@ class TransferFragspectVisitProposal(luigi.Task):
 
     def requires(self):
         return TransferFragspectTarget(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
-                                       target=self.target)
+                                       target=self.target, timestamp=self.timestamp)
 
     def output(self):
         pass
@@ -153,7 +154,7 @@ class StartFragspectLoader(luigi.Task):
     rand_string = VerneConfig().rand_string
 
     # other params
-    target = luigi.Parameter()
+    # target = luigi.Parameter()
     timestamp = luigi.Parameter()
     tmp_dir = luigi.Parameter()
 
@@ -162,11 +163,52 @@ class StartFragspectLoader(luigi.Task):
 
     def requires(self):
         targets = open(self.target_list, 'rb').readlines()
+        return [TransferFragspectVisitProposal(
+            username=self.username, hostname=self.hostname, remote_root=self.remote_root,
+                                       target=target, timestamp=self.timestamp
+        ) for target in targets]
 
     def output(self):
         pass
 
     def run(self):
         pass
+
+
+class KickOffFragspect(luigi.Task):
+    # hidden parameters in luigi.cfg - file transfer
+    username = VerneConfig().username
+    hostname = VerneConfig().hostname
+    remote_root = VerneConfig().remote_root
+
+    # luigi.cfg - curl request to start loader
+    user = VerneConfig().update_user
+    token = VerneConfig().update_token
+    rand_string = VerneConfig().rand_string
+
+    # other params
+    # target = luigi.Parameter()
+    timestamp = luigi.Parameter()
+    tmp_dir = luigi.Parameter()
+
+    # TODO: Add this to luigi.cfg
+    target_list = VerneConfig().fragspect_list
+
+    def requires(self):
+        to_upload = [c.crystal.target.target_name for c in
+                     PanddaEvent.objects.filter(
+                         modified_date__lte=django.utils.timezones.now()).distinct('crystal__target__target_name')]
+
+        with open(self.target_list, 'wb') as f:
+            f.writelines(to_upload)
+
+        return StartFragspectLoader(username=self.username,
+                                    hostname=self.hostname,
+                                    remote_root=self.remote_root,
+                                    user=self.user,
+                                    token=self.token,
+                                    rand_string=self.rand_string,
+                                    timestamp=self.timestamp,
+                                    target_list=self.target_list)
 
 
