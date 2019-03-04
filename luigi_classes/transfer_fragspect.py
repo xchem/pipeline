@@ -1,6 +1,9 @@
 import os
 import datetime
 
+import setup_django
+setup_django.setup_django()
+
 import luigi
 from paramiko import SSHClient
 import django.utils.timezone
