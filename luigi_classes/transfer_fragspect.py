@@ -10,7 +10,7 @@ import django.utils.timezone
 
 from xchem_db.models import PanddaEvent, Crystal
 from .config_classes import VerneConfig
-from transfer_verne import UpdateVerne
+from luigi_classes.transfer_verne import UpdateVerne
 
 
 def transfer_file(host_dict, file_dict):
