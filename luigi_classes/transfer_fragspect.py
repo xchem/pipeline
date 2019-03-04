@@ -203,10 +203,8 @@ class KickOffFragspect(UpdateVerne):
                      PanddaEvent.objects.filter(
                          modified_date__lte=django.utils.timezone.now()).distinct('crystal__target__target_name')]
 
-        print(to_upload)
-
         with open(self.target_list, 'wb') as f:
-            f.writelines(to_upload)
+            f.write('\n'.join(to_upload))
 
         return StartFragspectLoader(username=self.username,
                                     hostname=self.hostname,
