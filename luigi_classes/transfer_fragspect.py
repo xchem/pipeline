@@ -213,7 +213,8 @@ class KickOffFragspect(UpdateVerne):
                                     token=self.token,
                                     rand_string=self.rand_string,
                                     timestamp=self.timestamp,
-                                    target_list=self.target_list_file)
+                                    target_list=self.target_list_file,
+                                    tmp_dir=self.tmp_dir)
 
     def output(self):
         return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_transfer.done')
