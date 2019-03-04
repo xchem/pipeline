@@ -3,7 +3,6 @@ import setup_django
 setup_django.setup_django()
 
 from paramiko import SSHClient
-from scp import SCPClient
 import os
 import datetime
 
@@ -26,7 +25,7 @@ def transfer_file(host_dict, file_dict):
             f_path += str('/' + f)
             print(f_path)
             try:
-                sftp.stat(str(file_dict['remote_root']+ f_path))
+                sftp.stat(str(file_dict['remote_root'] + f_path))
             except FileNotFoundError:
                 sftp.mkdir(str(file_dict['remote_root'] + f_path))
 
@@ -51,7 +50,7 @@ for e in events:
         name = '_'.join([e.crystal.crystal_name, str(e.site.site), str(e.event)])
         remote_map = name + '_pandda.map'
         remote_pdb = name + '_bound.pdb'
-	
+
         transfer_file(host_dict=host_dict, file_dict={
             'remote_directory': os.path.join(remote_root, timestamp,  e.crystal.target.target_name.upper(), name, remote_map),
             'remote_root': remote_root,
