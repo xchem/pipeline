@@ -45,6 +45,7 @@ class TransferFragspectTarget(luigi.Task):
 
     # other params
     target = luigi.Parameter()
+    timestamp = luigi.Parameter()
 
     def requires(self):
         pass
@@ -55,7 +56,7 @@ class TransferFragspectTarget(luigi.Task):
     def run(self):
         events = PanddaEvent.objects.filter(crystal__target__target_name=self.target)
 
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H')
+        # timestamp = datetime.datetime.now().strftime('%Y-%m-%dT%H')
         remote_root = self.remote_root
 
         host_dict = {'hostname': self.hostname, 'username': self.username}
@@ -68,15 +69,15 @@ class TransferFragspectTarget(luigi.Task):
                 remote_pdb = name + '_bound.pdb'
 
                 transfer_file(host_dict=host_dict, file_dict={
-                    'remote_directory': os.path.join(remote_root, timestamp, e.crystal.target.target_name.upper(), name,
-                                                     remote_map),
+                    'remote_directory': os.path.join(remote_root, self.timestamp, e.crystal.target.target_name.upper(),
+                                                     name,remote_map),
                     'remote_root': remote_root,
                     'local_file': e.pandda_event_map_native
                 })
 
                 transfer_file(host_dict=host_dict, file_dict={
-                    'remote_directory': os.path.join(remote_root, timestamp, e.crystal.target.target_name.upper(), name,
-                                                     remote_pdb),
+                    'remote_directory': os.path.join(remote_root, self.timestamp, e.crystal.target.target_name.upper(),
+                                                     name, remote_pdb),
                     'remote_root': remote_root,
                     'local_file': e.refinement.bound_conf
                 })
@@ -90,6 +91,8 @@ class TransferFragspectVisitProposal(luigi.Task):
 
     # other params
     target = luigi.Parameter()
+    timestamp = luigi.Parameter()
+    tmp_dir = luigi.Parameter
 
     def requires(self):
         return TransferFragspectTarget(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
@@ -104,6 +107,38 @@ class TransferFragspectVisitProposal(luigi.Task):
 
         visits = [c.visit.visit[2:] for c in
                   Crystal.objects.filter(target__target_name=self.target).distinct('visit__visit')]
+
+        proposal_file = os.path.join(self.tmp_dir, 'PROPOSALS')
+
+        visit_file = os.path.join(self.tmp_dir, 'VISITS')
+
+        with open(proposal_file, 'wb') as f:
+            f.write(' '.join(proposals))
+
+        with open(visit_file, 'wb') as f:
+            f.write(' '.join(visits))
+
+        remote_root = self.remote_root
+
+        host_dict = {'hostname': self.hostname, 'username': self.username}
+
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, self.timestamp, self.target.upper(), 'PROPOSALS'),
+            'remote_root': remote_root,
+            'local_file': proposal_file
+        })
+
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, self.timestamp, self.target.upper(), 'VISITS'),
+            'remote_root': remote_root,
+            'local_file': visit_file
+        })
+
+        os.remove(proposal_file)
+        os.remove(visit_file)
+
+        with open(self.output().path, 'wb') as f:
+            f.write('')
 
 
 
