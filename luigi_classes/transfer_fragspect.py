@@ -5,8 +5,9 @@ import luigi
 from paramiko import SSHClient
 import django.utils.timezone
 
-from xchem_db.models import PanddaEvent, Target, Proposals, Crystal
+from xchem_db.models import PanddaEvent, Crystal
 from .config_classes import VerneConfig
+from transfer_verne import UpdateVerne
 
 
 def transfer_file(host_dict, file_dict):
@@ -165,17 +166,18 @@ class StartFragspectLoader(luigi.Task):
         targets = open(self.target_list, 'rb').readlines()
         return [TransferFragspectVisitProposal(
             username=self.username, hostname=self.hostname, remote_root=self.remote_root,
-                                       target=target, timestamp=self.timestamp
+            target=target, timestamp=self.timestamp
         ) for target in targets]
 
     def output(self):
         pass
 
     def run(self):
-        pass
+        with open(self.output().path, 'wb') as f:
+            f.write('')
 
 
-class KickOffFragspect(luigi.Task):
+class KickOffFragspect(UpdateVerne):
     # hidden parameters in luigi.cfg - file transfer
     username = VerneConfig().username
     hostname = VerneConfig().hostname
@@ -188,16 +190,16 @@ class KickOffFragspect(luigi.Task):
 
     # other params
     # target = luigi.Parameter()
-    timestamp = luigi.Parameter()
+    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
     tmp_dir = luigi.Parameter()
 
     # TODO: Add this to luigi.cfg
-    target_list = VerneConfig().fragspect_list
+    target_list_file = luigi.Parameter(default='FRAGSPECT_LIST')
 
     def requires(self):
         to_upload = [c.crystal.target.target_name for c in
                      PanddaEvent.objects.filter(
-                         modified_date__lte=django.utils.timezones.now()).distinct('crystal__target__target_name')]
+                         modified_date__lte=django.utils.timezone.now()).distinct('crystal__target__target_name')]
 
         with open(self.target_list, 'wb') as f:
             f.writelines(to_upload)
@@ -209,6 +211,9 @@ class KickOffFragspect(luigi.Task):
                                     token=self.token,
                                     rand_string=self.rand_string,
                                     timestamp=self.timestamp,
-                                    target_list=self.target_list)
+                                    target_list=self.target_list_file)
+
+    def output(self):
+        return luigi.LocalTarget(str('logs/verne_update_fragspect_' + str(self.timestamp)))
 
 

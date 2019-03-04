@@ -262,6 +262,25 @@ class UpdateVerne(luigi.Task):
     username = VerneConfig().username
     hostname = VerneConfig().hostname
     target_list = VerneConfig().target_list
+    target_list_file = luigi.Parameter(default='TARGET_LIST')
+
+    # # hidden parameters in luigi.cfg - file transfer
+    # username = VerneConfig().username
+    # hostname = VerneConfig().hostname
+    # remote_root = VerneConfig().remote_root
+    #
+    # # luigi.cfg - curl request to start loader
+    # user = VerneConfig().update_user
+    # token = VerneConfig().update_token
+    # rand_string = VerneConfig().rand_string
+    #
+    # # other params
+    # # target = luigi.Parameter()
+    # timestamp = luigi.Parameter()
+    # tmp_dir = luigi.Parameter()
+    #
+    # # TODO: Add this to luigi.cfg
+    # target_list = VerneConfig().fragspect_list
 
     def requires(self):
         return TransferByTargetList()
@@ -275,10 +294,10 @@ class UpdateVerne(luigi.Task):
         ssh.load_system_host_keys()
         ssh.connect(self.hostname, username=self.username)
 
-        if os.path.isfile(os.path.join(os.getcwd(), 'TARGET_LIST')):
-            os.remove(os.path.join(os.getcwd(), 'TARGET_LIST'))
+        if os.path.isfile(os.path.join(os.getcwd(), self.target_list_file)):
+            os.remove(os.path.join(os.getcwd(), self.target_list_file))
 
-        os.system('touch ' + os.path.join(os.getcwd(), 'TARGET_LIST'))
+        os.system('touch ' + os.path.join(os.getcwd(), self.target_list_file))
 
         verne_dirs = []
         v_sftp = ssh.open_sftp()
@@ -293,7 +312,7 @@ class UpdateVerne(luigi.Task):
 
         write_string = ' '.join(verne_dirs)
 
-        with open(os.path.join(os.getcwd(), 'TARGET_LIST'), 'w') as f:
+        with open(os.path.join(os.getcwd(), self.target_list_file), 'w') as f:
             f.write(write_string)
 
         local_file = os.path.join(os.getcwd(), 'READY')
@@ -303,7 +322,7 @@ class UpdateVerne(luigi.Task):
         scp = SCPClient(ssh.get_transport())
         scp.put(os.path.join(os.getcwd(), 'READY'), recursive=True,
                 remote_path=os.path.join(self.remote_root, self.timestamp))
-        scp.put(os.path.join(os.getcwd(), 'TARGET_LIST'), recursive=True,
+        scp.put(os.path.join(os.getcwd(), self.target_list_file), recursive=True,
                 remote_path=os.path.join(self.remote_root, self.timestamp))
         scp.close()
         ssh.exec_command(str('chmod -R 775 ' + os.path.join(self.remote_root, self.timestamp)))
