@@ -117,10 +117,10 @@ class TransferFragspectVisitProposal(luigi.Task):
 
         visit_file = os.path.join(self.tmp_dir, 'VISITS')
 
-        with open(proposal_file, 'wb') as f:
+        with open(proposal_file, 'w') as f:
             f.write(' '.join(proposals))
 
-        with open(visit_file, 'wb') as f:
+        with open(visit_file, 'w') as f:
             f.write(' '.join(visits))
 
         remote_root = self.remote_root
@@ -142,7 +142,7 @@ class TransferFragspectVisitProposal(luigi.Task):
         os.remove(proposal_file)
         os.remove(visit_file)
 
-        with open(self.output().path, 'wb') as f:
+        with open(self.output().path, 'w') as f:
             f.write('')
 
 
@@ -203,7 +203,7 @@ class KickOffFragspect(UpdateVerne):
                      PanddaEvent.objects.filter(
                          modified_date__lte=django.utils.timezone.now()).distinct('crystal__target__target_name')]
 
-        with open(self.target_list, 'wb') as f:
+        with open(self.target_list, 'w') as f:
             f.write('\n'.join(to_upload))
 
         return StartFragspectLoader(username=self.username,
