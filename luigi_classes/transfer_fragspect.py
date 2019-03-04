@@ -162,8 +162,7 @@ class StartFragspectLoader(luigi.Task):
     timestamp = luigi.Parameter()
     tmp_dir = luigi.Parameter()
 
-    # TODO: Add this to luigi.cfg
-    target_list = VerneConfig().fragspect_list
+    target_list = luigi.Parameter()
 
     def requires(self):
         targets = open(self.target_list, 'rb').readlines()
