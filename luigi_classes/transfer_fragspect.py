@@ -159,9 +159,9 @@ class StartFragspectLoader(luigi.Task):
 
     # TODO: Add this to luigi.cfg
     target_list = VerneConfig().fragspect_list
-    
+
     def requires(self):
-        pass
+        targets = open(self.target_list, 'rb').readlines()
 
     def output(self):
         pass
