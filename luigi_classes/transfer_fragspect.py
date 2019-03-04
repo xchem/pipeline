@@ -141,4 +141,32 @@ class TransferFragspectVisitProposal(luigi.Task):
             f.write('')
 
 
+class StartFragspectLoader(luigi.Task):
+    # hidden parameters in luigi.cfg - file transfer
+    username = VerneConfig().username
+    hostname = VerneConfig().hostname
+    remote_root = VerneConfig().remote_root
+
+    # luigi.cfg - curl request to start loader
+    user = VerneConfig().update_user
+    token = VerneConfig().update_token
+    rand_string = VerneConfig().rand_string
+
+    # other params
+    target = luigi.Parameter()
+    timestamp = luigi.Parameter()
+    tmp_dir = luigi.Parameter()
+
+    # TODO: Add this to luigi.cfg
+    target_list = VerneConfig().fragspect_list
+    
+    def requires(self):
+        pass
+
+    def output(self):
+        pass
+
+    def run(self):
+        pass
+
 
