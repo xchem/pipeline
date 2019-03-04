@@ -44,9 +44,9 @@ def transfer_file(host_dict, file_dict):
 
 class TransferFragspectTarget(luigi.Task):
     # hidden parameters in luigi.cfg
-    username = VerneConfig().username
-    hostname = VerneConfig().hostname
-    remote_root = VerneConfig().remote_root
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
 
     # other params
     target = luigi.Parameter()
@@ -90,9 +90,9 @@ class TransferFragspectTarget(luigi.Task):
 
 class TransferFragspectVisitProposal(luigi.Task):
     # hidden parameters in luigi.cfg
-    username = VerneConfig().username
-    hostname = VerneConfig().hostname
-    remote_root = VerneConfig().remote_root
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
 
     # other params
     target = luigi.Parameter()
@@ -148,14 +148,14 @@ class TransferFragspectVisitProposal(luigi.Task):
 
 class StartFragspectLoader(luigi.Task):
     # hidden parameters in luigi.cfg - file transfer
-    username = VerneConfig().username
-    hostname = VerneConfig().hostname
-    remote_root = VerneConfig().remote_root
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
 
     # luigi.cfg - curl request to start loader
-    user = VerneConfig().update_user
-    token = VerneConfig().update_token
-    rand_string = VerneConfig().rand_string
+    user = luigi.Parameter()
+    token = luigi.Parameter()
+    rand_string = luigi.Parameter()
 
     # other params
     # target = luigi.Parameter()
