@@ -100,7 +100,7 @@ class TransferFragspectVisitProposal(luigi.Task):
     # other params
     target = luigi.Parameter()
     timestamp = luigi.Parameter()
-    tmp_dir = luigi.Parameter
+    tmp_dir = luigi.Parameter()
 
     def requires(self):
         return TransferFragspectTarget(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
