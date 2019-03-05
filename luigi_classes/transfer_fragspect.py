@@ -87,6 +87,9 @@ class TransferFragspectTarget(luigi.Task):
                     'local_file': e.refinement.bound_conf
                 })
 
+        with open(self.output().path, 'w') as f:
+            f.write('')
+
 
 class TransferFragspectVisitProposal(luigi.Task):
     # hidden parameters in luigi.cfg
