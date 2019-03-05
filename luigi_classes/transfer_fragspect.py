@@ -116,9 +116,9 @@ class TransferFragspectVisitProposal(luigi.Task):
         visits = [c.visit.visit[2:] for c in
                   Crystal.objects.filter(target__target_name=self.target).distinct('visit__visit')]
 
-        proposal_file = os.path.join(self.tmp_dir, 'PROPOSALS')
+        proposal_file = os.path.join(os.getcwd(), self.tmp_dir, 'PROPOSALS')
 
-        visit_file = os.path.join(self.tmp_dir, 'VISITS')
+        visit_file = os.path.join(os.getcwd(), self.tmp_dir, 'VISITS')
 
         with open(proposal_file, 'w') as f:
             f.write(' '.join(proposals))
