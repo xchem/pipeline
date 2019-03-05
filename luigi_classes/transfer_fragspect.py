@@ -146,7 +146,7 @@ class TransferFragspectVisitProposal(luigi.Task):
         os.remove(visit_file)
 
         with open(self.output().path, 'w') as f:
-            f.write('')
+            f.write(' ')
 
 
 class StartFragspectLoader(luigi.Task):
@@ -179,7 +179,7 @@ class StartFragspectLoader(luigi.Task):
 
     def run(self):
         with open(self.output().path, 'wb') as f:
-            f.write('')
+            f.write(' ')
 
 
 class KickOffFragspect(UpdateVerne):
