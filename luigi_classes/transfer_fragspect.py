@@ -171,7 +171,7 @@ class StartFragspectLoader(luigi.Task):
         targets = [f.rstrip('\n') for f in open(self.target_list, 'r').readlines()]
         return [TransferFragspectVisitProposal(
             username=self.username, hostname=self.hostname, remote_root=self.remote_root,
-            target=target, timestamp=self.timestamp
+            target=target, timestamp=self.timestamp, tmp_dir=self.tmp_dir
         ) for target in targets]
 
     def output(self):
