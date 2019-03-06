@@ -121,11 +121,16 @@ class TransferFragspectVisitProposal(luigi.Task):
 
         visit_file = os.path.join(os.getcwd(), self.tmp_dir, 'VISITS')
 
+        new_data_file = os.path.join(os.getcwd(), self.tmp_dir, 'NEW_DATA')
+
         with open(proposal_file, 'w') as f:
             f.write(' '.join(proposals))
 
         with open(visit_file, 'w') as f:
             f.write(' '.join(visits))
+
+        with open(new_data_file, 'w') as f:
+            f.write(' ')
 
         remote_root = self.remote_root
 
@@ -143,8 +148,15 @@ class TransferFragspectVisitProposal(luigi.Task):
             'local_file': visit_file
         })
 
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, self.timestamp, self.target.upper(), 'NEW_DATA'),
+            'remote_root': remote_root,
+            'local_file': new_data_file
+        })
+
         os.remove(proposal_file)
         os.remove(visit_file)
+        os.remove(new_data_file)
 
         with open(self.output().path, 'w') as f:
             f.write(' ')
