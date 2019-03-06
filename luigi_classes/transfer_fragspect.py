@@ -179,7 +179,7 @@ class StartFragspectLoader(luigi.Task):
         return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_upload.done')
 
     def run(self):
-        with open(self.output().path, 'wb') as f:
+        with open(self.output().path, 'w') as f:
             f.write(' ')
 
 
@@ -209,7 +209,7 @@ class KickOffFragspect(UpdateVerne):
 
         print(os.path.join(os.getcwd(),self.target_list_file))
 
-        with open(os.path.join(os.getcwd(),self.target_list_file), 'w') as f:
+        with open(os.path.join(os.getcwd(), self.target_list_file), 'w') as f:
             f.write('\n'.join(to_upload))
 
         return StartFragspectLoader(username=self.username,
