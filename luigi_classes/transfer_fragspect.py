@@ -68,7 +68,8 @@ class TransferFragspectTarget(luigi.Task):
 
         for e in events:
 
-            if e.pandda_event_map_native and e.refinement.bound_conf:
+            if e.pandda_event_map_native and e.refinement.bound_conf and \
+                    os.path.isfile(e.pandda_event_map_native) and os.path.isfile(e.refinement.bound_conf):
                 name = '_'.join([e.crystal.crystal_name, str(e.site.site), str(e.event)])
                 remote_map = name + '_pandda.map'
                 remote_pdb = name + '_bound.pdb'
