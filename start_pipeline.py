@@ -22,16 +22,21 @@ sentry_string = str("https://" + SentryConfig().key + "@sentry.io/" + SentryConf
 
 sentry_sdk.init(sentry_string)
 
+
 @luigi.Task.event_handler(luigi.Event.FAILURE)
 def send_failure_to_sentry(task, exception):
-    with configure_scope() as scope:
-        scope.set_extra('os_pid', os.getpid())
-        scope.set_extra('task_id', task.task_id)
-        scope.set_extra('task_family', task.task_family)
-        scope.set_extra('param_args', task.param_args)
-        scope.set_extra('param_kwargs', task.param_kwargs)
+    ignore_tasks = ['UpdateVerne']
+    if task.task_id not in ignore_tasks:
 
-    capture_exception()
+        with configure_scope() as scope:
+            scope.set_extra('os_pid', os.getpid())
+            scope.set_extra('task_id', task.task_id)
+            scope.set_extra('task_family', task.task_family)
+            scope.set_extra('param_args', task.param_args)
+            scope.set_extra('param_kwargs', task.param_kwargs)
+
+        capture_exception()
+
 
 class StartPipeline(luigi.WrapperTask):
     date = luigi.DateParameter(default=datetime.datetime.now())
