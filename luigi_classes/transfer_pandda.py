@@ -388,7 +388,7 @@ class FindSearchPaths(luigi.Task):
 
         frame.to_csv(self.output().path)
 
-    
+
 class TransferPandda(luigi.Task):
     soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))

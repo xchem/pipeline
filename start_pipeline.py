@@ -3,6 +3,8 @@ from setup_django import setup_django
 setup_django()
 
 import luigi
+import sentry_sdk
+from sentry_sdk import capture_exception
 import datetime
 from luigi_classes.transfer_pandda import AnnotateAllEvents, TransferPandda
 from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
@@ -11,7 +13,25 @@ from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.transfer_verne import UpdateVerne
 
 import os
+import sys
 
+sentry_sdk.init("https://24cf480478634a5482bf40d3661936e6@sentry.io/1420547")
+
+@luigi.Task.event_handler(luigi.Event.FAILURE)
+def send_failure_to_sentry(task, exception):
+    capture_exception(exc_info=sys.exc_info(),
+                      extra={
+                          "os_pid": os.getpid(),
+                          "task": {
+                              "id": task.task_id,
+                              "family": task.task_family
+                          },
+                          "param": {
+                              "args": task.param_args,
+                              "kwargs": task.param_kwargs
+                          }
+                      },
+                      culprit=task)
 
 class StartPipeline(luigi.WrapperTask):
     date = luigi.DateParameter(default=datetime.datetime.now())
@@ -49,3 +69,7 @@ class StartPipeline(luigi.WrapperTask):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
+
+
+if __name__ == '__main__'
+    luigi.build(StartPipeline(), workers=1, no_lock=False)
