@@ -89,6 +89,9 @@ class PostPipeClean(luigi.Task):
             except:
                 pass
 
+        with self.output().open('w') as f:
+            f.write('')
+
 
 if __name__ == '__main__':
     luigi.build([PostPipeClean()], workers=1, no_lock=False)
