@@ -45,6 +45,32 @@ class StartPipeline(luigi.WrapperTask):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
+        yield StartTransfers()
+        yield AddProjects()
+        yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
+        yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
+        yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
+        yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
+        yield GetOutFiles()
+        yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
+        yield UpdateVerne()
+
+    def output(self):
+        return luigi.LocalTarget('logs/pipe.done')
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class PostPipeClean(luigi.Task):
+    def requires(self):
+        return StartPipeline()
+
+    def complete(self):
+        return True
+
+    def run(self):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
@@ -57,24 +83,7 @@ class StartPipeline(luigi.WrapperTask):
                 os.remove(path)
             except:
                 pass
-        yield StartTransfers()
-        yield AddProjects()
-        yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
-        yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
-        yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
-        yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
-        yield GetOutFiles()
-        yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
-        yield UpdateVerne()
-
-
-    def output(self):
-        return luigi.LocalTarget('logs/pipe.done')
-
-    def run(self):
-        with self.output().open('w') as f:
-            f.write('')
 
 
 if __name__ == '__main__':
-    luigi.build([StartPipeline()], workers=1, no_lock=False)
+    luigi.build([PostPipeClean()], workers=1, no_lock=False)
