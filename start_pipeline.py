@@ -19,20 +19,16 @@ import datetime
 
 sentry_sdk.init("https://24cf480478634a5482bf40d3661936e6@sentry.io/1420547")
 
+
 @luigi.Task.event_handler(luigi.Event.FAILURE)
 def send_failure_to_sentry(task, exception):
     with configure_scope() as scope:
-        scope.set_extra({
-                          "os_pid": os.getpid(),
-                          "task": {
-                              "id": task.task_id,
-                              "family": task.task_family
-                          },
-                          "param": {
-                              "args": task.param_args,
-                              "kwargs": task.param_kwargs
-                          }
-                      })
+        scope.set_extra('os_pid', os.getpid())
+        scope.set_extra('task_id', task.task_id)
+        scope.set_extra('task_family', task.task_family)
+        scope.set_extra('param_args', task.param_args)
+        scope.set_extra('param_kwargs', task.param_kwargs)
+
     capture_exception()
 
 class StartPipeline(luigi.WrapperTask):
