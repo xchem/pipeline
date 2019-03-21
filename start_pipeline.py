@@ -17,6 +17,7 @@ from luigi_classes.config_classes import SentryConfig
 
 import os
 import datetime
+import glob
 
 # set sentry key url from config
 sentry_string = str("https://" + SentryConfig().key + "@sentry.io/" + SentryConfig().ident)
@@ -67,6 +68,10 @@ class PostPipeClean(luigi.Task):
     def requires(self):
         return StartPipeline()
 
+    def output(self):
+        return luigi.LocalTarget(os.path.join(os.getcwd(), str('pipe_run_'
+                                                               + datetime.datetime.now().strftime("%Y%m%d%H%M") + '.done')))
+
     def run(self):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
@@ -75,6 +80,9 @@ class PostPipeClean(luigi.Task):
                  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
                  WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
                  os.path.join(os.getcwd(), 'logs/pipe.done')]
+
+        paths.append(glob.glob('*pipe_run_*.done'))
+
         for path in paths:
             try:
                 os.remove(path)
