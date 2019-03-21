@@ -71,5 +71,5 @@ class StartPipeline(luigi.WrapperTask):
             f.write('')
 
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     luigi.build(StartPipeline(), workers=1, no_lock=False)
