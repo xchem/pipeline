@@ -67,9 +67,6 @@ class PostPipeClean(luigi.Task):
     def requires(self):
         return StartPipeline()
 
-    def complete(self):
-        return True
-
     def run(self):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
                  AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
