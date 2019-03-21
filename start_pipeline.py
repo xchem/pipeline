@@ -13,12 +13,14 @@ from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlac
 from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.transfer_verne import UpdateVerne
+from luigi_classes.config_classes import SentryConfig
 
 import os
 import datetime
 
-sentry_sdk.init("https://24cf480478634a5482bf40d3661936e6@sentry.io/1420547")
+sentry_string = str("https://" + SentryConfig().key + "@sentry.io/" + SentryConfig().ident)
 
+sentry_sdk.init(sentry_string)
 
 @luigi.Task.event_handler(luigi.Event.FAILURE)
 def send_failure_to_sentry(task, exception):

@@ -10,3 +10,7 @@ class VerneConfig(luigi.Config):
     update_token = luigi.Parameter()
     rand_string = luigi.Parameter()
     open_target_list = luigi.Parameter()
+
+class SentryConfig(luigi.Config):
+    key = luigi.Parameter()
+    ident = luigi.Parameter()
