@@ -105,7 +105,7 @@ class TransferDirectory(luigi.Task):
         # see if the remote directory exists
         try:
             sftp.stat(self.remote_directory)
-        # if not, then recursivley add each file in the path
+        # if not, then recursively add each file in the path
         except FileNotFoundError:
             f_path = ''
             for f in self.remote_directory.replace(self.remote_root, '').split('/'):
@@ -216,6 +216,7 @@ class TransferByTargetList(luigi.Task):
         return luigi.LocalTarget(str('logs/verne_transfer_' + self.timestamp))
 
     def requires(self):
+        # If the TARGET_LIST file (lists targets for loader) exists, delete to repopulate
         if os.path.isfile(self.target_file):
             os.remove(self.target_file)
         transfer_paths = []
@@ -263,24 +264,6 @@ class UpdateVerne(luigi.Task):
     hostname = VerneConfig().hostname
     target_list = VerneConfig().target_list
     target_list_file = luigi.Parameter(default='TARGET_LIST')
-
-    # # hidden parameters in luigi.cfg - file transfer
-    # username = VerneConfig().username
-    # hostname = VerneConfig().hostname
-    # remote_root = VerneConfig().remote_root
-    #
-    # # luigi.cfg - curl request to start loader
-    # user = VerneConfig().update_user
-    # token = VerneConfig().update_token
-    # rand_string = VerneConfig().rand_string
-    #
-    # # other params
-    # # target = luigi.Parameter()
-    # timestamp = luigi.Parameter()
-    # tmp_dir = luigi.Parameter()
-    #
-    # # TODO: Add this to luigi.cfg
-    # target_list = VerneConfig().fragspect_list
 
     def requires(self):
         return TransferByTargetList()

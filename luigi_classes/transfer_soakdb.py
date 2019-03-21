@@ -11,7 +11,6 @@ setup_django()
 
 import datetime
 import luigi
-import pandas as pd
 
 from functions import db_functions
 from functions import misc_functions
