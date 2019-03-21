@@ -26,7 +26,7 @@ sentry_sdk.init(sentry_string)
 @luigi.Task.event_handler(luigi.Event.FAILURE)
 def send_failure_to_sentry(task, exception):
     ignore_tasks = ['UpdateVerne']
-    if task.task_id not in ignore_tasks:
+    if task.task_family not in ignore_tasks:
 
         with configure_scope() as scope:
             scope.set_extra('os_pid', os.getpid())
