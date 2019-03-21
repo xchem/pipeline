@@ -13,13 +13,12 @@ from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.transfer_verne import UpdateVerne
 
 import os
-import sys
 
 sentry_sdk.init("https://24cf480478634a5482bf40d3661936e6@sentry.io/1420547")
 
 @luigi.Task.event_handler(luigi.Event.FAILURE)
 def send_failure_to_sentry(task, exception):
-    capture_exception(exc_info=sys.exc_info(),
+    capture_exception(
                       extra={
                           "os_pid": os.getpid(),
                           "task": {
@@ -31,7 +30,8 @@ def send_failure_to_sentry(task, exception):
                               "kwargs": task.param_kwargs
                           }
                       },
-                      culprit=task)
+                      culprit=task
+    )
 
 class StartPipeline(luigi.WrapperTask):
     date = luigi.DateParameter(default=datetime.datetime.now())
