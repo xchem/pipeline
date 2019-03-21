@@ -252,6 +252,9 @@ class TransferByTargetList(luigi.Task):
                     int(datetime.datetime.strptime(get_mod_date(o), '%Y%m%d%H%M%S').strftime('%Y%m%d%H%M')) <= 130:
                 with self.output().open('w') as f:
                     f.write('')
+            else:
+                with self.output().open('w') as f:
+                    f.write('no_transfer_done')
 
 
 class UpdateVerne(luigi.Task):
@@ -272,6 +275,10 @@ class UpdateVerne(luigi.Task):
         return luigi.LocalTarget(str('logs/verne_update_' + str(self.timestamp)))
 
     def run(self):
+
+        if 'no_transfer_done' in open(self.input().path, 'r').readlines():
+            with self.output().open('w') as f:
+                f.write('')
 
         ssh = SSHClient()
         ssh.load_system_host_keys()
