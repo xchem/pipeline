@@ -1,11 +1,16 @@
 import os
 import datetime
 
+import setup_django
+setup_django.setup_django()
+
 import luigi
 from paramiko import SSHClient
+import django.utils.timezone
 
-from xchem_db.models import PanddaEvent, Target, Proposals, Crystal
+from xchem_db.models import PanddaEvent, Crystal
 from .config_classes import VerneConfig
+from luigi_classes.transfer_verne import UpdateVerne
 
 
 def transfer_file(host_dict, file_dict):
@@ -39,9 +44,9 @@ def transfer_file(host_dict, file_dict):
 
 class TransferFragspectTarget(luigi.Task):
     # hidden parameters in luigi.cfg
-    username = VerneConfig().username
-    hostname = VerneConfig().hostname
-    remote_root = VerneConfig().remote_root
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
 
     # other params
     target = luigi.Parameter()
@@ -51,7 +56,7 @@ class TransferFragspectTarget(luigi.Task):
         pass
 
     def output(self):
-        pass
+        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_' + self.target + '_files.done')
 
     def run(self):
         events = PanddaEvent.objects.filter(crystal__target__target_name=self.target)
@@ -63,7 +68,8 @@ class TransferFragspectTarget(luigi.Task):
 
         for e in events:
 
-            if e.pandda_event_map_native and e.refinement.bound_conf:
+            if e.pandda_event_map_native and e.refinement.bound_conf and \
+                    os.path.isfile(e.pandda_event_map_native) and os.path.isfile(e.refinement.bound_conf):
                 name = '_'.join([e.crystal.crystal_name, str(e.site.site), str(e.event)])
                 remote_map = name + '_pandda.map'
                 remote_pdb = name + '_bound.pdb'
@@ -82,24 +88,27 @@ class TransferFragspectTarget(luigi.Task):
                     'local_file': e.refinement.bound_conf
                 })
 
+        with open(self.output().path, 'w') as f:
+            f.write('')
+
 
 class TransferFragspectVisitProposal(luigi.Task):
     # hidden parameters in luigi.cfg
-    username = VerneConfig().username
-    hostname = VerneConfig().hostname
-    remote_root = VerneConfig().remote_root
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
 
     # other params
     target = luigi.Parameter()
     timestamp = luigi.Parameter()
-    tmp_dir = luigi.Parameter
+    tmp_dir = luigi.Parameter()
 
     def requires(self):
         return TransferFragspectTarget(username=self.username, hostname=self.hostname, remote_root=self.remote_root,
-                                       target=self.target)
+                                       target=self.target, timestamp=self.timestamp)
 
     def output(self):
-        pass
+        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_' + self.target + '_vps.done')
 
     def run(self):
         proposals = [c.visit.proposal.title for c in
@@ -108,15 +117,20 @@ class TransferFragspectVisitProposal(luigi.Task):
         visits = [c.visit.visit[2:] for c in
                   Crystal.objects.filter(target__target_name=self.target).distinct('visit__visit')]
 
-        proposal_file = os.path.join(self.tmp_dir, 'PROPOSALS')
+        proposal_file = os.path.join(os.getcwd(), self.tmp_dir, 'PROPOSALS')
 
-        visit_file = os.path.join(self.tmp_dir, 'VISITS')
+        visit_file = os.path.join(os.getcwd(), self.tmp_dir, 'VISITS')
 
-        with open(proposal_file, 'wb') as f:
+        new_data_file = os.path.join(os.getcwd(), self.tmp_dir, 'NEW_DATA')
+
+        with open(proposal_file, 'w') as f:
             f.write(' '.join(proposals))
 
-        with open(visit_file, 'wb') as f:
+        with open(visit_file, 'w') as f:
             f.write(' '.join(visits))
+
+        with open(new_data_file, 'w') as f:
+            f.write(' ')
 
         remote_root = self.remote_root
 
@@ -134,11 +148,93 @@ class TransferFragspectVisitProposal(luigi.Task):
             'local_file': visit_file
         })
 
+        transfer_file(host_dict=host_dict, file_dict={
+            'remote_directory': os.path.join(remote_root, self.timestamp, self.target.upper(), 'NEW_DATA'),
+            'remote_root': remote_root,
+            'local_file': new_data_file
+        })
+
         os.remove(proposal_file)
         os.remove(visit_file)
+        os.remove(new_data_file)
 
-        with open(self.output().path, 'wb') as f:
-            f.write('')
+        with open(self.output().path, 'w') as f:
+            f.write(' ')
 
+
+class StartFragspectLoader(luigi.Task):
+    # hidden parameters in luigi.cfg - file transfer
+    username = luigi.Parameter()
+    hostname = luigi.Parameter()
+    remote_root = luigi.Parameter()
+
+    # luigi.cfg - curl request to start loader
+    user = luigi.Parameter()
+    token = luigi.Parameter()
+    rand_string = luigi.Parameter()
+
+    # other params
+    # target = luigi.Parameter()
+    timestamp = luigi.Parameter()
+    tmp_dir = luigi.Parameter()
+
+    target_list = luigi.Parameter()
+
+    def requires(self):
+        targets = [f.rstrip('\n') for f in open(self.target_list, 'r').readlines()]
+        return [TransferFragspectVisitProposal(
+            username=self.username, hostname=self.hostname, remote_root=self.remote_root,
+            target=target, timestamp=self.timestamp, tmp_dir=self.tmp_dir
+        ) for target in targets]
+
+    def output(self):
+        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_upload.done')
+
+    def run(self):
+        with open(self.output().path, 'w') as f:
+            f.write(' ')
+
+
+class KickOffFragspect(UpdateVerne):
+    # hidden parameters in luigi.cfg - file transfer
+    username = VerneConfig().username
+    hostname = VerneConfig().hostname
+    remote_root = VerneConfig().remote_root
+
+    # luigi.cfg - curl request to start loader
+    user = VerneConfig().update_user
+    token = VerneConfig().update_token
+    rand_string = VerneConfig().rand_string
+
+    # other params
+    # target = luigi.Parameter()
+    timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
+    tmp_dir = luigi.Parameter()
+
+    # TODO: Add this to luigi.cfg
+    target_list_file = luigi.Parameter(default='FRAGSPECT_LIST')
+
+    def requires(self):
+        to_upload = [c.crystal.target.target_name for c in
+                     PanddaEvent.objects.filter(
+                         modified_date__lte=django.utils.timezone.now()).distinct('crystal__target__target_name')]
+
+        print(os.path.join(os.getcwd(),self.target_list_file))
+
+        with open(os.path.join(os.getcwd(), self.target_list_file), 'w') as f:
+            f.write('\n'.join(to_upload))
+
+        return StartFragspectLoader(username=self.username,
+                                    hostname=self.hostname,
+                                    remote_root=self.remote_root,
+                                    user=self.user,
+                                    token=self.token,
+                                    rand_string=self.rand_string,
+                                    timestamp=self.timestamp,
+                                    target_list=self.target_list_file,
+                                    tmp_dir=self.tmp_dir)
+
+    def output(self):
+        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_transfer.done')
 
 

@@ -105,7 +105,7 @@ class TransferDirectory(luigi.Task):
         # see if the remote directory exists
         try:
             sftp.stat(self.remote_directory)
-        # if not, then recursivley add each file in the path
+        # if not, then recursively add each file in the path
         except FileNotFoundError:
             f_path = ''
             for f in self.remote_directory.replace(self.remote_root, '').split('/'):
@@ -213,9 +213,10 @@ class TransferByTargetList(luigi.Task):
 
     def output(self):
         print(self.timestamp)
-        return luigi.LocalTarget(str('logs/verne_transfer_' + self.timestamp))
+        return luigi.LocalTarget(str('logs/verne_transfer_' + + datetime.datetime.now().strftime('%Y%m%d%H%M')))
 
     def requires(self):
+        # If the TARGET_LIST file (lists targets for loader) exists, delete to repopulate
         if os.path.isfile(self.target_file):
             os.remove(self.target_file)
         transfer_paths = []
@@ -251,6 +252,9 @@ class TransferByTargetList(luigi.Task):
                     int(datetime.datetime.strptime(get_mod_date(o), '%Y%m%d%H%M%S').strftime('%Y%m%d%H%M')) <= 130:
                 with self.output().open('w') as f:
                     f.write('')
+            else:
+                with self.output().open('w') as f:
+                    f.write('no_transfer_done')
 
 
 class UpdateVerne(luigi.Task):
@@ -262,59 +266,65 @@ class UpdateVerne(luigi.Task):
     username = VerneConfig().username
     hostname = VerneConfig().hostname
     target_list = VerneConfig().target_list
+    target_list_file = luigi.Parameter(default='TARGET_LIST')
 
     def requires(self):
         return TransferByTargetList()
 
     def output(self):
-        return luigi.LocalTarget(str('logs/verne_update_' + str(self.timestamp)))
+        return luigi.LocalTarget(str('logs/verne_update_' + datetime.datetime.now().strftime('%Y%m%d%H%M')))
 
     def run(self):
 
-        ssh = SSHClient()
-        ssh.load_system_host_keys()
-        ssh.connect(self.hostname, username=self.username)
-
-        if os.path.isfile(os.path.join(os.getcwd(), 'TARGET_LIST')):
-            os.remove(os.path.join(os.getcwd(), 'TARGET_LIST'))
-
-        os.system('touch ' + os.path.join(os.getcwd(), 'TARGET_LIST'))
-
-        verne_dirs = []
-        v_sftp = ssh.open_sftp()
-        v_sftp.chdir(os.path.join(self.remote_root, self.timestamp))
-        for i in v_sftp.listdir():
-            lstatout = str(v_sftp.lstat(i)).split()[0]
-            if 'd' in lstatout:
-                verne_dirs.append(str(i))
-        v_sftp.close()
-
-        verne_dirs.sort()
-
-        write_string = ' '.join(verne_dirs)
-
-        with open(os.path.join(os.getcwd(), 'TARGET_LIST'), 'w') as f:
-            f.write(write_string)
-
-        local_file = os.path.join(os.getcwd(), 'READY')
-        if not local_file:
-            with open(local_file, 'w') as f:
+        if 'no_transfer_done' in open(self.input().path, 'r').readlines():
+            with self.output().open('w') as f:
                 f.write('')
-        scp = SCPClient(ssh.get_transport())
-        scp.put(os.path.join(os.getcwd(), 'READY'), recursive=True,
-                remote_path=os.path.join(self.remote_root, self.timestamp))
-        scp.put(os.path.join(os.getcwd(), 'TARGET_LIST'), recursive=True,
-                remote_path=os.path.join(self.remote_root, self.timestamp))
-        scp.close()
-        ssh.exec_command(str('chmod -R 775 ' + os.path.join(self.remote_root, self.timestamp)))
 
-        curl_string = str('curl -X POST "https://' + self.user +
-                          ':' + self.rand_string +
-                          '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
-                          + self.token + '" -k')
+        else:
+            ssh = SSHClient()
+            ssh.load_system_host_keys()
+            ssh.connect(self.hostname, username=self.username)
 
-        os.system(curl_string)
+            if os.path.isfile(os.path.join(os.getcwd(), self.target_list_file)):
+                os.remove(os.path.join(os.getcwd(), self.target_list_file))
 
-        with self.output().open('w') as f:
-            f.write('')
+            os.system('touch ' + os.path.join(os.getcwd(), self.target_list_file))
+
+            verne_dirs = []
+            v_sftp = ssh.open_sftp()
+            v_sftp.chdir(os.path.join(self.remote_root, self.timestamp))
+            for i in v_sftp.listdir():
+                lstatout = str(v_sftp.lstat(i)).split()[0]
+                if 'd' in lstatout:
+                    verne_dirs.append(str(i))
+            v_sftp.close()
+
+            verne_dirs.sort()
+
+            write_string = ' '.join(verne_dirs)
+
+            with open(os.path.join(os.getcwd(), self.target_list_file), 'w') as f:
+                f.write(write_string)
+
+            local_file = os.path.join(os.getcwd(), 'READY')
+            if not local_file:
+                with open(local_file, 'w') as f:
+                    f.write('')
+            scp = SCPClient(ssh.get_transport())
+            scp.put(os.path.join(os.getcwd(), 'READY'), recursive=True,
+                    remote_path=os.path.join(self.remote_root, self.timestamp))
+            scp.put(os.path.join(os.getcwd(), self.target_list_file), recursive=True,
+                    remote_path=os.path.join(self.remote_root, self.timestamp))
+            scp.close()
+            ssh.exec_command(str('chmod -R 775 ' + os.path.join(self.remote_root, self.timestamp)))
+
+            curl_string = str('curl -X POST "https://' + self.user +
+                              ':' + self.rand_string +
+                              '@jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Loader%20Image/build?token='
+                              + self.token + '" -k')
+
+            os.system(curl_string)
+
+            with self.output().open('w') as f:
+                f.write('')
 

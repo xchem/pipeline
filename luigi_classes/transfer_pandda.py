@@ -368,24 +368,25 @@ class FindSearchPaths(luigi.Task):
         out_dict = {'search_path': [], 'soak_db_filepath': [], 'sdbfile': []}
 
         for path, sdbfile in zipped:
-            print(path)
-            print(sdbfile)
-            print(os.path.join(path, sdbfile))
 
-            out_dict['search_path'].append(path)
-            out_dict['soak_db_filepath'].append(self.soak_db_filepath)
-            out_dict['sdbfile'].append(os.path.join(path, sdbfile))
+            if path in to_exclude:
+                continue
+
+            else:
+
+                print(path)
+                print(sdbfile)
+                print(os.path.join(path, sdbfile))
+
+                out_dict['search_path'].append(path)
+                out_dict['soak_db_filepath'].append(self.soak_db_filepath)
+                out_dict['sdbfile'].append(os.path.join(path, sdbfile))
 
         frame = pd.DataFrame.from_dict(out_dict)
 
         print(self.output().path)
 
         frame.to_csv(self.output().path)
-
-        if to_exclude:
-            raise Exception('Multiple soakdb files were found in the following paths, and these will not'
-                            ' be included in data upload, as it is impossible to link data back to the correct'
-                            ' soakdbfiles when there are multiple per project:\n' + ', '.join(to_exclude))
 
 
 class TransferPandda(luigi.Task):

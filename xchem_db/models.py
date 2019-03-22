@@ -355,7 +355,9 @@ class PanddaEvent(models.Model):
     ligand_confidence = models.TextField(blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     interesting = models.BooleanField()
-    event_status = models.IntegerField(blank=True, null=True)
+    event_status = models.TextField(blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    modified_date = models.DateTimeField(auto_now=True, null=True)
 
     # model types
     NONE = 'NA'
