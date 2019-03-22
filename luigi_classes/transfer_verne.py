@@ -213,7 +213,7 @@ class TransferByTargetList(luigi.Task):
 
     def output(self):
         print(self.timestamp)
-        return luigi.LocalTarget(str('logs/verne_transfer_' + self.timestamp))
+        return luigi.LocalTarget(str('logs/verne_transfer_' + + datetime.datetime.now().strftime('%Y%m%d%H%M')))
 
     def requires(self):
         # If the TARGET_LIST file (lists targets for loader) exists, delete to repopulate
@@ -272,7 +272,7 @@ class UpdateVerne(luigi.Task):
         return TransferByTargetList()
 
     def output(self):
-        return luigi.LocalTarget(str('logs/verne_update_' + str(self.timestamp)))
+        return luigi.LocalTarget(str('logs/verne_update_' + datetime.datetime.now().strftime('%Y%m%d%H%M')))
 
     def run(self):
 
