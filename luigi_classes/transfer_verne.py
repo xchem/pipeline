@@ -225,7 +225,7 @@ class TransferByTargetList(luigi.Task):
             for target in target_list:
                 tgt = target.rstrip()
                 print(tgt)
-                proasis_out = ProasisOut.objects.filter(crystal__target__target_name=tgt)
+                proasis_out = ProasisOut.objects.filter(crystal__target__target_name__iexact=tgt)
                 for o in proasis_out:
                     if o.root and o.start:
                         pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
