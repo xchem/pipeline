@@ -442,7 +442,8 @@ def pop_soakdb(database_file):
     # add info to soakdbfiles table
     soakdb_entry = models.SoakdbFiles.objects.get_or_create(modification_date=modification_date, filename=database_file,
                                                             proposal=models.Proposals.objects.get_or_create(
-                                                                proposal=proposal)[0], visit=visit)[0]
+                                                                proposal=proposal, title=int(proposal[2:]))[0],
+                                                            visit=visit)[0]
     soakdb_entry.save()
     return out, err, proposal
 
