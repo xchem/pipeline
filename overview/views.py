@@ -186,7 +186,7 @@ def get_rachael_queue(request):
 
     out, err = submission.communicate()
 
-    return JsonResponse(out.decode('ascii'.split('\n')), safe=False)
+    return JsonResponse(out.decode('ascii').split('\n'), safe=False)
 
 
 
