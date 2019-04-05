@@ -1,5 +1,6 @@
 import glob
 import os
+import subprocess
 
 import datetime
 from django.http import HttpResponse, JsonResponse
@@ -175,6 +176,17 @@ def get_crystal_info(request):
             data.append(out_dict)
 
     return JsonResponse(data, safe=False)
+
+
+def get_rachael_queue():
+    submission_string = 'qstat'
+
+    submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+
+    out, err = submission.communicate()
+
+    return JsonResponse(out)
 
 
 
