@@ -178,7 +178,7 @@ def get_crystal_info(request):
     return JsonResponse(data, safe=False)
 
 
-def get_rachael_queue():
+def get_rachael_queue(request):
     submission_string = 'qstat'
 
     submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE,
