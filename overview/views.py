@@ -179,7 +179,7 @@ def get_crystal_info(request):
 
 
 def get_rachael_queue(request):
-    submission_string = 'qstat'
+    submission_string = "ssh uzw12877@nx.diamond.ac.uk 'qstat'"
 
     submission = subprocess.Popen(submission_string, shell=True, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
