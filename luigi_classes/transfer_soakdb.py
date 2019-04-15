@@ -491,7 +491,12 @@ class CheckUploadedFiles(luigi.Task):
                     try:
                         maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
                     except OperationalError:
-                        raise Exception(str(traceback.format_exc() + '; db_file=' + filename))
+                        if not os.path.isfile(filename):
+                            f = SoakdbFiles.objects.get(filename=filename)
+                            f.delete()
+                            continue
+                        else:
+                            raise Exception(str(traceback.format_exc() + '; db_file=' + filename))
                     if maint_exists == 1:
                         zipped.append(tuple([filename, model]))
 
