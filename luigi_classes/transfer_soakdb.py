@@ -1,9 +1,7 @@
 import glob
-import os
-import re
 import shutil
-import subprocess
 import traceback
+from sqlite3 import OperationalError
 
 from setup_django import setup_django
 
@@ -490,7 +488,10 @@ class CheckUploadedFiles(luigi.Task):
             zipped = []
             for filename in soakdb_files:
                 for model in m:
-                    maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
+                    try:
+                        maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
+                    except OperationalError:
+                        raise Exception(str(traceback.format_exc() + '; db_file=' + filename))
                     if maint_exists == 1:
                         zipped.append(tuple([filename, model]))
 
