@@ -114,7 +114,7 @@ def find_ligands(pandda_model_path):
     lig_strings = []
     for line in open(pandda_model_path, 'r'):
         if 'LIG' in line:
-            result = re.search(r"LIG.......", line.decode('ascii'))
+            result = re.search(r"LIG.......", line)
             if result:
                 lig_string = result.group()
                 lig_strings.append(lig_string)
