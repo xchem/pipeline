@@ -86,7 +86,7 @@ class PostPipeClean(luigi.Task):
                  WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
                  os.path.join(os.getcwd(), 'logs/pipe.done')]
 
-        paths.append(glob.glob('*pipe_run_*.done'))
+        paths.extend(glob.glob('*pipe_run_*.done'))
 
         for path in paths:
             try:
