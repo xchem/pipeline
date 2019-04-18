@@ -142,14 +142,19 @@ class CheckFiles(luigi.Task):
                 print(old_mod_date)
                 if not old_mod_date:
                     soakdb_query[0].modification_date = current_mod_date
+                    soakdb_query[0].save
                     old_mod_date = 0
                 print(current_mod_date)
 
                 # if the file has changed since the db was last updated for the entry, change status to indicate this
-                if int(current_mod_date) > int(old_mod_date):
-                    update_status = SoakdbFiles.objects.get(id=id_number)
-                    update_status.status = 1
-                    update_status.save()
+                try:
+                    if int(current_mod_date) > int(old_mod_date):
+                        update_status = SoakdbFiles.objects.get(id=id_number)
+                        update_status.status = 1
+                        update_status.save()
+                except ValueError:
+                    raise Exception(str('current_mod_date: ' + str(current_mod_date)
+                                        + ', old_mod_date: ' + str(old_mod_date)))
 
             # if there is more than one entry, raise an exception (should never happen - filename field is unique)
             if len(soakdb_query) > 1:
