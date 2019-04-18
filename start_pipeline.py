@@ -89,10 +89,8 @@ class PostPipeClean(luigi.Task):
         paths.extend(glob.glob('*pipe_run_*.done'))
 
         for path in paths:
-            try:
+            if os.path.isfile(path):
                 os.remove(path)
-            except:
-                pass
 
         with self.output().open('w') as f:
             f.write('')
