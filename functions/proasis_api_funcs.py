@@ -9,7 +9,7 @@ import json
 from simplejson.errors import JSONDecodeError
 
 
-def get_json(url, max_retries=10):
+def get_json(url, max_retries=100):
 
     def attempt_json(url, data):
         try:
