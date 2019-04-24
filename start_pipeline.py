@@ -98,4 +98,4 @@ class PostPipeClean(luigi.Task):
 
 
 if __name__ == '__main__':
-    luigi.build([PostPipeClean()], workers=1, no_lock=False)
+    luigi.build([PostPipeClean()], workers=10, no_lock=False)
