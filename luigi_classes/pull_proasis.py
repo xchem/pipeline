@@ -17,7 +17,7 @@ from rdkit.Chem import AllChem
 from functions import proasis_api_funcs
 from xchem_db.models import *
 from . import transfer_proasis
-from config_classes import DirectoriesConfig
+from .config_classes import DirectoriesConfig
 
 
 def get_output_file_name(proasis_hit, ligid, hit_directory, extension):

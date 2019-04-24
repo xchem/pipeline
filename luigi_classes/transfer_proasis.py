@@ -17,7 +17,7 @@ from itertools import chain
 
 from functions import misc_functions, db_functions, proasis_api_funcs
 from xchem_db.models import *
-from config_classes import SoakDBConfig, DirectoriesConfig
+from .config_classes import SoakDBConfig, DirectoriesConfig
 from . import transfer_soakdb
 
 

@@ -14,7 +14,7 @@ from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
 from xchem_db.models import *
-from config_classes import SoakDBConfig, DirectoriesConfig
+from .config_classes import SoakDBConfig, DirectoriesConfig
 
 from dateutil.parser import parse
 

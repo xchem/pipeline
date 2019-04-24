@@ -21,7 +21,7 @@ class CutOutEvent(luigi.Task):
         mapout = self.mol_file.replace('.mol', '_pandda.map')
 
         # convert to pdb with obabel
-        obCcnv = openbabel.OBConversion()
+        obconv = openbabel.OBConversion()
         obconv.SetInAndOutFormats('mol', 'pdb')
         mol = openbabel.OBMol()
 
