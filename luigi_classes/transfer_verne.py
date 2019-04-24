@@ -14,12 +14,13 @@ from functions.misc_functions import get_mod_date
 
 setup_django.setup_django()
 
-from .config_classes import VerneConfig
+from .config_classes import VerneConfig, DirectoriesConfig
 from xchem_db.models import *
 from luigi_classes.pull_proasis import GetOutFiles, CreateProposalVisitFiles
 
 
 class GenerateLigandResults(luigi.Task):
+    resources = {'django': 1}
     target = luigi.Parameter()
     directory = luigi.Parameter()
     sdf_file = luigi.Parameter(default='all_ligs.sdf')
@@ -206,6 +207,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
 
 
 class TransferByTargetList(luigi.Task):
+    resources = {'django': 1}
     remote_root = VerneConfig().remote_root
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
     target_list = VerneConfig().target_list
@@ -213,7 +215,9 @@ class TransferByTargetList(luigi.Task):
 
     def output(self):
         print(self.timestamp)
-        return luigi.LocalTarget(str('logs/verne_transfer_' + datetime.datetime.now().strftime('%Y%m%d%H%M')))
+        return luigi.LocalTarget(str(os.path.join(DirectoriesConfig().log_directory,
+                                                  str('verne_transfer_' +
+                                                      datetime.datetime.now().strftime('%Y%m%d%H%M')))))
 
     def requires(self):
         # If the TARGET_LIST file (lists targets for loader) exists, delete to repopulate
@@ -272,7 +276,8 @@ class UpdateVerne(luigi.Task):
         return TransferByTargetList()
 
     def output(self):
-        return luigi.LocalTarget(str('logs/verne_update_' + datetime.datetime.now().strftime('%Y%m%d%H%M')))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('verne_update_' + datetime.datetime.now().strftime('%Y%m%d%H%M'))))
 
     def run(self):
 

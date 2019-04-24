@@ -17,6 +17,7 @@ from rdkit.Chem import AllChem
 from functions import proasis_api_funcs
 from xchem_db.models import *
 from . import transfer_proasis
+from config_classes import DirectoriesConfig
 
 
 def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
@@ -33,6 +34,9 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
 
 
 class GetCurated(luigi.Task):
+
+    resources = {'django': 1}
+
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -133,6 +137,8 @@ class CreateApo(luigi.Task):
 
 
 class GetSDFS(luigi.Task):
+    resources = {'django': 1}
+
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -170,6 +176,8 @@ class GetSDFS(luigi.Task):
 
 
 class CreateMolFile(luigi.Task):
+    resources = {'django': 1}
+
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -212,6 +220,7 @@ class CreateMolFile(luigi.Task):
 
 
 class CutOutEvent(luigi.Task):
+    resources = {'django': 1}
     # standard parameters
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
@@ -308,6 +317,7 @@ class CutOutEvent(luigi.Task):
 
 
 class CreateHMolFile(luigi.Task):
+    resources = {'django': 1}
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -347,6 +357,7 @@ class CreateHMolFile(luigi.Task):
 
 
 class CreateMolTwoFile(luigi.Task):
+    resources = {'django': 1}
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -418,6 +429,7 @@ class CreateMolTwoFile(luigi.Task):
 
 
 class GetInteractionJSON(luigi.Task):
+    resources = {'django': 1}
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -462,6 +474,7 @@ class GetInteractionJSON(luigi.Task):
 
 
 class CreateStripped(luigi.Task):
+    resources = {'django': 1}
     hit_directory = luigi.Parameter()
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
@@ -596,10 +609,12 @@ class GetLigConf(luigi.Task):
 
 
 class GetOutFiles(luigi.Task):
+    resources = {'django': 1}
     date = luigi.Parameter(default=datetime.datetime.now())
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/out/proasis_out_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('proasis/out/proasis_out_%Y%m%d%H.txt')))
 
     def requires(self):
         # get anything that has been uploaded to proasis

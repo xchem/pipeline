@@ -9,7 +9,7 @@ from paramiko import SSHClient
 import django.utils.timezone
 
 from xchem_db.models import PanddaEvent, Crystal
-from .config_classes import VerneConfig
+from .config_classes import VerneConfig, DirectoriesConfig
 from luigi_classes.transfer_verne import UpdateVerne
 
 
@@ -43,6 +43,7 @@ def transfer_file(host_dict, file_dict):
 
 
 class TransferFragspectTarget(luigi.Task):
+    resources = {'django': 1}
     # hidden parameters in luigi.cfg
     username = luigi.Parameter()
     hostname = luigi.Parameter()
@@ -56,7 +57,8 @@ class TransferFragspectTarget(luigi.Task):
         pass
 
     def output(self):
-        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_' + self.target + '_files.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('/fragspect/' + self.timestamp + '_' + self.target + '_files.done')))
 
     def run(self):
         events = PanddaEvent.objects.filter(crystal__target__target_name=self.target)
@@ -93,6 +95,7 @@ class TransferFragspectTarget(luigi.Task):
 
 
 class TransferFragspectVisitProposal(luigi.Task):
+    reaources = {'django': 1}
     # hidden parameters in luigi.cfg
     username = luigi.Parameter()
     hostname = luigi.Parameter()
@@ -108,7 +111,8 @@ class TransferFragspectVisitProposal(luigi.Task):
                                        target=self.target, timestamp=self.timestamp)
 
     def output(self):
-        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_' + self.target + '_vps.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('/fragspect/' + self.timestamp + '_' + self.target + '_vps.done'))
 
     def run(self):
         proposals = [c.visit.proposal.title for c in
@@ -188,7 +192,8 @@ class StartFragspectLoader(luigi.Task):
         ) for target in targets]
 
     def output(self):
-        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_upload.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('/fragspect/' + self.timestamp + '_upload.done')))
 
     def run(self):
         with open(self.output().path, 'w') as f:
@@ -196,6 +201,7 @@ class StartFragspectLoader(luigi.Task):
 
 
 class KickOffFragspect(UpdateVerne):
+    resources = {'django': 1}
     # hidden parameters in luigi.cfg - file transfer
     username = VerneConfig().username
     hostname = VerneConfig().hostname
@@ -235,6 +241,7 @@ class KickOffFragspect(UpdateVerne):
                                     tmp_dir=self.tmp_dir)
 
     def output(self):
-        return luigi.LocalTarget('logs/fragspect/' + self.timestamp + '_transfer.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('/fragspect/' + self.timestamp + '_transfer.done')))
 
 

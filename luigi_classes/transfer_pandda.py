@@ -8,14 +8,15 @@ import pandas as pd
 from django.db import IntegrityError
 
 from functions import pandda_functions, misc_functions
-from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles
+from luigi_classes.transfer_soakdb import StartTransfers, FindSoakDBFiles, DirectoriesConfig
+from luigi_classes.config_classes import SoakDBConfig
 from xchem_db.models import *
 
 
 class FindPanddaLogs(luigi.Task):
     search_path = luigi.Parameter()
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         return StartTransfers(soak_db_filepath=self.soak_db_filepath)
@@ -33,6 +34,8 @@ class FindPanddaLogs(luigi.Task):
 
 
 class AddPanddaSites(luigi.Task):
+    resources = {'django': 1}
+
     log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
@@ -89,6 +92,7 @@ class AddPanddaSites(luigi.Task):
 
 
 class AddPanddaEvents(luigi.Task):
+    resources = {'django': 1}
     log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
@@ -211,6 +215,7 @@ class AddPanddaEvents(luigi.Task):
 
 
 class AddPanddaRun(luigi.Task):
+    resources = {'django': 1}
     log_file = luigi.Parameter()
     output_dir = luigi.Parameter()
     input_dir = luigi.Parameter()
@@ -240,7 +245,7 @@ class AddPanddaRun(luigi.Task):
 
 class FindPanddaInfo(luigi.Task):
     search_path = luigi.Parameter()
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     sdbfile = luigi.Parameter()
 
     def requires(self):
@@ -294,7 +299,7 @@ class FindPanddaInfo(luigi.Task):
 
 class AddPanddaData(luigi.Task):
     search_path = luigi.Parameter()
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     sdbfile = luigi.Parameter()
 
     def output(self):
@@ -327,14 +332,15 @@ class AddPanddaData(luigi.Task):
 
 
 class FindSearchPaths(luigi.Task):
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
         return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(str('logs/search_paths/search_paths_' + str(self.date_time) + '.csv'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('search_paths/search_paths_' + str(self.date_time) + '.csv')))
 
     def run(self):
         with self.input().open('r') as f:
@@ -390,7 +396,7 @@ class FindSearchPaths(luigi.Task):
 
 
 class TransferPandda(luigi.Task):
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
@@ -405,7 +411,9 @@ class TransferPandda(luigi.Task):
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
 
     def output(self):
-        return luigi.LocalTarget(str('logs/search_paths/search_paths_' + str(self.date_time) + '_transferred.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('search_paths/search_paths_' + str(self.date_time)
+                                                  + '_transferred.txt')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -413,7 +421,8 @@ class TransferPandda(luigi.Task):
 
 
 class AnnotateEvents(luigi.Task):
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    resources = {'django': 1}
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     soakdb_filename = luigi.Parameter()
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
@@ -455,7 +464,7 @@ class AnnotateEvents(luigi.Task):
 
 
 class AnnotateAllEvents(luigi.Task):
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
@@ -470,7 +479,9 @@ class AnnotateAllEvents(luigi.Task):
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
 
     def output(self):
-        return luigi.LocalTarget(str('logs/event_annotations/event_annotations_' + str(self.date_time) + '.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('event_annotations/event_annotations_' + str(self.date_time)
+                                                  + '.txt')))
 
     def run(self):
         with self.output().open('w') as f:

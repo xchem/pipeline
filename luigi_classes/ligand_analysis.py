@@ -1,9 +1,11 @@
 import luigi
 import pandas
+import os
 
 from functions import data_analysis_functions as daf
 from functions import db_functions as dbf
 from luigi_classes.archive import data_in_proasis
+from luigi_classes.config_classes import DirectoriesConfig
 
 
 class EdstatsScores(luigi.Task):
@@ -11,7 +13,8 @@ class EdstatsScores(luigi.Task):
     crystal = luigi.Parameter()
 
     def output(self):
-        filename = str('logs/edstats/' + str(self.crystal) + '_' + str(self.strucid) + '.done')
+        filename = os.path.join(DirectoriesConfig().log_directory,
+                                str('edstats/' + str(self.crystal) + '_' + str(self.strucid) + '.done'))
         return luigi.LocalTarget(filename)
 
     def run(self):
@@ -64,7 +67,7 @@ class StartEdstatsScores(luigi.Task):
                for (crystal_name, strucid_no) in run_list]
 
     def output(self):
-        return luigi.LocalTarget('logs/edstats.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'edstats.done'))
 
     def run(self):
         with self.output().open('wb') as f:

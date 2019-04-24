@@ -14,6 +14,7 @@ from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
 from xchem_db.models import *
+from config_classes import SoakDBConfig, DirectoriesConfig
 
 from dateutil.parser import parse
 
@@ -50,10 +51,11 @@ class FindSoakDBFiles(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
 
     # filepath parameter can be changed elsewhere
-    filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/soakDBfiles/soakDB_%Y%m%d.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('/soakDBfiles/soakDB_%Y%m%d.txt')))
 
     def run(self):
 
@@ -75,8 +77,9 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class CheckFiles(luigi.Task):
+    resources = {'django': 1}
     date = luigi.Parameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         print('Finding soakdb files via CheckFiles')
@@ -89,7 +92,9 @@ class CheckFiles(luigi.Task):
             return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/checked_files/files_%Y%m%d%H.checked'))
+        return luigi.LocalTarget(os.path.join(
+            DirectoriesConfig().log_directory,
+            self.date.strftime('checked_files/files_%Y%m%d%H.checked')))
 
     def run(self):
         soakdb = SoakdbFiles.objects.all()
@@ -190,9 +195,10 @@ class CheckFiles(luigi.Task):
 
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
+    resources = {'django': 1}
     # date parameter for daily run - needs to be changed
     date = luigi.Parameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     # needs a list of soakDB files from the same day
     def requires(self):
@@ -200,7 +206,8 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
     # output is just a log file
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/transfer_logs/fedids_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('transfer_logs/fedids_%Y%m%d%H.txt')))
 
     # transfers data to a central postgres db
     def run(self):
@@ -229,9 +236,10 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
 
 class TransferChangedDataFile(luigi.Task):
+    resources = {'django': 1}
     data_file = luigi.Parameter()
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         return CheckFiles(soak_db_filepath=self.data_file)
@@ -284,7 +292,7 @@ class TransferChangedDataFile(luigi.Task):
                 if ProasisHits.objects.filter(crystal_name=crystal).exists():
                     proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
                     for hit in proasis_hit:
-                        for path in glob.glob(os.path.join(os.getcwd(), 'logs/proasis/hits',
+                        for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits',
                                                            str(hit.crystal_name.crystal_name +
                                                                '_' + hit.modification_date + '*'))):
                             os.remove(path)
@@ -318,8 +326,9 @@ class TransferChangedDataFile(luigi.Task):
 
 
 class TransferNewDataFile(luigi.Task):
+    resources = {'django': 1}
     data_file = luigi.Parameter()
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
@@ -337,8 +346,9 @@ class TransferNewDataFile(luigi.Task):
 
 
 class StartTransfers(luigi.Task):
+    resources = {'django': 1}
     date = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def get_file_list(self, status_code):
 
@@ -359,7 +369,8 @@ class StartTransfers(luigi.Task):
                    for datafile in changed_list]
 
     def output(self):
-        return luigi.LocalTarget('logs/transfer_logs/transfers_' + str(self.date) + '.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('/transfer_logs/transfers_' + str(self.date) + '.done')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -367,6 +378,7 @@ class StartTransfers(luigi.Task):
 
 
 class CheckFileUpload(luigi.Task):
+    resources = {'django': 1}
     filename = luigi.Parameter()
     model = luigi.Parameter()
 
@@ -378,10 +390,12 @@ class CheckFileUpload(luigi.Task):
         return luigi.LocalTarget(str(self.filename + '.' + mod_date + '.checked'))
 
     def run(self):
-        out_err_file = str('logs/' + str(self.filename.split('/')[3]) + '_' + str(self.filename.split('/')[4]) +
-                           '_' + str(self.filename.split('/')[5]) + '_' +
-                           str(misc_functions.get_mod_date(self.filename)) +
-                           str(self.model).replace("<class '", '').replace("'>", '') + '.txt')
+        out_err_file = os.path.join(DirectoriesConfig().log_directory,
+                                    str(str(self.filename.split('/')[3]) +
+                                        '_' + str(self.filename.split('/')[4]) +
+                                        '_' + str(self.filename.split('/')[5]) + '_' +
+                                        str(misc_functions.get_mod_date(self.filename)) +
+                                        str(self.model).replace("<class '", '').replace("'>", '') + '.txt'))
 
         print(out_err_file)
 
@@ -481,8 +495,9 @@ class CheckFileUpload(luigi.Task):
 
 
 class CheckUploadedFiles(luigi.Task):
+    resources = {'django': 1}
     date = luigi.DateParameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         if not os.path.isfile(StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath).output().path):
@@ -508,7 +523,8 @@ class CheckUploadedFiles(luigi.Task):
             return [CheckFileUpload(filename=filename, model=model) for (filename, model) in zipped]
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/soakDBfiles/soakDB_checked_%Y%m%d.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('soakDBfiles/soakDB_checked_%Y%m%d.txt')))
 
     def run(self):
         with self.output().open('w') as f:

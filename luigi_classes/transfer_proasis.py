@@ -18,19 +18,22 @@ from itertools import chain
 
 from functions import misc_functions, db_functions, proasis_api_funcs
 from xchem_db.models import *
+from config_classes import SoakDBConfig, DirectoriesConfig
 from . import transfer_soakdb
 
 
 class InitDBEntries(luigi.Task):
+    resources = {'django': 1}
     date = luigi.Parameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         return transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/proasis_db_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                                                 self.date.strftime('proasis/proasis_db_%Y%m%d%H.txt')))
 
     def run(self):
         fail_count = 0
@@ -237,14 +240,15 @@ class InitDBEntries(luigi.Task):
 class AddProject(luigi.Task):
     protein_name = luigi.Parameter()
     date = luigi.Parameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         return InitDBEntries(date=self.date, soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
         self.protein_name = str(self.protein_name).upper()
-        return luigi.LocalTarget(str('logs/proasis/' + str(self.protein_name) + '.added'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('proasis/' + str(self.protein_name) + '.added'))
 
     def run(self):
         # use upper case so proasis can differentiate
@@ -267,7 +271,7 @@ class AddProject(luigi.Task):
 
 class AddProjects(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
         proteins = Target.objects.all()
@@ -275,7 +279,9 @@ class AddProjects(luigi.Task):
                 for protein in proteins]
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/proasis_projects_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                                                 self.date.strftime(
+                                                                     'proasis/proasis_projects_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -283,8 +289,9 @@ class AddProjects(luigi.Task):
 
 
 class AddLead(luigi.Task):
+    resources = {'django': 1}
     date = luigi.DateParameter(default=datetime.datetime.now())
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     site_centroids = luigi.Parameter()
     reference_structure = luigi.Parameter()
     target = luigi.Parameter()
@@ -429,8 +436,9 @@ class AddLead(luigi.Task):
 
 
 class UploadLeads(luigi.Task):
+    resources = {'django': 1}
     date = luigi.DateParameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         # get all leads that haven't yet been uploaded
@@ -471,7 +479,8 @@ class UploadLeads(luigi.Task):
         return [AddLead(reference_structure=ref, site_centroids=s, target=tar) for (ref, s, tar) in run_zip]
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_leads_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('/proasis/hits/proasis_leads_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -479,11 +488,12 @@ class UploadLeads(luigi.Task):
 
 
 class CopyFile(luigi.Task):
+    resources = {'django': 1}
     proasis_hit = luigi.Parameter()
     crystal = luigi.Parameter()
     update_field = luigi.Parameter()
     filename = luigi.Parameter()
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         return UploadLeads()
@@ -530,7 +540,7 @@ class CopyFile(luigi.Task):
 
 
 class CopyInputFiles(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     altconf = luigi.Parameter()
@@ -562,7 +572,8 @@ class CopyInputFiles(luigi.Task):
 
 
 class GetPanddaMaps(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    resources = {'django': 1}
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     altconf = luigi.Parameter()
@@ -585,7 +596,7 @@ class GetPanddaMaps(luigi.Task):
         else:
             alt_ext = ''
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' +
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits/', str(crystal_name + '_' +
                                                                        mod_date + alt_ext + '.pandda')))
 
     def run(self):
@@ -631,7 +642,8 @@ class GetPanddaMaps(luigi.Task):
 
 
 class GenerateSdf(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    resources = {'django': 1}
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     altconf = luigi.Parameter()
@@ -669,7 +681,8 @@ class GenerateSdf(luigi.Task):
 
 
 class UploadHit(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    resources = {'django': 1}
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     altconf = luigi.Parameter()
@@ -694,7 +707,8 @@ class UploadHit(luigi.Task):
         else:
             alt_ext = ''
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
                                                                        '.structure')))
 
     def run(self):
@@ -808,7 +822,7 @@ class UploadHit(luigi.Task):
 
 
 class AddFiles(luigi.Task):
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     crystal_id = luigi.Parameter()
     refinement_id = luigi.Parameter()
     altconf = luigi.Parameter()
@@ -831,7 +845,8 @@ class AddFiles(luigi.Task):
         else:
             alt_ext = ''
 
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
                                                                        '.files')))
 
     def run(self):
@@ -882,7 +897,7 @@ class AddFiles(luigi.Task):
 
 class UploadHits(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         hits1 = ProasisHits.objects.filter(strucid=None)
@@ -901,7 +916,8 @@ class UploadHits(luigi.Task):
                 (c, r, alt) in zip(c_id, r_id, a)]
 
     def output(self):
-        return luigi.LocalTarget(self.date.strftime('logs/proasis/hits/proasis_hits_%Y%m%d%H.txt'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              self.date.strftime('/proasis/hits/proasis_hits_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -910,13 +926,13 @@ class UploadHits(luigi.Task):
 
 class WriteBlackLists(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
         return UploadHits(date=self.date, hit_directory=self.hit_directory)
 
     def output(self):
-        return luigi.LocalTarget('logs/blacklists.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'blacklists.done'))
 
     def run(self):
         proposal_dict = {'proposal': [], 'strucids': [], 'fedids': []}
@@ -973,6 +989,7 @@ class WriteBlackLists(luigi.Task):
 
 
 class UpdateField(luigi.Task):
+    resources = {'django': 1}
     model = luigi.Parameter()
     field = luigi.Parameter()
     value = luigi.Parameter()
@@ -982,7 +999,8 @@ class UpdateField(luigi.Task):
 
     def output(self):
         crystal = self.model.crystal
-        return luigi.LocalTarget(os.path.join('logs/proasis/hits', str(crystal.crystal_name + '_' +
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              'proasis/hits', str(crystal.crystal_name + '_' +
                                                                        str(crystal.visit.modification_date) +
                                                                        '.' + self.field)))
 

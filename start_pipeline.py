@@ -13,7 +13,7 @@ from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlac
 from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.transfer_verne import UpdateVerne
-from luigi_classes.config_classes import SentryConfig
+from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
 
 import os
 import datetime
@@ -41,8 +41,8 @@ def send_failure_to_sentry(task, exception):
 
 class StartPipeline(luigi.WrapperTask):
     date = luigi.DateParameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
@@ -57,7 +57,7 @@ class StartPipeline(luigi.WrapperTask):
         yield UpdateVerne()
 
     def output(self):
-        return luigi.LocalTarget('logs/pipe.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'pipe.done'))
 
     def run(self):
         with self.output().open('w') as f:
@@ -66,8 +66,8 @@ class StartPipeline(luigi.WrapperTask):
 
 class PostPipeClean(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default='/dls/science/groups/proasis/LabXChem/')
-    soak_db_filepath = luigi.Parameter(default="/dls/labxchem/data/*/lb*/*")
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
 
     def requires(self):
@@ -75,7 +75,8 @@ class PostPipeClean(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(os.getcwd(), str('pipe_run_'
-                                                               + datetime.datetime.now().strftime("%Y%m%d%H%M") + '.done')))
+                                                               + datetime.datetime.now().strftime("%Y%m%d%H%M")
+                                                               + '.done')))
 
     def run(self):
         paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
@@ -84,9 +85,9 @@ class PostPipeClean(luigi.Task):
                  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
                  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
                  WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
-                 os.path.join(os.getcwd(), 'logs/pipe.done')]
+                 os.path.join(DirectoriesConfig().log_directory, 'pipe.done')]
 
-        paths.extend(glob.glob('*pipe_run_*.done'))
+        paths.extend(glob.glob(str(DirectoriesConfig().log_directory +'/*pipe_run_*.done')))
 
         for path in paths:
             if os.path.isfile(path):

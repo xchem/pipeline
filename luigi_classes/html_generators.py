@@ -1,9 +1,10 @@
 import datetime
+import os
 import luigi
 
 import functions.data_analysis_functions as daf
 from luigi_classes import ligand_analysis
-
+from luigi_classes.config_classes import DirectoriesConfig
 
 class ProjectSummaryCSV(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
@@ -27,7 +28,7 @@ class ProjectSummaryHTML(luigi.Task):
         return ProjectSummaryCSV()
 
     def output(self):
-        return luigi.LocalTarget('logs/summary_html.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'summary_html.done'))
 
     def run(self):
         daf.project_summary_html(self.input().path, self.html_out)
@@ -53,7 +54,7 @@ class LigandEdstatsViolinHTML(luigi.Task):
         return LigandEdstatsCSV()
 
     def output(self):
-        return luigi.LocalTarget('logs/violin_html.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'violin_html.done'))
 
     def run(self):
         daf.edstats_violin(self.input().path, self.html_root)

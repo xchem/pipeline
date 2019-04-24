@@ -7,6 +7,7 @@ from functions.docking_functions import *
 from .cluster_submission import submit_job
 from .cluster_submission import write_job
 from .prepare_dock import PrepProtein, PrepLigand, GridPrepADT, ParamPrepADT
+from .config_classes import DirectoriesConfig
 
 
 class RunAutoGrid(luigi.Task):
@@ -217,7 +218,7 @@ class BatchDock(luigi.Task):
                  (root, receptor, ligand) in zipped_list]]
 
     def output(self):
-        return luigi.LocalTarget('logs/batchdock.done')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'batchdock.done'))
 
     def run(self):
         with self.output().open('wb') as f:
