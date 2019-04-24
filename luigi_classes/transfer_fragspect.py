@@ -112,7 +112,7 @@ class TransferFragspectVisitProposal(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              str('/fragspect/' + self.timestamp + '_' + self.target + '_vps.done'))
+                                              str('/fragspect/' + self.timestamp + '_' + self.target + '_vps.done')))
 
     def run(self):
         proposals = [c.visit.proposal.title for c in

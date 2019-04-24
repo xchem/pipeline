@@ -248,7 +248,7 @@ class AddProject(luigi.Task):
     def output(self):
         self.protein_name = str(self.protein_name).upper()
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              str('proasis/' + str(self.protein_name) + '.added'))
+                                              str('proasis/' + str(self.protein_name) + '.added')))
 
     def run(self):
         # use upper case so proasis can differentiate
