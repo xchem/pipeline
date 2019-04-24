@@ -55,7 +55,7 @@ class FindSoakDBFiles(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              self.date.strftime('/soakDBfiles/soakDB_%Y%m%d.txt')))
+                                              self.date.strftime('soakDBfiles/soakDB_%Y%m%d.txt')))
 
     def run(self):
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
@@ -366,7 +366,7 @@ class StartTransfers(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              str('/transfer_logs/transfers_' + str(self.date) + '.done')))
+                                              str('transfer_logs/transfers_' + str(self.date) + '.done')))
 
     def run(self):
         with self.output().open('w') as f:
