@@ -78,7 +78,7 @@ class TransferFragspectTarget(luigi.Task):
 
                 transfer_file(host_dict=host_dict, file_dict={
                     'remote_directory': os.path.join(remote_root, self.timestamp, e.crystal.target.target_name.upper(),
-                                                     name,remote_map),
+                                                     name, remote_map),
                     'remote_root': remote_root,
                     'local_file': e.pandda_event_map_native
                 })
@@ -225,7 +225,7 @@ class KickOffFragspect(UpdateVerne):
                      PanddaEvent.objects.filter(
                          modified_date__lte=django.utils.timezone.now()).distinct('crystal__target__target_name')]
 
-        print(os.path.join(os.getcwd(),self.target_list_file))
+        print(os.path.join(os.getcwd(), self.target_list_file))
 
         with open(os.path.join(os.getcwd(), self.target_list_file), 'w') as f:
             f.write('\n'.join(to_upload))

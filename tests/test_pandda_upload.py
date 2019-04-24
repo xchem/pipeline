@@ -64,7 +64,7 @@ class TestFindLogs(unittest.TestCase):
     # requires mock outfile, as paths don't exist in test environment
     def test_get_files_from_log_function(self):
         log_file = '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log'
-        pver, input_dir, output_dir, sites_file, events_file, Error = pf.get_files_from_log(log_file)
+        pver, input_dir, output_dir, sites_file, events_file, error = pf.get_files_from_log(log_file)
 
         self.assertEqual(pver, '0.2.12-dev')
         self.assertEqual(input_dir, '/pipeline/tests/data/processing/analysis/initial_model/*')
@@ -73,7 +73,7 @@ class TestFindLogs(unittest.TestCase):
                          '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_sites.csv')
         self.assertEqual(events_file,
                          '/pipeline/tests/data/processing/analysis/panddas/analyses/pandda_analyse_events.csv')
-        self.assertEqual(Error, False)
+        self.assertEqual(error, False)
 
     # tasks: AddPanddaRun
     def test_add_pandda_run(self):

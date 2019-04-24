@@ -6,6 +6,7 @@ import functions.data_analysis_functions as daf
 from luigi_classes import ligand_analysis
 from luigi_classes.config_classes import DirectoriesConfig
 
+
 class ProjectSummaryCSV(luigi.Task):
     date = luigi.DateParameter(default=datetime.date.today())
 

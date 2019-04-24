@@ -50,19 +50,13 @@ def get_strucids_from_project(project):
 def delete_structure(strucid):
     delete_string = str('/usr/local/Proasis2/utils/removestruc.py -s ' + str(strucid))
     process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-    out = out.decode('ascii')
-    if err:
-        err = err.decode('ascii')
+    process.communicate()
 
 
 def delete_project(name):
     delete_string = str('/usr/local/Proasis2/utils/removeoldproject.py -p ' + str(name))
     process = subprocess.Popen(delete_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out, err = process.communicate()
-    out = out.decode('ascii')
-    if err:
-        err = err.decode('ascii')
+    process.communicate()
 
 
 def delete_all_inhouse(exception_list=None):
@@ -133,10 +127,7 @@ def get_struc_mtz(strucid, out_dir):
         mtz_zipped = filename.split('/')[-1]
         command_string = ('gzip -d ' + out_dir + '/' + mtz_zipped)
         process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
-        out = out.decode('ascii')
-        if err:
-            err = err.decode('ascii')
+        process.communicate()
         saved_to = str(mtz_zipped.replace('.gz', ''))
     else:
         saved_to = None
@@ -251,8 +242,6 @@ def get_struc_file(strucid, outfile, ftype):
     process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, _ = process.communicate()
     out = out.decode('ascii')
-    # if err:
-        # err = err.decode('ascii')
 
     print(out)
 

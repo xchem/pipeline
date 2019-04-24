@@ -25,7 +25,7 @@ class AuthRouter:
         """
         if obj1._meta.app_label == 'xchem_db' or \
            obj2._meta.app_label == 'xchem_db':
-           return True
+            return True
         return None
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):

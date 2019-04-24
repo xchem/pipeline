@@ -62,9 +62,8 @@ class StartEdstatsScores(luigi.Task):
 
         run_list = list(zip(crystal_list, strucid_list))
 
-        return data_in_proasis.StartHitTransfers(), \
-               [EdstatsScores(crystal=crystal_name, strucid=strucid_no)
-               for (crystal_name, strucid_no) in run_list]
+        return (data_in_proasis.StartHitTransfers(),
+                EdstatsScores(crystal=crystal_name, strucid=strucid_no) for (crystal_name, strucid_no) in run_list)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'edstats.done'))

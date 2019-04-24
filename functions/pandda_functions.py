@@ -37,7 +37,7 @@ def get_files_from_log(log):
     output_dir = ''
     sites_file = ''
     events_file = ''
-    Error = False
+    error = False
 
     for line in open(log, 'r'):
         # get pandda version from log file
@@ -61,9 +61,9 @@ def get_files_from_log(log):
                 events_file = to_check
         # check if pandda ran successfully
         if 'exited with an error' in line:
-            Error = True
+            error = True
 
-    return pver, input_dir, output_dir, sites_file, events_file, Error
+    return pver, input_dir, output_dir, sites_file, events_file, error
 
 
 def get_sites_from_events(events_file):
@@ -87,9 +87,9 @@ def get_sites_from_events(events_file):
     return crystals, events, sites, bdc
 
 
-def get_file_names(BDC, crystal, input_dir, output_dir, event):
+def get_file_names(bdc, crystal, input_dir, output_dir, event):
 
-    map_file_name = ''.join([crystal, '-event_', str(event), '_1-BDC_', str(BDC), '_map.native.ccp4'])
+    map_file_name = ''.join([crystal, '-event_', str(event), '_1-BDC_', str(bdc), '_map.native.ccp4'])
     map_file_path = os.path.join(input_dir.replace('*', ''), crystal, map_file_name)
 
     input_pdb_name = ''.join([crystal, '-pandda-input.pdb'])

@@ -2,10 +2,10 @@ import glob
 import os
 import smtplib
 import subprocess
+import time
 from email.mime.text import MIMEText
 
 import luigi
-import time
 
 from functions import cluster_functions
 

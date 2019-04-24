@@ -1,6 +1,5 @@
 import csv
 import glob
-import os
 import re
 import shutil
 import subprocess
@@ -33,7 +32,7 @@ class InitDBEntries(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                                                 self.date.strftime('proasis/proasis_db_%Y%m%d%H.txt')))
+                                              self.date.strftime('proasis/proasis_db_%Y%m%d%H.txt')))
 
     def run(self):
         fail_count = 0
@@ -280,8 +279,8 @@ class AddProjects(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                                                 self.date.strftime(
-                                                                     'proasis/proasis_projects_%Y%m%d%H.txt')))
+                                              self.date.strftime(
+                                                  'proasis/proasis_projects_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:
@@ -330,7 +329,7 @@ class AddLead(luigi.Task):
                     # if the residue is not a water etc. (amino acids have blank)
                     if parent.get_id()[0] == ' ':
                         # get the chain that the residue belongs to
-                        chain = Residue.Residue.get_parent(parent)
+                        c = Residue.Residue.get_parent(parent)
                         # if statements for fussy proasis formatting
 
                     # establish string spacing for proasis
@@ -343,7 +342,7 @@ class AddLead(luigi.Task):
                     # ignore waters
                     if 'HOH' not in str(parent.get_resname()):
                         res = (
-                                str(parent.get_resname()) + ' ' + str(chain.get_id()) + space + str(parent.get_id()[1]))
+                                str(parent.get_resname()) + ' ' + str(c.get_id()) + space + str(parent.get_id()[1]))
                         res_list.append(res)
 
                 except:
@@ -596,8 +595,9 @@ class GetPanddaMaps(luigi.Task):
         else:
             alt_ext = ''
 
-        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits/', str(crystal_name + '_' +
-                                                                       mod_date + alt_ext + '.pandda')))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits/',
+                                              str(crystal_name + '_' +
+                                                  mod_date + alt_ext + '.pandda')))
 
     def run(self):
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
@@ -709,7 +709,7 @@ class UploadHit(luigi.Task):
 
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
-                                                                       '.structure')))
+                                                                   '.structure')))
 
     def run(self):
         # get crystal and target name from provided ids
@@ -847,7 +847,7 @@ class AddFiles(luigi.Task):
 
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
-                                                                       '.files')))
+                                                                   '.files')))
 
     def run(self):
 
@@ -1001,8 +1001,8 @@ class UpdateField(luigi.Task):
         crystal = self.model.crystal
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               'proasis/hits', str(crystal.crystal_name + '_' +
-                                                                       str(crystal.visit.modification_date) +
-                                                                       '.' + self.field)))
+                                                                  str(crystal.visit.modification_date) +
+                                                                  '.' + self.field)))
 
     def run(self):
         setattr(self.model, self.field, self.value)

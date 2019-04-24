@@ -31,17 +31,17 @@ class PrepProtein(luigi.Task):
         protein = os.path.join(self.root_dir, self.docking_dir, str(self.protein_pdb).replace('.pdb', '_prepared.pdb'))
 
         # convert to pdbqt with obabel
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('pdb', 'pdbqt')
+        obconv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('pdb', 'pdbqt')
 
         # set protein to be rigid
-        obConv.AddOption('x')
-        obConv.AddOption('r')
+        obconv.AddOption('x')
+        obconv.AddOption('r')
         mol = openbabel.OBMol()
 
         # read pdb and write pdbqt
-        obConv.ReadFile(mol, protein)
-        obConv.WriteFile(mol, protein.replace('.pdb', '.pdbqt'))
+        obconv.ReadFile(mol, protein)
+        obconv.WriteFile(mol, protein.replace('.pdb', '.pdbqt'))
 
 
 class PrepLigand(luigi.Task):
@@ -63,23 +63,23 @@ class PrepLigand(luigi.Task):
         ligand = os.path.join(self.root_dir, self.docking_dir, self.ligand_sdf)
 
         # convert to pdbqt with obabel
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('sdf', 'pdbqt')
+        obconv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('sdf', 'pdbqt')
 
         mol = openbabel.OBMol()
 
         # read pdb and write pdbqt
-        obConv.ReadFile(mol, ligand)
-        obConv.WriteFile(mol, ligand.replace('.sdf', '_prepared.pdbqt'))
+        obconv.ReadFile(mol, ligand)
+        obconv.WriteFile(mol, ligand.replace('.sdf', '_prepared.pdbqt'))
 
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('sdf', 'mol2')
+        obconv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('sdf', 'mol2')
 
         mol = openbabel.OBMol()
 
         # read pdb and write mol2
-        obConv.ReadFile(mol, ligand)
-        obConv.WriteFile(mol, ligand.replace('.sdf', '.mol2'))
+        obconv.ReadFile(mol, ligand)
+        obconv.WriteFile(mol, ligand.replace('.sdf', '.mol2'))
 
 
 class GridPrepADT(luigi.Task):

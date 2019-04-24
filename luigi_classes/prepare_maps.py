@@ -21,13 +21,13 @@ class CutOutEvent(luigi.Task):
         mapout = self.mol_file.replace('.mol', '_pandda.map')
 
         # convert to pdb with obabel
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('mol', 'pdb')
+        obCcnv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('mol', 'pdb')
         mol = openbabel.OBMol()
 
         # read mol and write pdb
-        obConv.ReadFile(mol, os.path.join(self.directory, self.mol_file))
-        obConv.WriteFile(mol, os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
+        obconv.ReadFile(mol, os.path.join(self.directory, self.mol_file))
+        obconv.WriteFile(mol, os.path.join(self.directory, self.mol_file.replace('.mol', '_mol.pdb')))
 
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s

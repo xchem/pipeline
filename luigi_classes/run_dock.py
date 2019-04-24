@@ -140,14 +140,14 @@ class RunVinaDock(luigi.Task):
 
         if mol is None:
             # convert to mol with obabel
-            obConv = openbabel.OBConversion()
-            obConv.SetInAndOutFormats('mol2', 'mol')
+            obconv = openbabel.OBConversion()
+            obconv.SetInAndOutFormats('mol2', 'mol')
 
             mol = openbabel.OBMol()
 
             # read pdb and write pdbqt
-            obConv.ReadFile(mol, ligand)
-            obConv.WriteFile(mol, ligand.replace('.mol2', '.mol'))
+            obconv.ReadFile(mol, ligand)
+            obconv.WriteFile(mol, ligand.replace('.mol2', '.mol'))
 
             ligand = ligand.replace('.mol2', '.mol')
             mol = Chem.MolFromMolFile(ligand)

@@ -42,7 +42,7 @@ rows = c.fetchall()
 for row in rows:
     protein_list.append(str(row[0]))
 
-protein_list=list(set(protein_list))
+protein_list = list(set(protein_list))
 
 count = 0
 for protein in protein_list:
@@ -52,11 +52,12 @@ for protein in protein_list:
     # print(protein)
     # print('----------')
     current_list = []
-    status_list=[]
+    status_list = []
     good_list = []
-    file_checks = {'crystal':[], 'bound_state':[], 'mod_date':[], 'pdb':[], 'mtz':[], '2fofc':[], 'fofc':[], 'ligs':[]}
-    good_structures = {'crystal':[], 'bound_state': [], 'mod_date':[], 'strucid':[]}
-    #results_summary = {'crystal': []}
+    file_checks = {'crystal': [], 'bound_state': [], 'mod_date': [], 'pdb': [], 'mtz': [], '2fofc': [], 'fofc': [],
+                   'ligs': []}
+    good_structures = {'crystal': [], 'bound_state': [], 'mod_date': [], 'strucid': []}
+    # results_summary = {'crystal': []}
     for crys in crystal_list:
         if str(protein + '-') in crys:
             current_list.append(crys)
@@ -64,7 +65,9 @@ for protein in protein_list:
         # print(crystal)
         error_list = []
 
-        c.execute("select strucid, bound_conf, modification_date from proasis_hits where crystal_name like %s and strucid NOT LIKE ''", (crystal,))
+        c.execute(
+            "select strucid, bound_conf, modification_date from proasis_hits where crystal_name like %s and strucid NOT LIKE ''",
+            (crystal,))
         rows = c.fetchall()
         bound_list = []
         strucid_list = []
@@ -86,9 +89,7 @@ for protein in protein_list:
         for ids in unique_strucids:
             db_strucids.append(ids)
 
-
-
-        if len({len(unique_modification_date), len(unique_bound), len(unique_strucids)})==1:
+        if len({len(unique_modification_date), len(unique_bound), len(unique_strucids)}) == 1:
             status_list.append(0)
             good_list.append(crystal)
             for i in range(0, len(unique_bound)):
@@ -97,10 +98,12 @@ for protein in protein_list:
                 good_structures['mod_date'].append(unique_modification_date[i])
                 good_structures['strucid'].append(unique_strucids[i])
 
-        if sum([len(unique_modification_date),len(unique_bound),len(unique_strucids)])==0:
+        if sum([len(unique_modification_date), len(unique_bound), len(unique_strucids)]) == 0:
             # print('    ' + crystal)
             # print('    --------------------------------')
-            c.execute('select bound_conf, modification_date, exists_pdb, exists_mtz, exists_2fofc, exists_fofc, ligand_list from proasis_hits where crystal_name like %s', (crystal,))
+            c.execute(
+                'select bound_conf, modification_date, exists_pdb, exists_mtz, exists_2fofc, exists_fofc, ligand_list from proasis_hits where crystal_name like %s',
+                (crystal,))
             rows = c.fetchall()
             # print(rows)
             # print(strucid_list)
@@ -129,7 +132,7 @@ for protein in protein_list:
 
 
 
-        elif len({len(unique_modification_date), len(unique_bound), len(unique_strucids)})>1:
+        elif len({len(unique_modification_date), len(unique_bound), len(unique_strucids)}) > 1:
             # print('    ' + crystal)
             # print('    --------------------------------')
             status_list.append(1)
@@ -186,10 +189,6 @@ for protein in protein_list:
 
     # print(good_html)
 
-    #print('Number of bad structures = ' + str(sum(status_list)) + '\n')
+    # print('Number of bad structures = ' + str(sum(status_list)) + '\n')
     # if len(good_list) > 0 and len(good_list)!=1:
     #     print('    Good structures: ' + str(good_list) + '\n')
-
-
-
-

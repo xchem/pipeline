@@ -34,7 +34,7 @@ def run_edstats(strucid):
             print('writing temporary edstats output...')
             edstats_name = str('edstats_' + str(strucid) + '.out')
             command_string = ('source /dls/science/groups/i04-1/software/pandda-update/ccp4/ccp4-7.0/bin/ccp4.setup-sh;'
-                      ' edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=' +
+                              ' edstats.pl -hklin=' + mtz_file + ' -xyzin=' + pdb_file + ' -out=' +
                               edstats_name + ' > temp.out > /dev/null 2>&1')
             process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
@@ -51,7 +51,8 @@ def run_edstats(strucid):
 
             if output:
                 header = output.pop(0).split()
-                assert header[:3] == ['RT', 'CI', 'RN'], 'edstats output headers are not as expected! {!s}'.format(output)
+                assert header[:3] == ['RT', 'CI', 'RN'], \
+                    'edstats output headers are not as expected! {!s}'.format(output)
                 num_fields = len(header)
                 header = header[3:]
             else:
@@ -76,9 +77,7 @@ def run_edstats(strucid):
                     residue, chain, resnum = fields[:3]
                     try:
                         resnum = int(resnum)
-                        inscode = ' '
                     except ValueError:
-                        inscode = resnum[-1:]
                         resnum = int(resnum[:-1])
 
                     # Remove the processed columns

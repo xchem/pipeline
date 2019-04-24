@@ -207,13 +207,13 @@ class CreateMolFile(luigi.Task):
                                              ligand=self.ligand,
                                              ligid=self.ligid)
         # set openbabel to convert from sdf to mol
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('sdf', 'mol')
+        obconv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('sdf', 'mol')
         # blank mol for ob
         mol = openbabel.OBMol()
         # read pdb and write mol
-        obConv.ReadFile(mol, self.input().path)
-        obConv.WriteFile(mol, self.output().path)
+        obconv.ReadFile(mol, self.input().path)
+        obconv.WriteFile(mol, self.output().path)
         # add mol file to proasis out entry
         proasis_out.mol = self.output().path.split('/')[-1]
         proasis_out.save()
@@ -258,20 +258,22 @@ class CutOutEvent(luigi.Task):
         directory = '/'.join(self.output().path.split('/')[:-1])
 
         # convert to pdb with obabel
-        obConv = openbabel.OBConversion()
-        obConv.SetInAndOutFormats('mol', 'pdb')
+        obconv = openbabel.OBConversion()
+        obconv.SetInAndOutFormats('mol', 'pdb')
         mol = openbabel.OBMol()
 
         # read mol and write pdb
-        obConv.ReadFile(mol, self.input().path)
-        obConv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
+        obconv.ReadFile(mol, self.input().path)
+        obconv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
 
         # use mapmask to cut out event map in reference to ligand (mol)
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
             border %s
             end
         eof
-        ''' % (self.mapin, self.output().path.replace('.gz', ''), self.input().path.replace('.mol', '_mol.pdb'), str(self.border))
+        ''' % (self.mapin, self.output().path.replace('.gz', ''),
+               self.input().path.replace('.mol', '_mol.pdb'),
+               str(self.border))
 
         process = subprocess.Popen(str(self.ssh_command + ' "' + 'cd ' + directory + ';' + mapmask + '"'),
                                    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -306,12 +308,6 @@ class CutOutEvent(luigi.Task):
             if '(mapmask) - normal termination' not in out.decode('ascii'):
                 raise Exception(str('mapmask failed:' + out.decode('ascii')))
 
-        # process = subprocess.Popen(str('gzip ' + self.output().path.replace('.gz', '')), shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        # out, err = process.communicate()
-        # if err:
-        #     raise Exception(err)
-
-        # proasis_out.event = self.output().path.split('/')[-1]
         proasis_out.pmap = self.output().path.split('/')[-1]
         proasis_out.save()
 
@@ -379,15 +375,15 @@ class CreateMolTwoFile(luigi.Task):
 
     def run(self):
 
-        def obconv_method(self):
-            obConv = openbabel.OBConversion()
-            obConv.SetInAndOutFormats('mol', 'mol2')
+        def obconv_method(obj):
+            obconv = openbabel.OBConversion()
+            obconv.SetInAndOutFormats('mol', 'mol2')
             # blank mol for ob
             mol = openbabel.OBMol()
             # read pdb and write mol
-            obConv.ReadFile(mol, self.input().path)
-            obConv.WriteFile(mol, self.output().path)
-            proasis_out.mol2 = self.output().path.split('/')[-1]
+            obconv.ReadFile(mol, obj.input().path)
+            obconv.WriteFile(mol, obj.output().path)
+            proasis_out.mol2 = obj.output().path.split('/')[-1]
             proasis_out.save()
 
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
@@ -406,7 +402,7 @@ class CreateMolTwoFile(luigi.Task):
 
         boron_matches = rd_mol.HasSubstructMatch(boron)
         if boron_matches:
-            obconv_method(self)
+            obconv_method(obj=self)
 
         else:
             # get charge from mol file
@@ -419,7 +415,7 @@ class CreateMolTwoFile(luigi.Task):
             out, err = process.communicate()
             out = out.decode('ascii')
             if 'Error' in out:
-                obconv_method(self)
+                obconv_method(obj=self)
             else:
                 print(out)
                 print(err)
@@ -541,10 +537,10 @@ class CreateVisitFile(luigi.Task):
 
 class CreateProposalVisitFiles(luigi.Task):
     def requires(self):
-        def add_to_dict(dct, value, target):
-            if target not in dct.keys():
-                dct[target] = []
-            dct[target].append(value)
+        def add_to_dict(dct, value, tgt):
+            if tgt not in dct.keys():
+                dct[tgt] = []
+            dct[tgt].append(value)
 
         outs = ProasisOut.objects.all()
         out_dict = {}

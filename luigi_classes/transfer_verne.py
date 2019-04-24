@@ -1,13 +1,11 @@
-import os
+import datetime
 import time
 
-import datetime
 import luigi
 from paramiko import SSHClient
-from scp import SCPClient
-
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from scp import SCPClient
 
 import setup_django
 from functions.misc_functions import get_mod_date
@@ -156,7 +154,7 @@ class TransferVisitAndProposalFiles(luigi.Task):
         print(self.local_directory)
         print(self.remote_directory)
         return TransferDirectory(local_directory=self.local_directory, remote_directory=self.remote_directory,
-                          timestamp=self.timestamp, target_file=self.target_file, target_name=self.target_name)
+                                 timestamp=self.timestamp, target_file=self.target_file, target_name=self.target_name)
 
     def output(self):
         self.out_dir = '/'.join(
@@ -332,4 +330,3 @@ class UpdateVerne(luigi.Task):
 
             with self.output().open('w') as f:
                 f.write('')
-

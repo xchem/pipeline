@@ -480,6 +480,7 @@ class ProasisOut(models.Model):
         db_table = 'proasis_out'
         unique_together = ('crystal', 'proasis', 'ligand', 'ligid')
 
+
 class Occupancy(models.Model):
 
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
@@ -497,6 +498,7 @@ class Occupancy(models.Model):
     edited = models.DateTimeField(auto_now=True)
     added = models.DateTimeField(auto_now_add=True)
 
+
 class ConvergenceRefinement(Refinement):
 
     """ Refinement with more cycles to convergence
@@ -513,13 +515,16 @@ class ConvergenceRefinement(Refinement):
     cycles = models.IntegerField(null=True, blank=True)
     error = models.TextField(blank=True, null=True)
 
+
 class ConvergenceOccupancy(Occupancy):
 
     convergence_refinement = models.ForeignKey(ConvergenceRefinement, on_delete=models.CASCADE, related_name='+')
 
+
 class NonSuperposedRefinement(Refinement):
 
     orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
+
 
 class NonSuperposedOccupancy(Occupancy):
 

@@ -8,11 +8,12 @@ import datetime
 
 from xchem_db.models import PanddaEvent
 
-def transfer_file(host_dict, file_dict):
+
+def transfer_file(hdict, file_dict):
     # create SSH client with paramiko and connect with system host keys
     ssh = SSHClient()
     ssh.load_system_host_keys()
-    ssh.connect(host_dict['hostname'], username=host_dict['username'])
+    ssh.connect(hdict['hostname'], username=hdict['username'])
     sftp = ssh.open_sftp()
 
     # see if the remote directory exists
@@ -52,13 +53,15 @@ for e in events:
         remote_pdb = name + '_bound.pdb'
 
         transfer_file(host_dict=host_dict, file_dict={
-            'remote_directory': os.path.join(remote_root, timestamp,  e.crystal.target.target_name.upper(), name, remote_map),
+            'remote_directory': os.path.join(remote_root, timestamp,
+                                             e.crystal.target.target_name.upper(), name, remote_map),
             'remote_root': remote_root,
             'local_file': e.pandda_event_map_native
         })
 
         transfer_file(host_dict=host_dict, file_dict={
-            'remote_directory': os.path.join(remote_root, timestamp, e.crystal.target.target_name.upper(), name, remote_pdb),
+            'remote_directory': os.path.join(remote_root, timestamp,
+                                             e.crystal.target.target_name.upper(), name, remote_pdb),
             'remote_root': remote_root,
             'local_file': e.refinement.bound_conf
         })

@@ -58,7 +58,6 @@ class FindSoakDBFiles(luigi.Task):
                                               self.date.strftime('/soakDBfiles/soakDB_%Y%m%d.txt')))
 
     def run(self):
-
         # maybe change to *.sqlite to find renamed files? - this will probably pick up a tonne of backups
         command = str(
             '''find ''' + self.filepath + ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/tmp/*" -prune -o -path "*BACKUP*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*ack*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print''')
@@ -97,8 +96,6 @@ class CheckFiles(luigi.Task):
             self.date.strftime('checked_files/files_%Y%m%d%H.checked')))
 
     def run(self):
-        soakdb = SoakdbFiles.objects.all()
-
         # a list to hold filenames that have been checked
         checked = []
 
@@ -147,7 +144,7 @@ class CheckFiles(luigi.Task):
                 print(old_mod_date)
                 if not old_mod_date:
                     soakdb_query[0].modification_date = current_mod_date
-                    soakdb_query[0].save
+                    soakdb_query[0].save()
                     old_mod_date = 0
                 print(current_mod_date)
 
@@ -279,7 +276,7 @@ class TransferChangedDataFile(luigi.Task):
             find_logs_out_files = glob.glob(str(search_path + '*.txt'))
 
             for f in find_logs_out_files:
-                if is_date(f.replace(search_path,'').replace('.txt', '')):
+                if is_date(f.replace(search_path, '').replace('.txt', '')):
                     os.remove(f)
 
             crystals = Crystal.objects.filter(visit=soakdb_query)
@@ -338,7 +335,6 @@ class TransferNewDataFile(luigi.Task):
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
-
         transfer_file(self.data_file)
 
         with self.output().open('w') as f:
@@ -364,9 +360,9 @@ class StartTransfers(luigi.Task):
             new_list = self.get_file_list(0)
             changed_list = self.get_file_list(1)
             return [TransferNewDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                   for datafile in new_list], \
+                    for datafile in new_list], \
                    [TransferChangedDataFile(data_file=datafile, soak_db_filepath=self.soak_db_filepath)
-                   for datafile in changed_list]
+                    for datafile in changed_list]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -529,4 +525,3 @@ class CheckUploadedFiles(luigi.Task):
     def run(self):
         with self.output().open('w') as f:
             f.write('')
-

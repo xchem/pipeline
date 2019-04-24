@@ -111,7 +111,6 @@ def get_crystal_info(request):
             if events:
                 out_dict['pandda_model'] = '✓'
 
-
             proasis = ProasisHits.objects.filter(crystal_name=crys).exclude(strucid=None).exclude(strucid='')
             pout = []
 
@@ -148,7 +147,6 @@ def get_crystal_info(request):
                 mtz = check_file_status('refine.mtz', bound_conf)
                 two_fofc = check_file_status('2fofc.map', bound_conf)
                 fofc = check_file_status('fofc.map', bound_conf)
-
 
             if mtz[0]:
                 out_dict['mtz_present'] = '✓'
