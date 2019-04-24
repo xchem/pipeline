@@ -6,15 +6,28 @@ import requests
 
 from functions import misc_functions
 import json
+from simplejson.errors import JSONDecodeError
 
 
-def get_json(url):
+def get_json(url, max_retries=10):
+
+    def attempt_json(url, data):
+        try:
+            r = requests.get(url, data=data)
+            js = r.json()
+            return js
+        except JSONDecodeError:
+            return None
+
     # send API request and pull output as json
     data = '''{"username":"uzw12877","password":"uzw12877"}'''
-    r = requests.get(url, data=data)
-    json_string = r.json()
-
-    return json_string
+    attempt_no = 0
+    while attempt_no <= max_retries:
+        attempt_no += 1
+        json_string = attempt_json(url=url, data=data)
+        if json_string:
+            return json_string
+    raise Exception('Max tries to get json exceeded. Please check the code, or wait a bit longer!')
 
 
 def dict_from_string(json_string):
