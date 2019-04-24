@@ -129,7 +129,7 @@ class AddPanddaEvents(luigi.Task):
             output_directory = run.pandda_analysis.pandda_dir
 
             map_file_path, input_pdb_path, input_mtz_path, aligned_pdb_path, \
-            pandda_model_path, exists_array = pandda_functions.get_file_names(BDC=events_frame['1-BDC'][i],
+            pandda_model_path, exists_array = pandda_functions.get_file_names(bdc=events_frame['1-BDC'][i],
                                                                               crystal=events_frame['dtag'][i],
                                                                               input_dir=input_directory,
                                                                               output_dir=output_directory,
