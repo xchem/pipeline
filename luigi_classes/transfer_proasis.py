@@ -595,7 +595,7 @@ class GetPanddaMaps(luigi.Task):
         else:
             alt_ext = ''
 
-        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits/',
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'proasis/hits/',
                                               str(crystal_name + '_' +
                                                   mod_date + alt_ext + '.pandda')))
 
@@ -708,7 +708,7 @@ class UploadHit(luigi.Task):
             alt_ext = ''
 
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+                                              'proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
                                                                    '.structure')))
 
     def run(self):
@@ -846,7 +846,7 @@ class AddFiles(luigi.Task):
             alt_ext = ''
 
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              '/proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
+                                              'proasis/hits', str(crystal_name + '_' + mod_date + alt_ext +
                                                                    '.files')))
 
     def run(self):
@@ -917,7 +917,7 @@ class UploadHits(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              self.date.strftime('/proasis/hits/proasis_hits_%Y%m%d%H.txt')))
+                                              self.date.strftime('proasis/hits/proasis_hits_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:

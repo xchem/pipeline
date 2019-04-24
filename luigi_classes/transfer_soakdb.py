@@ -289,7 +289,7 @@ class TransferChangedDataFile(luigi.Task):
                 if ProasisHits.objects.filter(crystal_name=crystal).exists():
                     proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
                     for hit in proasis_hit:
-                        for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, '/proasis/hits',
+                        for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, 'proasis/hits',
                                                            str(hit.crystal_name.crystal_name +
                                                                '_' + hit.modification_date + '*'))):
                             os.remove(path)
