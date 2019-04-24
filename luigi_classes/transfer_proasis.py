@@ -479,7 +479,7 @@ class UploadLeads(luigi.Task):
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              self.date.strftime('/proasis/hits/proasis_leads_%Y%m%d%H.txt')))
+                                              self.date.strftime('proasis/hits/proasis_leads_%Y%m%d%H.txt')))
 
     def run(self):
         with self.output().open('w') as f:
