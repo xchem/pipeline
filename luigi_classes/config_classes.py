@@ -36,3 +36,9 @@ class ProasisConfig(luigi.Config):
     password = luigi.Parameter()
     # http://cs04r-sc-vserv-137.diamond.ac.uk/
     webserver_address = luigi.Parameter()
+    # proasisapi/v1.4/
+    api_ext = luigi.Parameter()
+    # /usr/local/Proasis2/utils/
+    utils_root = luigi.Parameter()
+    # need to set up with new dedicated user?
+    ssh_command = luigi.Parameter()
