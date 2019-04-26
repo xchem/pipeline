@@ -27,3 +27,12 @@ class DirectoriesConfig(luigi.Config):
     hit_directory = luigi.Parameter()
     # '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/logs/'
     log_directory = luigi.Parameter()
+
+
+class ProasisConfig(luigi.Config):
+    # uzw12877
+    username = luigi.Parameter()
+    # uzw12877
+    password = luigi.Parameter()
+    # http://cs04r-sc-vserv-137.diamond.ac.uk/
+    webserver_address = luigi.Parameter()

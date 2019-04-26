@@ -27,7 +27,8 @@ def get_json(url, max_retries=100):
         json_string = attempt_json(url=url, data=data)
         if json_string:
             return json_string
-    raise Exception('Max tries to get json exceeded. Please check the code, or wait a bit longer!')
+        elif attempt_no >= max_retries:
+            raise Exception('Max tries to get json exceeded. Please check the code, or wait a bit longer!')
 
 
 def dict_from_string(json_string):
