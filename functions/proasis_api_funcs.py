@@ -12,12 +12,12 @@ from simplejson.errors import JSONDecodeError
 def get_json(url, max_retries=100):
 
     def attempt_json(url, data):
-        # try:
+        try:
             r = requests.get(url, data=data)
             js = r.json()
             return js
-        # except JSONDecodeError:
-        #     return None
+        except JSONDecodeError:
+            return None
 
     # send API request and pull output as json
     data = '''{"username":"uzw12877","password":"uzw12877"}'''
