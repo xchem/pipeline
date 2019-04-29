@@ -84,7 +84,15 @@ class GetCurated(luigi.Task):
 
             proasis_out.save()
         else:
-            raise Exception('no curated pdb file found!')
+            try:
+                add_project = str(
+                    '/usr/local/Proasis2/utils/pdbwriter.py -s ' + str(strucid) + ' > ' + self.output().path)
+                process = subprocess.Popen(add_project, stdout=subprocess.PIPE, shell=True)
+                out, err = process.communicate()
+                if err:
+                    raise Exception(err.decode('ascii'))
+            except:
+                raise Exception('no curated pdb file found: strucid - ' + strucid)
 
 
 class CreateApo(luigi.Task):
