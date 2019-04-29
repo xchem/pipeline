@@ -247,6 +247,8 @@ def get_lig_strings(lig_list):
 def get_struc_file(strucid, outfile, ftype):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/' + ftype + '/' + strucid)
     json_string = get_json(url)
+    if not json_string:
+        return None
     file_dict = dict_from_string(json_string)
     # print file_dict
     if os.path.isfile(outfile):
