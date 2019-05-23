@@ -23,7 +23,7 @@ from .config_classes import DirectoriesConfig
 def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
     # get crystal and target name for output path
     crystal_name = proasis_hit.crystal_name.crystal_name
-    target_name = proasis_hit.crystal_name.target.target_name
+    target_name = str(proasis_hit.crystal_name.target.target_name)
 
     return luigi.LocalTarget(os.path.join(
         hit_directory,
