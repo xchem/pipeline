@@ -126,6 +126,8 @@ def count_all_inhouse(exception_list=None):
 def get_struc_mtz(strucid, out_dir):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
     json_string = get_json(url)
+    if not json_string:
+        raise Exception('failed to retreive mtz for ' + strucid + ' to ' + out_dir)
     file_dict = dict_from_string(json_string)
     filename = None
     for entry in file_dict['allfiles']:
@@ -152,6 +154,8 @@ def get_struc_mtz(strucid, out_dir):
 def get_struc_map(strucid, out_dir, mtype):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/listfiles/' + strucid)
     json_string = get_json(url)
+    if not json_string:
+        raise Exception('failed to retreive map for ' + strucid + ' to ' + out_dir)
     file_dict = dict_from_string(json_string)
     filename = None
     for entry in file_dict['allfiles']:
@@ -185,6 +189,8 @@ def get_struc_map(strucid, out_dir, mtype):
 def get_struc_pdb(strucid, outfile):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/fetchfile/originalpdb/' + strucid)
     json_string = get_json(url)
+    if not json_string:
+        raise Exception('failed to retreive pdb for ' + strucid + ' to ' + outfile)
     file_dict = dict_from_string(json_string)
     print(file_dict)
     if os.path.isfile(outfile):
@@ -273,6 +279,8 @@ def get_struc_file(strucid, outfile, ftype):
 def get_strucid_json(strucid):
     url = str('http://cs04r-sc-vserv-137.diamond.ac.uk/proasisapi/v1.4/idlookup/' + strucid)
     json_string = get_json(url)
+    if not json_string:
+        raise Exception('failed to retreive strucid json for ' + strucid)
     out_dict = dict_from_string(json_string)
 
     return out_dict
