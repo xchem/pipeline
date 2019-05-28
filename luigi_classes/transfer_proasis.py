@@ -774,6 +774,8 @@ class UploadHit(luigi.Task):
                         line = line.replace(lig, str(' ' + lig[1:]))
                     newlines += line
 
+                print(proasis_bound_pdb)
+
                 with open(proasis_bound_pdb.replace('.pdb', '_proasis.pdb'), 'w') as f:
                     f.write(newlines)
 
