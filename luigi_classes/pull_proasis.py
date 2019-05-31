@@ -505,7 +505,10 @@ class CreateStripped(luigi.Task):
                                              ligand=self.ligand,
                                              ligid=self.ligid)
         # remove altconfs and buffers from input and save to a temporary path defined by the function
-        tmp_file = remove_prot_buffers_alt_locs(self.input().path)
+        try:
+            tmp_file = remove_prot_buffers_alt_locs(self.input().path)
+        except:
+            raise Exception('remove_prot_buffers_alt_locs ln 508 failed for ' + str(self.input().path))
         # move the tmp file to the output path
         shutil.move(os.path.join(os.getcwd(), tmp_file), self.output().path)
         # save the output file to proasis_out model
