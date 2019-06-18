@@ -210,12 +210,12 @@ class TransferByTargetList(luigi.Task):
     timestamp = luigi.Parameter(default=datetime.datetime.now().strftime('%Y-%m-%dT%H'))
     target_list = VerneConfig().target_list
     target_file = 'TARGET_LIST'
+    now_time = luigi.Parameter()
 
     def output(self):
         print(self.timestamp)
         return luigi.LocalTarget(str(os.path.join(DirectoriesConfig().log_directory,
-                                                  str('verne_transfer_' +
-                                                      datetime.datetime.now().strftime('%Y%m%d%H%M')))))
+                                                  str('verne_transfer_' + self.now_time))))
 
     def requires(self):
         # If the TARGET_LIST file (lists targets for loader) exists, delete to repopulate
@@ -238,7 +238,7 @@ class TransferByTargetList(luigi.Task):
 
         return [TransferVisitAndProposalFiles(remote_directory=os.path.join(self.remote_root, self.timestamp),
                                               local_directory=p[0],
-                                              timestamp=datetime.datetime.now().strftime('%Y-%m-%dT%H'),
+                                              timestamp=self.timestamp,
                                               target_file=self.target_file,
                                               target_name=p[1])
                 for p in transfer_paths]
@@ -269,13 +269,14 @@ class UpdateVerne(luigi.Task):
     hostname = VerneConfig().hostname
     target_list = VerneConfig().target_list
     target_list_file = luigi.Parameter(default='TARGET_LIST')
+    now_time = luigi.Parameter(default=datetime.datetime.now().strftime('%Y%m%d%H%M'))
 
     def requires(self):
-        return TransferByTargetList()
+        return TransferByTargetList(now_time=self.now_time)
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              str('verne_update_' + datetime.datetime.now().strftime('%Y%m%d%H%M'))))
+                                              str('verne_update_' + self.now_time)))
 
     def run(self):
 
