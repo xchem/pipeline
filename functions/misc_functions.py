@@ -44,6 +44,13 @@ def create_sd_file(name, smiles, save_directory):
     sd_file.write(mol)
 
 
+def lig_sdf_from_pdb(lig_string, pdb_file, sdf_out):
+    pdb_ligs = ''.join([x for x in open(pdb_file, 'r').readlines() if lig_string in x])
+    mol = Chem.rdmolfiles.MolFromPDBBlock(pdb_ligs)
+    writer = Chem.rdmolfiles.SDWriter(sdf_out)
+    writer.write(mol)
+
+
 def randnumb(n):
     range_start = 10**(n-1)
     range_end = (10**n)-1

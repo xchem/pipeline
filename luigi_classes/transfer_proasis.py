@@ -814,6 +814,20 @@ class UploadHit(luigi.Task):
                 raise Exception(str(submit_to_proasis + '\n' + out))
             print(out)
 
+        warn_string = 'WARNING: Unable to compute the correct chemistry of the ligand from the pdb file'
+
+        if warn_string in out or warn_string in err:
+            proasis_api_funcs.delete_structure(strucid)
+            misc_functions.lig_sdf_from_pdb(lig_string=lig_string, pdb_file=proasis_bound_pdb,
+                                            sdf_out=str(os.path.join(proasis_crystal_directory,
+                                                                     str(crystal_name) + '.sdf')))
+
+            strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
+
+            if warn_string in out or warn_string in err:
+                raise Exception('problem with ligand processing in proasis: submission string was:\n'
+                                + submit_to_proasis)
+
         # add strucid to database
         proasis_hit.strucid = strucid
         proasis_hit.save()
