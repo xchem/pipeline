@@ -177,8 +177,14 @@ class GetSDFS(luigi.Task):
         # # add sdf file to out entry
         # proasis_out.sdf = sdf.split('/')[-1]
         # proasis_out.save()
-        misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
-                                        sdf_out=self.output().path)
+        try:
+            misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
+                                            sdf_out=self.output().path)
+        except:
+            # create sdf file
+            strucid = proasis_hit.strucid
+            sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
+            
         o.sdf = self.output().path.split('/')[-1]
         o.save()
 
