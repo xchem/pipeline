@@ -14,7 +14,7 @@ from duck.steps.chunk import remove_prot_buffers_alt_locs
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
-from functions import proasis_api_funcs
+from functions import proasis_api_funcs, misc_functions
 from xchem_db.models import *
 from . import transfer_proasis
 from .config_classes import DirectoriesConfig
@@ -34,7 +34,6 @@ def get_output_file_name(proasis_hit, ligid, hit_directory, extension):
 
 
 class GetCurated(luigi.Task):
-
     resources = {'django': 1}
 
     hit_directory = luigi.Parameter()
@@ -167,18 +166,20 @@ class GetSDFS(luigi.Task):
         # get hit and out entries
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id, refinement_id=self.refinement_id,
                                               altconf=self.altconf)
-        proasis_out = ProasisOut.objects.get(proasis=proasis_hit,
-                                             ligid=self.ligid,
-                                             ligand=self.ligand,
-                                             crystal=proasis_hit.crystal_name)
+        o = ProasisOut.objects.get(proasis=proasis_hit,
+                                   ligid=self.ligid,
+                                   ligand=self.ligand,
+                                   crystal=proasis_hit.crystal_name)
         # get strucid and ligand string
-        strucid = proasis_hit.strucid
-        lig = proasis_out.ligand[1:]
-        # create sdf file
-        sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
-        # add sdf file to out entry
-        proasis_out.sdf = sdf.split('/')[-1]
-        proasis_out.save()
+        # strucid = proasis_hit.strucid
+        lig = o.ligand[1:]
+        # # create sdf file
+        # sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
+        # # add sdf file to out entry
+        # proasis_out.sdf = sdf.split('/')[-1]
+        # proasis_out.save()
+        misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
+                                        sdf_out=self.output().path)
 
 
 class CreateMolFile(luigi.Task):
@@ -213,6 +214,7 @@ class CreateMolFile(luigi.Task):
                                              ligand=self.ligand,
                                              ligid=self.ligid)
         # set openbabel to convert from sdf to mol
+
         obconv = openbabel.OBConversion()
         obconv.SetInAndOutFormats('sdf', 'mol')
         # blank mol for ob

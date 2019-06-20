@@ -824,10 +824,6 @@ class UploadHit(luigi.Task):
 
             strucid, err, out = proasis_api_funcs.submit_proasis_job_string(submit_to_proasis)
 
-            if warn_string in out or warn_string in err:
-                raise Exception('problem with ligand processing in proasis: submission string was:\n'
-                                + submit_to_proasis)
-
         # add strucid to database
         proasis_hit.strucid = strucid
         proasis_hit.save()
