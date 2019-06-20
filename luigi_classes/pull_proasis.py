@@ -179,6 +179,8 @@ class GetSDFS(luigi.Task):
         # proasis_out.save()
         misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
                                         sdf_out=self.output().path)
+        o.sdf = self.output().path.split('/')[-1]
+        o.save()
 
 
 class CreateMolFile(luigi.Task):
