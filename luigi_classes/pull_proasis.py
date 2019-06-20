@@ -9,7 +9,6 @@ setup_django.setup_django()
 
 import datetime
 import luigi
-import openbabel
 from duck.steps.chunk import remove_prot_buffers_alt_locs
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -215,14 +214,8 @@ class CreateMolFile(luigi.Task):
                                              ligid=self.ligid)
         # set openbabel to convert from sdf to mol
 
-        obconv = openbabel.OBConversion()
-        obconv.SetInAndOutFormats('sdf', 'mol')
-        # blank mol for ob
-        mol = openbabel.OBMol()
-        # read pdb and write mol
-        obconv.ReadFile(mol, self.input().path)
-        obconv.WriteFile(mol, self.output().path)
-        # add mol file to proasis out entry
+        misc_functions.obconv(in_form='sdf', out_form='mol', in_file=self.input().path, out_file=self.output().path)
+
         proasis_out.mol = self.output().path.split('/')[-1]
         proasis_out.save()
 
@@ -266,13 +259,8 @@ class CutOutEvent(luigi.Task):
         directory = '/'.join(self.output().path.split('/')[:-1])
 
         # convert to pdb with obabel
-        obconv = openbabel.OBConversion()
-        obconv.SetInAndOutFormats('mol', 'pdb')
-        mol = openbabel.OBMol()
-
-        # read mol and write pdb
-        obconv.ReadFile(mol, self.input().path)
-        obconv.WriteFile(mol, self.input().path.replace('.mol', '_mol.pdb'))
+        misc_functions.obconv(in_file=self.input().path, out_file=self.input().path.replace('.mol', '_mol.pdb'),
+                              in_form='mol', out_form='pdb')
 
         # use mapmask to cut out event map in reference to ligand (mol)
         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
@@ -349,12 +337,9 @@ class CreateHMolFile(luigi.Task):
                                              crystal=proasis_hit.crystal_name,
                                              ligand=self.ligand,
                                              ligid=self.ligid)
-        # create mol from input mol file
-        rd_mol = Chem.MolFromMolFile(self.input().path, removeHs=False)
-        # add hydrogens
-        h_rd_mol = AllChem.AddHs(rd_mol, addCoords=True)
-        # save mol with hydrogens
-        Chem.MolToMolFile(h_rd_mol, self.output().path)
+
+        misc_functions.hmol(input=self.input().path, output=self.output().path)
+
         # add h_mol to proasis_out entry
         proasis_out.h_mol = self.output().path.split('/')[-1]
         proasis_out.save()
@@ -382,18 +367,6 @@ class CreateMolTwoFile(luigi.Task):
         return get_output_file_name(proasis_hit, self.ligid, self.hit_directory, '.mol2')
 
     def run(self):
-
-        def obconv_method(obj):
-            obconv = openbabel.OBConversion()
-            obconv.SetInAndOutFormats('mol', 'mol2')
-            # blank mol for ob
-            mol = openbabel.OBMol()
-            # read pdb and write mol
-            obconv.ReadFile(mol, obj.input().path)
-            obconv.WriteFile(mol, obj.output().path)
-            proasis_out.mol2 = obj.output().path.split('/')[-1]
-            proasis_out.save()
-
         proasis_hit = ProasisHits.objects.get(crystal_name_id=self.crystal_id,
                                               refinement_id=self.refinement_id,
                                               altconf=self.altconf)
@@ -410,23 +383,19 @@ class CreateMolTwoFile(luigi.Task):
 
         boron_matches = rd_mol.HasSubstructMatch(boron)
         if boron_matches:
-            obconv_method(obj=self)
+            misc_functions.obconv(in_form='mol', out_form='mol2', in_file=self.input().path,
+                                  out_file=self.output().path)
+            proasis_out.mol2 = self.output().path.split('/')[-1]
+            proasis_out.save()
 
         else:
-            # get charge from mol file
-            net_charge = AllChem.GetFormalCharge(rd_mol)
-            # use antechamber to calculate forcefield, and output a mol2 file
-            command_string = str("antechamber -i " + self.input().path + " -fi mdl -o " + self.output().path +
-                                 " -fo mol2 -at sybyl -c bcc -nc " + str(net_charge))
-            print(command_string)
-            process = subprocess.Popen(command_string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = process.communicate()
-            out = out.decode('ascii')
+
+            out = misc_functions.antechamber_mol2(rd_mol=rd_mol, input=self.input().path, output=self.output().path)
+
             if 'Error' in out:
-                obconv_method(obj=self)
+                misc_functions.obconv(in_form='mol', out_form='mol2', in_file=self.input().path,
+                                      out_file=self.output().path)
             else:
-                print(out)
-                print(err)
                 # save mol2 file to proasis_out object
                 proasis_out.mol2 = self.output().path.split('/')[-1]
                 proasis_out.save()
