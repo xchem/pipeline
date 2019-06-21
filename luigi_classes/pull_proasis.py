@@ -11,7 +11,6 @@ import datetime
 import luigi
 from duck.steps.chunk import remove_prot_buffers_alt_locs
 from rdkit import Chem
-from rdkit.Chem import AllChem
 
 from functions import proasis_api_funcs, misc_functions
 from xchem_db.models import *
@@ -169,22 +168,20 @@ class GetSDFS(luigi.Task):
                                    ligid=self.ligid,
                                    ligand=self.ligand,
                                    crystal=proasis_hit.crystal_name)
-        # get strucid and ligand string
-        # strucid = proasis_hit.strucid
+
         lig = o.ligand[1:]
-        # # create sdf file
-        # sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
-        # # add sdf file to out entry
-        # proasis_out.sdf = sdf.split('/')[-1]
-        # proasis_out.save()
-        try:
-            misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
-                                            sdf_out=self.output().path)
-        except:
-            # create sdf file
-            strucid = proasis_hit.strucid
-            sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
-            
+
+        strucid = proasis_hit.strucid
+        sdf = proasis_api_funcs.get_lig_sdf(strucid, lig, self.output().path)
+        for line in open(sdf, 'r').readlines():
+            if 'RDKit          2D' in line:
+
+                try:
+                    misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
+                                                    sdf_out=self.output().path)
+                except:
+                    continue
+
         o.sdf = self.output().path.split('/')[-1]
         o.save()
 
@@ -220,7 +217,6 @@ class CreateMolFile(luigi.Task):
                                              crystal=proasis_hit.crystal_name,
                                              ligand=self.ligand,
                                              ligid=self.ligid)
-        # set openbabel to convert from sdf to mol
 
         misc_functions.obconv(in_form='sdf', out_form='mol', in_file=self.input().path, out_file=self.output().path)
 
