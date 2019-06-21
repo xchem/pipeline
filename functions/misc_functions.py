@@ -48,9 +48,12 @@ def create_sd_file(name, smiles, save_directory):
 
 def lig_sdf_from_pdb(lig_string, pdb_file, sdf_out):
     pdb_ligs = ''.join([x for x in open(pdb_file, 'r').readlines() if lig_string in x])
-    mol = Chem.rdmolfiles.MolFromPDBBlock(pdb_ligs)
+    mol = Chem.rdmolfiles.MolFromPDBBlock(pdb_ligs, sanitize=False)
+    # m = Chem.AddHs(mol)
+    Chem.SanitizeMol(m, sanitizeOps=Chem.SANITIZE_ALL ^ Chem.SANITIZE_SETAROMATICITY)
+    m2 = Chem.RemoveHs(m)
     writer = Chem.rdmolfiles.SDWriter(sdf_out)
-    writer.write(mol)
+    writer.write(m2)
 
 
 def randnumb(n):
