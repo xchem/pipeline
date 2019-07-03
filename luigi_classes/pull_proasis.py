@@ -178,7 +178,7 @@ class GetSDFS(luigi.Task):
 
                 try:
                     misc_functions.lig_sdf_from_pdb(lig_string=lig, pdb_file=os.path.join(o.root, o.start, o.curated),
-                                                    sdf_out=self.output().path)
+                                                    sdf_out=self.output().path, smiles=o.crystal.compound.smiles)
                 except:
                     continue
 
