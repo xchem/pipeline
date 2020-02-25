@@ -29,7 +29,7 @@ class DjangoTaskTarget(luigi.target.Target):
         self.app_label = app_label
 
     def exists(self):
-        model = apps.get_model(app_label=self.app, model=self.model)
+        model = apps.get_model(app_label=self.app_label, model=self.model)
         try:
             model.get(**{'task_name': self.class_name, 'uuid':self.uuid})
         except DoesNotExist:
