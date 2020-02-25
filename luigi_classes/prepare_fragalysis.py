@@ -1,5 +1,10 @@
 import datetime
 import uuid
+
+from setup_django import setup_django
+
+setup_django()
+
 import luigi
 from xchem_db.models import *
 # from . import transfer_soakdb
