@@ -13,6 +13,16 @@ from django.contrib.postgres.fields import ArrayField
 import os
 
 
+class Tasks(models.Model):
+    task_name = models.CharField(max_length=255, blank=False, null=False, unique=False, db_index=True)
+    uuid = models.CharField(max_length=37, blank=False, null=False, unique=True, db_index=True)
+
+    class Meta:
+        app_label = 'xchem_db'
+        db_table = 'tasks'
+        unique_together = ('task_name', 'uuid')
+
+
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
 

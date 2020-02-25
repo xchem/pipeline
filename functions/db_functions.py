@@ -473,6 +473,6 @@ def check_file_status(filename, bound_pdb):
         map_directory = str(bound_pdb).replace(pdb_file_name, '')
 
     if os.path.isfile(str(map_directory + filename)):
-        return True, str(map_directory + filename)
+        return str(map_directory + filename)
     else:
-        return False, ''
+        return None
