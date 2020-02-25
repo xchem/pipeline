@@ -44,6 +44,9 @@ class RefinementObjectFiles:
                     # if can't find bound state, just use the latest pdb file
                     self.bound_conf = self.refinement_object.pdb_latest
 
+            if not os.path.isfile(self.bound_conf):
+                self.bound_conf = None
+
     def find_maps(self):
         if not self.bound_conf:
             return ValueError('Bound conf not set! use RefinementObjectFiles().find_bound_file()')
