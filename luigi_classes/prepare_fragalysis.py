@@ -35,6 +35,8 @@ class SymlinkBoundPDB(luigi.Task):
                 os.unlink(self.output().path)
         except FileNotFoundError:
             pass
+        if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
+            os.makedirs('/'.join(self.output().path.split('/')[:-1]))
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
         os.symlink(file_obj.bound_conf, self.output().path)
