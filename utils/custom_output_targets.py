@@ -32,9 +32,7 @@ class DjangoTaskTarget(luigi.target.Target):
         model = apps.get_model(app_label=self.app_label, model_name='tasks')
         try:
             model.get(**{'task_name': self.class_name, 'uuid':self.uuid})
-        except DoesNotExist:
+        except:
             return False
-        except MultipleObjectsReturned:
-            raise Exception('multiple tasks matching this output found!')
 
         return True
