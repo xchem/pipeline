@@ -40,6 +40,7 @@ class SymlinkBoundPDB(luigi.Task):
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
         if file_obj.bound_conf:
+            print(file_obj.bound_conf)
             os.symlink(file_obj.bound_conf, self.output().path)
         else:
             self.crystal.outcome = 3
