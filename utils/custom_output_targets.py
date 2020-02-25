@@ -1,6 +1,6 @@
 import luigi
 from django.apps import apps
-from django.core.exceptions import FieldError, MultipleObjectsReturned, DoesNotExist
+from django.core.exceptions import FieldError, MultipleObjectsReturned
 
 
 class DjangoFieldTarget(luigi.target.Target):
