@@ -7,21 +7,83 @@ setup_django()
 
 import luigi
 from xchem_db.models import *
-# from . import transfer_soakdb
 from .config_classes import SoakDBConfig, DirectoriesConfig
-
+import luigi_classes.transfer_soakdb
 from utils.custom_output_targets import DjangoTaskTarget
 from utils.refinement import RefinementObjectFiles
+
+from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
+
+class AlignTargetXChem(AlignTarget):
+    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
+    resources = {'django': 1}
+    date = luigi.Parameter(default=datetime.datetime.now())
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    uuid = str(uuid.uuid4())
+    input_dir = luigi.Parameter()
+    output_dir=luigi.Parameter()
+
+    def requires(self):
+        return BatchSymlinkBoundPDB(filter_by=self.filter_by,
+                                    resources=self.resources,
+                                    date=self.date,
+                                    soak_db_filepath=self.soak_db_filepath,
+                                    hit_directory=self.hit_directory(),
+                                    uuid=self.uuid)
+
+
+class ProcessAlignedPDBXChem(ProcessAlignedPDB):
+    def requires(self):
+        return AlignTargetXChem(input_dir=self.input_dir, output_dir=self.output_dir)
+
+
+class BatchProcessAlignedPDBXChem(BatchProcessAlignedPDB):
+    def requires(self):
+        self.aligned_list = outlist_from_align(self.input_dir, self.output_dir)
+        return [
+            ProcessAlignedPDBXChem(
+                target_name=self.target_name, input_file=i, output_dir=self.output_dir,
+                input_dir=self.input_dir
+            )
+            for i in self.aligned_list
+        ]
+
+class BatchConvertAlignedXChem(BatchConvertAligned):
+    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
+    resources = {'django': 1}
+    date = luigi.Parameter(default=datetime.datetime.now())
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    uuid = str(uuid.uuid4())
+
+    search_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    output_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    def requires(self):
+        if os.path.isfile(self.output().path):
+            os.remove(self.output().path)
+        in_lst = [os.path.abspath(f.path) for f in os.scandir(self.search_directory) if f.is_dir()]
+        out_lst = []
+        target_names = []
+
+        for f in in_lst:
+            out = os.path.join(os.path.abspath(self.output_directory), f.split('/')[-1])
+            out_lst.append(out)
+            target_names.append(f.split('/')[-1])
+
+        return [BatchProcessAlignedPDBXChem(input_dir=i, output_dir=self.output_directory, target_name=t)
+                for (i, t) in list(zip(in_lst, target_names))]
 
 
 class SymlinkBoundPDB(luigi.Task):
     crystal = luigi.Parameter()
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    date = luigi.Parameter(default=datetime.datetime.now())
 
     def requires(self):
-        # return transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
-        pass
+        return luigi_classes.transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
+
 
     def output(self):
         pth = os.path.join(self.hit_directory,

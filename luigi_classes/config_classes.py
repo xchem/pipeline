@@ -27,6 +27,7 @@ class DirectoriesConfig(luigi.Config):
     hit_directory = luigi.Parameter()
     # '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/logs/'
     log_directory = luigi.Parameter()
+    staging_directory = luigi.Parameter()
 
 
 class ProasisConfig(luigi.Config):

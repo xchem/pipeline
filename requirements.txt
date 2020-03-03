@@ -1,5 +1,5 @@
-rdkit==2017.09.02
-pandas==0.22.0
+rdkit
+pandas
 luigi==2.7.5
 numpy==1.14.2
 psycopg2==2.7.4
