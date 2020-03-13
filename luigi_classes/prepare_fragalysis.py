@@ -8,7 +8,7 @@ setup_django()
 import luigi
 from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
-import luigi_classes.transfer_soakdb
+from luigi_classes.transfer_soakdb import StartTransfers
 from utils.custom_output_targets import DjangoTaskTarget
 from utils.refinement import RefinementObjectFiles
 
@@ -83,7 +83,7 @@ class SymlinkBoundPDB(luigi.Task):
     smiles = luigi.Parameter(default=None)
 
     def requires(self):
-        return luigi_classes.transfer_soakdb.CheckUploadedFiles(date=self.date, soak_db_filepath=self.soak_db_filepath)
+        return StartTransfers()
 
 
     def output(self):
