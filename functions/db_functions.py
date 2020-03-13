@@ -56,6 +56,7 @@ def crystal_translations():
         'crystal_name': 'CrystalName',
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
+        'product' : 'CompoundSMILESproduct'
         'visit': '',
     }
 
@@ -290,6 +291,10 @@ def transfer_table(translate_dict, filename, model):
             except:
                 continue
 
+                
+        ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
+#         compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)
+                
         # set up blank dictionary to hold model values
         d = {}
         # get the keys and values of the query
@@ -339,7 +344,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'crystal_name' and model != models.Crystal:
                 d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
-                    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)[0])
+                    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0], product=product_smiles)
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
