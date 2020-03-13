@@ -114,7 +114,7 @@ class SymlinkBoundPDB(luigi.Task):
 #                 if self.smiles:
                 smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
-                    f.write(str(self.smiles))
+                    f.write(str(smi))
                 f.close()
 
             except:
