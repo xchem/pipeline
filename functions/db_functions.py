@@ -250,7 +250,7 @@ def check_db_duplicates(filename):
     results = soakdb_query(filename)
 
     # check for existing crystal entries
-    lst = [(row['CrystalName'], row['CompoundSMILES'], row['ProteinName']) for row in results]
+    lst = [(row['CrystalName'], row['CompoundSMILES'], row['ProteinName'], row['CompoundSMILESproduct']) for row in results]
     for tup in lst:
         vals = list(tup)
         obj, was_created = models.Crystal.objects.get_or_create(crystal_name=vals[0],
@@ -259,7 +259,8 @@ def check_db_duplicates(filename):
                                                                 target=models.Target.objects.get_or_create(
                                                                     target_name=vals[2])[0],
                                                                 visit=models.SoakdbFiles.objects.get_or_create(
-                                                                    filename=filename)[0]
+                                                                    filename=filename)[0],
+                                                                product=vals[3]
                                                                 )
         if not was_created:
             if str(filename) == str(obj.visit.filename):
