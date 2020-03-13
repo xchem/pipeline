@@ -81,6 +81,7 @@ class SymlinkBoundPDB(luigi.Task):
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date = luigi.Parameter(default=datetime.datetime.now())
     smiles = luigi.Parameter(default=None)
+    prod_smiles = luigi.Parameter(default=None)
 
     def requires(self):
         return StartTransfers()
@@ -106,12 +107,15 @@ class SymlinkBoundPDB(luigi.Task):
             try:
 
                 os.symlink(file_obj.bound_conf, self.output().path)
-
-                if self.smiles:
-                    smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
-                    with open(smi_pth, 'w') as f:
-                        f.write(str(self.smiles))
-                    f.close()
+                if self.prod_smiles:
+                    smi = self.prod_smiles
+                elif self.smiles:
+                    smi = self.smiles
+#                 if self.smiles:
+                smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
+                with open(smi_pth, 'w') as f:
+                    f.write(str(self.smiles))
+                f.close()
 
             except:
                 raise Exception(file_obj.bound_conf)
@@ -133,6 +137,7 @@ class BatchSymlinkBoundPDB(luigi.Task):
             SymlinkBoundPDB(
                 crystal=crystal,
                 smiles=crystal.crystal_name.compound.smiles,
+                prod_smiles=crystal.crystal_name.compound.product_smiles,
                 hit_directory=self.hit_directory,
                 soak_db_filepath=self.soak_db_filepath
             )
