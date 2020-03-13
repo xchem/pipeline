@@ -56,7 +56,7 @@ def crystal_translations():
         'crystal_name': 'CrystalName',
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
-        'product' : 'CompoundSMILESproduct'
+        'product' : 'CompoundSMILESproduct',
         'visit': '',
     }
 
