@@ -137,7 +137,7 @@ class BatchSymlinkBoundPDB(luigi.Task):
             SymlinkBoundPDB(
                 crystal=crystal,
                 smiles=crystal.crystal_name.compound.smiles,
-                prod_smiles=crystal.crystal_name.compound.product_smiles,
+                prod_smiles=crystal.crystal_name.product,
                 hit_directory=self.hit_directory,
                 soak_db_filepath=self.soak_db_filepath
             )
