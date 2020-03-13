@@ -33,12 +33,11 @@ class Target(models.Model):
 
 class Compounds(models.Model):
     smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True)
-    product_smiles = models.CharField(max_length=255, blank=True, null=True)
+
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'compounds'
-        unique_together = ('smiles', 'product_smiles')
 
 
 class Reference(models.Model):
@@ -80,6 +79,7 @@ class Crystal(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    product = models.CharField(max_length=255, blank=True, null=True)
 
     # model types
     PREPROCESSING = 'PP'
