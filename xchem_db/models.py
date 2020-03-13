@@ -32,7 +32,7 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
