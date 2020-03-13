@@ -32,12 +32,13 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.CharField(max_length=255, blank=True, null=True, unique=True, db_index=True)
-
+    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    product_smiles = models.CharField(max_length=255, blank=True, null=True)
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'compounds'
+        unique_together = ('smiles', 'product_smiles')
 
 
 class Reference(models.Model):
