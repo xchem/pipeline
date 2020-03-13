@@ -103,7 +103,7 @@ class Crystal(models.Model):
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'crystal'
-        unique_together = ('crystal_name', 'visit', 'compound')
+        unique_together = ('crystal_name', 'visit', 'compound', 'product')
 
 
 class DataProcessing(models.Model):
