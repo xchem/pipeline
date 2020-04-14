@@ -14,7 +14,7 @@ setup_django.setup_django()
 
 from .config_classes import VerneConfig, DirectoriesConfig
 from xchem_db.models import *
-from luigi_classes.pull_proasis import GetOutFiles, CreateProposalVisitFiles
+# from luigi_classes.pull_proasis import GetOutFiles, CreateProposalVisitFiles
 
 
 class GenerateLigandResults(luigi.Task):
@@ -82,12 +82,13 @@ class TransferDirectory(luigi.Task):
     # normal parameters
     remote_directory = luigi.Parameter()
     local_directory = luigi.Parameter()
-    timestamp = luigi.Parameter()
-    target_file = luigi.Parameter()
-    target_name = luigi.Parameter()
+    # timestamp = luigi.Parameter()
+    # target_file = luigi.Parameter()
+    # target_name = luigi.Parameter()
 
     def requires(self):
-        return GetOutFiles(), CreateProposalVisitFiles()
+        # return CreateProposalVisitFiles()
+        pass
 
     def output(self):
         print(self.local_directory)
@@ -211,6 +212,7 @@ class TransferByTargetList(luigi.Task):
     target_list = VerneConfig().target_list
     target_file = 'TARGET_LIST'
     now_time = luigi.Parameter()
+    search_dir = DirectoriesConfig().staging_directory
 
     def output(self):
         print(self.timestamp)
@@ -225,14 +227,8 @@ class TransferByTargetList(luigi.Task):
         if os.path.isfile(self.target_list):
             target_list = open(self.target_list, 'r')
             for target in target_list:
-                tgt = target.rstrip()
-                print(tgt)
-                proasis_out = ProasisOut.objects.filter(crystal__target__target_name__iexact=tgt)
-                for o in proasis_out:
-                    if o.root and o.start:
-                        pth = os.path.join(o.root, '/'.join(o.start.split('/')[:-2]))
-                        if os.path.isdir(pth):
-                            transfer_paths.append((pth, tgt))
+                if os.path.isdir(os.path.join(self.search_dir, target)):
+                    transfer_paths.append((pth, tgt))
 
         transfer_paths = list(set(transfer_paths))
 

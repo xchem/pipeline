@@ -8,11 +8,11 @@ import sentry_sdk
 from sentry_sdk import capture_exception
 from sentry_sdk import configure_scope
 
-from luigi_classes.transfer_pandda import AnnotateAllEvents, TransferPandda
-from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
-from luigi_classes.pull_proasis import GetOutFiles
+# from luigi_classes.transfer_pandda import AnnotateAllEvents, TransferPandda
+# from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
+# from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
-from luigi_classes.transfer_verne import UpdateVerne
+# from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
 
 import os
@@ -47,14 +47,15 @@ class StartPipeline(luigi.WrapperTask):
 
     def requires(self):
         yield StartTransfers()
-        yield AddProjects()
-        yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
-        yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
-        yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
-        yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
-        yield GetOutFiles()
-        yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
-        yield UpdateVerne()
+        # yield AddProjects()
+        # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
+        # yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
+        # yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
+        yield
+        # yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
+        # yield GetOutFiles()
+        # yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
+        # yield UpdateVerne()
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, 'pipe.done'))

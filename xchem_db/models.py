@@ -13,6 +13,16 @@ from django.contrib.postgres.fields import ArrayField
 import os
 
 
+class Tasks(models.Model):
+    task_name = models.CharField(max_length=255, blank=False, null=False, unique=False, db_index=True)
+    uuid = models.CharField(max_length=37, blank=False, null=False, unique=True, db_index=True)
+
+    class Meta:
+        app_label = 'xchem_db'
+        db_table = 'tasks'
+        unique_together = ('task_name', 'uuid')
+
+
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
 
@@ -22,7 +32,7 @@ class Target(models.Model):
 
 
 class Compounds(models.Model):
-    smiles = models.CharField(max_length=255, blank=True, null=True, unique=True, db_index=True)
+    smiles = models.CharField(max_length=255, blank=True, null=True, db_index=True, unique=True)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
@@ -69,6 +79,7 @@ class Crystal(models.Model):
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE, null=True, blank=True)
     visit = models.ForeignKey(SoakdbFiles, on_delete=models.CASCADE)
+    product = models.CharField(max_length=255, blank=True, null=True)
 
     # model types
     PREPROCESSING = 'PP'
@@ -92,7 +103,7 @@ class Crystal(models.Model):
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'crystal'
-        unique_together = ('crystal_name', 'visit', 'compound')
+        unique_together = ('crystal_name', 'visit', 'compound', 'product')
 
 
 class DataProcessing(models.Model):

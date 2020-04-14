@@ -56,6 +56,7 @@ def crystal_translations():
         'crystal_name': 'CrystalName',
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
+        'product' : 'CompoundSMILESproduct',
         'visit': '',
     }
 
@@ -249,7 +250,7 @@ def check_db_duplicates(filename):
     results = soakdb_query(filename)
 
     # check for existing crystal entries
-    lst = [(row['CrystalName'], row['CompoundSMILES'], row['ProteinName']) for row in results]
+    lst = [(row['CrystalName'], row['CompoundSMILES'], row['ProteinName'], row['CompoundSMILESproduct']) for row in results]
     for tup in lst:
         vals = list(tup)
         obj, was_created = models.Crystal.objects.get_or_create(crystal_name=vals[0],
@@ -258,7 +259,8 @@ def check_db_duplicates(filename):
                                                                 target=models.Target.objects.get_or_create(
                                                                     target_name=vals[2])[0],
                                                                 visit=models.SoakdbFiles.objects.get_or_create(
-                                                                    filename=filename)[0]
+                                                                    filename=filename)[0],
+                                                                product=vals[3]
                                                                 )
         if not was_created:
             if str(filename) == str(obj.visit.filename):
@@ -281,6 +283,7 @@ def transfer_table(translate_dict, filename, model):
     # for each row found in soakdb
     for row in results:
         compound_smiles = row['CompoundSMILES']
+        product_smiles = row['CompoundSMILESproduct']
         crystal_name = row['CrystalName']
         target = row['ProteinName']
         if not target or target == 'None':
@@ -289,6 +292,10 @@ def transfer_table(translate_dict, filename, model):
             except:
                 continue
 
+                
+        ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
+#         compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)
+                
         # set up blank dictionary to hold model values
         d = {}
         # get the keys and values of the query
@@ -473,6 +480,6 @@ def check_file_status(filename, bound_pdb):
         map_directory = str(bound_pdb).replace(pdb_file_name, '')
 
     if os.path.isfile(str(map_directory + filename)):
-        return True, str(map_directory + filename)
+        return str(map_directory + filename)
     else:
-        return False, ''
+        return None
