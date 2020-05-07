@@ -40,8 +40,7 @@ for _, row in new_frame.iterrows():
 
         results = c.fetchall()
         for result in results:
-            print(result)
-            sdb_prod_smiles = results['CompoundSMILESproduct']
+            sdb_prod_smiles = result['CompoundSMILESproduct']
 
             if str(sdb_prod_smiles)!= str(prod_smiles):
                 c.execute("update mainTable set CompoundSMILESproduct=? where CrystalName=?;", (prod_smiles, crystal_name, ))
