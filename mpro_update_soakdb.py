@@ -30,8 +30,6 @@ for _, row in new_frame.iterrows():
         prod_smiles = row['new_smiles']
         crystal_name = row['crystal_name']
 
-        # crystal = Crystal.objects.get(crystal_name=crystal_name)
-
         conn = sqlite3.connect(sdb)
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
@@ -44,3 +42,6 @@ for _, row in new_frame.iterrows():
 
             if str(sdb_prod_smiles)!= str(prod_smiles):
                 c.execute("update mainTable set CompoundSMILESproduct=? where CrystalName=?;", (prod_smiles, crystal_name, ))
+
+        conn.commit()
+        conn.close()
