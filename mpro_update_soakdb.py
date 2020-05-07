@@ -39,8 +39,8 @@ for _, row in new_frame.iterrows():
         c.execute("select * from mainTable where CrystalName = ?", (crystal_name,))
 
         results = c.fetchall()
+        for result in results:
+            sdb_prod_smiles = results['CompoundSMILESproduct']
 
-        sdb_prod_smiles = results['CompoundSMILESproduct']
-
-        if str(sdb_prod_smiles)!= str(prod_smiles):
-            c.execute("update mainTable set CompoundSMILESproduct=? where CrystalName=?;", (prod_smiles, crystal_name, ))
+            if str(sdb_prod_smiles)!= str(prod_smiles):
+                c.execute("update mainTable set CompoundSMILESproduct=? where CrystalName=?;", (prod_smiles, crystal_name, ))
