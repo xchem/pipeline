@@ -89,6 +89,7 @@ def check_file(filename):
             if int(current_mod_date) > int(old_mod_date):
                 update_status = SoakdbFiles.objects.get(id=id_number)
                 update_status.status = 1
+                status = 1
                 update_status.save()
         except ValueError:
             raise Exception(str('current_mod_date: ' + str(current_mod_date)
@@ -113,9 +114,11 @@ def check_file(filename):
         update_status = SoakdbFiles.objects.get(id=id_number)
         update_status.status = 0
         update_status.save()
+        status = 0
 
     else:
-        print('This is an existing file, so the old data will be removed and new data put in to XCDB')
+        print('The file has not been updated, using existing XCDB data...')
+        status = 2
 
     # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
 
@@ -127,6 +130,8 @@ def check_file(filename):
         for filename in soakdb:
             filename.status = 0
             filename.save()
+
+    return status
 
 
 @transaction.atomic
@@ -248,9 +253,10 @@ if __name__ == "__main__":
     print('symlinks to the bound-state pdbs will be found in: ' + link_dir)
 
     print('Checking wether ' + filename + ' is a new or existing entry in XCDB...')
-    check_file(filename)
-    print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
-    run_transfer(filename)
+    status = check_file(filename)
+    if status==0 or status==1:
+        print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
+        run_transfer(filename)
     print('Creating the symbolic links to the bound-state pdb files...')
     create_links(filename, link_dir)
     print('Telling the database this file is now up-to-date...')
@@ -258,5 +264,3 @@ if __name__ == "__main__":
     sdb.status = 2
     sdb.save()
     print('Done :)')
-
-
