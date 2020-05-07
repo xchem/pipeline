@@ -28,6 +28,7 @@ new_frame.to_csv('metadata.csv')
 for _, row in new_frame.iterrows():
     if isinstance(row['new_smiles'], str):
         prod_smiles = row['new_smiles']
+        print(prod_smiles)
         crystal_name = row['crystal_name']
 
         conn = sqlite3.connect(sdb)
@@ -39,6 +40,7 @@ for _, row in new_frame.iterrows():
         results = c.fetchall()
         for result in results:
             sdb_prod_smiles = result['CompoundSMILESproduct']
+            print(sdb_prod_smiles)
 
             if str(sdb_prod_smiles)!= str(prod_smiles):
                 c.execute("update mainTable set CompoundSMILESproduct=? where CrystalName=?;", (prod_smiles, crystal_name, ))
