@@ -40,6 +40,7 @@ for _, row in new_frame.iterrows():
 
         results = c.fetchall()
         for result in results:
+            print(result)
             sdb_prod_smiles = results['CompoundSMILESproduct']
 
             if str(sdb_prod_smiles)!= str(prod_smiles):
