@@ -58,8 +58,6 @@ def check_file(filename):
 
     soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
 
-    print(len(soakdb_query))
-
     # raise an exception if the file is not in the soakdb table - not necessary here, I think
     # if len(soakdb_query) == 0:
     #     print('LEN=0')
@@ -94,6 +92,9 @@ def check_file(filename):
         except ValueError:
             raise Exception(str('current_mod_date: ' + str(current_mod_date)
                                 + ', old_mod_date: ' + str(old_mod_date)))
+
+        print(current_mod_date)
+        print(old_mod_date)
 
     # if there is more than one entry, raise an exception (should never happen - filename field is unique)
     if len(soakdb_query) > 1:
