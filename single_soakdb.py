@@ -52,6 +52,7 @@ def transfer_file(data_file):
 @transaction.atomic
 # step 1 - check the file to get it's status
 def check_file(filename):
+    status=2
     # remove any newline characters
     filename_clean = filename.rstrip('\n')
     # find the relevant entry in the soakdbfiles table
@@ -117,9 +118,9 @@ def check_file(filename):
         update_status.save()
         status = 0
 
-    else:
-        print('The file has not been updated, using existing XCDB data...')
-        status = 2
+    # else:
+    #     print('The file has not been updated, using existing XCDB data...')
+    #     status = 2
 
     # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
 
@@ -255,6 +256,7 @@ if __name__ == "__main__":
 
     print('Checking wether ' + filename + ' is a new or existing entry in XCDB...')
     status = check_file(filename)
+    print(status)
     if status==0 or status==1:
         print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
         run_transfer(filename)
