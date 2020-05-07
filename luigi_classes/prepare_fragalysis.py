@@ -84,7 +84,8 @@ class SymlinkBoundPDB(luigi.Task):
     prod_smiles = luigi.Parameter(default=None)
 
     def requires(self):
-        return StartTransfers()
+        return None
+	#return StartTransfers()
 
 
     def output(self):

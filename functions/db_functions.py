@@ -31,7 +31,7 @@ def lab_translations():
         'cryo_frac': 'CryoFraction',
         'cryo_status': 'CryoStatus',
         'cryo_stock_frac': 'CryoStockFraction',
-        'cryo_transfer_vol': 'CryoTransferVolume',
+#        'cryo_transfer_vol': 'CryoTransferVolume',
         'crystal_name': 'CrystalName',
         'data_collection_visit': 'DataCollectionVisit',
         'expr_conc': 'CompoundConcentration',
@@ -395,12 +395,12 @@ def transfer_table(translate_dict, filename, model):
                 print('Crystal duplicated!')
                 continue
         # uncomment to debug
-        # except ValueError as e:
-        #     print(d)
-        #     print('WARNING: ' + str(e.__cause__))
-        #     print(e)
-        #     print(model_fields)
-        #     continue
+        except ValueError as e:
+             print(d)
+             print('WARNING: ' + str(e.__cause__))
+             print(e)
+             print(model_fields)
+             continue
 
 
 def soakdb_query(filename):
