@@ -25,8 +25,8 @@ def is_date(string):
 
 @transaction.atomic
 def transfer_file(data_file):
-    # maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
-    # if maint_exists == 1:
+    maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
+    if maint_exists == 1:
         print('transferring crystal data...')
         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=data_file,
                                     model=Crystal)
@@ -43,9 +43,9 @@ def transfer_file(data_file):
         db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
                                     filename=data_file, model=DataProcessing)
 
-    # soakdb_query = SoakdbFiles.objects.get(filename=data_file)
-    # soakdb_query.status = 2
-    # soakdb_query.save()
+    soakdb_query = SoakdbFiles.objects.get(filename=data_file)
+    soakdb_query.status = 2
+    soakdb_query.save()
 # end of functions called in steps
 
 
