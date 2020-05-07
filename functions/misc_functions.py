@@ -28,7 +28,7 @@ def get_id_string(out):
 def get_mod_date(filename):
     try:
         modification_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename)).strftime("%Y%m%d%H%M%S")
-    except FileNotFoundError:
+    except:
         modification_date = 'None'
     return modification_date
 
