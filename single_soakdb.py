@@ -13,6 +13,7 @@ from utils.refinement import RefinementObjectFiles
 from dateutil.parser import parse
 import argparse
 
+from django.db import transaction
 
 # functions called in steps
 def is_date(string):
@@ -22,26 +23,33 @@ def is_date(string):
     except ValueError:
         return False
 
+@transaction.atomic
 def transfer_file(data_file):
-    maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
-    if maint_exists == 1:
+    # maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
+    # if maint_exists == 1:
+        print('transferring crystal data...')
         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=data_file,
                                     model=Crystal)
+        print('transferring lab data...')
         db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=data_file,
                                     model=Lab)
+        print('transferring refinement data...')
         db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=data_file,
                                     model=Refinement)
+        print('transferring dimple data...')
         db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=data_file,
                                     model=Dimple)
+        print('transferring data processing data...')
         db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
                                     filename=data_file, model=DataProcessing)
 
-    soakdb_query = SoakdbFiles.objects.get(filename=data_file)
-    soakdb_query.status = 2
-    soakdb_query.save()
+    # soakdb_query = SoakdbFiles.objects.get(filename=data_file)
+    # soakdb_query.status = 2
+    # soakdb_query.save()
 # end of functions called in steps
 
 
+@transaction.atomic
 # step 1 - check the file to get it's status
 def check_file(filename):
     # remove any newline characters
@@ -60,7 +68,6 @@ def check_file(filename):
 
     # only one entry should exist per file
     if len(soakdb_query) == 1:
-        print('LEN=1')
         # get the filename back from the query
         data_file = soakdb_query[0].filename
         # add the file to the list of those that have been checked
@@ -72,12 +79,10 @@ def check_file(filename):
         # get the id of the entry to write to
         id_number = soakdb_query[0].id
 
-        print(old_mod_date)
         if not old_mod_date:
             soakdb_query[0].modification_date = current_mod_date
             soakdb_query[0].save()
             old_mod_date = 0
-        print(current_mod_date)
 
         # if the file has changed since the db was last updated for the entry, change status to indicate this
         try:
@@ -95,6 +100,7 @@ def check_file(filename):
 
     # if the file is not in the database at all
     if len(soakdb_query) == 0:
+        print('This is a new soakDB file, just setting it up in the database!')
         # add the file to soakdb
         out, err, proposal = db_functions.pop_soakdb(filename_clean)
         # add the proposal to proposal
@@ -108,6 +114,9 @@ def check_file(filename):
         update_status.status = 0
         update_status.save()
 
+    else:
+        print('This is an existing file, so the old data will be removed and new data put in to XCDB')
+
     # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
 
 
@@ -120,9 +129,11 @@ def check_file(filename):
             filename.save()
 
 
+@transaction.atomic
 # Step 2 - identify whether the file is new or changed (from filename status in soakdb) and upload to db
 def run_transfer(filename):
-    status_query = SoakdbFiles.objects.filter(filename=filename)
+    status_query = SoakdbFiles.objects.get(filename=filename).status
+    print('status query: ' + str(status_query) + '(0=new, 1=updated)')
     # if it is a changed file - do the delete things
     if status_query == 1:
         # maint_exists = db_functions.check_table_sqlite(filename, 'mainTable')
@@ -134,12 +145,13 @@ def run_transfer(filename):
         split_path = filename.split('database')
         search_path = split_path[0]
 
+        print('removing old logs...')
         # remove pandda data transfer done file
         if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
             os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
 
         log_files = find_log_files(search_path).rsplit()
-        print(log_files)
+        # print(log_files)
 
         for log in log_files:
             print(str(log + '.run.done'))
@@ -156,6 +168,7 @@ def run_transfer(filename):
             if is_date(f.replace(search_path, '').replace('.txt', '')):
                 os.remove(f)
 
+        print('adding a new entry for file...')
         soakdb_query.delete()
 
     # the next step is always the same
@@ -164,10 +177,11 @@ def run_transfer(filename):
 
     transfer_file(filename)
 
-
+@transaction.atomic
 # step 3 - create symlinks to bound-state pdbs
 def create_links(filename, link_dir):
-    crystals = Crystal.objects.filter(visit__filename=filename)
+    to_search = Crystal.objects.filter(visit__filename=filename)
+    crystals = Refinement.objects.filter(crystal_name__in=to_search, outcome__gte=4).filter(outcome__lte=6)
     for crystal in crystals:
         pth = os.path.join(link_dir,
                            crystal.crystal_name.target.target_name,
@@ -229,7 +243,20 @@ if __name__ == "__main__":
 
     filename = args["soakdb_file"]
     link_dir = args["output_directory"]
-    
+
+    print('Will process: ' + filename)
+    print('symlinks to the bound-state pdbs will be found in: ' + link_dir)
+
+    print('Checking wether ' + filename + ' is a new or existing entry in XCDB...')
     check_file(filename)
+    print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
     run_transfer(filename)
+    print('Creating the symbolic links to the bound-state pdb files...')
     create_links(filename, link_dir)
+    print('Telling the database this file is now up-to-date...')
+    sdb = SoakdbFiles.objects.get(filename=filename)
+    sdb.status = 2
+    sdb.save()
+    print('Done :)')
+
+
