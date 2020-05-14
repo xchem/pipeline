@@ -544,12 +544,12 @@ class NonSuperposedOccupancy(Occupancy):
 
 class ReviewResponses(models.Model):
 
-    crystal_id = models.ForeignKey(Crystal, on_delete=models.CASCADE) # This may not be correctly linked in psql...
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # This may not be correctly linked in psql...
     fedid = models.TextField(blank=False, null=False)
-    decision = models.IntegerField(null=False, null=False)
+    decision_int = models.IntegerField(blank=False, null=False)
     decision_str = models.TextField(blank=False, null=False)
     reason = models.TextField(blank=False, null=False)
-    time_submitted = models.IntegerField(null=False, blank=False)
+    time_submitted = models.IntegerField(blank=False, null=False)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
