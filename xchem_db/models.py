@@ -540,3 +540,18 @@ class NonSuperposedRefinement(Refinement):
 class NonSuperposedOccupancy(Occupancy):
 
     nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE, related_name='+')
+
+
+class ReviewResponses(models.Model):
+
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # This may not be correctly linked in psql...
+    fedid = models.TextField(blank=False, null=False)
+    decision_int = models.IntegerField(blank=False, null=False)
+    decision_str = models.TextField(blank=False, null=False)
+    reason = models.TextField(blank=False, null=False)
+    time_submitted = models.IntegerField(blank=False, null=False)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'review_responses'
