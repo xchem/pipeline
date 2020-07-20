@@ -25,6 +25,8 @@ class Tasks(models.Model):
 
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
+    uniprot_id = models.CharField()
+    alias = models.CharField()
 
     class Meta:
         app_label = 'xchem_db'
@@ -233,61 +235,6 @@ class Refinement(models.Model):
         db_table = 'refinement'
 
 
-class ProasisHits(models.Model):
-    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
-    pdb_file = models.TextField(blank=False, null=False)
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key
-    modification_date = models.TextField(blank=True, null=True)
-    strucid = models.TextField(blank=True, null=True)
-    ligand_list = models.TextField(blank=True, null=True)
-    mtz = models.TextField(blank=False, null=False)
-    two_fofc = models.TextField(blank=False, null=False)
-    fofc = models.TextField(blank=False, null=False)
-    sdf = models.TextField(blank=True, null=True)
-    altconf = models.CharField(max_length=255, blank=True, null=True)
-    added = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'proasis_hits'
-        unique_together = ('refinement', 'crystal_name', 'altconf')
-
-
-class LigandEdstats(models.Model):
-    baa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    ccpa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    ccsa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    npa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    rga = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    ra = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    srga = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zccpa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zd_a = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zd_a_0 = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zda = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    zoa = models.FloatField(blank=True, null=True)  # Field name made lowercase.
-    crystal_name = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # changed to foreign key # changed from crystal
-    ligand = models.CharField(max_length=255, blank=True, null=True)
-    strucid = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'ligand_edstats'
-        unique_together = ('crystal_name', 'ligand', 'strucid')
-
-
-class ProasisLeads(models.Model):
-    reference_pdb = models.ForeignKey(Reference, to_field='reference_pdb', on_delete=models.CASCADE, unique=True)
-    strucid = models.CharField(max_length=255, blank=True, null=True, unique=True)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'proasis_leads'
-
-
 class PanddaAnalysis(models.Model):
     pandda_dir = models.CharField(max_length=255, unique=True)
 
@@ -445,106 +392,10 @@ class PanddaEventStats(models.Model):
         db_table = 'pandda_event_stats'
 
 
-class ProasisPandda(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    hit = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)
-    event = models.ForeignKey(PanddaEvent, on_delete=models.CASCADE)
-    event_map_native = models.TextField(blank=False, null=False)
-    model_pdb = models.TextField(blank=False, null=False)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'proasis_pandda'
-        unique_together = ('crystal', 'hit', 'event')
-
-
-class ProasisOut(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # done
-    proasis = models.ForeignKey(ProasisHits, on_delete=models.CASCADE)  # done
-    ligand = models.CharField(max_length=255, blank=False, null=False)  # done
-    ligid = models.IntegerField(blank=True, null=True)
-    root = models.TextField(blank=True, null=True)  # root directory for all crystals in this project (target)
-    start = models.TextField(blank=True, null=True)  # directory name for this crystal within root
-    curated = models.TextField(blank=True, null=True)  # done
-    sdf = models.TextField(blank=True, null=True)  # done
-    apo = models.TextField(blank=True, null=True)  # done
-    mol = models.TextField(blank=True, null=True)  # done
-    mol2 = models.TextField(blank=True, null=True)  # done
-    h_mol = models.TextField(blank=True, null=True)  # done
-    stripped = models.TextField(blank=True, null=True)  # done
-    event = models.TextField(blank=True, null=True)
-    mtz = models.TextField(blank=True, null=True)
-    contacts = models.TextField(blank=True, null=True)  # done
-    acc = models.TextField(blank=True, null=True)
-    don = models.TextField(blank=True, null=True)
-    lip = models.TextField(blank=True, null=True)
-    pmap = models.TextField(blank=True, null=True)
-    ppdb = models.TextField(blank=True, null=True)
-    pjson = models.TextField(blank=True, null=True)
-    pmtz = models.TextField(blank=True, null=True)
-    added = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'proasis_out'
-        unique_together = ('crystal', 'proasis', 'ligand', 'ligid')
-
-
-class Occupancy(models.Model):
-
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
-    refine_log = models.TextField(blank=True, null=True)
-    all_occupancy = ArrayField(models.FloatField())
-    occupancy = models.FloatField(blank=True, null=True)
-    occupancy_group = models.IntegerField(blank=True, null=True)
-    complete_group = models.TextField(blank=True, null=True)
-    resid = models.IntegerField(blank=True, null=True)
-    alte = models.CharField(max_length=1, blank=True, null=True)
-    state = models.CharField(max_length=7, blank=True, null=True)
-    resname = models.CharField(max_length=3, blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
-    edited = models.DateTimeField(auto_now=True)
-    added = models.DateTimeField(auto_now_add=True)
-
-
-class ConvergenceRefinement(Refinement):
-
-    """ Refinement with more cycles to convergence
-
-    Notes
-    ------------------------------
-
-    Inheritance
-
-    https://godjango.com/blog/django-abstract-base-class-multi-table-inheritance/"""
-
-    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
-    success = models.NullBooleanField(null=True)
-    cycles = models.IntegerField(null=True, blank=True)
-    error = models.TextField(blank=True, null=True)
-
-
-class ConvergenceOccupancy(Occupancy):
-
-    convergence_refinement = models.ForeignKey(ConvergenceRefinement, on_delete=models.CASCADE, related_name='+')
-
-
-class NonSuperposedRefinement(Refinement):
-
-    orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
-
-
-class NonSuperposedOccupancy(Occupancy):
-
-    nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE, related_name='+')
-
-
 class ReviewResponses(models.Model):
-
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # This may not be correctly linked in psql...
+    # may need to be changed to ligand in the end. Depends on XCR
+    # ligand = models.ForeignKey(Ligand)
     fedid = models.TextField(blank=False, null=False)
     decision_int = models.IntegerField(blank=False, null=False)
     decision_str = models.TextField(blank=False, null=False)
@@ -555,3 +406,110 @@ class ReviewResponses(models.Model):
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'review_responses'
+
+
+class Site(models.Model):
+    site_name = models.CharField(max_length=255)
+    description = models.TextField()
+
+
+class Ligand(models.Model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    target = models.ForeignKey(Target)
+    site = models.ForeignKey(Site)
+    compound = models.ForeignKey(Compounds)
+    new_smiles = models.TextField()
+    alternate_name = models.CharField(max_length=255)
+    pdb_id = models.CharField(max_length=255)
+    fragalysis_name = models.CharField(max_length=255, unique=True)
+    original_name = models.CharField(max_length=255)
+    lig_string = models.CharField(max_length=255)
+
+
+class AtomSelection(models.Model):
+    ligand = models.ForeignKey(Ligand)
+    # to be determined by review app - needs to be readable by NGL in fragalysis
+    selection_string = models.TextField()
+    comments = models.TextField()
+
+
+class MiscFile(models.Model):
+    file = models.FileField()
+    description = models.TextField()
+
+
+class FragalysisTarget(models.Model):
+    open = models.BooleanField()
+    target = models.ForeignKey(Target)
+    metadata_file = models.FileField()
+    input_root = models.TextField()
+    staging_root = models.TextField()
+    biomol = models.FileField()
+    additional_files = models.ManyToManyField(MiscFile)
+
+
+class FragalysisLigand(models.Model):
+    ligand = models.ForeignKey(Ligand)
+    fragalysis_target = models.ForeignKey(FragalysisTarget)
+    crystallographic_bound = models.FileField()
+    lig_mol_file = models.FileField()
+    apo_pdb = models.FileField()
+    bound_pdb = models.FileField()
+    smiles_file = models.FileField()
+    desolvated_pdb = models.FileField()
+    solvated_pdb = models.FileField()
+    # do we really want them all in fragalysis?
+    pandda_event = models.FileField()
+    two_fofc = models.FileField()
+    fofc = models.FileField()
+
+
+## CHAT TO ELLIOT - DO WE NEED THESE, OR CODE?
+# class Occupancy(models.Model):
+#
+#     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+#     refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE)
+#     refine_log = models.TextField(blank=True, null=True)
+#     all_occupancy = ArrayField(models.FloatField())
+#     occupancy = models.FloatField(blank=True, null=True)
+#     occupancy_group = models.IntegerField(blank=True, null=True)
+#     complete_group = models.TextField(blank=True, null=True)
+#     resid = models.IntegerField(blank=True, null=True)
+#     alte = models.CharField(max_length=1, blank=True, null=True)
+#     state = models.CharField(max_length=7, blank=True, null=True)
+#     resname = models.CharField(max_length=3, blank=True, null=True)
+#     comment = models.TextField(blank=True, null=True)
+#     edited = models.DateTimeField(auto_now=True)
+#     added = models.DateTimeField(auto_now_add=True)
+#
+#
+# class ConvergenceRefinement(Refinement):
+#
+#     """ Refinement with more cycles to convergence
+#
+#     Notes
+#     ------------------------------
+#
+#     Inheritance
+#
+#     https://godjango.com/blog/django-abstract-base-class-multi-table-inheritance/"""
+#
+#     orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
+#     success = models.NullBooleanField(null=True)
+#     cycles = models.IntegerField(null=True, blank=True)
+#     error = models.TextField(blank=True, null=True)
+#
+#
+# class ConvergenceOccupancy(Occupancy):
+#
+#     convergence_refinement = models.ForeignKey(ConvergenceRefinement, on_delete=models.CASCADE, related_name='+')
+#
+#
+# class NonSuperposedRefinement(Refinement):
+#
+#     orignal_refinement = models.ForeignKey(Refinement, on_delete=models.CASCADE, related_name='+')
+#
+#
+# class NonSuperposedOccupancy(Occupancy):
+#
+#     nonsuper_refinement = models.ForeignKey(NonSuperposedRefinement, on_delete=models.CASCADE, related_name='+')
