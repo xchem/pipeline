@@ -148,33 +148,6 @@ def run_transfer(filename):
         # if maint_exists == 1:
         soakdb_query = SoakdbFiles.objects.get(filename=filename)
         print(soakdb_query)
-        # for pandda file finding
-        split_path = filename.split('database')
-        search_path = split_path[0]
-
-        print('removing old logs...')
-        # remove pandda data transfer done file
-        if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
-            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
-
-        log_files = find_log_files(search_path).rsplit()
-        # print(log_files)
-
-        for log in log_files:
-            print(str(log + '.run.done'))
-            if os.path.isfile(str(log + '.run.done')):
-                os.remove(str(log + '.run.done'))
-            if os.path.isfile(str(log + '.sites.done')):
-                os.remove(str(log + '.sites.done'))
-            if os.path.isfile(str(log + '.events.done')):
-                os.remove(str(log + '.events.done'))
-
-        find_logs_out_files = glob.glob(str(search_path + '*.txt'))
-
-        for f in find_logs_out_files:
-            if is_date(f.replace(search_path, '').replace('.txt', '')):
-                os.remove(f)
-
         print('adding a new entry for file...')
         soakdb_query.delete()
 
@@ -208,7 +181,8 @@ def create_links(filename, link_dir):
         file_obj.find_bound_file()
         if file_obj.bound_conf:
             try:
-
+                if not os.path.isfile(file_obj.bound_conf):
+                    print('path: ' + file_obj.bound_conf + ' does not exist!')
                 os.symlink(file_obj.bound_conf, pth)
                 if prod_smiles:
                     smi = prod_smiles
