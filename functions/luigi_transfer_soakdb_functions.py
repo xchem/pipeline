@@ -1,13 +1,42 @@
 import glob
-import os
-import subprocess
+import shutil
+import subprocess #?
 import traceback
+
+from functions.pandda_functions import find_log_files
 
 from functions import db_functions, misc_functions
 from luigi_classes.config_classes import DirectoriesConfig
-from xchem_db.models import SoakdbFiles
+from xchem_db.models import *
+from dateutil.parser import parse
 
+# Moving defined functions in transfer_soakdb.py to avoid cross-imports...
+def is_date(string):
+    try:
+        parse(string)
+        return True
+    except ValueError:
+        return False
 
+def transfer_file(data_file):
+    maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
+    if maint_exists == 1:
+        db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=data_file,
+                                    model=Crystal)
+        db_functions.transfer_table(translate_dict=db_functions.lab_translations(), filename=data_file,
+                                    model=Lab)
+        db_functions.transfer_table(translate_dict=db_functions.refinement_translations(), filename=data_file,
+                                    model=Refinement)
+        db_functions.transfer_table(translate_dict=db_functions.dimple_translations(), filename=data_file,
+                                    model=Dimple)
+        db_functions.transfer_table(translate_dict=db_functions.data_processing_translations(),
+                                    filename=data_file, model=DataProcessing)
+
+    soakdb_query = SoakdbFiles.objects.get(filename=data_file)
+    soakdb_query.status = 2
+    soakdb_query.save()
+
+# Transfer_soakdb.py functions
 def find_soak_db_files(filepath):
     command = str(
         '''find ''' + filepath + ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/tmp/*" -prune -o -path "*BACKUP*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*ack*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print'''
@@ -58,7 +87,7 @@ def check_files(soak_db_filepath):
             # Get last modification date as stored in soakdb
             old_mod_date = soakdb_query[0].modification_date
             # Get current modification date of file
-            current_mod_date = misc_functions.get_mod_date()
+            current_mod_date = misc_functions.get_mod_date(data_file)
             # get the id of entry to write to
             id_number = soakdb_query[0].id
 
@@ -89,7 +118,7 @@ def check_files(soak_db_filepath):
             db_functions.pop_proposals(proposal)
             soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
             id_number = soakdb_query[0].id
-            update_status = Soakdbfiles.objects.get(id=id_number)
+            update_status = SoakdbFiles.objects.get(id=id_number)
             update_status.status=0
             update_status.save()
 
@@ -122,7 +151,7 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
     return 'DONE'
 
 
-def transfer_changed_datafile(data_file):
+def transfer_changed_datafile(data_file, hit_directory):
     print(data_file)
     maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
 
@@ -159,29 +188,29 @@ def transfer_changed_datafile(data_file):
         for crystal in crystals:
             target_name = str(crystal.target.target_name).upper()
             crystal_name = str(crystal.crystal_name)
+            # Do we even need this part if the proasis is being removed?
+            proasis_crystal_directory = os.path.join(hit_directory, target_name.upper(), crystal_name)
+            if ProasisHits.objects.filter(crystal_name=crystal).exists():
+                proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
+                for hit in proasis_hit:
+                    for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, 'proasis/hits',
+                                                       str(hit.crystal_name.crystal_name +
+                                                           '_' + hit.modification_date + '*'))):
+                        os.remove(path)
+                    if os.path.isdir(proasis_crystal_directory):
+                        shutil.rmtree(os.path.join(proasis_crystal_directory), ignore_errors=True)
 
-            #proasis_crystal_directory = os.path.join(self.hit_directory, target_name.upper(), crystal_name)
-            #if ProasisHits.objects.filter(crystal_name=crystal).exists():
-            #    proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
-            #    for hit in proasis_hit:
-            #        for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, 'proasis/hits',
-            #                                           str(hit.crystal_name.crystal_name +
-            #                                               '_' + hit.modification_date + '*'))):
-            #            os.remove(path)
-            #        if os.path.isdir(proasis_crystal_directory):
-            #            shutil.rmtree(os.path.join(proasis_crystal_directory), ignore_errors=True)
-            #
-            #        if ProasisOut.objects.filter(proasis=hit).exists:
-            #            for obj in ProasisOut.objects.filter(proasis=hit):
-            #                if obj.root:
-            #                    delete_files = ['verne.transferred', 'PROPOSALS', 'VISITS', 'visits_proposals.done']
-            #                    for f in delete_files:
-            #                        if os.path.isfile(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]),
-            #                                                       f)):
-            #                            os.remove(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]), f))
-            #                    shutil.rmtree(os.path.join(obj.root, obj.start))
-            #                obj.delete()
-            #        hit.delete()
+                    if ProasisOut.objects.filter(proasis=hit).exists:
+                        for obj in ProasisOut.objects.filter(proasis=hit):
+                            if obj.root:
+                                delete_files = ['verne.transferred', 'PROPOSALS', 'VISITS', 'visits_proposals.done']
+                                for f in delete_files:
+                                    if os.path.isfile(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]),
+                                                                   f)):
+                                        os.remove(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]), f))
+                                shutil.rmtree(os.path.join(obj.root, obj.start))
+                            obj.delete()
+                    hit.delete()
 
         soakdb_query.delete() # ?
 
@@ -198,11 +227,11 @@ def transfer_changed_datafile(data_file):
 
 # Calls transfer_file
 #def transfer_new_datafile(luigi.Task):
-#    pass
+#    return ''
 
 
 #def start_transfers(luigi.Task):
-#    pass
+#    return ''
 #
 
 def check_file_upload(filename, model):
@@ -297,8 +326,7 @@ def check_file_upload(filename, model):
     return ''
 
 
-# To Do?
-def check_uploaded_files(luigi.Task):
-    pass
-
+#def check_uploaded_files(luigi.Task):
+#    return ''
+#
 
