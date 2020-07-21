@@ -1,14 +1,15 @@
 import glob
 import shutil
-import subprocess #?
 import traceback
 
-from functions.pandda_functions import find_log_files
+from dateutil.parser import parse
 
-from functions import db_functions, misc_functions
+from functions import db_functions
+from functions import misc_functions
+from functions.pandda_functions import *
 from luigi_classes.config_classes import DirectoriesConfig
 from xchem_db.models import *
-from dateutil.parser import parse
+
 
 # Moving defined functions in transfer_soakdb.py to avoid cross-imports...
 def is_date(string):
@@ -17,6 +18,7 @@ def is_date(string):
         return True
     except ValueError:
         return False
+
 
 def transfer_file(data_file):
     maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
@@ -35,6 +37,7 @@ def transfer_file(data_file):
     soakdb_query = SoakdbFiles.objects.get(filename=data_file)
     soakdb_query.status = 2
     soakdb_query.save()
+
 
 # Transfer_soakdb.py functions
 def find_soak_db_files(filepath):
@@ -119,7 +122,7 @@ def check_files(soak_db_filepath):
             soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
             id_number = soakdb_query[0].id
             update_status = SoakdbFiles.objects.get(id=id_number)
-            update_status.status=0
+            update_status.status = 0
             update_status.save()
 
     lab = list(Lab.objects.all())
@@ -176,7 +179,7 @@ def transfer_changed_datafile(data_file, hit_directory):
             if os.path.isfile(f"{log}.events.done"):
                 os.remove(f"{log}.events.done")
 
-        #find_logs_out_files = glob.glob(str(search_path + '*.txt'))
+        # find_logs_out_files = glob.glob(str(search_path + '*.txt'))
         find_logs_out_files = glob.glob(f"{search_path}*.txt")
 
         for f in find_logs_out_files:
@@ -212,9 +215,9 @@ def transfer_changed_datafile(data_file, hit_directory):
                             obj.delete()
                     hit.delete()
 
-        soakdb_query.delete() # ?
+        soakdb_query.delete()  # ?
 
-        out,err,proposal = db_functions.pop_soakdb(data_file)
+        out, err, proposal = db_functions.pop_soakdb(data_file)
         db_functions.pop_proposals(proposal)
 
     else:
@@ -226,11 +229,11 @@ def transfer_changed_datafile(data_file, hit_directory):
 
 
 # Calls transfer_file
-#def transfer_new_datafile(luigi.Task):
+# def transfer_new_datafile(luigi.Task):
 #    return ''
 
 
-#def start_transfers(luigi.Task):
+# def start_transfers(luigi.Task):
 #    return ''
 #
 
@@ -259,15 +262,16 @@ def check_file_upload(filename, model):
 
         for row in results:
             lab_object = model.objects.filter(crystal_name__crystal_name=row['CrystalName'],
-                                                crystal_name__visit__filename=str(filename),
-                                                crystal_name__compound__smiles=row['CompoundSMILES'])
+                                              crystal_name__visit__filename=str(filename),
+                                              crystal_name__compound__smiles=row['CompoundSMILES'])
             if len(lab_object) > 1:
                 raise Exception('Multiple Crystals!')
             if len(lab_object) == 0:
-                if model == Dimple and not row row['DimplePathToPDB'] and not row['DimplePathToMTZ']:
+                if model == Dimple and not row['DimplePathToPDB'] and not row['DimplePathToMTZ']:
                     pass
                 else:
-                    raise Exception(f"No entry for {row['CrystalName']}, {row['DimplePathToPDB']}, {row['DimplePathToMTZ']}")
+                    raise Exception(
+                        f"No entry for {row['CrystalName']}, {row['DimplePathToPDB']}, {row['DimplePathToMTZ']}")
             for key in translation.keys():
                 test_xchem_val = eval(f"lab_objects[0].{key}")
                 soakdb_val = row[translation[key]]
@@ -325,8 +329,6 @@ def check_file_upload(filename, model):
 
     return ''
 
-
-#def check_uploaded_files(luigi.Task):
+# def check_uploaded_files(luigi.Task):
 #    return ''
 #
-
