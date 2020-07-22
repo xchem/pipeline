@@ -3,7 +3,6 @@ import shutil
 import traceback
 
 from dateutil.parser import parse
-
 from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
@@ -133,7 +132,7 @@ def check_files(soak_db_filepath):
             filename.status = 0
             filename.save()
 
-    return str('')
+    # return ''
 
 
 def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
@@ -150,8 +149,6 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
 
     for proposal_number in set(proposal_list):
         db_functions.pop_proposals(proposal_number)
-
-    return 'DONE'
 
 
 def transfer_changed_datafile(data_file, hit_directory):
@@ -225,8 +222,6 @@ def transfer_changed_datafile(data_file, hit_directory):
 
     transfer_file(data_file)
 
-    return ''
-
 
 # Calls transfer_file
 # def transfer_new_datafile(luigi.Task):
@@ -236,6 +231,7 @@ def transfer_changed_datafile(data_file, hit_directory):
 # def start_transfers(luigi.Task):
 #    return ''
 #
+
 
 def check_file_upload(filename, model):
     out_err_file = os.path.join(DirectoriesConfig().log_directory,
