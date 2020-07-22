@@ -147,6 +147,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
         os.makedirs('/pipeline/logs/transfer_logs')
+        os.makedirs('/pipeline/tests/data/processing/database/')
 
         shutil.copy(cls.db, f"/pipeline/tests/data/processing/database/{cls.db.split('/')[-1]}")
 
