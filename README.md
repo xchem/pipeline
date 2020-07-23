@@ -9,14 +9,24 @@ There are some basic tests that run tasks from the pipeline and populate data in
 
 You will need to test manually the migration of your models into an empty postgres database. 
 
-There is a docker container that you can build, based on the Dockerfile in this repo. From within the cloned repo:
+There is a docker container that you can build, based on the Dockerfile in this repo. 
 
-1. docker build -t pipeline .
-2. docker run --user root -it pipeline /bin/bash
-3. source activate pipeline
-4. python manage.py makemigrations
-5. python manage.py migrate
+On local machine, from within the cloned repo::
+```
+docker build --no-cache -t pipeline .
+# Optional, for debugging purposes. Mount the git repo into the docker container
+repo=$(pwd)
+docker run --mount type=bind,source=$repo,target=/pipeline -it pipeline /bin/bash 
+```
+Within the docker container:
+```
+source activate pipeline
+python manage.py makemigrations
+python manage.py migrate
+```
 
-If, in step 4 or 5, any errors are thrown, you will need to troubleshoot based on those errors, before the code makes it into the master branch. 
+If, during the `python manage.py makemigrations` or `python manage.py migrate` errors are thrown you need to troubleshoot 
+based on these errors before the code will be successfully pushed into the master branch. Hence why we mount the repo 
+when testing so we can edit the python code without rebuilding the docker container.
 
 I will update my TravisCI tests to make sure the integration tests fail if the migrate tasks listed above don't work. 
