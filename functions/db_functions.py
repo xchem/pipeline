@@ -297,12 +297,18 @@ def transfer_table(translate_dict, filename, model):
                 
         # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
         # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
-        target_obj = Target.objects.get_or_create(target_name=target.upper())[1]
-        compound_obj = Compounds.objects.get_or_create(smiles=compound_smiles)[1]
+        target_obj = models.Target.objects.get_or_create(target_name=target.upper())[1]
+        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[1]
         # this one should deffo exist
-        visit_obj = SoakdbFiles.objects.get(filename=filename)
+        visit_obj = models.SoakdbFiles.objects.get(filename=filename)
         # put everything together and get the crystal object
-        crys_obj = Crystal.objects.get_or_create(target=target_obj, crystal_name=crystal_name, visit=visit_obj, product=product_smiles)
+        crys_obj = models.Crystal.objects.get_or_create(
+            target=target_obj,
+            crystal_name=crystal_name,
+            visit=visit_obj,
+            product=product_smiles,
+            compound=compound_obj
+        )[1]
         
         # now see if there's already a row for this crystal in the model we're currently using
         model_row = model.objects.get_or_create(crystal_name=crys_obj)[1]
