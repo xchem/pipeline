@@ -9,9 +9,14 @@ from functions.pandda_functions import *
 from luigi_classes.config_classes import DirectoriesConfig
 from xchem_db.models import *
 
-
-# Moving defined functions in transfer_soakdb.py to avoid cross-imports...
 def is_date(string):
+    """Check if a string is a parsable date using parse()
+
+    :param string: A string that may or may not contain a date
+    :type string: str
+    :return: Returns True if string is a date
+    :rtype: bool
+    """
     try:
         parse(string)
         return True
@@ -20,6 +25,14 @@ def is_date(string):
 
 
 def transfer_file(data_file):
+    """Transfer contents of soakdb.sqlite file to xcdb into separate
+    (crystal, lab, refinement, dimple and data_processing tables.
+
+    :param data_file: File-path(?) pointing towards a soakdb.sqlite file
+    :type data_file: str
+    :return: Function should not return anything but will write to a database.
+    :rtype: None
+    """
     maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
     if maint_exists == 1:
         db_functions.transfer_table(translate_dict=db_functions.crystal_translations(), filename=data_file,
@@ -38,8 +51,14 @@ def transfer_file(data_file):
     soakdb_query.save()
 
 
-# Transfer_soakdb.py functions
 def find_soak_db_files(filepath):
+    """Find soakdb files from a given filepath (specific to the dls file-system...)
+
+    :param filepath: A string corresponding to a valid file-path. Within :class:`transfer_soakdb.FindSoakDBFiles` this is stored inside self.filepath
+    :type filepath: str
+    :return: A list of filepath(s) to corresponding soakdb file(s)
+    :rtype: str
+    """
     command = str(
         '''find ''' + filepath + ''' -maxdepth 5 -path "*/lab36/*" -prune -o -path "*/tmp/*" -prune -o -path "*BACKUP*" -prune -o -path "*/initial_model/*" -prune -o -path "*/beamline/*" -prune -o -path "*/analysis/*" -prune -o -path "*ackup*" -prune -o -path "*ack*" -prune -o -path "*old*" -prune -o -path "*TeXRank*" -prune -o -name "soakDBDataFile.sqlite" -print'''
     )
@@ -54,6 +73,14 @@ def find_soak_db_files(filepath):
 
 
 def check_files(soak_db_filepath):
+    """Check if soakdb file has been updated since last run
+
+    :param soak_db_filepath: Soakdb filepath as defined
+    within :class:`transfer_soakdb.CheckFiles` as self.input()[1].path
+    :type soak_db_filepath: str
+    :return: Will return nothing but should update the status of soakdb file if it needs to...
+    :rtype: None
+    """
     # Beginning of run(self)
     checked = []
     # Status codes:-
@@ -136,6 +163,13 @@ def check_files(soak_db_filepath):
 
 
 def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
+    """Transfers fedids and datafiles from soakdb filepaths to XCDB, used to populate the proposals table
+
+    :param soak_db_filepath: Soakdb filepath as defined within :class:`transfer_soakdb.TransferAllFedIDsAndDatafiles` as self.input()
+    :type soak_db_filepath: str
+    :return: Should return nothing, but will populate the proposals table in XCDB.
+    :rtype: None
+    """
     with soak_db_filepath.open('r') as database_list:
         for database_file in database_list.readlines():
             database_file = database_file.replace('\n', '')
@@ -152,6 +186,15 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
 
 
 def transfer_changed_datafile(data_file, hit_directory):
+    """Transfers a changed file to XCDB by calling `transfer_file(data_file)`
+
+    :param data_file: The soakdb that we want to check if it updated, :class:`TransferChangedDataFile` self.data_file
+    :type data_file: str
+    :param hit_directory: Directory to which the soakdb corresponds to. Usually :class:`TransferChangedDataFile` self.hit_directory
+    :type hit_directory: str
+    :return: Should return nothing but will update the
+    :rtype: None
+    """
     print(data_file)
     maint_exists = db_functions.check_table_sqlite(data_file, 'mainTable')
 
@@ -223,17 +266,16 @@ def transfer_changed_datafile(data_file, hit_directory):
     transfer_file(data_file)
 
 
-# Calls transfer_file
-# def transfer_new_datafile(luigi.Task):
-#    return ''
-
-
-# def start_transfers(luigi.Task):
-#    return ''
-#
-
-
 def check_file_upload(filename, model):
+    """Check if a soakdb file has been uploaded to a given django model
+
+    :param filename: filename to check, :class:`transfer_soakdb.CheckFileUpload` self.filename
+    :type filename: str
+    :param model: model to check if file had uploaded correctly to, :class:`transfer_soakdb.CheckFileUpload` self.model
+    :type model: str or model class, not sure tbh, I didn't write the code!
+    :return: Should check if file is uploaded correctly
+    :rtype: None
+    """
     out_err_file = os.path.join(DirectoriesConfig().log_directory,
                                 str(str(filename.split('/')[3]) +
                                     '_' + str(filename.split('/')[4]) +
@@ -323,8 +365,4 @@ def check_file_upload(filename, model):
         with open(out_err_file, 'w') as f:
             f.write(traceback.format_exc())
 
-    return ''
 
-# def check_uploaded_files(luigi.Task):
-#    return ''
-#
