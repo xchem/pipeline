@@ -457,7 +457,7 @@ def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
     try:
-        visit = database_file.split('/')[5]
+        visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', database_file)
         proposal = visit.split('-')[0]
         # proposal_number = int(proposal[2:])
     except:

@@ -255,7 +255,7 @@ def transfer_changed_datafile(data_file, hit_directory):
                             obj.delete()
                     hit.delete()
 
-        soakdb_query.delete()  # ?
+        #soakdb_query.delete()  # ?
 
         out, err, proposal = db_functions.pop_soakdb(data_file)
         db_functions.pop_proposals(proposal)
