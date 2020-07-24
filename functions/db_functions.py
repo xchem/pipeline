@@ -283,7 +283,10 @@ def transfer_table(translate_dict, filename, model):
     # for each row found in soakdb
     for row in results:
         compound_smiles = row['CompoundSMILES']
-        product_smiles = row['CompoundSMILESproduct']
+        product_smiles=None
+        # add a check here to see if the key exists - most sdb files won't have this column
+        if 'CompoundSMILESproduct' in row.keys():
+            product_smiles = row['CompoundSMILESproduct']
         crystal_name = row['CrystalName']
         target = row['ProteinName']
         if not target or target == 'None':
@@ -291,6 +294,18 @@ def transfer_table(translate_dict, filename, model):
                 target = str(row['CrystalName']).split('-')[0]
             except:
                 continue
+                
+        # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
+        # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
+        target_obj = Target.objects.get_or_create(target_name=target.upper())[1]
+        compound_obj = Compounds.objects.get_or_create(smiles=compound_smiles)[1]
+        # this one should deffo exist
+        visit_obj = SoakdbFiles.objects.get(filename=filename)
+        # put everything together and get the crystal object
+        crys_obj = Crystal.objects.get_or_create(target=target_obj, crystal_name=crystal_name, visit=visit_obj, product=product_smiles)
+        
+        # now see if there's already a row for this crystal in the model we're currently using
+        model_row = model.objects.get_or_create(crystal_name=crys_obj)[1]
 
                 
         ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
@@ -382,8 +397,9 @@ def transfer_table(translate_dict, filename, model):
         # write out the row to the relevant model (table)
         try:
             with transaction.atomic():
-                m = model.objects.create(**d)
-                m.save()
+                # here we need to update instead of creating, using the row we created or grabbed at the beginning
+                model_row.update({**d})
+                model_row.save()
 
         except IntegrityError as e:
             print(d)
