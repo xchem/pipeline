@@ -12,11 +12,14 @@ from .config_classes import SoakDBConfig, DirectoriesConfig
 
 
 class FindSoakDBFiles(luigi.Task):
-    """Luigi Class to find soakdb files within a given directory.
-    Does not require any pre-requisite tasks to be run.
+    """ Find and return a list of all soakdb files within a specified directory
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    This class requires no prerequisite tasks to be completed to run
+
+    Args:
+        date: A date that will be used to create the output file...
+        filepath: The file/directory path to look for soakdb files.
+
     """
 
     # date parameter - needs to be changed
@@ -26,20 +29,19 @@ class FindSoakDBFiles(luigi.Task):
     filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def output(self):
-        """Defines Expected output of :class:`FindSoakDBFiles`
+        """ Returns the specified output for this task (:class:`FindSoakDBFiles`)
 
-        :return: Creates a log file: 'soakDBfiles/soakDB_%Y%m%d.txt' in Luigi config dir.
-        :rtype: None
+        The naming convention for the output file follows : soakDBfiles/soakDB_%Y%m%d.txt given the date.
+        and should be located in the specified log directory.
+
+        Returns:
+            luigi.localTarget
         """
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               self.date.strftime('soakDBfiles/soakDB_%Y%m%d.txt')))
 
     def run(self):
-        """Defines what tasks should be run when :class:`FindSoakDBFiles` is performed.
-
-        :return: Writes output of `find_soak_db_files` as described by :class:`FindSoakDBFiles.output()`
-        :rtype: None
-        """
+        """Performs `find_soak_db_files` and creates text file containing valid soakdb filepaths."""
         out = find_soak_db_files(filepath=self.filepath)
 
         with self.output().open('w') as f:
@@ -47,12 +49,15 @@ class FindSoakDBFiles(luigi.Task):
 
 
 class CheckFiles(luigi.Task):
-    """Luigi Class to check if a given soakdb file has been uploaded to XCD
-    If file is in XCDB, requires :class:`FindSoakDBFiles` to be completed
-    else requires :class:`FindSoakDBFiles` and :class:`TransferAllFedIDsAndDatafiles`
+    """ Check if a given soakdb file has been uploaded to XCDB.
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    If the file is in XCDB this task requires :class:`FindSoakDBFiles` to be completed
+    If the file is NOT in XCDB then :class:`FindSoakDBFiles` and :class:`TransferAllFedIDsAndDatafiles` are required.
+
+    Args:
+        date: A date that will be used to create the output file
+        soak_db_filepath: The filepath pointing to a given soakdb file.
+
     """
 
     resources = {'django': 1}
@@ -60,10 +65,12 @@ class CheckFiles(luigi.Task):
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
 
     def requires(self):
-        """Requirements for :class:`CheckFiles` to be run
-        If file is in XCDB, requires :class:`FindSoakDBFiles` to be completed
-        else requires :class:`FindSoakDBFiles` and :class:`TransferAllFedIDsAndDatafiles`
+        """ CheckFiles requires :class:`FindSoakDBFiles` and :class:`TransferAllFedIDsAndDatafiles`
 
+        CheckFiles expects a soak_db_filepath as a parameter given under default_path
+
+        Returns:
+            [(output of TransferAllFedIDs or FindSoakDBFiles), output of FindSoakDBFiles]
         """
         print('Finding soakdb files via CheckFiles')
         soakdb = list(SoakdbFiles.objects.all())
@@ -75,21 +82,19 @@ class CheckFiles(luigi.Task):
             return [FindSoakDBFiles(filepath=self.soak_db_filepath), FindSoakDBFiles(filepath=self.soak_db_filepath)]
 
     def output(self):
-        """Defines Expected output of :class:`CheckFiles`
+        """ Returns the target output for :class:`CheckFiles` task.
 
-        :return: Creates a log file: 'checked_files/files_%Y%m%d%H.checked' in Luigi config dir.
-        :rtype: None
+        Naming convention for the output file is 'checked_files/files_%Y%m%d%H.checked'
+
+        Returns:
+            luigi.localTarget
         """
         return luigi.LocalTarget(os.path.join(
             DirectoriesConfig().log_directory,
             self.date.strftime('checked_files/files_%Y%m%d%H.checked')))
 
     def run(self):
-        """Defines what tasks should be run when :class:`CheckFiles` is performed.
-
-        :return: Performed the `check_files` functions and writes '' to a logfile as described by :class:`CheckFiles.output()`
-        :rtype: None
-        """
+        """ Performs `check_files` function and writes '' to the expected log file"""
         check_files(soak_db_filepath=self.input[1].path)
         # write output to signify job done
         with self.output().open('w') as f:
@@ -97,11 +102,13 @@ class CheckFiles(luigi.Task):
 
 
 class TransferAllFedIDsAndDatafiles(luigi.Task):
-    """Luigi Class to transfers FedID and DataFiles into XCDB
-    Requires :class:`FindSoakDBFiles` to be completed
+    """ Transfer All FedID and Datafiles from within a soak-db file into XCDB?
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    This task requires :class:`FindSoakDBfiles` to be completed
+
+    Args:
+        date:
+        soak_db_filepath:
     """
 
     resources = {'django': 1}
@@ -111,41 +118,43 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
 
     # needs a list of soakDB files from the same day
     def requires(self):
-        """Requirements for :class:`TransferAllFedIDsAndDatafiles` to be run
-        Requires :class:`FindSoakDBFiles` to be completed
+        """TransferAllFedIDsAndDatafiles requires :class:`FindSoakDBFiles` to be completed
 
+        TransferAllFedIDsAndDatafiles expects a soak_db_filepath as a parameter given under default_path
+
+        Returns:
+            [output of FindSoakDBFiles]
         """
         return FindSoakDBFiles(filepath=self.soak_db_filepath)
 
     # output is just a log file
     def output(self):
-        """Defines Expected output of :class:`TransferAllFedIDsAndDatafiles`
+        """Returns the target output for :class:`TransferAllFedIDsAndDatafiles`
 
-        :return: Creates a log file: 'transfer_logs/fedids_%Y%m%d%H.txt' in Luigi config dir.
-        :rtype: None
+        Naming convention for the output file is 'transfer_logs/fedids_%Y%m%d%H.txt'
+
+        Returns:
+            luigi.localTarget
         """
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               self.date.strftime('transfer_logs/fedids_%Y%m%d%H.txt')))
 
     # transfers data to a central postgres db
     def run(self):
-        """Defines what tasks should be run when :class:`CheckFiles` is performed.
-
-        :return: Performed the `transfer_all_fed_ids_and_datafiles` functions and writes 'TransferFeDIDs DONE'
-        to a logfile as described by :class:`TransferAllFedIDsAndDatafiles.output()`
-        :rtype: None
-        """
+        """ Performs `transfer_all_fed_ids_and_datafiles` function and writes 'TransferFeDIDs DONE' to the expected log file"""
         transfer_all_fed_ids_and_datafiles(soak_db_filepath=self.input())
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 
 
 class TransferChangedDataFile(luigi.Task):
-    """Luigi Class to transfer changed files into XCDB
-    Requires :class:`CheckFiles` to be completed
+    """Transfer soakdb files that have been modified since upload
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    Requires :class:`CheckFiles` task to be completed
+
+    Args:
+        data_file:
+        hit_directory:
     """
 
     resources = {'django': 1}
@@ -154,28 +163,29 @@ class TransferChangedDataFile(luigi.Task):
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 
     def requires(self):
-        """Requirements for :class:`TransferChangedDataFile` to be run
-        Requires :class:`CheckFiles` to be completed
+        """TransferChangedDataFile requires :class:`CheckFiles` to be completed.
 
+        Expects the data_file given as a parameter
+
+        Returns:
+            Output of CheckFiles
         """
         return CheckFiles(soak_db_filepath=self.data_file)
 
     def output(self):
-        """Defines Expected output of :class:`TransferChangedDataFile`
+        """Returns the target output for :class:`TransferChangedDataFile`
 
-        :return: Creates a log file: '[filename]_[modification_date].transferred' in Luigi config dir.
-        :rtype: None
+        Naming convention for the output file is 'data+file+mod_date.transferred'
+
+        Returns:
+            luigi.localTarget
         """
         modification_date = misc_functions.get_mod_date(self.data_file)
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
-        """Defines what tasks should be run when :class:`TransferChangedDataFile` is performed.
+        """ Performs `transfer_changed_datafile` function and writes '' to the expected log file"""
 
-        :return: Performed the `transfer_changed_datafile` functions and writes ''
-        to a logfile as described by :class:`TransferChangedDataFile.output()`
-        :rtype: None
-        """
         transfer_changed_datafile(data_file=self.data_file, hit_directory=self.hit_directory)
 
         with self.output().open('w') as f:
@@ -183,11 +193,13 @@ class TransferChangedDataFile(luigi.Task):
 
 
 class TransferNewDataFile(luigi.Task):
-    """Luigi Class to transfer changed files into XCDB
-    Requires :class:`CheckFiles` to be completed
+    """Transfer new soakdb files to XCDB.
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    Requires :class:`CheckFiles` task to be completed
+
+    Args:
+        soak_db_filepath:
+        data_file:
     """
 
     resources = {'django': 1}
@@ -196,27 +208,25 @@ class TransferNewDataFile(luigi.Task):
 
     def requires(self):
         """Requirements for :class:`TransferNewDataFile` to be run
+
         Requires :class:`CheckFiles` to be completed
 
         """
         return CheckFiles(soak_db_filepath=self.soak_db_filepath)
 
     def output(self):
-        """Defines Expected output of :class:`TransferNewDataFile`
+        """Returns the target output for :class:`TransferNewDataFile`
 
-        :return: Creates a log file: '[filename]_[modification_date].transferred' in Luigi config dir.
-        :rtype: None
+        Creates a log file: '[data_file]_[modification_date].transferred' in Luigi config dir.
+
+        Returns:
+            luigi.localTarget
         """
         modification_date = misc_functions.get_mod_date(self.data_file)
         return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
 
     def run(self):
-        """Defines what tasks should be run when :class:`TransferNewDataFile` is performed.
-
-        :return: Performed the `transfer_file` functions and writes ''
-        to a logfile as described by :class:`TransferNewDataFile.output()`
-        :rtype: None
-        """
+        """ Performs `transfer_file` function and writes '' to the expected log file"""
         transfer_file(self.data_file)
 
         with self.output().open('w') as f:
@@ -224,11 +234,13 @@ class TransferNewDataFile(luigi.Task):
 
 
 class StartTransfers(luigi.Task):
-    """Luigi Class to initiate transfer sequence into XCDB
+    """Initiate the transfer sequence of files into XCDB
+
     Requires :class:`CheckFiles` or both :class:`TransferNewDataFile` and :class:`TransferChangedDataFile` to be completed
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    Args:
+        date:
+        soak_db_filepath:
     """
 
     resources = {'django': 1}
@@ -238,11 +250,11 @@ class StartTransfers(luigi.Task):
     def get_file_list(self, status_code):
         """Get a list of files to attempt to transfer.
 
-        :param status_code: Not sure, ask Rachael
-        :type status_code: str
+        Args:
+            status_code: Not sure, ask Rachael
 
-        :return: list of filenames that are to be transferred to XCDB
-        :rtype: list
+        Returns:
+            list of filenames that are to be transferred to XCDB
         """
         status_query = SoakdbFiles.objects.filter(status=status_code)
         datafiles = [o.filename for o in status_query]
@@ -251,8 +263,13 @@ class StartTransfers(luigi.Task):
 
     def requires(self):
         """Requirements for :class:`StartTransfers` to be run
+
         Requires :class:`CheckFiles` to be completed or both :class:`TransferNewDataFile` and :class:`TransferChangedDataFile`
 
+        Returns:
+            Output of CheckFiles
+            or
+            Output of one of TransferNewDataFile or TransferChangedDataFile depending on state of soakdb file.
         """
         if not os.path.isfile(CheckFiles(soak_db_filepath=self.soak_db_filepath).output().path):
             return CheckFiles(soak_db_filepath=self.soak_db_filepath)
@@ -265,29 +282,30 @@ class StartTransfers(luigi.Task):
                     for datafile in changed_list]
 
     def output(self):
-        """Defines Expected output of :class:`StartTransfers`
+        """Returns the target output for :class:`StartTransfers`
 
-        :return: Creates a log file: 'transfer_logs/transfers_[date].done' in Luigi config dir.
-        :rtype: None
+        Creates a log file: 'transfer_logs/transfers_[date].done' in Luigi config dir.
+
+        Returns:
+            luigi.localTarget
         """
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               str('transfer_logs/transfers_' + str(self.date) + '.done')))
 
     def run(self):
-        """Defines what tasks should be run when :class:`StartTransfers` is performed.
-
-        :return: writes '' to a logfile as described by :class:`StartTransfers.output()`
-        :rtype: None
-        """
+        """Write to the output file, otherwise schedules required tasks."""
         with self.output().open('w') as f:
             f.write('')
 
 
 class CheckFileUpload(luigi.Task):
-    """Luigi Class to check if files uploaded
+    """Check if a file has uploaded correctly
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    Has no requirements
+
+    Args:
+        filename:
+        model:
     """
 
     resources = {'django': 1}
@@ -298,31 +316,31 @@ class CheckFileUpload(luigi.Task):
         pass
 
     def output(self):
-        """Defines Expected output of :class:`CheckFileUpload`
+        """Returns the target output for :class:`CheckFileUpload`
 
-        :return: Creates a log file: 'filename.data.checked' in Luigi config dir.
-        :rtype: None
+        Creates a log file: 'filename.date.checked' in Luigi config dir.
+
+        Returns:
+            luigi.localTarget
         """
         mod_date = misc_functions.get_mod_date(self.filename)
         return luigi.LocalTarget(str(self.filename + '.' + mod_date + '.checked'))
 
     def run(self):
-        """Defines what tasks should be run when :class:`CheckFileUpload` is performed.
-
-        :return: Performes `check_file_upload` and writes '' to a logfile as described by :class:`CheckFileUpload.output()`
-        :rtype: None
-        """
+        """Performs the check_file_upload function on the given filename and model"""
         check_file_upload(filename=self.filename, model=self.model)
         with self.output().open('w') as f:
             f.write('')
 
 
 class CheckUploadedFiles(luigi.Task):
-    """Luigi Class to check all uploaded Files
+    """Check whether or not all specified soakdb files have uploaded correctly
+
     Requires :class:`StartTransfers` or `CheckFileUpload` to be completed
 
-    :param luigi.Task: Task representation containing necessary input to perform function
-    :type luigi.Task: :class:`luigi.task.Task`
+    Args:
+        date:
+        soak_db_filepath:
     """
 
     resources = {'django': 1}
@@ -331,9 +349,12 @@ class CheckUploadedFiles(luigi.Task):
 
     def requires(self):
         """Requirements for :class:`CheckUploadedFiles` to be run
+
         Requires :class:`StartTransfers` to be completed if file is missing or
         :class:`CheckFileUpload` if exists
 
+        Returns:
+            Output of CheckFileUpload (if in XCDB) or StartTransfers (if not in XCDB)
         """
         if not os.path.isfile(StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath).output().path):
             return StartTransfers(date=self.date, soak_db_filepath=self.soak_db_filepath)
@@ -358,20 +379,17 @@ class CheckUploadedFiles(luigi.Task):
             return [CheckFileUpload(filename=filename, model=model) for (filename, model) in zipped]
 
     def output(self):
-        """Defines Expected output of :class:`CheckUploadedFiles`
+        """Returns the target output for:class:`CheckUploadedFiles`
 
-        :return: Creates a log file: 'soakDBfiles/soakDB_checked_%Y%m%d.txt' in Luigi config dir.
-        :rtype: None
+        Creates a log file: 'soakDBfiles/soakDB_checked_%Y%m%d.txt' in Luigi config dir.
+        Returns:
+            luigi.localTarget
         """
 
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
                                               self.date.strftime('soakDBfiles/soakDB_checked_%Y%m%d.txt')))
 
     def run(self):
-        """Defines what tasks should be run when :class:`CheckUploadedFiles` is performed.
-
-        :return: writes '' to a logfile as described by :class:`CheckFileUpload.output()`
-        :rtype: None
-        """
+        """Write to the output file, otherwise schedules required tasks."""
         with self.output().open('w') as f:
             f.write('')
