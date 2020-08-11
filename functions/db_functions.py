@@ -407,20 +407,13 @@ def transfer_table(translate_dict, filename, model):
         try:
             with transaction.atomic():
                 # here we need to update instead of creating, using the row we created or grabbed at the beginning
-                #print(f'Updating entry for {crystal_name}')
                 if model == models.Crystal:
                     qset = model.objects.filter(crystal_name=crystal_name)
                 else:
                     qset = model.objects.filter(crystal_name=crys_obj)
 
                 if(len(qset) == 1):
-                    #print(d)
-                    #key_to_be_deleted = 'crystal_name'
-                    #d.pop(key_to_be_deleted)
-                    #print(d)
-                    #print({**d})
                     qset.update(**d)
-                    #print('Ding')
                 else:
                     print(f'More than one entry for {crystal_name}')
 
@@ -500,7 +493,6 @@ def pop_soakdb(database_file):
     # 1.5) Bump modification_date accordingly...
     # 2) If 1) Fails, then create the soakdb file as the existing code had it...
     print(f'Checking if {database_file} exists')
-    toupdate = {'modification_date': modification_date}
     try:
         soakdb_entry = models.SoakdbFiles.objects.get(filename=database_file)
         print('Exists')
