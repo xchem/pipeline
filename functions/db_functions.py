@@ -407,17 +407,22 @@ def transfer_table(translate_dict, filename, model):
         try:
             with transaction.atomic():
                 # here we need to update instead of creating, using the row we created or grabbed at the beginning
-                print(f'Updating entry for {crystal_name}')
+                #print(f'Updating entry for {crystal_name}')
                 if model == models.Crystal:
-                    qset = model.objects.all().filter(crystal_name=crystal_name)
+                    qset = model.objects.filter(crystal_name=crystal_name)
                 else:
-                    qset = model.objects.all().filter(crystal_name=crystal_name)
+                    qset = model.objects.filter(crystal_name=crys_obj)
 
                 if(len(qset) == 1):
+                    #print(d)
+                    #key_to_be_deleted = 'crystal_name'
+                    #d.pop(key_to_be_deleted)
+                    #print(d)
+                    #print({**d})
                     qset.update(**d)
-                    print('Ding')
+                    #print('Ding')
                 else:
-                    print('More than one entry')
+                    print(f'More than one entry for {crystal_name}')
 
         except IntegrityError as e:
             print(d)
@@ -428,6 +433,7 @@ def transfer_table(translate_dict, filename, model):
             if crys_from_db.target == target:
                 print('Crystal duplicated!')
                 continue
+            
         # uncomment to debug
         except ValueError as e:
              print(d)
@@ -469,7 +475,7 @@ def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
     try:
-        visit = database_file.split('/')[5]
+        visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', database_file)[0]
         proposal = visit.split('-')[0]
         # proposal_number = int(proposal[2:])
     except:
@@ -481,11 +487,34 @@ def pop_soakdb(database_file):
     # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
     # add info to soakdbfiles table
-    soakdb_entry = models.SoakdbFiles.objects.get_or_create(modification_date=modification_date, filename=database_file,
-                                                            proposal=models.Proposals.objects.get_or_create(
-                                                                proposal=proposal, title=int(proposal[2:]))[0],
-                                                            visit=visit)[0]
-    soakdb_entry.save()
+    proposal_obj = models.Proposals.objects.get_or_create(proposal=proposal, title=int(proposal[2:]))[0]
+
+    # This needs fixing, it is not good left like this.
+    # My guess that it is associated with the modification date, and that it tries to get a soakdb object
+    # with the specified mod date AND soakdb filepath, fails and then creates one
+    # This then causes another problem since it tries to create a new soakdb object
+    # with the mod_date and the file_path
+    # since filename needs to be unique this will fail.
+    # Hence the solution is to: 
+    # 1) Test if soakdb file can be retrieved through unique filename
+    # 1.5) Bump modification_date accordingly...
+    # 2) If 1) Fails, then create the soakdb file as the existing code had it...
+    print(f'Checking if {database_file} exists')
+    toupdate = {'modification_date': modification_date}
+    try:
+        soakdb_entry = models.SoakdbFiles.objects.get(filename=database_file)
+        print('Exists')
+        setattr(soakdb_entry, 'modification_date', modification_date)
+        soakdb_entry.save()
+    except models.SoakdbFiles.DoesNotExist:     
+        print('Does not exist...')
+        soakdb_entry = models.SoakdbFiles.objects.create(modification_date=modification_date, 
+                                                            filename=database_file,
+                                                            proposal=proposal_obj,
+                                                            visit=visit
+                                                            )
+        soakdb_entry.save()
+
     return out, err, proposal
 
 

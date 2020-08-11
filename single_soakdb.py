@@ -149,7 +149,7 @@ def run_transfer(filename):
         soakdb_query = SoakdbFiles.objects.get(filename=filename)
         print(soakdb_query)
         print('adding a new entry for file...')
-        soakdb_query.delete()
+        #soakdb_query.delete()
 
     # the next step is always the same
     out, err, proposal = db_functions.pop_soakdb(filename)
