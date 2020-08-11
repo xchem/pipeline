@@ -297,23 +297,26 @@ def transfer_table(translate_dict, filename, model):
                 
         # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
         # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
-        target_obj = models.Target.objects.get_or_create(target_name=target.upper())[1]
-        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[1]
+        target_obj, target_obj_created = models.Target.objects.get_or_create(target_name=target.upper())
+        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
         # this one should deffo exist
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
         # put everything together and get the crystal object
-        crys_obj = models.Crystal.objects.get_or_create(
+        crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
             target=target_obj,
             crystal_name=crystal_name,
             visit=visit_obj,
             product=product_smiles,
             compound=compound_obj
-        )[1]
-        
+        )
         # now see if there's already a row for this crystal in the model we're currently using
-        model_row = model.objects.get_or_create(crystal_name=crys_obj)[1]
+        if model != models.Crystal:
+            model_row, model_row_created = model.objects.get_or_create(crystal_name=crys_obj)
+        else:
+            model_row = crys_obj
+            model_row_created = crys_obj_created
 
-                
+               
         ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
 #         compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)
                 
@@ -404,8 +407,17 @@ def transfer_table(translate_dict, filename, model):
         try:
             with transaction.atomic():
                 # here we need to update instead of creating, using the row we created or grabbed at the beginning
-                model_row.update({**d})
-                model_row.save()
+                print(f'Updating entry for {crystal_name}')
+                if model == models.Crystal:
+                    qset = model.objects.all().filter(crystal_name=crystal_name)
+                else:
+                    qset = model.objects.all().filter(crystal_name=crystal_name)
+
+                if(len(qset) == 1):
+                    qset.update(**d)
+                    print('Ding')
+                else:
+                    print('More than one entry')
 
         except IntegrityError as e:
             print(d)
