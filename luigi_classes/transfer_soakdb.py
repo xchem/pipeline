@@ -142,7 +142,7 @@ class TransferAllFedIDsAndDatafiles(luigi.Task):
     # transfers data to a central postgres db
     def run(self):
         """ Performs `transfer_all_fed_ids_and_datafiles` function and writes 'TransferFeDIDs DONE' to the expected log file"""
-        transfer_all_fed_ids_and_datafiles(soak_db_filepath=self.input())
+        transfer_all_fed_ids_and_datafiles(soak_db_filelist=self.input())
         with self.output().open('w') as f:
             f.write('TransferFeDIDs DONE')
 

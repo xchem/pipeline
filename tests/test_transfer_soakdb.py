@@ -127,30 +127,35 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         self.assertTrue(find_soak_db_files('/pipeline/tests/data/ab12345/processing/database/') == '')
 
     def test_check_files(self):
-        check_files('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite')
+        check_files('/pipeline/tests/soakdblist.txt')
 
     def test_transfer_all_fed_ids_and_datafiles(self):
-        transfer_all_fed_ids_and_datafiles('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')
+        transfer_all_fed_ids_and_datafiles('/pipeline/tests/soakdblist.txt')
 
     def test_transfer_changed_datafile(self):
-        pass
-        # transfer_changed_datafile('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite', )
+        transfer_changed_datafile('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite', hit_directory='./logs', log_directory='./logs/transfer_logs')
 
     def test_check_file_upload(self):
-        pass
-        # check_file_upload('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite', model)
+        soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
+        m = [Lab, Dimple, DataProcessing, Refinement]
+        zipped = []
+        for filename in soakdb_files:
+            for model in m:
+                maint_exists = check_table_sqlite(filename, 'mainTable')
+                if maint_exists == 1:
+                    zipped.append(tuple([filename, model]))
+
+        [check_file_upload(filename=filename, model=model, log_directory='./logs/transfer_logs') for (filename, model) in zipped]
 
     # NB: requires a soakdb object exists for the data file
     def test_transfer_file(self):
-        soak_db_dump = {'filename': '/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite',
-                        'proposal': 'lb13385',#Proposals.objects.get_or_create(proposal='lb13385')[0],
-                        'modification_date': 0
+        # Is this REALLY needed?
+        soak_db_dump = {'filename': '/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite',
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': get_mod_date('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite')
                         }
-
-        [i.proposal for i in [Proposals.objects.get_or_create(proposal='lb13385')[0]]][0]
-
         sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
-        transfer_file('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')
+        transfer_file('/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite')
 
 
 class TestTransferSoakDBTasks(unittest.TestCase):

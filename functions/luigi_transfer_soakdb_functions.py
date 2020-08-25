@@ -9,6 +9,7 @@ from functions.pandda_functions import *
 from luigi_classes.config_classes import DirectoriesConfig
 from xchem_db.models import *
 
+
 def is_date(string):
     """Check if a string is a parsable date using parse()
 
@@ -159,18 +160,16 @@ def check_files(soak_db_filepath):
             filename.status = 0
             filename.save()
 
-    # return ''
 
-
-def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
+def transfer_all_fed_ids_and_datafiles(soak_db_filelist):
     """Transfers fedids and datafiles from soakdb filepaths to XCDB, used to populate the proposals table
 
-    :param soak_db_filepath: Soakdb filepath as defined within :class:`transfer_soakdb.TransferAllFedIDsAndDatafiles` as self.input()
-    :type soak_db_filepath: str
+    :param soak_db_filelist: Soakdb filepath as defined within :class:`transfer_soakdb.TransferAllFedIDsAndDatafiles` as self.input()
+    :type soak_db_filelist: str
     :return: Should return nothing, but will populate the proposals table in XCDB.
     :rtype: None
     """
-    with soak_db_filepath.open('r') as database_list:
+    with open(soak_db_filelist, 'r') as database_list:
         for database_file in database_list.readlines():
             database_file = database_file.replace('\n', '')
 
@@ -185,7 +184,7 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filepath):
         db_functions.pop_proposals(proposal_number)
 
 
-def transfer_changed_datafile(data_file, hit_directory):
+def transfer_changed_datafile(data_file, hit_directory, log_directory = DirectoriesConfig().log_directory):
     """Transfers a changed file to XCDB by calling `transfer_file(data_file)`
 
     :param data_file: The soakdb that we want to check if it updated, :class:`TransferChangedDataFile` self.data_file
@@ -236,7 +235,7 @@ def transfer_changed_datafile(data_file, hit_directory):
             if ProasisHits.objects.filter(crystal_name=crystal).exists():
                 proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
                 for hit in proasis_hit:
-                    for path in glob.glob(os.path.join(DirectoriesConfig().log_directory, 'proasis/hits',
+                    for path in glob.glob(os.path.join(log_directory, 'proasis/hits',
                                                        str(hit.crystal_name.crystal_name +
                                                            '_' + hit.modification_date + '*'))):
                         os.remove(path)
@@ -255,7 +254,8 @@ def transfer_changed_datafile(data_file, hit_directory):
                             obj.delete()
                     hit.delete()
 
-        #soakdb_query.delete()  # ?
+        # This can be safely deleted as the single_soakdb function should be able to overwrite itself...
+        # soakdb_query.delete()
 
         out, err, proposal = db_functions.pop_soakdb(data_file)
         db_functions.pop_proposals(proposal)
@@ -266,7 +266,7 @@ def transfer_changed_datafile(data_file, hit_directory):
     transfer_file(data_file)
 
 
-def check_file_upload(filename, model):
+def check_file_upload(filename, model, log_directory = DirectoriesConfig().log_directory):
     """Check if a soakdb file has been uploaded to a given django model
 
     :param filename: filename to check, :class:`transfer_soakdb.CheckFileUpload` self.filename
@@ -276,12 +276,13 @@ def check_file_upload(filename, model):
     :return: Should check if file is uploaded correctly
     :rtype: None
     """
-    out_err_file = os.path.join(DirectoriesConfig().log_directory,
+    out_err_file = os.path.join(log_directory,
                                 str(str(filename.split('/')[3]) +
                                     '_' + str(filename.split('/')[4]) +
                                     '_' + str(filename.split('/')[5]) + '_' +
                                     str(misc_functions.get_mod_date(filename)) +
                                     str(model).replace("<class '", '').replace("'>", '') + '.txt'))
+
 
     print(out_err_file)
 
@@ -364,5 +365,3 @@ def check_file_upload(filename, model):
     except:
         with open(out_err_file, 'w') as f:
             f.write(traceback.format_exc())
-
-
