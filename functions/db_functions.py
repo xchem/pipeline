@@ -473,26 +473,17 @@ def pop_soakdb(database_file):
         # proposal_number = int(proposal[2:])
     except:
         proposal = 'lb13385'
+        visit = 'lb13385-1'
         print('WARNING: USING DEFAULT PROPOSAL FOR TESTS')
     # get allowed users
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
     # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
-    # add info to soakdbfiles table
-    proposal_obj = models.Proposals.objects.get_or_create(proposal=proposal, title=int(proposal[2:]))[0]
-
-    # This needs fixing, it is not good left like this.
-    # My guess that it is associated with the modification date, and that it tries to get a soakdb object
-    # with the specified mod date AND soakdb filepath, fails and then creates one
-    # This then causes another problem since it tries to create a new soakdb object
-    # with the mod_date and the file_path
-    # since filename needs to be unique this will fail.
-    # Hence the solution is to: 
-    # 1) Test if soakdb file can be retrieved through unique filename
-    # 1.5) Bump modification_date accordingly...
-    # 2) If 1) Fails, then create the soakdb file as the existing code had it...
     print(f'Checking if {database_file} exists')
+    # Check if soak_db file has been parsed already, if so update the mod date.
+    # If it is new, create a new entry with the mod date, filename, proposal and visit...
+    # Proposal is bugging out for test cases...
     try:
         soakdb_entry = models.SoakdbFiles.objects.get(filename=database_file)
         print('Exists')
@@ -500,11 +491,12 @@ def pop_soakdb(database_file):
         soakdb_entry.save()
     except models.SoakdbFiles.DoesNotExist:     
         print('Does not exist...')
-        soakdb_entry = models.SoakdbFiles.objects.create(modification_date=modification_date, 
-                                                            filename=database_file,
-                                                            proposal=proposal_obj,
-                                                            visit=visit
-                                                            )
+        soakdb_entry = models.SoakdbFiles.objects.create(
+            modification_date=modification_date,
+            filename=database_file,
+            proposal=models.Proposals.objects.get_or_create(proposal=proposal)[0],
+            visit=visit
+        )
         soakdb_entry.save()
 
     return out, err, proposal
@@ -520,7 +512,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number, title=proposal_number[2:])[0]
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 

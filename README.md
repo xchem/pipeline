@@ -15,8 +15,13 @@ On local machine, from within the cloned repo::
 ```
 docker build --no-cache -t pipeline .
 # Optional, for debugging purposes. Mount the git repo into the docker container
+# If mouting the directory: Clear the repo for db_files and logs folders...
+# Optional Deletes...
+rm -rf db_files
+rm -rf logs
+rm -rf "''"
 repo=$(pwd)
-docker run --mount type=bind,source=$repo,target=/pipeline -it pipeline /bin/bash 
+docker run --expose 8080 --mount type=bind,source=$repo,target=/pipeline -it pipeline /bin/bash 
 ```
 Within the docker container:
 ```
