@@ -1,1 +1,1 @@
-/pipeline/tests/data/database/soakDBDataFile.sqlite
+/pipeline/tests/data/lb13385-1/processing/database/soakDBDataFile.sqlite
