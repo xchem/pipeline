@@ -127,7 +127,14 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         self.assertTrue(find_soak_db_files('/pipeline/tests/data/ab12345/processing/database/') == '')
 
     def test_check_files(self):
+        # Not sure how to really test this... Literally just checking if there is a soakdb and a proposal...
         check_files('/pipeline/tests/soakdblist.txt')
+        soakdb_query = list(SoakdbFiles.objects.filter(filename='/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite'))
+        self.assertTrue(len(soakdb_query) == 1)
+        prop = pop_soakdb('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')[2]
+        self.assertTrue(len(prop) == 1)
+        proposal_entry = models.Proposals.objects.get_or_create(proposal=prop)[0]
+        self.assertTrue(len(proposal_entry))
 
     def test_transfer_all_fed_ids_and_datafiles(self):
         transfer_all_fed_ids_and_datafiles('/pipeline/tests/soakdblist.txt')
