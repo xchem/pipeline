@@ -137,12 +137,15 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         self.assertTrue(len(proposal_entry))
 
     def test_transfer_all_fed_ids_and_datafiles(self):
+        # Write a proper Test for this someday...
         transfer_all_fed_ids_and_datafiles('/pipeline/tests/soakdblist.txt')
 
     def test_transfer_changed_datafile(self):
+        # Write a proper Test for this someday...
         transfer_changed_datafile('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite', hit_directory='./logs', log_directory='./logs/transfer_logs')
 
     def test_check_file_upload(self):
+        # Write a proper Test for this someday...
         soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
         m = [Lab, Dimple, DataProcessing, Refinement]
         zipped = []
@@ -156,6 +159,7 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
 
     # NB: requires a soakdb object exists for the data file
     def test_transfer_file(self):
+        # Write a proper Test for this someday...
         # Is this REALLY needed?
         soak_db_dump = {'filename': '/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite',
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
