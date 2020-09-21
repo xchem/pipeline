@@ -314,25 +314,23 @@ def transfer_table(translate_dict, filename, model):
         #crys_obj.compound = compound_obj
         #crys_obj.save()
 
-        try:
-            # This is janky... Assumption that product_smiles and compound_obj and target_obj are redundant information
-            crys_obj = models.Crystal.objects.get(
-                target=target_obj,
-                crystal_name=crystal_name,
-                visit=visit_obj#,
-                #product=product_smiles,
-                #compound=compound_obj
-            )
-            crys_obj_created = False
-        except models.Crystal.DoesNotExist:
-            crys_obj = models.Crystal.objects.create(
+        crys_objs = models.Crystal.objects.filter(
+            target=target_obj,
+            crystal_name=crystal_name,
+            visit=visit_obj)
+
+        if len(crys_objs)==1: 
+            crys_obj=crys_objs[0]
+            crys_obj_created=False
+        elif len(crys_objs)==0:
+            crys = models.Crystal.objects.create(
                 target=target_obj,
                 crystal_name=crystal_name,
                 visit=visit_obj,
                 product=product_smiles,
                 compound=compound_obj
             )
-            crys_obj_created = True
+            crys_obj_created=True
 
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
