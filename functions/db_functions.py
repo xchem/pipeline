@@ -323,6 +323,7 @@ def transfer_table(translate_dict, filename, model):
                 #product=product_smiles,
                 #compound=compound_obj
             )
+            crys_obj_created = False
         except models.Crystal.DoesNotExist:
             crys_obj = models.Crystal.objects.create(
                 target=target_obj,
@@ -331,6 +332,7 @@ def transfer_table(translate_dict, filename, model):
                 product=product_smiles,
                 compound=compound_obj
             )
+            crys_obj_created = True
 
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
