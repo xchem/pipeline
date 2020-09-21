@@ -315,9 +315,9 @@ def transfer_table(translate_dict, filename, model):
         #crys_obj.save()
 
         try:
-            # This is janky...
+            # This is janky... Assumption that product_smiles and compound_obj and target_obj are redundant information
             crys_obj = models.Crystal.objects.get(
-                #target=target_obj,
+                target=target_obj,
                 crystal_name=crystal_name,
                 visit=visit_obj#,
                 #product=product_smiles,
