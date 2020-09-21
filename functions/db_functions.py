@@ -302,18 +302,38 @@ def transfer_table(translate_dict, filename, model):
         # this one should deffo exist
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
         # put everything together and get the crystal object
-        crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
-            target=target_obj,
-            crystal_name=crystal_name,
-            visit=visit_obj#,
-            #product=product_smiles,
-            #compound=compound_obj
-        )
+        #crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
+        #    target=target_obj,
+        #    crystal_name=crystal_name,
+        #    visit=visit_obj#,
+        #    #product=product_smiles,
+        #    #compound=compound_obj
+        #)
+        #print(crys_obj)
+        #crys_obj.product = product_smiles
+        #crys_obj.compound = compound_obj
+        #crys_obj.save()
 
-        crys_obj.product = product_smiles
-        crys_obj.compound = compound_obj
-        crys_obj.save()
+        try:
+            # This is janky...
+            crys_obj = models.Crystal.objects.get(
+                target=target_obj,
+                crystal_name=crystal_name,
+                visit=visit_obj)
+            crys_obj.product = product_smiles
+            crys_obj.compound = compound_obj
+            crys_obj.save()
+        except models.Crystal.DoesNotExist:
+            crys_obj = models.Crystal.objects.create(
+                target=target_obj,
+                crystal_name=crystal_name,
+                visit=visit_obj,
+                product=product_smiles,
+                compound=compound_obj
+            )
+            crys_obj.save()
 
+        print(crys_obj)
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
             model_row, model_row_created = model.objects.get_or_create(crystal_name=crys_obj)
