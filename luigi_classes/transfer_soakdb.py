@@ -95,7 +95,7 @@ class CheckFiles(luigi.Task):
 
     def run(self):
         """ Performs `check_files` function and writes '' to the expected log file"""
-        check_files(soak_db_filepath=self.input[1].path)
+        check_files(soak_db_filepath=self.input()[1].path)
         # write output to signify job done
         with self.output().open('w') as f:
             f.write('')
