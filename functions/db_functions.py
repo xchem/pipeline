@@ -317,11 +317,11 @@ def transfer_table(translate_dict, filename, model):
         try:
             # This is janky...
             crys_obj = models.Crystal.objects.get(
-                target=target_obj,
+                #target=target_obj,
                 crystal_name=crystal_name,
-                visit=visit_obj,
-                product=product_smiles,
-                compound=compound_obj
+                visit=visit_obj#,
+                #product=product_smiles,
+                #compound=compound_obj
             )
         except models.Crystal.DoesNotExist:
             crys_obj = models.Crystal.objects.create(
