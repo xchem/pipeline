@@ -225,38 +225,6 @@ def transfer_changed_datafile(data_file, hit_directory, log_directory = Director
             if is_date(f.replace(search_path, '').replace('.txt', '')):
                 os.remove(f)
 
-        crystals = Crystal.objects.filter(visit=soakdb_query)
-
-        for crystal in crystals:
-            target_name = str(crystal.target.target_name).upper()
-            crystal_name = str(crystal.crystal_name)
-            # Do we even need this part if the proasis is being removed?
-            proasis_crystal_directory = os.path.join(hit_directory, target_name.upper(), crystal_name)
-            if ProasisHits.objects.filter(crystal_name=crystal).exists():
-                proasis_hit = ProasisHits.objects.filter(crystal_name=crystal)
-                for hit in proasis_hit:
-                    for path in glob.glob(os.path.join(log_directory, 'proasis/hits',
-                                                       str(hit.crystal_name.crystal_name +
-                                                           '_' + hit.modification_date + '*'))):
-                        os.remove(path)
-                    if os.path.isdir(proasis_crystal_directory):
-                        shutil.rmtree(os.path.join(proasis_crystal_directory), ignore_errors=True)
-
-                    if ProasisOut.objects.filter(proasis=hit).exists:
-                        for obj in ProasisOut.objects.filter(proasis=hit):
-                            if obj.root:
-                                delete_files = ['verne.transferred', 'PROPOSALS', 'VISITS', 'visits_proposals.done']
-                                for f in delete_files:
-                                    if os.path.isfile(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]),
-                                                                   f)):
-                                        os.remove(os.path.join(obj.root, '/'.join(obj.start.split('/')[:-2]), f))
-                                shutil.rmtree(os.path.join(obj.root, obj.start))
-                            obj.delete()
-                    hit.delete()
-
-        # This can be safely deleted as the single_soakdb function should be able to overwrite itself...
-        # soakdb_query.delete()
-
         out, err, proposal = db_functions.pop_soakdb(data_file)
         db_functions.pop_proposals(proposal)
 
