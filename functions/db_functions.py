@@ -309,7 +309,7 @@ def transfer_table(translate_dict, filename, model):
         )
 
         if len(crys_objs) == 1:
-            crys_objs = crys_objs[0]
+            crys_obj = crys_objs[0]
             crys_obj_created = False
             # Great carry on?
         elif len(crys_objs) == 0:
