@@ -301,14 +301,42 @@ def transfer_table(translate_dict, filename, model):
         compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
         # this one should deffo exist
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
-        # put everything together and get the crystal object
-        crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
-            target=target_obj,
+
+        # Logic? Get the crystal name...
+        crys_objs = models.Crystal.objects.filter(
             crystal_name=crystal_name,
-            visit=visit_obj,
-            product=product_smiles,
-            compound=compound_obj
+            visit=visit_obj
         )
+
+        if len(crys_objs) == 1:
+            crys_objs = crys_objs[0]
+            crys_obj_created = False
+            # Great carry on?
+        elif len(crys_objs) == 0:
+            # Create a new Crys_obj
+            crys_obj = models.Crystal.objects.create(
+                    target=target_obj,
+                    crystal_name=crystal_name,
+                    visit=visit_obj,
+                    product=product_smiles,
+                    compound=compound_obj
+            )
+            crys_obj_created = True
+        else:
+            # Honestly go next...
+            # There should only be 1 crystal name per visit...
+            # That's all that matters...
+            # This will never end will it?
+            next
+
+        # put everything together and get the crystal object
+        #crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
+        #    target=target_obj,
+        #    crystal_name=crystal_name,
+        #    visit=visit_obj,
+        #    product=product_smiles,
+        #    compound=compound_obj
+        #)
         #print(crys_obj)
         #crys_obj.product = product_smiles
         #crys_obj.compound = compound_obj
