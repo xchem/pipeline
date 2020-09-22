@@ -303,7 +303,7 @@ def transfer_table(translate_dict, filename, model):
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
         # put everything together and get the crystal object
         crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
-            # target=target_obj,
+            target=target_obj,
             crystal_name=crystal_name,
             visit=visit_obj,
             product=product_smiles,
