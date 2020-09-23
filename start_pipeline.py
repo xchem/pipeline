@@ -79,9 +79,12 @@ class PostPipeClean(luigi.Task):
         return StartPipeline()
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(os.getcwd(), str('pipe_run_'
-                                                               + datetime.datetime.now().strftime("%Y%m%d%H%M")
-                                                               + '.done')))
+        # Changing the output to not clog up the main dir
+        return luigi.LocalTarget(os.path.join(self.log_directory,
+                                              f'pipe_run_{datetime.datetime.now().strftime("%Y%m%d%H%M")}.done'))
+        #return luigi.LocalTarget(os.path.join(os.getcwd(), str('pipe_run_'
+        #                                                       + datetime.datetime.now().strftime("%Y%m%d%H%M")
+        #                                                       + '.done')))
 
     def run(self):
         paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
@@ -92,7 +95,7 @@ class PostPipeClean(luigi.Task):
                  # WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
                  os.path.join(self.log_directory, 'pipe.done')]
 
-        paths.extend(glob.glob(str(DirectoriesConfig().log_directory + '*pipe_run_*.done')))
+        paths.extend(glob.glob(str(self.log_directory + '*pipe_run_*.done')))
 
         for path in paths:
             if os.path.isfile(path):
