@@ -45,10 +45,10 @@ class StartPipeline(luigi.WrapperTask):
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-    
+
     def requires(self):
-        if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
-            os.remove(os.path.join(self.log_directory + 'pipe.done'))
+        # if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
+        #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
@@ -73,6 +73,7 @@ class PostPipeClean(luigi.Task):
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
 
     def requires(self):
         return StartPipeline()
@@ -83,13 +84,13 @@ class PostPipeClean(luigi.Task):
                                                                + '.done')))
 
     def run(self):
-        paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
-                 UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
-                 UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
-                 WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
-                 os.path.join(DirectoriesConfig().log_directory, 'pipe.done')]
+        paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+                 # AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+                 # InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
+                 os.path.join(self.log_directory, 'pipe.done')]
 
         paths.extend(glob.glob(str(DirectoriesConfig().log_directory + '*pipe_run_*.done')))
 
@@ -102,4 +103,4 @@ class PostPipeClean(luigi.Task):
 
 
 if __name__ == '__main__':
-    luigi.build([StartPipeline()], workers=1, no_lock=False)
+    luigi.build([PostPipeClean()], workers=1, no_lock=False)
