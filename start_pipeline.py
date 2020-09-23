@@ -44,11 +44,11 @@ class StartPipeline(luigi.WrapperTask):
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
-
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    
     def requires(self):
-        log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-        if os.path.exists(os.path.join(log_directory + 'pipe.done')):
-            os.remove(os.path.join(log_directory + 'pipe.done'))
+        if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
+            os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
