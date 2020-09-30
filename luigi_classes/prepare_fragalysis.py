@@ -14,6 +14,12 @@ from utils.refinement import RefinementObjectFiles
 
 from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
 
+
+# Use this to generate fragalysis input + ligand stuff
+# 1) After data is in XCDB, take all 4-6 structures and run them through fragalysis api outputting to staging/proteinname
+# 2) Scour the staging directories for filenames, creating ligand and meta table entries with them. 
+# 3) Cry
+
 class AlignTargetXChem(AlignTarget):
     filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
     resources = {'django': 1}
