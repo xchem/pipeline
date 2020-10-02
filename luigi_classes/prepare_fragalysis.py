@@ -12,7 +12,8 @@ from luigi_classes.transfer_soakdb import StartTransfers
 from utils.custom_output_targets import DjangoTaskTarget
 from utils.refinement import RefinementObjectFiles
 
-#from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
+
+# from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
 
 
 # Use this to generate fragalysis input + ligand stuff
@@ -65,7 +66,6 @@ class CreateSymbolicLinks(luigi.Task):
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
     def requires(self):
-        # return StartTransfers()
         return None
 
     def output(self):
@@ -93,7 +93,7 @@ class CreateSymbolicLinks(luigi.Task):
                     smi = self.prod_smiles
                 elif self.smiles:
                     smi = self.smiles
-#                 if self.smiles:
+                #                 if self.smiles:
                 smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
@@ -105,7 +105,52 @@ class CreateSymbolicLinks(luigi.Task):
             self.crystal.outcome = 3
             self.crystal.save()
 
-#class AlignTargetXChem(AlignTarget):
+
+class BatchAlignTargets(luigi.Task):
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    date = luigi.Parameter(default=datetime.datetime.now())
+
+    def requires(self):
+        return [AlignTarget(target=target[0]) for target in os.walk(self.input_directory)]
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('Alignment/aligned_' + str(self.date) + '.done')))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class AlignTarget(luigi.Task):
+    # Need to account for -m argument?
+    target = luigi.Parameter()
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    target_name = target.rsplit('/', 1)[1]
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+
+    def requires(self):
+        return None
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              f'Alignment/aligned_{self.target_name}' + str(self.date) + '.done'))
+
+    def run(self):
+        os.system(f'rm -rf {os.path.join(self.staging_directory, "tmp", "*")}')
+        os.system(f'rm -rf {os.path.join(self.staging_directory, "mono", "*")}')
+        # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
+        os.system(
+            f'/dls/science/groups/i04-1/software/miniconda_3/envs/pipeline/bin/python /dls/science/groups/i04-1/fragprep/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {self.target_name}')
+        with self.output().open('w') as f:
+            f.write('')
+
+
+
+
+# class AlignTargetXChem(AlignTarget):
 #    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
 #    resources = {'django': 1}
 #    date = luigi.Parameter(default=datetime.datetime.now())
@@ -124,12 +169,12 @@ class CreateSymbolicLinks(luigi.Task):
 #                                    uuid=self.uuid)
 
 
-#class ProcessAlignedPDBXChem(ProcessAlignedPDB):
+# class ProcessAlignedPDBXChem(ProcessAlignedPDB):
 #    def requires(self):
 #        return AlignTargetXChem(input_dir=self.input_dir, output_dir=self.output_dir)
 
 
-#class BatchProcessAlignedPDBXChem(BatchProcessAlignedPDB):
+# class BatchProcessAlignedPDBXChem(BatchProcessAlignedPDB):
 #    def requires(self):
 #        self.aligned_list = outlist_from_align(self.input_dir, self.output_dir)
 #        return [
@@ -140,7 +185,7 @@ class CreateSymbolicLinks(luigi.Task):
 #            for i in self.aligned_list
 #        ]
 
-#class BatchConvertAlignedXChem(BatchConvertAligned):
+# class BatchConvertAlignedXChem(BatchConvertAligned):
 #    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
 #    resources = {'django': 1}
 #    date = luigi.Parameter(default=datetime.datetime.now())
@@ -166,7 +211,7 @@ class CreateSymbolicLinks(luigi.Task):
 #                for (i, t) in list(zip(in_lst, target_names))]
 
 
-#class SymlinkBoundPDB(luigi.Task):
+# class SymlinkBoundPDB(luigi.Task):
 #    crystal = luigi.Parameter()
 #    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
 #    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
@@ -177,7 +222,6 @@ class CreateSymbolicLinks(luigi.Task):
 #    def requires(self):
 #        # return StartTransfers()
 #        return None
-
 
 
 #    def output(self):
@@ -217,7 +261,7 @@ class CreateSymbolicLinks(luigi.Task):
 #            self.crystal.save()
 
 
-#class BatchSymlinkBoundPDB(luigi.Task):
+# class BatchSymlinkBoundPDB(luigi.Task):
 #    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
 #    resources = {'django': 1}
 #    date = luigi.Parameter(default=datetime.datetime.now())

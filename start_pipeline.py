@@ -12,7 +12,7 @@ from sentry_sdk import configure_scope
 # from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
 # from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
-from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks
+from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
 
@@ -53,6 +53,7 @@ class StartPipeline(luigi.WrapperTask):
         #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
         yield BatchCreateSymbolicLinks()
+        yield BatchAlignTargets()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
