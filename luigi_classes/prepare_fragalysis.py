@@ -111,9 +111,10 @@ class BatchAlignTargets(luigi.Task):
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     date = luigi.Parameter(default=datetime.datetime.now())
+    targets = [target[0] for target in os.walk(input_directory)]
 
     def requires(self):
-        return [AlignTarget(target=target[0]) for target in os.walk(self.input_directory)]
+        return [AlignTarget(target=i) for i in self.targets]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -127,6 +128,7 @@ class BatchAlignTargets(luigi.Task):
 class AlignTarget(luigi.Task):
     # Need to account for -m argument?
     target = luigi.Parameter()
+    print(target)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     target_name = target.rsplit('/', 1)[1]
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
