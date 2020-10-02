@@ -12,7 +12,7 @@ from luigi_classes.transfer_soakdb import StartTransfers
 from utils.custom_output_targets import DjangoTaskTarget
 from utils.refinement import RefinementObjectFiles
 
-from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
+#from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
 
 
 # Use this to generate fragalysis input + ligand stuff
