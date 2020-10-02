@@ -111,10 +111,11 @@ class BatchAlignTargets(luigi.Task):
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     date = luigi.Parameter(default=datetime.datetime.now())
-    targets = [target[0] for target in os.walk(input_directory)]
 
     def requires(self):
-        return [AlignTarget(target=i) for i in self.targets]
+        targets = [target[0] for target in os.walk(self.input_directory)]
+        print(targets)
+        return [AlignTarget(target=target) for target in targets]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -128,24 +129,25 @@ class BatchAlignTargets(luigi.Task):
 class AlignTarget(luigi.Task):
     # Need to account for -m argument?
     target = luigi.Parameter()
-    print(target)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    target_name = target.rsplit('/', 1)[1]
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    date = luigi.DateParameter(default=datetime.datetime.now())
 
     def requires(self):
         return None
 
     def output(self):
+        target_name = self.target.rsplit('/', 1)[1]
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              f'Alignment/aligned_{self.target_name}' + str(self.date) + '.done'))
+                                              f'Alignment/aligned_{target_name}' + str(self.date) + '.done'))
 
     def run(self):
+        target_name = self.target.rsplit('/', 1)[1]
         os.system(f'rm -rf {os.path.join(self.staging_directory, "tmp", "*")}')
         os.system(f'rm -rf {os.path.join(self.staging_directory, "mono", "*")}')
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         os.system(
-            f'/dls/science/groups/i04-1/software/miniconda_3/envs/pipeline/bin/python /dls/science/groups/i04-1/fragprep/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {self.target_name}')
+            f'/dls/science/groups/i04-1/software/miniconda_3/envs/pipeline/bin/python /dls/science/groups/i04-1/fragprep/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name}')
         with self.output().open('w') as f:
             f.write('')
 
