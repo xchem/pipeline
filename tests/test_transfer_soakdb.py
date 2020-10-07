@@ -5,23 +5,40 @@ import sqlite3
 import unittest
 
 import setup_django
+
 setup_django.setup_django()
 
 import datetime
 import pandas
 
-from functions.db_functions import soakdb_query
+from functions.db_functions import *
 from functions.misc_functions import get_mod_date
 from luigi_classes.transfer_soakdb import FindSoakDBFiles, TransferAllFedIDsAndDatafiles, CheckFiles, \
     TransferNewDataFile, transfer_file, TransferChangedDataFile
 from luigi_classes.transfer_pandda import AddPanddaRun, AddPanddaSites
+from functions.luigi_transfer_soakdb_functions import is_date, find_soak_db_files, check_files, \
+    transfer_all_fed_ids_and_datafiles, transfer_changed_datafile, check_file_upload
 from xchem_db.models import *
 from .test_functions import run_luigi_worker
+
 
 # function list:
 # + misc_functions.get_mod_date
 # - luigi_classes.transfer_soakdb.transfer_file
 # + soakdb_query
+
+# My functions:
+# is_date
+# transfer_file
+# find_soak_db_files
+# check_files
+# transfer_all_fed_ids_and_datafiles
+# transfer_changed_datafile
+# check_file_upload
+
+
+# https://docs.python-guide.org/writing/tests/
+
 
 # task list:
 # + FindSoakDBFiles
@@ -35,7 +52,6 @@ from .test_functions import run_luigi_worker
 
 
 class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
-
     # variables
     tmp_file = 'tmp.txt'
     # filepath where test data is (in docker container) and filenames for soakdb
@@ -82,31 +98,76 @@ class TestTransferSoakDBDependencyFunctions(unittest.TestCase):
         print('test_soakdb_query')
         results = soakdb_query(self.db)
         results_list = [dict(ix) for ix in results]
-        print(results_list)
-        print(self.json_file)
+        # print(results_list)
+        # print(self.json_file)
 
         self.assertTrue(len(results_list) == 1)
         self.assertTrue(len(self.json_file) == 1)
 
         for key in results_list[0].keys():
             if key not in self.json_file[0].keys():
-                print('key: "' + str(key) + '" not found')
+                next
+                # print('key: "' + str(key) + '" not found')
+
             else:
-                print('checking ' + str(key) + '...')
+                # print('checking ' + str(key) + '...')
                 self.assertEqual(results_list[0][key], self.json_file[0][key])
 
         print('\n')
 
+    def test_is_date(self):
+        a_date = datetime.datetime.now()
+        # Don't know how else to really test if this function would break...
+        self.assertTrue(is_date(str(a_date)))
+        self.assertFalse(is_date('NotADate'))
+
+    def test_find_soak_db_files(self):
+        self.assertTrue(len(find_soak_db_files('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')) >= 1)
+        # Fake Filepath
+        self.assertTrue(find_soak_db_files('/pipeline/tests/data/ab12345/processing/database/') == '')
+
+    def test_check_files(self):
+        # Not sure how to really test this... Literally just checking if there is a soakdb and a proposal...
+        # Check if this runs without error...
+        check_files('/pipeline/tests/soakdblist.txt')
+        #soakdb_query = list(SoakdbFiles.objects.filter(filename='/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite'))
+        #self.assertTrue(len(soakdb_query) == 1)
+        #prop = pop_soakdb('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')[2]
+        #self.assertTrue(len(prop) == 1)
+        #proposal_entry = models.Proposals.objects.get_or_create(proposal=prop)[0]
+        #self.assertTrue(len(proposal_entry))
+
+    def test_transfer_all_fed_ids_and_datafiles(self):
+        # Write a proper Test for this someday...
+        transfer_all_fed_ids_and_datafiles('/pipeline/tests/soakdblist.txt')
+
+    def test_transfer_changed_datafile(self):
+        # Write a proper Test for this someday...
+        transfer_changed_datafile('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite', hit_directory='./logs', log_directory='./logs/transfer_logs')
+
+    def test_check_file_upload(self):
+        # Write a proper Test for this someday...
+        soakdb_files = [obj.filename for obj in SoakdbFiles.objects.all()]
+        m = [Lab, Dimple, DataProcessing, Refinement]
+        zipped = []
+        for filename in soakdb_files:
+            for model in m:
+                maint_exists = check_table_sqlite(filename, 'mainTable')
+                if maint_exists == 1:
+                    zipped.append(tuple([filename, model]))
+
+        [check_file_upload(filename=filename, model=model, log_directory='./logs/transfer_logs') for (filename, model) in zipped]
+
     # NB: requires a soakdb object exists for the data file
-    # def test_transfer_file(self):
-    #     soak_db_dump = {'filename': self.db,
-    #                     'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
-    #                     'modification_date': 0
-    #                     }
-    #
-    #     sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
-    #
-    #     transfer_file(self.db)
+    def test_transfer_file(self):
+        # Write a proper Test for this someday...
+        # Is this REALLY needed?
+        soak_db_dump = {'filename': '/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite',
+                        'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
+                        'modification_date': get_mod_date('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')
+                        }
+        sdb = SoakdbFiles.objects.get_or_create(**soak_db_dump)
+        transfer_file('/pipeline/tests/data/soakdb_files/soakDBDataFile.sqlite')
 
 
 class TestTransferSoakDBTasks(unittest.TestCase):
@@ -143,12 +204,12 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         cls.modification_date = get_mod_date(os.path.join(cls.filepath, cls.db_file_name))
         print(str('mdate: ' + cls.modification_date))
 
-
         # create log directories
         os.makedirs('/pipeline/logs/soakDBfiles')
         os.makedirs('/pipeline/logs/transfer_logs')
+        os.makedirs('/pipeline/tests/data/processing/database/')
 
-        shutil.copy(cls.db, '/pipeline/tests/data/processing/database/')
+        shutil.copy(cls.db, f"/pipeline/tests/data/processing/database/{cls.db.split('/')[-1]}")
 
         cls.db = os.path.join('/pipeline/tests/data/processing/database/', cls.db_file_name)
 
@@ -170,10 +231,10 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                 os.remove(f)
 
         mods = [Target, Compounds, Reference, SoakdbFiles, Reference, Proposals, Crystal, DataProcessing,
-                  Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
+                Dimple, Lab, Refinement, PanddaAnalysis, PanddaRun, PanddaEvent, PanddaSite, PanddaStatisticalMap]
 
         for m in mods:
-                m.objects.all().delete()
+            m.objects.all().delete()
 
     # tasks: FindSoakDBFiles
     def test_findsoakdb(self):
@@ -196,8 +257,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles
     def test_transfer_fedids_files(self):
-        print('test_transfer_fedids_files')
-        print(Crystal.objects.all())
+        # print('test_transfer_fedids_files')
+        # print(Crystal.objects.all())
         # run the task to transfer all fedids and datafiles
         transfer = run_luigi_worker(TransferAllFedIDsAndDatafiles(date=self.date,
                                                                   soak_db_filepath=self.db_filepath))
@@ -211,15 +272,15 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         # check that the transfer task output is as expected
         self.assertEqual(output_file, self.transfer_outfile)
 
-        print(Crystal.objects.all())
+        # print(Crystal.objects.all())
 
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: nothing run yet, so requires FindSoakDBFiles and TransferAllFedIDsAndDataFiles
     def test_check_files(self):
-        print('test_check_files')
-        print(Crystal.objects.all())
+        # print('test_check_files')
+        # print(Crystal.objects.all())
         check_files = run_luigi_worker(CheckFiles(date=self.date, soak_db_filepath=self.db_filepath))
         output_file = CheckFiles(date=self.date, soak_db_filepath=self.db_filepath).output().path
         self.assertTrue(check_files)
@@ -234,15 +295,15 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.checkfiles_outfile)
         # check that the status of the soakdb file has been set to 0
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 0)
-        print(Crystal.objects.all())
+        # print(Crystal.objects.all())
         print('\n')
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles
     # scenario: dump json into soakdb model to emulate existing record, check that status picked up as 1 (changed)
     # NB: Checks that data has actually been transfered by looking for lab entry, so have to emulate that too
     def test_check_files_changed(self):
-        print('test_check_files_changed')
-        print(Crystal.objects.all())
+        # print('test_check_files_changed')
+        # print(Crystal.objects.all())
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -280,8 +341,8 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
     # tasks: FindSoakDBFiles -> TransferAllFedIDsAndDatafiles -> CheckFiles -> TransferChangedDatafile
     def test_transfer_changed_datafile(self):
-        print('test_transfer_changed_datafile')
-        print(Crystal.objects.all())
+        # print('test_transfer_changed_datafile')
+        # print(Crystal.objects.all())
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -341,7 +402,7 @@ class TestTransferSoakDBTasks(unittest.TestCase):
                                                     pver=pver, sites_file=sites_file, events_file=events_file,
                                                     soakdb_filename=soakdb_filename))
 
-        print(Crystal.objects.all())
+        # print(Crystal.objects.all())
         # create mock entry in soakdb table to represent file with 0 modification date
         soak_db_dump = {'filename': self.db,
                         'proposal': Proposals.objects.get_or_create(proposal='lb13385')[0],
@@ -374,7 +435,6 @@ class TestTransferSoakDBTasks(unittest.TestCase):
 
         transfer_new = run_luigi_worker(TransferChangedDataFile(data_file=self.db, soak_db_filepath=self.db_filepath))
 
-
         # check the task output exists
         self.assertTrue(os.path.isfile(output_file))
         # check the transfer task has run (by worker)
@@ -383,12 +443,11 @@ class TestTransferSoakDBTasks(unittest.TestCase):
         self.assertEqual(output_file, self.newfile_outfile)
         # check that the status of the soakdb file has been set to 2 (changed)
         self.assertEqual(SoakdbFiles.objects.get(filename=self.db).status, 2)
-        print(Crystal.objects.all())
+        # print(Crystal.objects.all())
         print('\n')
 
-        self.assertTrue(os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.run.done')==False)
+        self.assertTrue(os.path.isfile(
+            '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.run.done') == False)
         self.assertTrue(
-            os.path.isfile('/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.sites.done')==False)
-
-
-
+            os.path.isfile(
+                '/pipeline/tests/data/processing/analysis/panddas/logs/pandda-2018-07-29-1940.log.sites.done') == False)

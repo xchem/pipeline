@@ -283,7 +283,10 @@ def transfer_table(translate_dict, filename, model):
     # for each row found in soakdb
     for row in results:
         compound_smiles = row['CompoundSMILES']
-        product_smiles = row['CompoundSMILESproduct']
+        product_smiles=None
+        # add a check here to see if the key exists - most sdb files won't have this column
+        if 'CompoundSMILESproduct' in row.keys():
+            product_smiles = row['CompoundSMILESproduct']
         crystal_name = row['CrystalName']
         target = row['ProteinName']
         if not target or target == 'None':
@@ -291,8 +294,82 @@ def transfer_table(translate_dict, filename, model):
                 target = str(row['CrystalName']).split('-')[0]
             except:
                 continue
-
                 
+        # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
+        # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
+        target_obj, target_obj_created = models.Target.objects.get_or_create(target_name=target.upper())
+        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
+        # this one should deffo exist
+        visit_obj = models.SoakdbFiles.objects.get(filename=filename)
+
+        # Logic? Get the crystal name...
+        crys_objs = models.Crystal.objects.filter(
+            crystal_name=crystal_name,
+            visit=visit_obj
+        )
+
+        if len(crys_objs) == 1:
+            crys_obj = crys_objs[0]
+            crys_obj_created = False
+            # Great carry on?
+        elif len(crys_objs) == 0:
+            # Create a new Crys_obj
+            crys_obj = models.Crystal.objects.create(
+                    target=target_obj,
+                    crystal_name=crystal_name,
+                    visit=visit_obj,
+                    product=product_smiles,
+                    compound=compound_obj
+            )
+            crys_obj_created = True
+        else:
+            # Honestly go next...
+            # There should only be 1 crystal name per visit...
+            # That's all that matters...
+            # This will never end will it?
+            next
+
+        # put everything together and get the crystal object
+        #crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
+        #    target=target_obj,
+        #    crystal_name=crystal_name,
+        #    visit=visit_obj,
+        #    product=product_smiles,
+        #    compound=compound_obj
+        #)
+        #print(crys_obj)
+        #crys_obj.product = product_smiles
+        #crys_obj.compound = compound_obj
+        #crys_obj.save()
+
+        #crys_objs = models.Crystal.objects.filter(
+        #    target=target_obj,
+        #    crystal_name=crystal_name,
+        #    visit=visit_obj)
+
+        #if len(crys_objs) == 1:
+        #    crys_obj = crys_objs[0]
+        #    crys_obj_created = False
+        #elif len(crys_objs) == 0:
+        #    crys_obj = models.Crystal.objects.create(
+        #        target=target_obj,
+        #        crystal_name=crystal_name,
+        #        visit=visit_obj,
+        #        product=product_smiles,
+        #        compound=compound_obj
+        #    )
+        #    crys_obj_created = True
+        #elif len(crys_objs) > 1:
+        #    raise ValueError()
+
+        # now see if there's already a row for this crystal in the model we're currently using
+        if model != models.Crystal:
+            model_row, model_row_created = model.objects.get_or_create(crystal_name=crys_obj)
+        else:
+            model_row = crys_obj
+            model_row_created = crys_obj_created
+
+               
         ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
 #         compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)
                 
@@ -382,8 +459,16 @@ def transfer_table(translate_dict, filename, model):
         # write out the row to the relevant model (table)
         try:
             with transaction.atomic():
-                m = model.objects.create(**d)
-                m.save()
+                # here we need to update instead of creating, using the row we created or grabbed at the beginning
+                if model == models.Crystal:
+                    qset = model.objects.filter(crystal_name=crystal_name)
+                else:
+                    qset = model.objects.filter(crystal_name=crys_obj)
+
+                if(len(qset) == 1):
+                    qset.update(**d)
+                else:
+                    print(f'More than one entry for {crystal_name}')
 
         except IntegrityError as e:
             print(d)
@@ -394,6 +479,7 @@ def transfer_table(translate_dict, filename, model):
             if crys_from_db.target == target:
                 print('Crystal duplicated!')
                 continue
+            
         # uncomment to debug
         except ValueError as e:
              print(d)
@@ -435,23 +521,37 @@ def pop_soakdb(database_file):
     # get proposal number from dls path
     print(database_file)
     try:
-        visit = database_file.split('/')[5]
+        visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', database_file)[0]
         proposal = visit.split('-')[0]
         # proposal_number = int(proposal[2:])
     except:
         proposal = 'lb13385'
+        visit = 'lb13385-1'
         print('WARNING: USING DEFAULT PROPOSAL FOR TESTS')
     # get allowed users
     proc = subprocess.Popen(str('getent group ' + str(proposal)), stdout=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
     # get modification date of file
     modification_date = misc_functions.get_mod_date(database_file)
-    # add info to soakdbfiles table
-    soakdb_entry = models.SoakdbFiles.objects.get_or_create(modification_date=modification_date, filename=database_file,
-                                                            proposal=models.Proposals.objects.get_or_create(
-                                                                proposal=proposal, title=int(proposal[2:]))[0],
-                                                            visit=visit)[0]
-    soakdb_entry.save()
+    print(f'Checking if {database_file} exists')
+    # Check if soak_db file has been parsed already, if so update the mod date.
+    # If it is new, create a new entry with the mod date, filename, proposal and visit...
+    # Proposal is bugging out for test cases...
+    try:
+        soakdb_entry = models.SoakdbFiles.objects.get(filename=database_file)
+        print('Exists')
+        setattr(soakdb_entry, 'modification_date', modification_date)
+        soakdb_entry.save()
+    except models.SoakdbFiles.DoesNotExist:     
+        print('Does not exist...')
+        soakdb_entry = models.SoakdbFiles.objects.create(
+            modification_date=modification_date,
+            filename=database_file,
+            proposal=models.Proposals.objects.get_or_create(proposal=proposal)[0],
+            visit=visit
+        )
+        soakdb_entry.save()
+
     return out, err, proposal
 
 
@@ -465,7 +565,7 @@ def pop_proposals(proposal_number):
     else:
         append_list = out.decode('ascii').split(':')[3].replace('\n', '')
     # add proposal to proposals table with allowed fedids
-    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number, title=proposal_number[2:])[0]
+    proposal_entry = models.Proposals.objects.get_or_create(proposal=proposal_number)[0]
     proposal_entry.fedids = str(append_list)
     proposal_entry.save()
 

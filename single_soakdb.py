@@ -52,13 +52,12 @@ def transfer_file(data_file):
 @transaction.atomic
 # step 1 - check the file to get it's status
 def check_file(filename):
+    status=2
     # remove any newline characters
     filename_clean = filename.rstrip('\n')
     # find the relevant entry in the soakdbfiles table
 
     soakdb_query = list(SoakdbFiles.objects.filter(filename=filename_clean))
-
-    print(len(soakdb_query))
 
     # raise an exception if the file is not in the soakdb table - not necessary here, I think
     # if len(soakdb_query) == 0:
@@ -95,6 +94,9 @@ def check_file(filename):
             raise Exception(str('current_mod_date: ' + str(current_mod_date)
                                 + ', old_mod_date: ' + str(old_mod_date)))
 
+        print(current_mod_date)
+        print(old_mod_date)
+
     # if there is more than one entry, raise an exception (should never happen - filename field is unique)
     if len(soakdb_query) > 1:
         raise Exception('More than one entry for file! Something has gone wrong!')
@@ -116,9 +118,9 @@ def check_file(filename):
         update_status.save()
         status = 0
 
-    else:
-        print('The file has not been updated, using existing XCDB data...')
-        status = 2
+    # else:
+    #     print('The file has not been updated, using existing XCDB data...')
+    #     status = 2
 
     # if the lab table is empty, no data has been transferred from the datafiles, so set status of everything to 0
 
@@ -145,36 +147,8 @@ def run_transfer(filename):
         #
         # if maint_exists == 1:
         soakdb_query = SoakdbFiles.objects.get(filename=filename)
-        print(soakdb_query)
-        # for pandda file finding
-        split_path = filename.split('database')
-        search_path = split_path[0]
-
-        print('removing old logs...')
-        # remove pandda data transfer done file
-        if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
-            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
-
-        log_files = find_log_files(search_path).rsplit()
-        # print(log_files)
-
-        for log in log_files:
-            print(str(log + '.run.done'))
-            if os.path.isfile(str(log + '.run.done')):
-                os.remove(str(log + '.run.done'))
-            if os.path.isfile(str(log + '.sites.done')):
-                os.remove(str(log + '.sites.done'))
-            if os.path.isfile(str(log + '.events.done')):
-                os.remove(str(log + '.events.done'))
-
-        find_logs_out_files = glob.glob(str(search_path + '*.txt'))
-
-        for f in find_logs_out_files:
-            if is_date(f.replace(search_path, '').replace('.txt', '')):
-                os.remove(f)
-
-        print('adding a new entry for file...')
-        soakdb_query.delete()
+        print('Updating/adding a new entry for file... (not deleting)')
+        #soakdb_query.delete()
 
     # the next step is always the same
     out, err, proposal = db_functions.pop_soakdb(filename)
@@ -206,7 +180,8 @@ def create_links(filename, link_dir):
         file_obj.find_bound_file()
         if file_obj.bound_conf:
             try:
-
+                if not os.path.isfile(file_obj.bound_conf):
+                    print('path: ' + file_obj.bound_conf + ' does not exist!')
                 os.symlink(file_obj.bound_conf, pth)
                 if prod_smiles:
                     smi = prod_smiles
@@ -254,6 +229,7 @@ if __name__ == "__main__":
 
     print('Checking wether ' + filename + ' is a new or existing entry in XCDB...')
     status = check_file(filename)
+    print(status)
     if status==0 or status==1:
         print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
         run_transfer(filename)

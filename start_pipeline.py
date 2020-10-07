@@ -12,6 +12,7 @@ from sentry_sdk import configure_scope
 # from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
 # from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
+from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
 
@@ -44,14 +45,21 @@ class StartPipeline(luigi.WrapperTask):
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
     def requires(self):
+        # if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
+        #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
+        yield BatchCreateSymbolicLinks()
+        yield BatchAlignTargets()
+        # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         # yield AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
         # yield InitDBEntries(date=self.date, hit_directory=self.hit_directory)
-        yield
+        # yield
         # yield UploadLeads(date=self.date, hit_directory=self.hit_directory)
         # yield GetOutFiles()
         # yield WriteBlackLists(date=self.date, hit_directory=self.hit_directory)
@@ -70,25 +78,28 @@ class PostPipeClean(luigi.Task):
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
     def requires(self):
         return StartPipeline()
 
     def output(self):
-        return luigi.LocalTarget(os.path.join(os.getcwd(), str('pipe_run_'
-                                                               + datetime.datetime.now().strftime("%Y%m%d%H%M")
-                                                               + '.done')))
+        # Changing the output to not clog up the main dir
+        return luigi.LocalTarget(os.path.join(self.log_directory,
+                                              f'pipe_run_{datetime.datetime.now().strftime("%Y%m%d%H%M")}.done'))
 
     def run(self):
-        paths = [TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
-                 UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
-                 UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
-                 WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
-                 os.path.join(DirectoriesConfig().log_directory, 'pipe.done')]
+        paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+                 # AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+                 # InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+                 # WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
+                 os.path.join(self.log_directory, 'pipe.done')]
 
-        paths.extend(glob.glob(str(DirectoriesConfig().log_directory + '*pipe_run_*.done')))
+        paths.extend(glob.glob(str(self.log_directory + '*pipe_run_*.done')))
 
         for path in paths:
             if os.path.isfile(path):
