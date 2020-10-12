@@ -6,6 +6,8 @@ from setup_django import setup_django
 setup_django()
 
 import luigi
+import glob
+import os
 from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 from luigi_classes.transfer_soakdb import StartTransfers
@@ -94,13 +96,13 @@ class CreateSymbolicLinks(luigi.Task):
                 os.symlink(file_obj.bound_conf, self.output().path)
                 # Try to create symlinks for the eventmap, 2fofc and fofc
                 # Get root of file_obj.bound_conf
-                bcdir = os.path.dirname(os.path.dirname(file_obj.bound_conf))
+                bcdir = os.path.dirname(file_obj.bound_conf)
                 print(bcdir)
                 # Check if this is the correct directory (most likely not)
-                #fofc = glob.glob(bcdir+'fofc.map')
-                #if len(fofc) < 1:
-                #    # go one deeper!
-                #    bcdir = os.path.dirname(bcdir)
+                fofc = glob.glob(bcdir+'fofc.map')
+                if len(fofc) < 1:
+                    # go one deeper!
+                    bcdir = os.path.dirname(bcdir)
 
                 # Get the files
                 fofc = glob.glob(bcdir + 'fofc.map')
