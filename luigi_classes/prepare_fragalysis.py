@@ -94,7 +94,7 @@ class CreateSymbolicLinks(luigi.Task):
                 os.symlink(file_obj.bound_conf, self.output().path)
                 # Try to create symlinks for the eventmap, 2fofc and fofc
                 # Get root of file_obj.bound_conf
-                bcdir = os.patch.dirname(os.path.dirname(file_obj.bound_conf))
+                bcdir = os.path.dirname(os.path.dirname(file_obj.bound_conf))
                 print(bcdir)
                 # Check if this is the correct directory (most likely not)
                 #fofc = glob.glob(bcdir+'fofc.map')
