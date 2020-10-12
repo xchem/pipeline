@@ -115,15 +115,19 @@ class CreateSymbolicLinks(luigi.Task):
                 print(fofc_pth)
                 fofc2_pth = self.output().path.replace('.pdb', '_2fofc.map')
                 print(fofc2_pth)
-                # Assumption only one?
-                os.symlink(fofc[0], fofc_pth)
-                os.symlink(fofc2[0], fofc2_pth)
+
+                # Assumption only one file to use....
+                if len(fofc) > 0:
+                    os.symlink(fofc[0], fofc_pth)
+                if len(fofc2) > 0:
+                    os.symlink(fofc2[0], fofc2_pth)
 
                 # probably should use enumerate
-                event_num = 0
-                for i in event_maps:
-                    os.symlink(i, self.output().path.replace('.pdb', f'event_{event_num}.ccp4'))
-                    event_num += 1
+                if len(event_maps) > 0:
+                    event_num = 0
+                    for i in event_maps:
+                        os.symlink(i, self.output().path.replace('.pdb', f'_event_{event_num}.ccp4'))
+                        event_num += 1
 
                 if self.prod_smiles:
                     smi = self.prod_smiles
