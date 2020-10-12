@@ -25,8 +25,8 @@ class Tasks(models.Model):
 
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
-    uniprot_id = models.CharField()
-    alias = models.CharField()
+    # uniprot_id = models.CharField(blank=True, null=True)
+    # alias = models.CharField(blank=True, null=True)
 
     class Meta:
         app_label = 'xchem_db'
