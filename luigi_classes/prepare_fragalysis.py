@@ -66,9 +66,11 @@ class CreateSymbolicLinks(luigi.Task):
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
     def requires(self):
+        # Ensure that this task only runs IF the sdb file has been updated otherwise no need right?
         return None
 
     def output(self):
+        # Change this to create a log entry?
         pth = os.path.join(self.input_directory,
                            self.crystal.crystal_name.target.target_name,
                            str(self.crystal.crystal_name.crystal_name + '.pdb'))
@@ -83,11 +85,12 @@ class CreateSymbolicLinks(luigi.Task):
 
         if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
             os.makedirs('/'.join(self.output().path.split('/')[:-1]))
+
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
+
         if file_obj.bound_conf:
             try:
-
                 os.symlink(file_obj.bound_conf, self.output().path)
                 if self.prod_smiles:
                     smi = self.prod_smiles
@@ -97,7 +100,30 @@ class CreateSymbolicLinks(luigi.Task):
                 smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
-                f.close()
+                #  f.close() should delete.
+                # Try to create symlinks for the eventmap, 2fofc and fofc
+                # Get root of file_obj.bound_conf
+                bcdir = os.path.dirname(file_obj.bound_conf)
+                # Check if this is the correct directory (most likely not)
+                fofc = glob.glob(bcdir+'fofc.map')
+                if len(fofc) < 1:
+                    # go one deeper!
+                    bcdir = os.path.dirname(bcdir)
+
+                # Get the files
+                fofc = glob.glob(bcdir + 'fofc.map')
+                fofc2 = glob.glob(bcdir + '2fofc.map')
+                event_maps = glob.glob(bcdir + '*event*native*.ccp4') # nice doesn't capture all of it though...
+                fofc_pth = self.output().path.replace('.pdb', '_fofc.map')
+                fofc2_pth = self.output().path.replace('.pdb', '_2fofc.map')
+                os.symlink(fofc, fofc_pth)
+                os.symlink(fofc2, fofc2_pth)
+
+                # probably should use enumerate
+                event_num = 0
+                for i in event_maps:
+                    os.symlink(i, self.output().path.replace('.pdb', f'event_{event_num}.ccp4'))
+                    event_num += 1
 
             except:
                 raise Exception(file_obj.bound_conf)
