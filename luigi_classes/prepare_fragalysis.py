@@ -105,10 +105,10 @@ class CreateSymbolicLinks(luigi.Task):
                 # Get root of file_obj.bound_conf
                 bcdir = os.path.dirname(file_obj.bound_conf)
                 # Check if this is the correct directory (most likely not)
-                fofc = glob.glob(bcdir+'fofc.map')
-                if len(fofc) < 1:
-                    # go one deeper!
-                    bcdir = os.path.dirname(bcdir)
+                #fofc = glob.glob(bcdir+'fofc.map')
+                #if len(fofc) < 1:
+                #    # go one deeper!
+                #    bcdir = os.path.dirname(bcdir)
 
                 # Get the files
                 fofc = glob.glob(bcdir + 'fofc.map')
