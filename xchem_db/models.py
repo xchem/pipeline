@@ -415,9 +415,9 @@ class Site(models.Model):
 
 class Ligand(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    target = models.ForeignKey(Target)
-    site = models.ForeignKey(Site)
-    compound = models.ForeignKey(Compounds)
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE)
+    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
     new_smiles = models.TextField()
     alternate_name = models.CharField(max_length=255)
     pdb_id = models.CharField(max_length=255)
@@ -427,7 +427,7 @@ class Ligand(models.Model):
 
 
 class AtomSelection(models.Model):
-    ligand = models.ForeignKey(Ligand)
+    ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
     # to be determined by review app - needs to be readable by NGL in fragalysis
     selection_string = models.TextField()
     comments = models.TextField()
@@ -440,7 +440,7 @@ class MiscFile(models.Model):
 
 class FragalysisTarget(models.Model):
     open = models.BooleanField()
-    target = models.ForeignKey(Target)
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
     metadata_file = models.FileField()
     input_root = models.TextField()
     staging_root = models.TextField()
@@ -449,8 +449,8 @@ class FragalysisTarget(models.Model):
 
 
 class FragalysisLigand(models.Model):
-    ligand = models.ForeignKey(Ligand)
-    fragalysis_target = models.ForeignKey(FragalysisTarget)
+    ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
+    fragalysis_target = models.ForeignKey(FragalysisTarget, on_delete=models.CASCADE)
     crystallographic_bound = models.FileField()
     lig_mol_file = models.FileField()
     apo_pdb = models.FileField()
