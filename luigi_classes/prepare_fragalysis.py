@@ -115,8 +115,9 @@ class CreateSymbolicLinks(luigi.Task):
                 print(fofc_pth)
                 fofc2_pth = self.output().path.replace('.pdb', '_2fofc.map')
                 print(fofc2_pth)
-                os.symlink(fofc, fofc_pth)
-                os.symlink(fofc2, fofc2_pth)
+                # Assumption only one?
+                os.symlink(fofc[0], fofc_pth)
+                os.symlink(fofc2[0], fofc2_pth)
 
                 # probably should use enumerate
                 event_num = 0
