@@ -99,17 +99,17 @@ class CreateSymbolicLinks(luigi.Task):
                 bcdir = os.path.dirname(file_obj.bound_conf)
                 print(bcdir)
                 # Check if this is the correct directory (most likely not)
-                fofc = glob.glob(bcdir+'fofc.map')
+                fofc = glob.glob(bcdir+'/fofc.map')
                 if len(fofc) < 1:
                     # go one deeper!
                     bcdir = os.path.dirname(bcdir)
 
                 # Get the files
-                fofc = glob.glob(bcdir + 'fofc.map')
+                fofc = glob.glob(bcdir + '/fofc.map')
                 print(fofc)
-                fofc2 = glob.glob(bcdir + '2fofc.map')
+                fofc2 = glob.glob(bcdir + '/2fofc.map')
                 print(fofc2)
-                event_maps = glob.glob(bcdir + '*event*native*.ccp4') # nice doesn't capture all of it though...
+                event_maps = glob.glob(bcdir + '/*event*native*.ccp4') # nice doesn't capture all of it though...
                 print(event_maps)
                 fofc_pth = self.output().path.replace('.pdb', '_fofc.map')
                 print(fofc_pth)
