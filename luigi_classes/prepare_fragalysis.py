@@ -187,13 +187,59 @@ class AlignTarget(luigi.Task):
         os.system(f'rm -rf {os.path.join(self.staging_directory, "tmp", "*")}')
         os.system(f'rm -rf {os.path.join(self.staging_directory, "mono", "*")}')
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        os.system(
-            f'/dls/science/groups/i04-1/software/miniconda_3/envs/pipeline/bin/python /dls/science/groups/i04-1/fragprep/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name}')
+        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m')
+        with self.output().open('w') as f:
+            f.write('')
+
+class BatchCutMaps(luigi.Task):
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    date = luigi.Parameter(default=datetime.datetime.now())
+
+    def requires(self):
+        stagingfolders = glob.glob(f'{self.staging_directory}*')
+        stagingfolders = [x for x in stagingfolders if 'tmp' not in x]
+        stagingfolders = [x for x in stagingfolders if 'mono' not in x]
+        print(stagingfolders)
+        return [CutMaps(target=target) for target in stagingfolders]
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              str('Cutting/cut_' + str(self.date) + '.done')))
+
+    def run(self):
         with self.output().open('w') as f:
             f.write('')
 
 
+class CutMaps(luigi.Task):
+    target = luigi.Parameter()
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    date = luigi.DateParameter(default=datetime.datetime.now())
 
+    def requires(self):
+        return None
+
+    def output(self):
+        target_name = os.path.basename(self.target)
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              f'Cutting/cut_{target_name}' + '.done'))
+
+    def run(self):
+        target_name = os.path.basename(self.target)
+        targs = glob.glob(os.path.join(self.staging_directory, target_name, 'aligned', '*'))
+        targs = [x for x in targs if 'pdb_file_failures' not in x]
+
+        for i in targs:
+            crys = os.path.basename(i)
+            maps = glob.glob(os.path.join(i, '*.map')) + glob.glob(os.path.join(i, '*.ccp4'))
+            for j in maps:
+                os.system(f'module load ccp4 && mapmask mapin {j} mapout {j} xyzin {os.path.join(i, f"{crys}.pdb")} << eof\n border 6\n end\n eof')
+
+        with self.output().open('w') as f:
+            f.write('')
 
 # class AlignTargetXChem(AlignTarget):
 #    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
