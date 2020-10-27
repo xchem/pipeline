@@ -124,7 +124,7 @@ class CreateSymbolicLinks(luigi.Task):
                         border %s
                         end
                     eof
-                    ''' % (fofc[0], fofc_pth, self.output().path, str(6))
+                    ''' % (fofc[0], fofc_pth, self.output().path, str(0))
                     print(mapmask)
                     proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                           executable='/bin/bash')
@@ -142,7 +142,7 @@ class CreateSymbolicLinks(luigi.Task):
                         border %s
                         end
                     eof
-                    ''' % (fofc2[0], fofc2_pth, self.output().path, str(6))
+                    ''' % (fofc2[0], fofc2_pth, self.output().path, str(0))
                     print(mapmask)
                     proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                           executable='/bin/bash')
@@ -166,7 +166,7 @@ class CreateSymbolicLinks(luigi.Task):
                             border %s
                             end
                         eof
-                        ''' % (i, fn, self.output().path, str(6))
+                        ''' % (i, fn, self.output().path, str(0))
                         print(mapmask)
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                               executable='/bin/bash')
