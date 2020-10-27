@@ -58,7 +58,7 @@ class BatchCreateSymbolicLinks(luigi.Task):
 
 
 class CreateSymbolicLinks(luigi.Task):
-    ssh_command = 'ssh uzw12877@nx.diamond.ac.uk'
+    ssh_command = 'ssh mly94721@ssh.diamond.ac.uk'
     crystal = luigi.Parameter()
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
@@ -130,6 +130,8 @@ class CreateSymbolicLinks(luigi.Task):
                         str(self.ssh_command + ' "' + mapmask + '"'),
                         shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     out, err = process.communicate()
+                    if '(mapmask) - normal termination' not in out:
+                        raise Exception('mapmask failed!')
                     #os.symlink(fofc[0], fofc_pth)
                     #os.system(
                     #    f'module load ccp4 && mapmask mapin {fofc[0]} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
@@ -144,6 +146,8 @@ class CreateSymbolicLinks(luigi.Task):
                         str(self.ssh_command + ' "' + mapmask + '"'),
                         shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     out, err = process.communicate()
+                    if '(mapmask) - normal termination' not in out:
+                        raise Exception('mapmask failed!')
                     #os.symlink(fofc2[0], fofc2_pth)
                     #os.system(
                     #    f'module load ccp4 && mapmask mapin {fofc2[0]} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
@@ -164,6 +168,8 @@ class CreateSymbolicLinks(luigi.Task):
                             str(self.ssh_command + ' "' + mapmask + '"'),
                             shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                         out, err = process.communicate()
+                        if '(mapmask) - normal termination' not in out:
+                            raise Exception('mapmask failed!')
                         #os.system(
                         #    f'module load ccp4 && mapmask mapin {i} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                         event_num += 1
