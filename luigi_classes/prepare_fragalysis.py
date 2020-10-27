@@ -118,22 +118,22 @@ class CreateSymbolicLinks(luigi.Task):
 
                 # Assumption only one file to use....
                 if len(fofc) > 0:
-                    os.symlink(fofc[0], fofc_pth)
+                    #os.symlink(fofc[0], fofc_pth)
                     os.system(
-                        f'module load ccp4 && mapmask mapin {fofc_pth} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                        f'module load ccp4 && mapmask mapin {fofc[0]} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                 if len(fofc2) > 0:
-                    os.symlink(fofc2[0], fofc2_pth)
+                    #os.symlink(fofc2[0], fofc2_pth)
                     os.system(
-                        f'module load ccp4 && mapmask mapin {fofc2_pth} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                        f'module load ccp4 && mapmask mapin {fofc2[0]} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
 
                 # probably should use enumerate
                 if len(event_maps) > 0:
                     event_num = 0
                     for i in event_maps:
                         fn = self.output().path.replace('.pdb', f'_event_{event_num}.ccp4')
-                        os.symlink(i, fn)
+                        #os.symlink(i, fn)
                         os.system(
-                            f'module load ccp4 && mapmask mapin {fn} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                            f'module load ccp4 && mapmask mapin {i} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                         event_num += 1
 
                 if self.prod_smiles:
