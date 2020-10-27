@@ -146,10 +146,10 @@ class CreateSymbolicLinks(luigi.Task):
                     print(mapmask)
                     proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                           executable='/bin/bash')
-                    process = subprocess.Popen(
-                        str(self.ssh_command + ' "' + mapmask + '"'),
-                        shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                    out, err = process.communicate()
+                    #process = subprocess.Popen(
+                    #    str(self.ssh_command + ' "' + mapmask + '"'),
+                    #    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    #out, err = process.communicate()
                     #if '(mapmask) - normal termination' not in out:
                     #    raise Exception('mapmask failed!')
                     #os.symlink(fofc2[0], fofc2_pth)
