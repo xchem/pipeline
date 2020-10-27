@@ -126,12 +126,14 @@ class CreateSymbolicLinks(luigi.Task):
                     eof
                     ''' % (fofc[0], fofc_pth, self.output().path, str(6))
                     print(mapmask)
-                    process = subprocess.Popen(
-                        str(self.ssh_command + ' "' + mapmask + '"'),
-                        shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                    out, err = process.communicate()
-                    if '(mapmask) - normal termination' not in out:
-                        raise Exception('mapmask failed!')
+                    proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                          executable='/bin/bash')
+                    #process = subprocess.Popen(
+                    #    str(self.ssh_command + ' "' + mapmask + '"'),
+                    #    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    #out, err = process.communicate()
+                    #if '(mapmask) - normal termination' not in out:
+                    #    raise Exception('mapmask failed!')
                     #os.symlink(fofc[0], fofc_pth)
                     #os.system(
                     #    f'module load ccp4 && mapmask mapin {fofc[0]} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
@@ -142,12 +144,14 @@ class CreateSymbolicLinks(luigi.Task):
                     eof
                     ''' % (fofc2[0], fofc2_pth, self.output().path, str(6))
                     print(mapmask)
+                    proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                          executable='/bin/bash')
                     process = subprocess.Popen(
                         str(self.ssh_command + ' "' + mapmask + '"'),
                         shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
                     out, err = process.communicate()
-                    if '(mapmask) - normal termination' not in out:
-                        raise Exception('mapmask failed!')
+                    #if '(mapmask) - normal termination' not in out:
+                    #    raise Exception('mapmask failed!')
                     #os.symlink(fofc2[0], fofc2_pth)
                     #os.system(
                     #    f'module load ccp4 && mapmask mapin {fofc2[0]} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
@@ -164,12 +168,14 @@ class CreateSymbolicLinks(luigi.Task):
                         eof
                         ''' % (i, fn, self.output().path, str(6))
                         print(mapmask)
-                        process = subprocess.Popen(
-                            str(self.ssh_command + ' "' + mapmask + '"'),
-                            shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                        out, err = process.communicate()
-                        if '(mapmask) - normal termination' not in out:
-                            raise Exception('mapmask failed!')
+                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                              executable='/bin/bash')
+                        #process = subprocess.Popen(
+                        #    str(self.ssh_command + ' "' + mapmask + '"'),
+                        #    shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        #out, err = process.communicate()
+                        #if '(mapmask) - normal termination' not in out:
+                        #    raise Exception('mapmask failed!')
                         #os.system(
                         #    f'module load ccp4 && mapmask mapin {i} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                         event_num += 1
