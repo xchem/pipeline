@@ -125,6 +125,7 @@ class CreateSymbolicLinks(luigi.Task):
                         end
                     eof
                     ''' % (fofc[0], fofc_pth, self.output().path, str(6))
+                    print(mapmask)
                     process = subprocess.Popen(
                         str(self.ssh_command + ' "' + mapmask + '"'),
                         shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -138,6 +139,7 @@ class CreateSymbolicLinks(luigi.Task):
                         end
                     eof
                     ''' % (fofc2[0], fofc2_pth, self.output().path, str(6))
+                    print(mapmask)
                     process = subprocess.Popen(
                         str(self.ssh_command + ' "' + mapmask + '"'),
                         shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -157,6 +159,7 @@ class CreateSymbolicLinks(luigi.Task):
                             end
                         eof
                         ''' % (i, fn, self.output().path, str(6))
+                        print(mapmask)
                         process = subprocess.Popen(
                             str(self.ssh_command + ' "' + mapmask + '"'),
                             shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
