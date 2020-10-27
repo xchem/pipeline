@@ -1,4 +1,5 @@
 import datetime
+import subprocess
 import uuid
 
 from setup_django import setup_django
@@ -57,6 +58,7 @@ class BatchCreateSymbolicLinks(luigi.Task):
 
 
 class CreateSymbolicLinks(luigi.Task):
+    ssh_command = 'ssh uzw12877@nx.diamond.ac.uk'
     crystal = luigi.Parameter()
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
@@ -118,13 +120,31 @@ class CreateSymbolicLinks(luigi.Task):
 
                 # Assumption only one file to use....
                 if len(fofc) > 0:
+                    mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                        border %s
+                        end
+                    eof
+                    ''' % (fofc[0], fofc_pth, self.output().path, str(6))
+                    process = subprocess.Popen(
+                        str(self.ssh_command + ' "' + mapmask + '"'),
+                        shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    out, err = process.communicate()
                     #os.symlink(fofc[0], fofc_pth)
-                    os.system(
-                        f'module load ccp4 && mapmask mapin {fofc[0]} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                    #os.system(
+                    #    f'module load ccp4 && mapmask mapin {fofc[0]} mapout {fofc_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                 if len(fofc2) > 0:
+                    mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                        border %s
+                        end
+                    eof
+                    ''' % (fofc2[0], fofc2_pth, self.output().path, str(6))
+                    process = subprocess.Popen(
+                        str(self.ssh_command + ' "' + mapmask + '"'),
+                        shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                    out, err = process.communicate()
                     #os.symlink(fofc2[0], fofc2_pth)
-                    os.system(
-                        f'module load ccp4 && mapmask mapin {fofc2[0]} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                    #os.system(
+                    #    f'module load ccp4 && mapmask mapin {fofc2[0]} mapout {fofc2_pth} xyzin {self.output().path} << eof\n border 6\n end\n eof')
 
                 # probably should use enumerate
                 if len(event_maps) > 0:
@@ -132,8 +152,17 @@ class CreateSymbolicLinks(luigi.Task):
                     for i in event_maps:
                         fn = self.output().path.replace('.pdb', f'_event_{event_num}.ccp4')
                         #os.symlink(i, fn)
-                        os.system(
-                            f'module load ccp4 && mapmask mapin {i} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
+                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                            border %s
+                            end
+                        eof
+                        ''' % (i, fn, self.output().path, str(6))
+                        process = subprocess.Popen(
+                            str(self.ssh_command + ' "' + mapmask + '"'),
+                            shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                        out, err = process.communicate()
+                        #os.system(
+                        #    f'module load ccp4 && mapmask mapin {i} mapout {fn} xyzin {self.output().path} << eof\n border 6\n end\n eof')
                         event_num += 1
 
                 if self.prod_smiles:
