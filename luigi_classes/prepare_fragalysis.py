@@ -262,7 +262,16 @@ class CutMaps(luigi.Task):
             crys = os.path.basename(i)
             maps = glob.glob(os.path.join(i, '*.map')) + glob.glob(os.path.join(i, '*.ccp4'))
             for j in maps:
-                os.system(f'module load ccp4 && mapmask mapin {j} mapout {j} xyzin {os.path.join(i, f"{crys}.pdb")} << eof\n border 6\n end\n eof')
+                fn = j
+                mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                    border %s
+                    end
+                eof
+                ''' % (fn, fn, os.path.join(i, f"{crys}.pdb"), str(6))
+                print(mapmask)
+                proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                      executable='/bin/bash')
+                #os.system(f'module load ccp4 && mapmask mapin {j} mapout {j} xyzin {os.path.join(i, f"{crys}.pdb")} << eof\n border 6\n end\n eof')
 
         with self.output().open('w') as f:
             f.write('')
