@@ -182,7 +182,7 @@ class BatchAlignTargets(luigi.Task):
         targets = [target[0] for target in os.walk(self.input_directory)]
         print(targets)
         # Run Align Target target name is NOT in staging directory...
-        return [AlignTarget(target=target) for target in targets if not os.path.exists(os.path.join(self.input_directory, target))]
+        return [AlignTarget(target=target) for target in targets if not os.path.exists(os.path.join(self.staging_directory, os.path.basename(target)))]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
