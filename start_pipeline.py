@@ -74,26 +74,6 @@ class StartPipeline(luigi.WrapperTask):
             f.write('')
 
 
-class StartAlignment(luigi.WrapperTask):
-    date = luigi.DateParameter(default=datetime.datetime.now())
-    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
-    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
-    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
-
-    def requires(self):
-        yield BatchAlignTargets()
-
-    def output(self):
-        return luigi.LocalTarget(os.path.join(self.log_directory,
-                                              f'align_run_{datetime.datetime.now().strftime("%Y%m%d%H%M")}.done'))
-
-    def run(self):
-        with self.output().open('w') as f:
-            f.write('')
-
-
 class PostPipeClean(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
@@ -132,4 +112,3 @@ class PostPipeClean(luigi.Task):
 
 if __name__ == '__main__':
     luigi.build([PostPipeClean()], workers=1, no_lock=False)
-    luigi.build([StartAlignment()], workers=10, no_lock=False)
