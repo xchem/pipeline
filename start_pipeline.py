@@ -53,8 +53,8 @@ class StartPipeline(luigi.WrapperTask):
         #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
         yield BatchCreateSymbolicLinks()
-        #yield BatchAlignTargets()
-        yield BatchCutMaps()
+#        yield BatchAlignTargets()
+#        yield BatchCutMaps()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
@@ -111,4 +111,4 @@ class PostPipeClean(luigi.Task):
 
 
 if __name__ == '__main__':
-    luigi.build([PostPipeClean()], workers=1, no_lock=False)
+    luigi.build([PostPipeClean()], workers=5, no_lock=False)
