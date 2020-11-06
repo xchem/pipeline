@@ -25,6 +25,7 @@ class Tasks(models.Model):
 
 class Target(models.Model):
     target_name = models.CharField(max_length=255, blank=False, null=False, unique=True, db_index=True)
+
     # uniprot_id = models.CharField(blank=True, null=True)
     # alias = models.CharField(blank=True, null=True)
 
@@ -60,6 +61,7 @@ class Proposals(models.Model):
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
+
         db_table = 'proposals'
 
 
@@ -392,10 +394,26 @@ class PanddaEventStats(models.Model):
         db_table = 'pandda_event_stats'
 
 
+class Ligand():
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
+    target = models.ForeignKey(Target, on_delete=models.CASCADE)
+    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
+    new_smiles = models.TextField()
+    alternate_name = models.CharField(max_length=255)
+    pdb_id = models.CharField(max_length=255)
+    fragalysis_name = models.CharField(max_length=255, unique=True)
+    original_name = models.CharField(max_length=255)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'ligand'
+
+
 class ReviewResponses(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE) # This may not be correctly linked in psql...
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # This may not be correctly linked in psql...
     # may need to be changed to ligand in the end. Depends on XCR
-    # ligand = models.ForeignKey(Ligand)
+    # Ligand_name = models.ForeignKey(Ligand)
     fedid = models.TextField(blank=False, null=False)
     decision_int = models.IntegerField(blank=False, null=False)
     decision_str = models.TextField(blank=False, null=False)
@@ -408,34 +426,48 @@ class ReviewResponses(models.Model):
         db_table = 'review_responses'
 
 
-class Site(models.Model):
-    site_name = models.CharField(max_length=255)
-    description = models.TextField()
+# New Class as the old one is STILL IN USE!
+class ReviewResponses2(models.Model):
+    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # This may not be correctly linked in psql...
+    # may need to be changed to ligand in the end. Depends on XCR
+    Ligand_name = models.ForeignKey(Ligand)
+    fedid = models.TextField(blank=False, null=False)
+    decision_int = models.IntegerField(blank=False, null=False)
+    decision_str = models.TextField(blank=False, null=False)
+    reason = models.TextField(blank=False, null=False)
+    time_submitted = models.IntegerField(blank=False, null=False)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'review_responses_new'
 
 
-class Ligand(models.Model):
-    crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
-    target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    site = models.ForeignKey(Site, on_delete=models.CASCADE)
-    compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
-    new_smiles = models.TextField()
-    alternate_name = models.CharField(max_length=255)
-    pdb_id = models.CharField(max_length=255)
-    fragalysis_name = models.CharField(max_length=255, unique=True)
-    original_name = models.CharField(max_length=255)
-    lig_string = models.CharField(max_length=255)
+class BadAtoms(models.Model):
+    Review = models.ForeignKey(ReviewResponses2, on_delete=models.CASCADE)
+    Ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
+    atomid = models.IntegerField(blank=False, null=False)
+    comment = models.CharField(blank=False, null=False)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'BadAtoms'
 
 
-class AtomSelection(models.Model):
-    ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
-    # to be determined by review app - needs to be readable by NGL in fragalysis
-    selection_string = models.TextField()
-    comments = models.TextField()
+class MetaData(models.Model):
+    Ligand_name = models.ForeignKey(Ligand, on_delete=models.CASCADE)
+    Site_Label = models.CharField(blank=False, null=False)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'MetaData'
 
 
-class MiscFile(models.Model):
-    file = models.FileField()
-    description = models.TextField()
+# class Site(models.Model):
+#    site_name = models.CharField(max_length=255)
+#    description = models.TextField()
 
 
 class FragalysisTarget(models.Model):
@@ -445,7 +477,23 @@ class FragalysisTarget(models.Model):
     input_root = models.TextField()
     staging_root = models.TextField()
     biomol = models.FileField()
-    additional_files = models.ManyToManyField(MiscFile)
+    additional_files = models.ManyToManyField(MiscFiles)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'FragalysisTarget'
+
+
+class MiscFiles(models.Model):
+    FragalysisTarget = models.ForeignKey(FragalysisTarget)
+    file = models.FileField()
+    description = models.TextField()
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'MiscFiles'
 
 
 class FragalysisLigand(models.Model):
@@ -463,6 +511,10 @@ class FragalysisLigand(models.Model):
     two_fofc = models.FileField()
     fofc = models.FileField()
 
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'FragalysisLigand'
 
 ## CHAT TO ELLIOT - DO WE NEED THESE, OR CODE?
 # class Occupancy(models.Model):
