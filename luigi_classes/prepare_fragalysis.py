@@ -179,10 +179,10 @@ class BatchAlignTargets(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now())
 
     def requires(self):
+        # Check list of targets that have staging dirs
         targets = [target[0] for target in os.walk(self.input_directory)]
-        print(targets)
-        # Run Align Target target name is NOT in staging directory...
-        return [AlignTarget(target=target) for target in targets if not os.path.exists(os.path.join(self.staging_directory, os.path.basename(target)))]
+        # Decide which mode to run.
+        return [DecideAlignTarget(target=target) for target in targets]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -193,8 +193,42 @@ class BatchAlignTargets(luigi.Task):
             f.write('')
 
 
+class DecideAlignTarget(luigi.Task):
+    # Target is /inputdir/targetname
+    target = luigi.Parameter()
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    date = luigi.DateParameter(default=datetime.datetime.now())
+
+    def requires(self):
+        base = os.path.basename(self.target)
+        staging_dir = os.path.join(self.staging_directory, base)
+        if not os.path.exists(staging_dir):
+            # If staging direct with name does not exist do a big alignment
+            return AlignTarget(target=self.target)
+        else:
+            # If it does exist, find .pdbs that haven't aligned and try to align them.
+            aligned_dir = os.path.join(staging_dir, 'aligned')
+            infile = glob.glob(os.path.join(self.target, '*.pdb'))
+            infile_bases = set([os.path.basename(x).replace('.pdb', '') for x in infile])
+            staging_files = glob.glob(os.path.join(aligned_dir, '*'))
+            staging_bases = set([os.path.basename(x).rsplit('_', 1)[0] for x in staging_files])
+            to_align = list(infile_bases - staging_bases)
+            return [AlignTargetToReference(target=os.path.join(self.input_directory, f, '.pdb')) for f in to_align]
+
+    def output(self):
+        target_name = self.target.rsplit('/', 1)[1]
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              f'Alignment/Decide_aligned_{target_name}' + str(self.date) + '.done')
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
 class AlignTarget(luigi.Task):
-    # Need to account for -m argument?
+    # Target is /inputdir/targetname
     target = luigi.Parameter()
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
@@ -210,12 +244,34 @@ class AlignTarget(luigi.Task):
 
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
-        os.system(f'rm -rf {os.path.join(self.staging_directory, "tmp", "*")}')
-        os.system(f'rm -rf {os.path.join(self.staging_directory, "mono", "*")}')
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m')
         with self.output().open('w') as f:
             f.write('')
+
+class AlignTargetToReference(luigi.Task):
+    # Target is /inputdir/targetname.pdb
+    target = luigi.Parameter()
+    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    date = luigi.DateParameter(default=datetime.datetime.now())
+
+    def requires(self):
+        return None
+
+    def output(self):
+        target_name = os.path.basename(self.target).replace('.pdb', '')
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
+                                              f'Alignment/aligned_{target_name}' + str(self.date) + '.done'))
+
+    # Clean up
+    def run(self):
+        target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
+        # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
+        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -r {os.path.join(self.staging_directory, "aligned","reference.pdb")}')
+        with self.output().open('w') as f:
+            f.write('')
+
 
 class BatchCutMaps(luigi.Task):
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
