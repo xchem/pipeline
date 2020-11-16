@@ -220,7 +220,7 @@ class DecideAlignTarget(luigi.Task):
     def output(self):
         target_name = self.target.rsplit('/', 1)[1]
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
-                                              f'Alignment/Decide_aligned_{target_name}' + str(self.date) + '.done')
+                                              f'Alignment/Decide_aligned_{target_name}' + str(self.date) + '.done'))
 
     def run(self):
         with self.output().open('w') as f:
