@@ -394,7 +394,7 @@ class PanddaEventStats(models.Model):
         db_table = 'pandda_event_stats'
 
 
-class Ligand():
+class Ligand(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
@@ -430,7 +430,7 @@ class ReviewResponses(models.Model):
 class ReviewResponses2(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # This may not be correctly linked in psql...
     # may need to be changed to ligand in the end. Depends on XCR
-    Ligand_name = models.ForeignKey(Ligand)
+    Ligand_name = models.ForeignKey(Ligand, on_delete=models.CASCADE)
     fedid = models.TextField(blank=False, null=False)
     decision_int = models.IntegerField(blank=False, null=False)
     decision_str = models.TextField(blank=False, null=False)
@@ -470,6 +470,17 @@ class MetaData(models.Model):
 #    description = models.TextField()
 
 
+class MiscFiles(models.Model):
+    #FragalysisTarget = models.ForeignKey(FragalysisTarget)
+    file = models.FileField()
+    description = models.TextField()
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'MiscFiles'
+
+
 class FragalysisTarget(models.Model):
     open = models.BooleanField()
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
@@ -483,17 +494,6 @@ class FragalysisTarget(models.Model):
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'FragalysisTarget'
-
-
-class MiscFiles(models.Model):
-    FragalysisTarget = models.ForeignKey(FragalysisTarget)
-    file = models.FileField()
-    description = models.TextField()
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'MiscFiles'
 
 
 class FragalysisLigand(models.Model):
