@@ -394,22 +394,64 @@ class PanddaEventStats(models.Model):
         db_table = 'pandda_event_stats'
 
 
+class MiscFiles(models.Model):
+    file = models.FileField()
+    description = models.TextField()
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'MiscFiles'
+
+
+class FragalysisTarget(models.Model):
+    open = models.BooleanField()
+    target = models.CharField(max_length=255)
+    metadata_file = models.FileField()
+    input_root = models.TextField()
+    staging_root = models.TextField()
+    biomol = models.FileField()
+    additional_files = models.ManyToManyField(MiscFiles)
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'FragalysisTarget'
+
+
+class FragalysisLigand(models.Model):
+    ligand = models.CharField(max_length=255)
+    fragalysis_target = models.ForeignKey(FragalysisTarget, on_delete=models.CASCADE)
+    crystallographic_bound = models.FileField()
+    lig_mol_file = models.FileField()
+    apo_pdb = models.FileField()
+    bound_pdb = models.FileField()
+    smiles_file = models.FileField()
+    desolvated_pdb = models.FileField()
+    solvated_pdb = models.FileField()
+    # do we really want them all in fragalysis?
+    pandda_event = models.FileField()
+    two_fofc = models.FileField()
+    fofc = models.FileField()
+
+    class Meta:
+        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
+            app_label = 'xchem_db'
+        db_table = 'FragalysisLigand'
+
+
 class Ligand(models.Model):
+    fragalyis_ligand = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
-    new_smiles = models.TextField()
-    alternate_name = models.CharField(max_length=255)
-    pdb_id = models.CharField(max_length=255)
-    fragalysis_name = models.CharField(max_length=255, unique=True)
-    original_name = models.CharField(max_length=255)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'ligand'
 
-
+# Old Review
 class ReviewResponses(models.Model):
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)  # This may not be correctly linked in psql...
     # may need to be changed to ligand in the end. Depends on XCR
@@ -456,65 +498,18 @@ class BadAtoms(models.Model):
 
 
 class MetaData(models.Model):
-    Ligand_name = models.ForeignKey(Ligand, on_delete=models.CASCADE)
+    Ligand_name = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
     Site_Label = models.CharField(blank=False, null=False)
+    new_smiles = models.TextField()
+    alternate_name = models.CharField(max_length=255)
+    pdb_id = models.CharField(max_length=255)
+    fragalysis_name = models.CharField(max_length=255, unique=True)
+    original_name = models.CharField(max_length=255)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
             app_label = 'xchem_db'
         db_table = 'MetaData'
-
-
-# class Site(models.Model):
-#    site_name = models.CharField(max_length=255)
-#    description = models.TextField()
-
-
-class MiscFiles(models.Model):
-    #FragalysisTarget = models.ForeignKey(FragalysisTarget)
-    file = models.FileField()
-    description = models.TextField()
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'MiscFiles'
-
-
-class FragalysisTarget(models.Model):
-    open = models.BooleanField()
-    target = models.ForeignKey(Target, on_delete=models.CASCADE)
-    metadata_file = models.FileField()
-    input_root = models.TextField()
-    staging_root = models.TextField()
-    biomol = models.FileField()
-    additional_files = models.ManyToManyField(MiscFiles)
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'FragalysisTarget'
-
-
-class FragalysisLigand(models.Model):
-    ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
-    fragalysis_target = models.ForeignKey(FragalysisTarget, on_delete=models.CASCADE)
-    crystallographic_bound = models.FileField()
-    lig_mol_file = models.FileField()
-    apo_pdb = models.FileField()
-    bound_pdb = models.FileField()
-    smiles_file = models.FileField()
-    desolvated_pdb = models.FileField()
-    solvated_pdb = models.FileField()
-    # do we really want them all in fragalysis?
-    pandda_event = models.FileField()
-    two_fofc = models.FileField()
-    fofc = models.FileField()
-
-    class Meta:
-        if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
-            app_label = 'xchem_db'
-        db_table = 'FragalysisLigand'
 
 ## CHAT TO ELLIOT - DO WE NEED THESE, OR CODE?
 # class Occupancy(models.Model):

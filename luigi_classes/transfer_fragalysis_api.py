@@ -57,29 +57,28 @@ class TranslateFragalysisAPIOutput(luigi.Task):
         # Ensure to only run if data is updated???
         Translate_Files(target=self.target,
                         staging_directory=os.path.join(self.staging_directory, os.path.basename(self.target)),
-                        input_directory=os.path.join(self.input_directory, os.path.basename(self.target)),)
+                        input_directory=os.path.join(self.input_directory, os.path.basename(self.target)), )
 
 
-def Translate_Files(target, staging_directory, input_directory):
+def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_directory):
     '''
     target = folder path for particular fragalysis Entry?
     '''
-
-    ligand_name = os.path.basename(target)
+    # Should be target_name_[0-9]{1}[A-Z]{1}
+    ligand_name = os.path.basename(fragment_abs_dirname)
+    # Should be /staging_directory/target_name/aligned/
+    target = os.path.dirname(fragment_abs_dirname)
+    # Should be prefix of target_name e.g. 70x-x0001_0A would be 70x
     crystal_name = ligand_name.rsplit('_', 1)[0]
 
-    # Create Ligand Object, THIS WONT WORK FOR NON XCDB Crystals! Or Renamed stuff!!!
-    crys = models.Crystal.objects.get(crystal_name)
-    ligand_entry, created = models.Ligand.objects.get_or_create(crystal=crys,
-                                                                target=crys.target,
-                                                                compount=crys.compound)
-    fragtarget, created = models.FragalysisTarget.objects.get_or_create(target=crys.target,
-                                                                        staging_root=staging_directory,
-                                                                        input_root=input_directory)
+    # Get or Create FragTarget
+    frag_target, created = models.FragalysisTarget.objects.get_or_create(target=target_name,
+                                                                         staging_root=staging_directory,
+                                                                         input_root=input_directory)
     # Frag Target information is edited post-pipeline?
     ligand_props = {
-        'ligand': ligand_entry,
-        'fragalysis_target': fragtarget,
+        'ligand': ligand_name,
+        'fragalysis_target': frag_target,
         'crystallographic_bound': os.path.join(target, ligand_name, '_bound.pdb'),
         'lig_mol_file': os.path.join(target, ligand_name, '.mol'),
         'apo_pdb': os.path.join(target, ligand_name, '_apo.pdb'),
@@ -92,13 +91,22 @@ def Translate_Files(target, staging_directory, input_directory):
         'fofc': os.path.join(target, ligand_name, '_fofc.map')
     }
 
-    # fragligand, created = models.FragalysisLigand.objects.update_or_create(ligand=ligand_entry, fragalysis_target=fragtarget, defaults=ligand_props)
     try:
-        fragligand = models.FragalysisLigand.objects.get(ligand=ligand_entry,
-                                                         fragalysis_target=fragtarget)
+        frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name,
+                                                          fragalysis_target=frag_target)
         for key, value in ligand_props.items():
-            setattr(fragligand, key, value)
-        fragligand.save()
-    except FragalysisLigand.DoesNotExists:
-        fragligand = models.FragalysisLigand.objects.create(**ligand_props)
-        fragligand.save()
+            setattr(frag_ligand, key, value)
+        frag_ligand.save()
+    except FragalysisLigand.DoesNotExist:
+        frag_ligand = models.FragalysisLigand.objects.create(**ligand_props)  # Does this EVEN work?
+        frag_ligand.save()
+
+    # Bonza, now link frag_ligand to ligand table for internal stuff.
+    try:
+        crys = models.Crystal.objects.get(crystal_name=crystal_name)
+        ligand_entry, created = models.Ligand.objects.get_or_create(fragalyis_ligand=frag_ligand,
+                                                                    crystal=crys,
+                                                                    target=crys.target,
+                                                                    compount=crys.compound)
+    except Crystal.DoesNotExist:
+        pass
