@@ -429,10 +429,10 @@ class FragalysisLigand(models.Model):
     smiles_file = models.FileField()
     desolvated_pdb = models.FileField()
     solvated_pdb = models.FileField()
-    # do we really want them all in fragalysis?
     pandda_event = models.FileField()
     two_fofc = models.FileField()
     fofc = models.FileField()
+    modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
