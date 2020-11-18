@@ -158,3 +158,21 @@ PYTHONPATH='.' luigi --module luigi_classes.transfer_soakdb TransferNewDataFile 
 Note that we're providing the `PYTHONPATH` variable as the local `pipeline` directory that we're working, to give the 
 scheduler context of where to look for the `luigi_classes` modules. We're also changing `_` to `-` in our variable names 
 for the task.
+
+### Config file example
+
+Filename: luigi.cfg.   
+
+Contents:  
+
+```
+[SoakDBConfig]
+default_path=/dls/labxchem/data/*/lb*/*
+
+[DirectoriesConfig]
+hit_directory=/dls/science/groups/proasis/LabXChem/
+log_directory=/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV/logs/
+
+[resources]
+django=1
+```
