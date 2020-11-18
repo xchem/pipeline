@@ -169,7 +169,8 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filelist):
     :return: Should return nothing, but will populate the proposals table in XCDB.
     :rtype: None
     """
-    with open(soak_db_filelist, 'r') as database_list:
+    print(soak_db_filelist)
+    with open(soak_db_filelist, 'rb') as database_list:
         for database_file in database_list.readlines():
             database_file = database_file.replace('\n', '')
 
