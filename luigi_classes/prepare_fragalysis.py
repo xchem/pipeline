@@ -220,7 +220,7 @@ class DecideAlignTarget(luigi.Task):
             staging_files = glob.glob(os.path.join(aligned_dir, '*'))
             staging_bases = set([os.path.basename(x).rsplit('_', 1)[0] for x in staging_files])
             to_align = list(infile_bases - staging_bases)
-            return [AlignTargetToReference(target=os.path.join(self.input_directory, f'{f}.pdb')) for f in to_align]
+            return [AlignTargetToReference(target=os.path.join(self.input_directory, base, f'{f}.pdb')) for f in to_align]
 
     def output(self):
         target_name = self.target.rsplit('/', 1)[1]
@@ -273,7 +273,7 @@ class AlignTargetToReference(luigi.Task):
     def run(self):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -r {os.path.join(self.staging_directory, "aligned","reference.pdb")}')
+        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -r {os.path.join(self.staging_directory,"reference.pdb")}')
         with self.output().open('w') as f:
             f.write('')
 
