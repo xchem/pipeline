@@ -1,10 +1,10 @@
 from rest_framework import viewsets
 
 from .models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, Refinement, \
-    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut
+    PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent
 from .serializers import TargetSerializer, CompoundsSerializer, ReferenceSerializer, SoakdbFilesSerializer, \
     CrystalSerializer, DataProcessingSerializer, DimpleSerializer, LabSerializer, RefinementSerializer, \
-    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, ProasisOutSerializer, \
+    PanddaAnalysisSerializer, PanddaRunSerializer, PanddaSiteSerializer, PanddaEventSerializer, \
     FragspectCrystalSerializer
 
 
@@ -183,36 +183,6 @@ class PanddaEventView(viewsets.ReadOnlyModelViewSet):
         "pandda_input_mtz",
         "pandda_input_pdb",
     )
-
-
-class ProasisOutView(viewsets.ReadOnlyModelViewSet):
-    queryset = ProasisOut.objects.filter()
-    serializer_class = ProasisOutSerializer
-    filter_fields = (
-        "crystal__crystal_name",
-        "crystal__target__target_name",
-        "crystal__compound__smiles",
-        "crystal__visit__filename",
-        "crystal__visit__proposal__proposal",
-        "crystal__visit__visit",
-        "proasis__strucid",
-        "proasis__crystal_name__crystal_name",
-        "proasis__crystal_name__target__target_name",
-        "proasis__crystal_name__compound__smiles",
-        "proasis__crystal_name__visit__filename",
-        "proasis__crystal_name__visit__proposal__proposal",
-        "proasis__crystal_name__visit__visit",
-        "proasis__refinement__crystal_name__crystal_name",
-        "proasis__refinement__crystal_name__target__target_name",
-        "proasis__refinement__crystal_name__compound__smiles",
-        "proasis__refinement__crystal_name__visit__filename",
-        "proasis__refinement__crystal_name__visit__proposal__proposal",
-        "proasis__refinement__crystal_name__visit__visit",
-        "proasis__refinement__outcome",
-        "root",
-        'start',
-    )
-
 
 class FragspectCrystalView(viewsets.ReadOnlyModelViewSet):
     queryset = PanddaEvent.objects.filter().prefetch_related('crystal', 'site', 'refinement', 'data_proc')

@@ -420,7 +420,7 @@ class FragalysisTarget(models.Model):
 
 
 class FragalysisLigand(models.Model):
-    ligand = models.CharField(max_length=255)
+    ligand_name = models.CharField(max_length=255)
     fragalysis_target = models.ForeignKey(FragalysisTarget, on_delete=models.CASCADE)
     crystallographic_bound = models.FileField()
     lig_mol_file = models.FileField()
@@ -489,7 +489,7 @@ class BadAtoms(models.Model):
     Review = models.ForeignKey(ReviewResponses2, on_delete=models.CASCADE)
     Ligand = models.ForeignKey(Ligand, on_delete=models.CASCADE)
     atomid = models.IntegerField(blank=False, null=False)
-    comment = models.CharField(blank=False, null=False)
+    comment = models.TextField(blank=False, null=False)
 
     class Meta:
         if os.getcwd() != '/dls/science/groups/i04-1/software/luigi_pipeline/pipelineDEV':
@@ -499,7 +499,7 @@ class BadAtoms(models.Model):
 
 class MetaData(models.Model):
     Ligand_name = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
-    Site_Label = models.CharField(blank=False, null=False)
+    Site_Label = models.CharField(blank=False, null=False, max_length=255)
     new_smiles = models.TextField()
     alternate_name = models.CharField(max_length=255)
     pdb_id = models.CharField(max_length=255)

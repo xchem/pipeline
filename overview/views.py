@@ -8,7 +8,7 @@ from django.template import loader
 
 from functions.db_functions import check_file_status
 from functions.misc_functions import get_mod_date
-from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles, PanddaEvent, ProasisHits, ProasisOut
+from xchem_db.models import Target, Crystal, Refinement, SoakdbFiles, PanddaEvent
 
 
 def targets(request):

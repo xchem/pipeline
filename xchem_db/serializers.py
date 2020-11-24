@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from xchem_db.models import Target, Compounds, Reference, SoakdbFiles, Crystal, DataProcessing, Dimple, Lab, \
-    Refinement, PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, ProasisOut, Proposals, PanddaEventStats
+    Refinement, PanddaAnalysis, PanddaRun, PanddaSite, PanddaEvent, Proposals, PanddaEventStats
 
 
 class ProposalsSerializer(serializers.ModelSerializer):
@@ -99,13 +99,6 @@ class PanddaEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PanddaEvent
-        fields = ('__all__',)
-
-
-class ProasisOutSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ProasisOut
         fields = ('__all__',)
 
 
