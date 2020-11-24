@@ -25,6 +25,11 @@ from utils.refinement import RefinementObjectFiles
 # 3) Cry
 
 class BatchCreateSymbolicLinks(luigi.Task):
+    '''
+    Create Symbolic Links for all Crystals in refinements that have outcomes >=4 and <=6
+
+    This class requires/schedules CreateSymbolicLinks to be run for each crystal in the refinement table that satisfies the condition
+    '''
     resources = {'django': 1}
     date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
@@ -215,7 +220,7 @@ class DecideAlignTarget(luigi.Task):
             staging_files = glob.glob(os.path.join(aligned_dir, '*'))
             staging_bases = set([os.path.basename(x).rsplit('_', 1)[0] for x in staging_files])
             to_align = list(infile_bases - staging_bases)
-            return [AlignTargetToReference(target=os.path.join(self.input_directory, f, '.pdb')) for f in to_align]
+            return [AlignTargetToReference(target=os.path.join(self.input_directory, f'{f}.pdb')) for f in to_align]
 
     def output(self):
         target_name = self.target.rsplit('/', 1)[1]
