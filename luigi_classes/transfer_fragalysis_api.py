@@ -153,7 +153,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     try:
         crys = models.Crystal.objects.get(crystal_name=crystal_name)
         ligand_entry, created = models.Ligand.objects.get_or_create(
-            fragalyis_ligand=frag_ligand,
+            fragalysis_ligand=frag_ligand,
             crystal=crys,
             target=crys.target,
             compound=crys.compound)

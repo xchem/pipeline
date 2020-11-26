@@ -441,7 +441,7 @@ class FragalysisLigand(models.Model):
 
 
 class Ligand(models.Model):
-    fragalyis_ligand = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
+    fragalysis_ligand = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
     crystal = models.ForeignKey(Crystal, on_delete=models.CASCADE)
     target = models.ForeignKey(Target, on_delete=models.CASCADE)
     compound = models.ForeignKey(Compounds, on_delete=models.CASCADE)
