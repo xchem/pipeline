@@ -21,7 +21,7 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_dir)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
     def requires(self):
         # Honestly do not know how slow this is haha...
@@ -47,7 +47,7 @@ class TranslateFragalysisAPIOutput(luigi.Task):
     date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_dir)
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     target = luigi.Parameter()
 
     def requires(self):
@@ -102,48 +102,63 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     ligand_name = os.path.basename(fragment_abs_dirname)
 
     # Should be /staging_directory/target_name/aligned/
-    target = os.path.dirname(fragment_abs_dirname)
+    # target = os.path.dirname(fragment_abs_dirname)
 
     # Should be prefix of ligand_name e.g. 70x-x0001_0A would be 70x-x0001
     crystal_name = ligand_name.rsplit('_', 1)[0]
 
     # Get or Create FragTarget
-    frag_target, created = models.FragalysisTarget.objects.get_or_create(target=target_name,
-                                                                         staging_root=staging_directory,
-                                                                         input_root=input_directory)
-    # Frag Target information is edited post-pipeline?
-    ligand_props = {
-        'ligand': ligand_name,
-        'fragalysis_target': frag_target,
-        'crystallographic_bound': os.path.join(target, ligand_name, '_bound.pdb'),
-        'lig_mol_file': os.path.join(target, ligand_name, '.mol'),
-        'apo_pdb': os.path.join(target, ligand_name, '_apo.pdb'),
-        'bound_pdb': os.path.join(target, ligand_name, '_bound.pdb'),
-        'smiles_file': os.path.join(target, ligand_name, '_smiles.txt'),
-        'desolvated_pdb': os.path.join(target, ligand_name, '_apo-desolv.pdb'),
-        'solvated_pdb': os.path.join(target, ligand_name, '_apo-solv.pdb'),
-        'pandda_event': os.path.join(target, ligand_name, '_event_0.ccp4'),
-        'two_fofc': os.path.join(target, ligand_name, '_2fofc.map'),
-        'fofc': os.path.join(target, ligand_name, '_fofc.map'),
-        'modification_date': misc_functions.get_mod_date(os.path.join(target, ligand_name, '.mol'))
-    }
+    frag_target, created = models.FragalysisTarget.objects.get_or_create(
+        target=target_name,
+        staging_root=staging_directory,
+        input_root=input_directory
+    )
 
+    mod_date = misc_functions.get_mod_date(os.path.join(fragment_abs_dirname, f'{ligand_name}.mol'))
+    if mod_date is 'None':
+        mod_date = 0
+    # Frag Target information is edited post-pipeline?
+    # Should test all paths to makesure they exist otherwise set to None?
+    ligand_props = {
+        'ligand_name': ligand_name,
+        'fragalysis_target': frag_target,
+        'crystallographic_bound': os.path.join(fragment_abs_dirname, f'{ligand_name}_bound.pdb'),
+        'lig_mol_file': os.path.join(fragment_abs_dirname, f'{ligand_name}.mol'),
+        'apo_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo.pdb'),
+        'bound_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}.pdb'),
+        'smiles_file': os.path.join(fragment_abs_dirname, f'{ligand_name}_smiles.txt'),
+        'desolvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-desolv.pdb'),
+        'solvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-solv.pdb'),
+        'pandda_event': os.path.join(fragment_abs_dirname, f'{ligand_name}_event_0.ccp4'),
+        'two_fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_2fofc.map'),
+        'fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_fofc.map'),
+        'modification_date': int(mod_date)
+    }
     try:
-        frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name,
+        frag_ligand = models.FragalysisLigand.objects.get(ligand_name=ligand_name,
                                                           fragalysis_target=frag_target)
         for key, value in ligand_props.items():
+            print(key)
+            print(value)
             setattr(frag_ligand, key, value)
+
         frag_ligand.save()
     except FragalysisLigand.DoesNotExist:
+        print('Creating Fragalysis Ligand')
+        print(ligand_props)
         frag_ligand = models.FragalysisLigand.objects.create(**ligand_props)  # Does this EVEN work?
         frag_ligand.save()
 
     # Bonza, now link frag_ligand to ligand table for internal stuff.
     try:
         crys = models.Crystal.objects.get(crystal_name=crystal_name)
-        ligand_entry, created = models.Ligand.objects.get_or_create(fragalyis_ligand=frag_ligand,
-                                                                    crystal=crys,
-                                                                    target=crys.target,
-                                                                    compound=crys.compound)
+        ligand_entry, created = models.Ligand.objects.get_or_create(
+            fragalyis_ligand=frag_ligand,
+            crystal=crys,
+            target=crys.target,
+            compound=crys.compound)
+        if created:
+            print('Created Ligand Entry!')
     except Crystal.DoesNotExist:
+        print(f'No base Crystal entry for {ligand_name}, skipping!')
         pass
