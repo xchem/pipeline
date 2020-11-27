@@ -80,13 +80,13 @@ def compare_mod_date(molfile):
     target = ligand_name.rsplit('_', 1)[0]
     try:
         frag_target = models.FragalysisTarget.objects.get(target=target)
-    except FragalysisTarget.DoesNotExist:
+    except models.FragalysisTarget.DoesNotExist:
         print(f'{target} is a new Fragalysis Target')
         return True
 
     try:
         frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name, fragalysis_target=frag_target)
-    except FragalysisLigand.DoesNotExist:
+    except models.FragalysisLigand.DoesNotExist:
         print(f'{ligand_name} is a new Ligand for {target}')
         return True
 
@@ -144,7 +144,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
             setattr(frag_ligand, key, value)
 
         frag_ligand.save()
-    except FragalysisLigand.DoesNotExist:
+    except models.FragalysisLigand.DoesNotExist:
         print('Creating Fragalysis Ligand')
         print(ligand_props)
         frag_ligand = models.FragalysisLigand.objects.create(**ligand_props)  # Does this EVEN work?
@@ -160,6 +160,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
             compound=crys.compound)
         if created:
             print('Created Ligand Entry!')
-    except Crystal.DoesNotExist:
+    except models.Crystal.DoesNotExist:
         print(f'No base Crystal entry for {ligand_name}, skipping!')
         pass
