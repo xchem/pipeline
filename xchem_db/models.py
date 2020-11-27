@@ -395,7 +395,7 @@ class PanddaEventStats(models.Model):
 
 
 class MiscFiles(models.Model):
-    file = models.FileField()
+    file = models.FileField(max_length=500)
     description = models.TextField()
 
     class Meta:
@@ -407,10 +407,10 @@ class MiscFiles(models.Model):
 class FragalysisTarget(models.Model):
     open = models.NullBooleanField()  # Later versions of django use BooleanField(null=True)
     target = models.CharField(max_length=255)
-    metadata_file = models.FileField(blank=True)
+    metadata_file = models.FileField(blank=True,max_length=500)
     input_root = models.TextField()
     staging_root = models.TextField()
-    biomol = models.FileField(blank=True)
+    biomol = models.FileField(blank=True, max_length=500)
     additional_files = models.ManyToManyField(MiscFiles)
 
     class Meta:
@@ -422,16 +422,16 @@ class FragalysisTarget(models.Model):
 class FragalysisLigand(models.Model):
     ligand_name = models.CharField(max_length=255)
     fragalysis_target = models.ForeignKey(FragalysisTarget, on_delete=models.CASCADE)
-    crystallographic_bound = models.FileField()
-    lig_mol_file = models.FileField()
-    apo_pdb = models.FileField()
-    bound_pdb = models.FileField()
-    smiles_file = models.FileField()
-    desolvated_pdb = models.FileField()
-    solvated_pdb = models.FileField()
-    pandda_event = models.FileField(blank=True)
-    two_fofc = models.FileField(blank=True)
-    fofc = models.FileField(blank=True)
+    crystallographic_bound = models.FileField(max_length=500)
+    lig_mol_file = models.FileField(max_length=500)
+    apo_pdb = models.FileField(max_length=500)
+    bound_pdb = models.FileField(max_length=500)
+    smiles_file = models.FileField(max_length=500)
+    desolvated_pdb = models.FileField(max_length=500)
+    solvated_pdb = models.FileField(max_length=500)
+    pandda_event = models.FileField(blank=True,max_length=500)
+    two_fofc = models.FileField(blank=True,max_length=500)
+    fofc = models.FileField(blank=True,max_length=500)
     modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
