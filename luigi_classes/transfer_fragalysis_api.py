@@ -2,14 +2,14 @@ import glob
 
 from functions import misc_functions
 from setup_django import setup_django
-from xchem_db import models
 
 setup_django()
+
+from xchem_db import models
 
 import datetime
 import luigi
 
-from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
 
