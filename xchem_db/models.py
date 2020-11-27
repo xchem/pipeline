@@ -407,10 +407,10 @@ class MiscFiles(models.Model):
 class FragalysisTarget(models.Model):
     open = models.NullBooleanField()  # Later versions of django use BooleanField(null=True)
     target = models.CharField(max_length=255)
-    metadata_file = models.FileField()
+    metadata_file = models.FileField(blank=True)
     input_root = models.TextField()
     staging_root = models.TextField()
-    biomol = models.FileField()
+    biomol = models.FileField(blank=True)
     additional_files = models.ManyToManyField(MiscFiles)
 
     class Meta:
@@ -429,9 +429,9 @@ class FragalysisLigand(models.Model):
     smiles_file = models.FileField()
     desolvated_pdb = models.FileField()
     solvated_pdb = models.FileField()
-    pandda_event = models.FileField()
-    two_fofc = models.FileField()
-    fofc = models.FileField()
+    pandda_event = models.FileField(blank=True)
+    two_fofc = models.FileField(blank=True)
+    fofc = models.FileField(blank=True)
     modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
@@ -500,9 +500,9 @@ class BadAtoms(models.Model):
 class MetaData(models.Model):
     Ligand_name = models.ForeignKey(FragalysisLigand, on_delete=models.CASCADE)
     Site_Label = models.CharField(blank=False, null=False, max_length=255)
-    new_smiles = models.TextField()
-    alternate_name = models.CharField(max_length=255)
-    pdb_id = models.CharField(max_length=255)
+    new_smiles = models.TextField(blank=True)
+    alternate_name = models.CharField(max_length=255, blank=True)
+    pdb_id = models.CharField(max_length=255, blank=True)
     fragalysis_name = models.CharField(max_length=255, unique=True)
     original_name = models.CharField(max_length=255)
 
