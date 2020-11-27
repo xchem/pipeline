@@ -15,7 +15,7 @@ from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets, BatchCutMaps
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
-
+from luigi_classes.transfer_fragalysis_api import BatchTranslateFragalysisAPIOutput
 import os
 import datetime
 import glob
