@@ -118,6 +118,19 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     mod_date = misc_functions.get_mod_date(os.path.join(fragment_abs_dirname, f'{ligand_name}.mol'))
     if mod_date is 'None':
         mod_date = 0
+        
+    pandda_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_event_0.ccp4')
+    if not os.path.exists(pandda_map_path):
+        pandda_map_path = ""
+    
+    twofofc_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_2fofc.map')
+    if not os.path.exists(twofofc_map_path):
+        twofofc_map_path = ""
+    
+    fofc_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_fofc.map')
+    if not os.path.exists(fofc_map_path):
+        fofc_map_path = ""
+    
     # Frag Target information is edited post-pipeline?
     # Should test all paths to makesure they exist otherwise set to None?
     ligand_props = {
@@ -130,9 +143,9 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         'smiles_file': os.path.join(fragment_abs_dirname, f'{ligand_name}_smiles.txt'),
         'desolvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-desolv.pdb'),
         'solvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-solv.pdb'),
-        'pandda_event': os.path.join(fragment_abs_dirname, f'{ligand_name}_event_0.ccp4'),
-        'two_fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_2fofc.map'),
-        'fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_fofc.map'),
+        'pandda_event': pandda_map_path,
+        'two_fofc': twofofc_map_path,
+        'fofc': fofc_map_path,
         'modification_date': int(mod_date)
     }
     try:
