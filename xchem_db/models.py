@@ -405,7 +405,7 @@ class MiscFiles(models.Model):
 
 
 class FragalysisTarget(models.Model):
-    open = models.NullBooleanField()  # Later versions of django use BooleanField(null=True)
+    open = models.BooleanField()
     target = models.CharField(max_length=255)
     metadata_file = models.FileField(blank=True,max_length=500)
     input_root = models.TextField()
