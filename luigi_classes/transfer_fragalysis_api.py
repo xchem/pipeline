@@ -109,11 +109,16 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     crystal_name = ligand_name.rsplit('_', 1)[0]
 
     # Get or Create FragTarget
-    frag_target, created = models.FragalysisTarget.objects.get_or_create(
-        target=target_name,
-        staging_root=staging_directory,
-        input_root=input_directory
-    )
+    try:
+        frag_target = models.FragalysisTarget.objects.get(target=target_name)
+    except models.FragalysisTarget.DoesNotExist:
+        frag_target = models.FragalysisTarget.objects.create(
+            open=true,
+            target=target_name,
+            staging_root=staging_directory,
+            input_root=input_directory
+        )
+        frag_target.save()
 
     mod_date = misc_functions.get_mod_date(os.path.join(fragment_abs_dirname, f'{ligand_name}.mol'))
     if mod_date is 'None':
