@@ -1,16 +1,16 @@
 import glob
-import os
 
 from functions import misc_functions
 from setup_django import setup_django
+from xchem_db import models
 
 setup_django()
 
-from xchem_db import models
-
 import datetime
 import luigi
+import re
 
+from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
 
@@ -65,8 +65,8 @@ class TranslateFragalysisAPIOutput(luigi.Task):
         # Ensure to only run if data is updated???
         Translate_Files(fragment_abs_dirname=self.target,
                         target_name=target_name,
-                        staging_directory=os.path.join(self.staging_directory, os.path.basename(self.target)),
-                        input_directory=os.path.join(self.input_directory, os.path.basename(self.target))
+                        staging_directory=os.path.join(self.staging_directory, target_name),
+                        input_directory=os.path.join(self.input_directory, target_name)
                         )
 
 
@@ -80,13 +80,13 @@ def compare_mod_date(molfile):
     target = ligand_name.rsplit('_', 1)[0]
     try:
         frag_target = models.FragalysisTarget.objects.get(target=target)
-    except models.FragalysisTarget.DoesNotExist:
+    except FragalysisTarget.DoesNotExist:
         print(f'{target} is a new Fragalysis Target')
         return True
 
     try:
         frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name, fragalysis_target=frag_target)
-    except models.FragalysisLigand.DoesNotExist:
+    except FragalysisLigand.DoesNotExist:
         print(f'{ligand_name} is a new Ligand for {target}')
         return True
 
@@ -118,19 +118,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     mod_date = misc_functions.get_mod_date(os.path.join(fragment_abs_dirname, f'{ligand_name}.mol'))
     if mod_date is 'None':
         mod_date = 0
-        
-    pandda_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_event_0.ccp4')
-    if not os.path.exists(pandda_map_path):
-        pandda_map_path = ""
-    
-    twofofc_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_2fofc.map')
-    if not os.path.exists(twofofc_map_path):
-        twofofc_map_path = ""
-    
-    fofc_map_path = os.path.join(fragment_abs_dirname, f'{ligand_name}_fofc.map')
-    if not os.path.exists(fofc_map_path):
-        fofc_map_path = ""
-    
     # Frag Target information is edited post-pipeline?
     # Should test all paths to makesure they exist otherwise set to None?
     ligand_props = {
@@ -143,9 +130,9 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         'smiles_file': os.path.join(fragment_abs_dirname, f'{ligand_name}_smiles.txt'),
         'desolvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-desolv.pdb'),
         'solvated_pdb': os.path.join(fragment_abs_dirname, f'{ligand_name}_apo-solv.pdb'),
-        'pandda_event': pandda_map_path,
-        'two_fofc': twofofc_map_path,
-        'fofc': fofc_map_path,
+        'pandda_event': os.path.join(fragment_abs_dirname, f'{ligand_name}_event_0.ccp4'),
+        'two_fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_2fofc.map'),
+        'fofc': os.path.join(fragment_abs_dirname, f'{ligand_name}_fofc.map'),
         'modification_date': int(mod_date)
     }
     try:
@@ -157,22 +144,40 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
             setattr(frag_ligand, key, value)
 
         frag_ligand.save()
-    except models.FragalysisLigand.DoesNotExist:
+    except FragalysisLigand.DoesNotExist:
         print('Creating Fragalysis Ligand')
         print(ligand_props)
         frag_ligand = models.FragalysisLigand.objects.create(**ligand_props)  # Does this EVEN work?
         frag_ligand.save()
 
     # Bonza, now link frag_ligand to ligand table for internal stuff.
-    try:
-        crys = models.Crystal.objects.get(crystal_name=crystal_name)
+    symlink = os.path.join(input_directory, f'{crystal_name}.pdb')
+    path = os.readlink(symlink)
+    visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', path)[0]
+    crys = models.Crystal.objects.filter(crystal_name=crystal_name).filter(visit__visit=visit)  # This should only return one thing...
+    if len(crys) > 1:
+        try:
+            raise Exception(ligand_name, symlink, crystal_name, visit)
+        except Exception as e:
+            
+            bad_ligname, bad_symlink, bad_crystal_name, bad_visit, bad_crys = e.args
+            print(bad_ligname)
+            print(bad_symlink)
+            print(bad_crystal_name)
+            print(bad_visit)
+            print(bad_crys)
+            print(bad_crys.values())
+
+    elif len(crys) == 1:
+        crystal = crys[0]
         ligand_entry, created = models.Ligand.objects.get_or_create(
             fragalysis_ligand=frag_ligand,
-            crystal=crys,
-            target=crys.target,
-            compound=crys.compound)
+            crystal=crystal,
+            target=crystal.target,
+            compound=crystal.compound
+        )
         if created:
-            print('Created Ligand Entry!')
-    except models.Crystal.DoesNotExist:
-        print(f'No base Crystal entry for {ligand_name}, skipping!')
-        pass
+            print('Created New Ligand Entry!')
+    else:
+        print(f'No base Crystal entry for {ligand_name}, will not be linked')
+
