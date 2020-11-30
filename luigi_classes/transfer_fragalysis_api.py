@@ -60,7 +60,7 @@ class TranslateFragalysisAPIOutput(luigi.Task):
                                                   os.path.basename(self.target)) + '.done')))
 
     def run(self):
-        target_name = os.path.dirname(os.path.dirname(self.target))
+        target_name = os.path.basename(os.path.dirname(self.target))
         # Do each file one at a time!
         # Ensure to only run if data is updated???
         Translate_Files(fragment_abs_dirname=self.target,
