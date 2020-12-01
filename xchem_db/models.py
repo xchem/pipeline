@@ -407,7 +407,7 @@ class MiscFiles(models.Model):
 class FragalysisTarget(models.Model):
     open = models.BooleanField()
     target = models.CharField(max_length=255)
-    metadata_file = models.FileField(blank=True,max_length=500)
+    metadata_file = models.FileField(blank=True, max_length=500)
     input_root = models.TextField()
     staging_root = models.TextField()
     biomol = models.FileField(blank=True, max_length=500)
@@ -429,9 +429,9 @@ class FragalysisLigand(models.Model):
     smiles_file = models.FileField(max_length=500)
     desolvated_pdb = models.FileField(max_length=500)
     solvated_pdb = models.FileField(max_length=500)
-    pandda_event = models.FileField(blank=True,max_length=500)
-    two_fofc = models.FileField(blank=True,max_length=500)
-    fofc = models.FileField(blank=True,max_length=500)
+    pandda_event = models.FileField(blank=True, max_length=500)
+    two_fofc = models.FileField(blank=True, max_length=500)
+    fofc = models.FileField(blank=True, max_length=500)
     modification_date = models.BigIntegerField(blank=False, null=False)
 
     class Meta:
