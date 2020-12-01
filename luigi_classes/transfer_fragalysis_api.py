@@ -8,8 +8,10 @@ setup_django()
 import datetime
 import luigi
 import re
+import os
 
-from xchem_db.models import *
+from xchem_db import models
+from django.core.exceptions import ObjectDoesNotExist
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
 
@@ -28,8 +30,8 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
         staging_folders = [x[0] for x in os.walk(self.staging_directory) if 'aligned' in x[0]]
         folders_containing_mols = [x for x in staging_folders if len(glob.glob(os.path.join(x, '*.mol'))) > 0]
         # Check Modification date to fire off!!
-        #return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
-        return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols]  # if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
+        return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
+        #return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols]  # if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -60,7 +62,8 @@ class TranslateFragalysisAPIOutput(luigi.Task):
                                                   os.path.basename(self.target)) + '.done')))
 
     def run(self):
-        target_name = os.path.basename(os.path.dirname(self.target))
+        split = self.target.split('/')
+        target_name = split[split.index('aligned') - 1]
         # Do each file one at a time!
         # Ensure to only run if data is updated???
         Translate_Files(fragment_abs_dirname=self.target,
@@ -68,6 +71,8 @@ class TranslateFragalysisAPIOutput(luigi.Task):
                         staging_directory=os.path.join(self.staging_directory, target_name),
                         input_directory=os.path.join(self.input_directory, target_name)
                         )
+        with self.output().open('w') as f:
+            f.write('')
 
 
 def compare_mod_date(molfile):
@@ -113,7 +118,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
         frag_target = models.FragalysisTarget.objects.create(
-            open=true,
+            open=True,
             target=target_name,
             staging_root=staging_directory,
             input_root=input_directory
@@ -157,14 +162,18 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
 
     # Bonza, now link frag_ligand to ligand table for internal stuff.
     symlink = os.path.join(input_directory, f'{crystal_name}.pdb')
-    path = os.readlink(symlink)
+    try:
+        path = os.readlink(symlink)
+    except OSError:
+        # Exit out
+        print('Ligand is directly deposited into input directory, no known reference crystal')
+        return None
     visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', path)[0]
     crys = models.Crystal.objects.filter(crystal_name=crystal_name).filter(visit__visit=visit)  # This should only return one thing...
     if len(crys) > 1:
         try:
-            raise Exception(ligand_name, symlink, crystal_name, visit)
+            raise Exception(ligand_name, symlink, crystal_name, visit, crys)
         except Exception as e:
-            
             bad_ligname, bad_symlink, bad_crystal_name, bad_visit, bad_crys = e.args
             print(bad_ligname)
             print(bad_symlink)
