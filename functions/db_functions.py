@@ -421,8 +421,16 @@ def transfer_table(translate_dict, filename, model):
             # find relevant entries for foreign keys and set as value - crystal names and proteins
 
             if key == 'crystal_name' and model != models.Crystal:
-                d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
-                    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
+                # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
+                #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
+                d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
+                # This should return one thing!
+                # Then update the compound based on the thingy?
+                compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=compound_smiles)
+
+                if is_new:
+                    d[key].compound = compound_obj
+                    d[key].save()
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
