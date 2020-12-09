@@ -423,14 +423,20 @@ def transfer_table(translate_dict, filename, model):
             if key == 'crystal_name' and model != models.Crystal:
                 # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
                 #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
-                d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
-                # This should return one thing!
-                # Then update the compound based on the thingy?
                 compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=compound_smiles)
-
-                if is_new:
+                filter_set = models.Crystal.objects.filter(crystal_name=d[key],
+                                                           visit=models.SoakdbFiles.objects.get(filename=filename),
+                                                           compound=compound_obj)
+                if len(filter_set) == 0:
+                    d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
                     d[key].compound = compound_obj
                     d[key].save()
+                elif len(filter_set) == 1:
+                    d[key] = filter_set[0]
+                else:
+                    print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
+                    raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
+
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
