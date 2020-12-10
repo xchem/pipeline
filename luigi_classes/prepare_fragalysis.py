@@ -69,104 +69,103 @@ class CreateSymbolicLinks(luigi.Task):
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
+    outpath = os.path.join(input_directory, crystal.crystal_name.target.target_name, str(crystal.crystal_name.crystal_name + '.pdb'))
+
     def requires(self):
         # Ensure that this task only runs IF the sdb file has been updated otherwise no need right?
         return None
 
     def output(self):
-        # Change this to create a log entry?
-        pth = os.path.join(self.input_directory,
-                           self.crystal.crystal_name.target.target_name,
-                           str(self.crystal.crystal_name.crystal_name + '.pdb'))
-        return luigi.LocalTarget(pth)
+        # Change this to create a log entry? # Is it not running because of this?
+        #pth = os.path.join(self.input_directory,
+        #                   self.crystal.crystal_name.target.target_name,
+        #                   str(self.crystal.crystal_name.crystal_name + '.pdb'))
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, str('symboliclinks/transfers_' + str(self.crystal.crystal_name.crystal_name) + str(self.date) + '.done')))
+        #return luigi.LocalTarget(pth)
 
     def run(self):
         try:
-            if not os.path.exists(os.readlink(self.output().path)):
-                os.unlink(self.output().path)
+            if not os.path.exists(os.readlink(self.outpath)):
+                os.unlink(self.outpath)
         except FileNotFoundError:
             pass
 
-        if not os.path.isdir('/'.join(self.output().path.split('/')[:-1])):
-            os.makedirs('/'.join(self.output().path.split('/')[:-1]))
+        if not os.path.isdir('/'.join(self.outpath.split('/')[:-1])):
+            os.makedirs('/'.join(self.outpath.split('/')[:-1]))
 
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
-
+        cutmaps = True
         if file_obj.bound_conf:
             try:
-                if os.path.exists(self.output().path):
-                    os.unlink(self.output().path)
-                    #  Make sure cutting works before we get rid of the other files??
-                    #  base = self.output().path.replace('.pdb', '')
-                    #  files = glob.glob(f'{base}*')
-                    #  [os.unlink(x) for x in files]
+                if os.path.exists(self.outpath):
+                    old = get_mod_date(get_filepath_of_potential_symlink(self.outpath))
+                    new = get_mod_date(file_obj.bound_conf)
+                    if int(new) > int(old):
+                        # Only do things if the new bound_conf is newer than old symbolic link?
+                        os.unlink(self.outpath)
+                        #  Make sure cutting works before we get rid of the other files??
+                        base = self.outpath.replace('.pdb', '')
+                        files = glob.glob(f'{base}*')
+                        [os.unlink(x) for x in files]
+                    else:
+                        cutmaps = False
 
-                os.symlink(file_obj.bound_conf, self.output().path)
-                # Try to create symlinks for the eventmap, 2fofc and fofc
-                # Get root of file_obj.bound_conf
-                bcdir = os.path.dirname(file_obj.bound_conf)
-                print(bcdir)
-                # Check if this is the correct directory (most likely not)
-                fofc = glob.glob(bcdir+'/fofc.map')
-                if len(fofc) < 1:
-                    # go one deeper!
-                    bcdir = os.path.dirname(bcdir)
+                os.symlink(file_obj.bound_conf, self.outpath)
+                if cutmaps:
+                    # Try to create symlinks for the eventmap, 2fofc and fofc
+                    # Get root of file_obj.bound_conf
+                    bcdir = os.path.dirname(file_obj.bound_conf)
+                    # Check if this is the correct directory (most likely not)
+                    fofc = glob.glob(bcdir+'/fofc.map')
+                    if len(fofc) < 1:
+                        # go one deeper!
+                        bcdir = os.path.dirname(bcdir)
+                    # Get the files
+                    fofc = glob.glob(bcdir + '/fofc.map')
+                    fofc2 = glob.glob(bcdir + '/2fofc.map')
+                    event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
+                    fofc_pth = self.outpath.replace('.pdb', '_fofc.map')
+                    fofc2_pth = self.outpath.replace('.pdb', '_2fofc.map')
 
-                # Get the files
-                fofc = glob.glob(bcdir + '/fofc.map')
-                print(fofc)
-                fofc2 = glob.glob(bcdir + '/2fofc.map')
-                print(fofc2)
-                event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
-                print(event_maps)
-                fofc_pth = self.output().path.replace('.pdb', '_fofc.map')
-                print(fofc_pth)
-                fofc2_pth = self.output().path.replace('.pdb', '_2fofc.map')
-                print(fofc2_pth)
-
-                # Assumption only one file to use....
-                if len(fofc) > 0:
-                    mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                        border %s
-                        end
-                    eof
-                    ''' % (fofc[0], fofc_pth, self.output().path, str(0))
-                    print(mapmask)
-                    proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                          executable='/bin/bash')
-
-                if len(fofc2) > 0:
-                    mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                        border %s
-                        end
-                    eof
-                    ''' % (fofc2[0], fofc2_pth, self.output().path, str(0))
-                    print(mapmask)
-                    proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                          executable='/bin/bash')
-
-                # probably should use enumerate
-                if len(event_maps) > 0:
-                    event_num = 0
-                    for i in event_maps:
-                        fn = self.output().path.replace('.pdb', f'_event_{event_num}.ccp4')
+                    # Assumption only one file to use....
+                    if len(fofc) > 0:
                         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
                             border %s
                             end
                         eof
-                        ''' % (i, fn, self.output().path, str(0))
-                        print(mapmask)
+                        ''' % (fofc[0], fofc_pth, self.outpath, str(0))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                              executable='/bin/bash')
-                        event_num += 1
+                                            executable='/bin/bash')
+                    if len(fofc2) > 0:
+                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                            border %s
+                            end
+                        eof
+                        ''' % (fofc2[0], fofc2_pth, self.outpath, str(0))
+                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                            executable='/bin/bash')
+
+                    # probably should use enumerate
+                    if len(event_maps) > 0:
+                        event_num = 0
+                        for i in event_maps:
+                            fn = self.output().path.replace('.pdb', f'_event_{event_num}.ccp4')
+                            mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                                border %s
+                                end
+                            eof
+                            ''' % (i, fn, self.outpath, str(0))
+                            proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                                executable='/bin/bash')
+                            event_num += 1
 
                 if self.prod_smiles:
                     smi = self.prod_smiles
                 elif self.smiles:
                     smi = self.smiles
                 #                 if self.smiles:
-                smi_pth = self.output().path.replace('.pdb', '_smiles.txt')
+                smi_pth = self.self.outpath.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
                 #  f.close() should delete.
@@ -176,6 +175,9 @@ class CreateSymbolicLinks(luigi.Task):
         else:
             self.crystal.outcome = 3
             self.crystal.save()
+
+        with self.output().open('w') as f:
+            f.write('')
 
 
 class BatchAlignTargets(luigi.Task):
@@ -307,10 +309,9 @@ class BatchCutMaps(luigi.Task):
     date = luigi.Parameter(default=datetime.datetime.now())
 
     def requires(self):
-        stagingfolders = glob.glob(f'{self.staging_directory}*')
+        stagingfolders = glob.glob(os.path.join(self.staging_directory, '*'))
         stagingfolders = [x for x in stagingfolders if 'tmp' not in x]
         stagingfolders = [x for x in stagingfolders if 'mono' not in x]
-        print(stagingfolders)
         return [CutMaps(target=target) for target in stagingfolders]
 
     def output(self):
