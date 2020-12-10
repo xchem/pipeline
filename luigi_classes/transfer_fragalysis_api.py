@@ -77,7 +77,7 @@ class TranslateFragalysisAPIOutput(luigi.Task):
 
 def compare_mod_date(molfile):
     new_date = misc_functions.get_mod_date(molfile)
-    if new_date is None:
+    if new_date is 'None':
         # Cannot resolve mod date, do not process!
         return False
 

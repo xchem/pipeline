@@ -97,3 +97,13 @@ def antechamber_mol2(rd_mol, input, output):
     out = out.decode('ascii')
 
     return out
+
+
+def get_filepath_of_potential_symlink(file):
+    try:
+        path = os.readlink(file)
+    except OSError:
+        path = file
+
+    return path
+

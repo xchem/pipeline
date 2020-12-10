@@ -2,6 +2,7 @@ import datetime
 import subprocess
 import uuid
 
+from functions.misc_functions import get_mod_date, get_filepath_of_potential_symlink
 from setup_django import setup_django
 
 setup_django()
@@ -11,18 +12,12 @@ import glob
 import os
 from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
-from luigi_classes.transfer_soakdb import StartTransfers
+from luigi_classes.transfer_soakdb import StartTransfers, misc_functions
 from utils.custom_output_targets import DjangoTaskTarget
 from utils.refinement import RefinementObjectFiles
 
 
 # from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
-
-
-# Use this to generate fragalysis input + ligand stuff
-# 1) After data is in XCDB, take all 4-6 structures and run them through fragalysis api outputting to staging/proteinname
-# 2) Scour the staging directories for filenames, creating ligand and meta table entries with them. 
-# 3) Cry
 
 class BatchCreateSymbolicLinks(luigi.Task):
     '''
@@ -100,6 +95,13 @@ class CreateSymbolicLinks(luigi.Task):
 
         if file_obj.bound_conf:
             try:
+                if os.path.exists(self.output().path):
+                    os.unlink(self.output().path)
+                    #  Make sure cutting works before we get rid of the other files??
+                    #  base = self.output().path.replace('.pdb', '')
+                    #  files = glob.glob(f'{base}*')
+                    #  [os.unlink(x) for x in files]
+
                 os.symlink(file_obj.bound_conf, self.output().path)
                 # Try to create symlinks for the eventmap, 2fofc and fofc
                 # Get root of file_obj.bound_conf
@@ -116,7 +118,7 @@ class CreateSymbolicLinks(luigi.Task):
                 print(fofc)
                 fofc2 = glob.glob(bcdir + '/2fofc.map')
                 print(fofc2)
-                event_maps = glob.glob(bcdir + '/*event*native*.ccp4') # nice doesn't capture all of it though...
+                event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
                 print(event_maps)
                 fofc_pth = self.output().path.replace('.pdb', '_fofc.map')
                 print(fofc_pth)
@@ -169,7 +171,6 @@ class CreateSymbolicLinks(luigi.Task):
                     f.write(str(smi))
                 #  f.close() should delete.
 
-
             except:
                 raise Exception(file_obj.bound_conf)
         else:
@@ -213,13 +214,32 @@ class DecideAlignTarget(luigi.Task):
             # If staging direct with name does not exist do a big alignment
             return AlignTarget(target=self.target)
         else:
-            # If it does exist, find .pdbs that haven't aligned and try to align them.
+            # If the folder exists:
+            # Check if the file exists
+            # If the file exists, check the date of the file to whats in the db!
             aligned_dir = os.path.join(staging_dir, 'aligned')
             infile = glob.glob(os.path.join(self.target, '*.pdb'))
-            infile_bases = set([os.path.basename(x).replace('.pdb', '') for x in infile])
-            staging_files = glob.glob(os.path.join(aligned_dir, '*'))
-            staging_bases = set([os.path.basename(x).rsplit('_', 1)[0] for x in staging_files])
-            to_align = list(infile_bases - staging_bases)
+            infile_bases = [os.path.basename(x).replace('.pdb', '') for x in infile]
+            staging_files = glob.glob(os.path.join(aligned_dir, '*', '*.mol'))
+            staging_bases = [os.path.basename(x).rsplit('_', 1)[0] for x in staging_files]
+            not_aligned = list(set(infile_bases) - set(staging_bases))
+            check_for_updates = list(set(infile_bases) - set(not_aligned))
+            updated = []
+            for i in check_for_updates:
+                infile_date = [get_mod_date(x) for x in infile if f'{i}.pdb' in x]
+                if len(infile_date) == 1:
+                    infile_date = infile_date[0]
+                else:
+                    raise Exception('Multiple input pdbs with the same name? Somehow?')
+                staging_dates = [get_mod_date(get_filepath_of_potential_symlink(x)) for x in staging_files if f'{i}' in x]
+                diffs = [int(infile_date) > int(y) for y in staging_dates]
+                print(infile_date)
+                print(staging_dates)
+                print(diffs)
+                if any(diffs):
+                    updated.append(i)
+
+            to_align = list(set(not_aligned).union(set(updated)))
             return [AlignTargetToReference(target=os.path.join(self.input_directory, base, f'{f}.pdb')) for f in to_align]
 
     def output(self):
