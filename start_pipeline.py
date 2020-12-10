@@ -93,14 +93,15 @@ class PostPipeClean(luigi.Task):
                                               f'pipe_run_{datetime.datetime.now().strftime("%Y%m%d%H%M")}.done'))
 
     def run(self):
-        paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 # AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 # InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
-                 os.path.join(self.log_directory, 'pipe.done')]
-
+        #  paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+        #  AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+        #  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
+        #        os.path.join(self.log_directory, 'pipe.done')]
+        paths = [x for x in glob.glob(os.path.join(self.log_directory, '*', '*')) if 'done' in x]
+        paths.extend(os.path.join(self.log_directory, 'pipe.done'))
         paths.extend(glob.glob(str(self.log_directory + '*pipe_run_*.done')))
 
         for path in paths:
