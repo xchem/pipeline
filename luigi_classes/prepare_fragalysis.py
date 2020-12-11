@@ -69,8 +69,6 @@ class CreateSymbolicLinks(luigi.Task):
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
-    outpath = os.path.join(input_directory, crystal.crystal_name.target.target_name, str(crystal.crystal_name.crystal_name + '.pdb'))
-
     def requires(self):
         # Ensure that this task only runs IF the sdb file has been updated otherwise no need right?
         return None
@@ -84,34 +82,38 @@ class CreateSymbolicLinks(luigi.Task):
         #return luigi.LocalTarget(pth)
 
     def run(self):
+
+        outpath = os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name,
+                               str(self.crystal.crystal_name.crystal_name + '.pdb'))
+
         try:
-            if not os.path.exists(os.readlink(self.outpath)):
-                os.unlink(self.outpath)
+            if not os.path.exists(os.readlink(outpath)):
+                os.unlink(outpath)
         except FileNotFoundError:
             pass
 
-        if not os.path.isdir('/'.join(self.outpath.split('/')[:-1])):
-            os.makedirs('/'.join(self.outpath.split('/')[:-1]))
+        if not os.path.isdir('/'.join(outpath.split('/')[:-1])):
+            os.makedirs('/'.join(outpath.split('/')[:-1]))
 
-        file_obj = RefinementObjectFiles(refinement_object=self.crystal)
+        file_obj = RefinementObjectFiles(refinement_object=crystal)
         file_obj.find_bound_file()
         cutmaps = True
         if file_obj.bound_conf:
             try:
-                if os.path.exists(self.outpath):
-                    old = get_mod_date(get_filepath_of_potential_symlink(self.outpath))
+                if os.path.exists(outpath):
+                    old = get_mod_date(get_filepath_of_potential_symlink(outpath))
                     new = get_mod_date(file_obj.bound_conf)
                     if int(new) > int(old):
                         # Only do things if the new bound_conf is newer than old symbolic link?
-                        os.unlink(self.outpath)
+                        os.unlink(outpath)
                         #  Make sure cutting works before we get rid of the other files??
-                        base = self.outpath.replace('.pdb', '')
+                        base = outpath.replace('.pdb', '')
                         files = glob.glob(f'{base}*')
                         [os.unlink(x) for x in files]
                     else:
                         cutmaps = False
 
-                os.symlink(file_obj.bound_conf, self.outpath)
+                os.symlink(file_obj.bound_conf, outpath)
                 if cutmaps:
                     # Try to create symlinks for the eventmap, 2fofc and fofc
                     # Get root of file_obj.bound_conf
@@ -125,8 +127,8 @@ class CreateSymbolicLinks(luigi.Task):
                     fofc = glob.glob(bcdir + '/fofc.map')
                     fofc2 = glob.glob(bcdir + '/2fofc.map')
                     event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
-                    fofc_pth = self.outpath.replace('.pdb', '_fofc.map')
-                    fofc2_pth = self.outpath.replace('.pdb', '_2fofc.map')
+                    fofc_pth = outpath.replace('.pdb', '_fofc.map')
+                    fofc2_pth = outpath.replace('.pdb', '_2fofc.map')
 
                     # Assumption only one file to use....
                     if len(fofc) > 0:
@@ -134,7 +136,7 @@ class CreateSymbolicLinks(luigi.Task):
                             border %s
                             end
                         eof
-                        ''' % (fofc[0], fofc_pth, self.outpath, str(0))
+                        ''' % (fofc[0], fofc_pth, outpath, str(0))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                             executable='/bin/bash')
                     if len(fofc2) > 0:
@@ -142,7 +144,7 @@ class CreateSymbolicLinks(luigi.Task):
                             border %s
                             end
                         eof
-                        ''' % (fofc2[0], fofc2_pth, self.outpath, str(0))
+                        ''' % (fofc2[0], fofc2_pth, outpath, str(0))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                             executable='/bin/bash')
 
@@ -150,12 +152,12 @@ class CreateSymbolicLinks(luigi.Task):
                     if len(event_maps) > 0:
                         event_num = 0
                         for i in event_maps:
-                            fn = self.output().path.replace('.pdb', f'_event_{event_num}.ccp4')
+                            fn = outpath.replace('.pdb', f'_event_{event_num}.ccp4')
                             mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
                                 border %s
                                 end
                             eof
-                            ''' % (i, fn, self.outpath, str(0))
+                            ''' % (i, fn, outpath, str(0))
                             proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                                 executable='/bin/bash')
                             event_num += 1
@@ -165,7 +167,7 @@ class CreateSymbolicLinks(luigi.Task):
                 elif self.smiles:
                     smi = self.smiles
                 #                 if self.smiles:
-                smi_pth = self.self.outpath.replace('.pdb', '_smiles.txt')
+                smi_pth = outpath.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
                 #  f.close() should delete.
@@ -351,7 +353,7 @@ class CutMaps(luigi.Task):
                     border %s
                     end
                 eof
-                ''' % (fn, fn, os.path.join(i, f"{crys}.pdb"), str(6))
+                ''' % (fn, fn, os.path.join(i, f"{crys}.pdb"), str(12))
                 print(mapmask)
                 proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                       executable='/bin/bash')

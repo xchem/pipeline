@@ -103,6 +103,7 @@ class PostPipeClean(luigi.Task):
         paths = [x for x in glob.glob(os.path.join(self.log_directory, '*', '*')) if 'done' in x]
         paths.extend(os.path.join(self.log_directory, 'pipe.done'))
         paths.extend(glob.glob(str(self.log_directory + '*pipe_run_*.done')))
+        paths = [x for x in paths if 'cut' not in x]  # I don't think I want to constantly try to cut the maps... May delete later.
 
         for path in paths:
             if os.path.isfile(path):
