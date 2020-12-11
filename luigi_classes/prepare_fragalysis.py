@@ -95,7 +95,7 @@ class CreateSymbolicLinks(luigi.Task):
         if not os.path.isdir('/'.join(outpath.split('/')[:-1])):
             os.makedirs('/'.join(outpath.split('/')[:-1]))
 
-        file_obj = RefinementObjectFiles(refinement_object=crystal)
+        file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
         cutmaps = True
         if file_obj.bound_conf:
