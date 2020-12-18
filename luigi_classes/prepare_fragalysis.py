@@ -75,11 +75,7 @@ class CreateSymbolicLinks(luigi.Task):
 
     def output(self):
         # Change this to create a log entry? # Is it not running because of this?
-        #pth = os.path.join(self.input_directory,
-        #                   self.crystal.crystal_name.target.target_name,
-        #                   str(self.crystal.crystal_name.crystal_name + '.pdb'))
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, str('symboliclinks/transfers_' + str(self.crystal.crystal_name.crystal_name) + str(self.date) + '.done')))
-        #return luigi.LocalTarget(pth)
 
     def run(self):
 
@@ -103,10 +99,8 @@ class CreateSymbolicLinks(luigi.Task):
                 if os.path.exists(outpath):
                     old = get_mod_date(get_filepath_of_potential_symlink(outpath))
                     new = get_mod_date(file_obj.bound_conf)
+                    os.unlink(outpath)
                     if int(new) > int(old):
-                        # Only do things if the new bound_conf is newer than old symbolic link?
-                        os.unlink(outpath)
-                        #  Make sure cutting works before we get rid of the other files??
                         base = outpath.replace('.pdb', '')
                         files = glob.glob(f'{base}*')
                         [os.unlink(x) for x in files]
@@ -274,11 +268,13 @@ class AlignTarget(luigi.Task):
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m')
+        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c')
         with self.output().open('w') as f:
             f.write('')
 
 class AlignTargetToReference(luigi.Task):
+    worker_timeout = 600
+    retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
@@ -297,7 +293,7 @@ class AlignTargetToReference(luigi.Task):
     def run(self):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m'
+        command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c'
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                        executable='/bin/bash')
         with self.output().open('w') as f:
