@@ -10,6 +10,8 @@ setup_django()
 import luigi
 import glob
 import os
+import shutil
+
 from xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 from luigi_classes.transfer_soakdb import StartTransfers, misc_functions
