@@ -292,6 +292,13 @@ class AlignTargetToReference(luigi.Task):
     # Clean up
     def run(self):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
+        # Clean-up tmp and mono folders if previous tasks fail?
+        tmpfolder = os.path.join(self.staging_directory, f'tmp{target_name}')
+        monofolder = os.path.join(self.staging_directory, f'mono{target_name}')
+        if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
+            shutil.rmtree(tmpfolder)
+        if os.path.exists(monofolder) and os.path.isdir(monofolder):
+            shutil.rmtree(monofolder)
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c'
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
