@@ -12,10 +12,10 @@ from sentry_sdk import configure_scope
 # from luigi_classes.transfer_proasis import InitDBEntries, UploadLeads, WriteBlackLists, UploadHits, AddProjects
 # from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
-from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets
+from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets, BatchCutMaps
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
-
+from luigi_classes.transfer_fragalysis_api import BatchTranslateFragalysisAPIOutput
 import os
 import datetime
 import glob
@@ -54,6 +54,8 @@ class StartPipeline(luigi.WrapperTask):
         yield StartTransfers()
         yield BatchCreateSymbolicLinks()
         yield BatchAlignTargets()
+        yield BatchCutMaps()
+        yield BatchTranslateFragalysisAPIOutput()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
@@ -91,15 +93,17 @@ class PostPipeClean(luigi.Task):
                                               f'pipe_run_{datetime.datetime.now().strftime("%Y%m%d%H%M")}.done'))
 
     def run(self):
-        paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 # AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
-                 # InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
-                 # WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
-                 os.path.join(self.log_directory, 'pipe.done')]
-
+        #  paths = [# TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+        #  AnnotateAllEvents(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath).output().path,
+        #  InitDBEntries(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  UploadLeads(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  UploadHits(date=self.date, hit_directory=self.hit_directory).output().path,
+        #  WriteBlackLists(date=self.date, hit_directory=self.hit_directory).output().path,
+        #        os.path.join(self.log_directory, 'pipe.done')]
+        paths = [x for x in glob.glob(os.path.join(self.log_directory, '*', '*')) if 'done' in x]
+        paths.extend(os.path.join(self.log_directory, 'pipe.done'))
         paths.extend(glob.glob(str(self.log_directory + '*pipe_run_*.done')))
+        paths = [x for x in paths if 'cut' not in x]  # I don't think I want to constantly try to cut the maps... May delete later.
 
         for path in paths:
             if os.path.isfile(path):
