@@ -1,6 +1,6 @@
 rdkit
 pandas
-luigi==2.7.5
+luigi==2.8.0
 numpy==1.14.2
 psycopg2==2.7.4
 postgresql==10.5
