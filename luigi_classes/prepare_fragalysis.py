@@ -132,7 +132,7 @@ class CreateSymbolicLinks(luigi.Task):
                             border %s
                             end
                         eof
-                        ''' % (fofc[0], fofc_pth, outpath, str(0))
+                        ''' % (fofc[0], fofc_pth, outpath, str(6))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                             executable='/bin/bash')
                     if len(fofc2) > 0:
@@ -140,7 +140,7 @@ class CreateSymbolicLinks(luigi.Task):
                             border %s
                             end
                         eof
-                        ''' % (fofc2[0], fofc2_pth, outpath, str(0))
+                        ''' % (fofc2[0], fofc2_pth, outpath, str(6))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                             executable='/bin/bash')
 
@@ -153,7 +153,7 @@ class CreateSymbolicLinks(luigi.Task):
                                 border %s
                                 end
                             eof
-                            ''' % (i, fn, outpath, str(0))
+                            ''' % (i, fn, outpath, str(6))
                             proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                                 executable='/bin/bash')
                             event_num += 1
@@ -186,7 +186,7 @@ class BatchAlignTargets(luigi.Task):
 
     def requires(self):
         # Check list of targets that have staging dirs
-        targets = [target[0] for target in os.walk(self.input_directory)]
+        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] # Blacklisting NSP15_B lol
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
 
