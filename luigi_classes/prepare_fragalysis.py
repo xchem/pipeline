@@ -186,8 +186,8 @@ class BatchAlignTargets(luigi.Task):
 
     def requires(self):
         # Check list of targets that have staging dirs
-        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] 
-        #targets = [target[0] for target in os.walk(self.input_directory) if any(blocked not in target[0] for blocked in ['PlPro', 'NSP15_B'])]
+        # This is not a good way to ignore data...
+        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
 
@@ -273,15 +273,28 @@ class AlignTarget(luigi.Task):
         target_name = self.target.rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c')
+
+        # This should work right?
+        unaligned_command = f'''
+        for i in $(ls {self.target} | grep -e '.pdb')
+        do
+        /dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target}/$i --out_dir={self.unaligned_directory} --target {target_name} -m -c -sr
+        done
+        '''
+
+        subprocess.run(unaligned_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                       executable='/bin/bash')
+
         with self.output().open('w') as f:
             f.write('')
 
 class AlignTargetToReference(luigi.Task):
-    worker_timeout = 600
+    worker_timeout = 900 #15 Minutes? Also do self-alignment??
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
@@ -305,8 +318,11 @@ class AlignTargetToReference(luigi.Task):
             shutil.rmtree(monofolder)
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c'
-        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                       executable='/bin/bash')
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+        # This should also work...
+        unaligned_command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.unaligned_directory} --target {target_name} -m -c -sr'
+        subprocess.run(unaligned_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+
         with self.output().open('w') as f:
             f.write('')
 
@@ -314,6 +330,7 @@ class AlignTargetToReference(luigi.Task):
 class BatchCutMaps(luigi.Task):
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     date = luigi.Parameter(default=datetime.datetime.now())
 
@@ -321,7 +338,15 @@ class BatchCutMaps(luigi.Task):
         stagingfolders = glob.glob(os.path.join(self.staging_directory, '*'))
         stagingfolders = [x for x in stagingfolders if 'tmp' not in x]
         stagingfolders = [x for x in stagingfolders if 'mono' not in x]
-        return [CutMaps(target=target) for target in stagingfolders]
+
+        unalignfolders = glob.glob(os.path.join(self.unaligned_directory, '*'))
+        unalignfolders = [x for x in unalignfolders if 'tmp' not in x]
+        unalignfolders = [x for x in unalignfolders if 'mono' not in x]
+
+        return [
+            [CutMaps(target=target) for target in stagingfolders],
+            [CutMaps(target=target) for target in unalignfolders]
+        ]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
