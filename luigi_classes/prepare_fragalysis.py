@@ -186,7 +186,8 @@ class BatchAlignTargets(luigi.Task):
 
     def requires(self):
         # Check list of targets that have staging dirs
-        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] # Blacklisting NSP15_B lol
+        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] 
+        #targets = [target[0] for target in os.walk(self.input_directory) if any(blocked not in target[0] for blocked in ['PlPro', 'NSP15_B'])]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
 
@@ -232,10 +233,11 @@ class DecideAlignTarget(luigi.Task):
                 else:
                     raise Exception('Multiple input pdbs with the same name? Somehow?')
                 staging_dates = [get_mod_date(get_filepath_of_potential_symlink(x)) for x in staging_files if f'{i}' in x]
-                diffs = [int(infile_date) > int(y) for y in staging_dates]
-                print(infile_date)
-                print(staging_dates)
-                print(diffs)
+                staging_dates = [y if not y == 'None' else 0 for y in staging_dates]
+                if infile_date is 'None':
+                    diffs = [True]
+                else:                
+                    diffs = [int(infile_date) > int(y) for y in staging_dates]
                 if any(diffs):
                     updated.append(i)
 
