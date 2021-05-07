@@ -186,8 +186,8 @@ class BatchAlignTargets(luigi.Task):
 
     def requires(self):
         # Check list of targets that have staging dirs
-        targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] 
-        #targets = [target[0] for target in os.walk(self.input_directory) if any(blocked not in target[0] for blocked in ['PlPro', 'NSP15_B'])]
+        #targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] 
+        targets = [target[0] for target in os.walk(self.input_directory) if all(target[0].find(blocked)==-1 for blocked in ['BKVP126', 'NSP15_B'])]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
 
@@ -277,7 +277,7 @@ class AlignTarget(luigi.Task):
             f.write('')
 
 class AlignTargetToReference(luigi.Task):
-    worker_timeout = 600
+    worker_timeout = 900
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
@@ -307,6 +307,9 @@ class AlignTargetToReference(luigi.Task):
         command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c'
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                        executable='/bin/bash')
+        # Adding unaligned bit??
+        unaligned = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory.replace('staging', 'unaligned')} --target {target_name} -m -c -sr'
+        subprocess.run(unaligned, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
         with self.output().open('w') as f:
             f.write('')
 

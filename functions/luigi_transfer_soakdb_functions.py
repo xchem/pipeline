@@ -131,7 +131,7 @@ def check_files(soak_db_filepath):
 
             # if the file has changed since the db was last updated for the entry, change status to indicate this
             try:
-                if int(current_mod_date) > int(old_mod_date):
+                if int(current_mod_date) > int(old_mod_date): # Change back to old_mod_date
                     update_status = SoakdbFiles.objects.get(id=id_number)
                     update_status.status = 1
                     update_status.save()
