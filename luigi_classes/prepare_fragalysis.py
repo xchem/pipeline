@@ -1,3 +1,12 @@
+from utils.refinement import RefinementObjectFiles
+from utils.custom_output_targets import DjangoTaskTarget
+from luigi_classes.transfer_soakdb import StartTransfers, misc_functions
+from .config_classes import SoakDBConfig, DirectoriesConfig
+from xchem_db.models import *
+import shutil
+import os
+import glob
+import luigi
 import datetime
 import subprocess
 import uuid
@@ -7,19 +16,168 @@ from setup_django import setup_django
 
 setup_django()
 
-import luigi
-import glob
-import os
-import shutil
-
-from xchem_db.models import *
-from .config_classes import SoakDBConfig, DirectoriesConfig
-from luigi_classes.transfer_soakdb import StartTransfers, misc_functions
-from utils.custom_output_targets import DjangoTaskTarget
-from utils.refinement import RefinementObjectFiles
-
 
 # from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
+
+
+#
+class BatchCreateBiomoledPDB(luigi.Task):
+    resources = {'django': 1}
+    date = luigi.DateParameter(default=datetime.datetime.now())
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    date_time = luigi.Parameter(
+        default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
+
+    filter_by = Refinement.objects.filter(
+        outcome__gte=4).filter(outcome__lte=6)
+
+    def requires(self):
+        return [CreateBiomoledPDB(crystal=crystal,
+                smiles=crystal.crystal_name.compound.smiles,
+                prod_smiles=crystal.crystal_name.product,
+                hit_directory=self.hit_directory,
+                soak_db_filepath=self.soak_db_filepath
+                                  )
+                for crystal in self.filter_by
+                ]
+
+    def output(self):
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, str('biomolpdb/transfers_' + str(self.date) + '.done')))
+
+    def run(self):
+        with self.output().open('w') as f:
+            f.write('')
+
+
+class CreateBiomoledPDB(luigi.Task):
+    ssh_command = 'ssh mly94721@ssh.diamond.ac.uk'
+    crystal = luigi.Parameter()
+    hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
+    soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
+    date = luigi.Parameter(default=datetime.datetime.now())
+    smiles = luigi.Parameter(default=None)
+    prod_smiles = luigi.Parameter(default=None)
+    log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
+
+    def requires(self):
+        # Ensure that this task only runs IF the sdb file has been updated otherwise no need right?
+        return None
+
+    def output(self):
+        # Change this to create a log entry? # Is it not running because of this?
+        return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, str('biomolpdb/transfers_' + str(self.crystal.crystal_name.crystal_name) + str(self.date) + '.done')))
+
+    def run(self):
+
+        outpath = os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name,
+                               str(self.crystal.crystal_name.crystal_name + '.pdb'))
+
+        if not os.path.isdir('/'.join(outpath.split('/')[:-1])):
+            os.makedirs('/'.join(outpath.split('/')[:-1]))
+
+        file_obj = RefinementObjectFiles(refinement_object=self.crystal)
+        file_obj.find_bound_file()
+
+        if file_obj.bound_conf:
+            try:
+                dostuff = False
+                # Check if output exists, if it is there is an update copy everything later, if not do not do anything!
+                if os.path.exists(outpath):
+                    # If output has been made, check for updates then do stuff. If new
+                    old = get_mod_date(outpath)
+                    new = get_mod_date(file_obj.bound_conf)
+                    if int(new) > int(old):
+                        os.unlink(outpath)
+                        base = outpath.replace('.pdb', '')
+                        files = glob.glob(f'{base}*')
+                        [os.unlink(x) for x in files]
+                        dostuff = True
+                    else:
+                        # Just for my sake.
+                        dostuff = False
+                else:
+                    dostuff = True
+
+                if dostuff:
+                    # biomol copy the bound_conf to outpath
+                    command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {file_obj.bound_conf} {outpath}'
+                    proc = subprocess.run(
+                        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+                    # Cut maps
+                    bcdir = os.path.dirname(file_obj.bound_conf)
+                    fofc = glob.glob(bcdir+'/fofc.map')
+                    if len(fofc) < 1:
+                        # go one step deeper?
+                        bcdir = os.path.dirname(bcdir)
+
+                    fofc = glob.glob(bcdir + '/fofc.map')
+                    fofc2 = glob.glob(bcdir + '/2fofc.map')
+                    # nice doesn't capture all of it though... This needs to be smarter!!!
+                    event_maps = glob.glob(bcdir + '/*event*native*.ccp4')
+                    fofc_pth = outpath.replace('.pdb', '_fofc.map')
+                    fofc2_pth = outpath.replace('.pdb', '_2fofc.map')
+                    # Assumption only one file to use....
+                    if len(fofc) > 0:
+                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                            border %s
+                            end
+                        eof
+                        ''' % (fofc[0], fofc_pth, outpath, str(6))
+                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                              executable='/bin/bash')
+                    if len(fofc2) > 0:
+                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                            border %s
+                            end
+                        eof
+                        ''' % (fofc2[0], fofc2_pth, outpath, str(6))
+                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                              executable='/bin/bash')
+
+                    # probably should use enumerate
+                    if len(event_maps) > 0:
+                        event_num = 0
+                        for i in event_maps:
+                            fn = outpath.replace(
+                                '.pdb', f'_event_{event_num}.ccp4')
+                            mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                                border %s
+                                end
+                            eof
+                            ''' % (i, fn, outpath, str(6))
+                            proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                                  executable='/bin/bash')
+                            event_num += 1
+
+                    if self.prod_smiles:
+                        smi = self.prod_smiles
+                    elif self.smiles:
+                        smi = self.smiles
+                    #                 if self.smiles:
+                    smi_pth = outpath.replace('.pdb', '_smiles.txt')
+                    with open(smi_pth, 'w') as f:
+                        f.write(str(smi))
+
+            except:
+                raise Exception(file_obj.bound_conf)
+        else:
+            # This causes problems though...
+            self.crystal.outcome = 3
+            self.crystal.save()
+
+        with self.output().open('w') as f:
+            f.write('')
+
 
 class BatchCreateSymbolicLinks(luigi.Task):
     '''
@@ -31,12 +189,16 @@ class BatchCreateSymbolicLinks(luigi.Task):
     date = luigi.DateParameter(default=datetime.datetime.now())
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
-    date_time = luigi.Parameter(default=datetime.datetime.now().strftime("%Y%m%d%H"))
+    date_time = luigi.Parameter(
+        default=datetime.datetime.now().strftime("%Y%m%d%H"))
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
 
-    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
+    filter_by = Refinement.objects.filter(
+        outcome__gte=4).filter(outcome__lte=6)
 
     def requires(self):
         return [
@@ -68,8 +230,10 @@ class CreateSymbolicLinks(luigi.Task):
     smiles = luigi.Parameter(default=None)
     prod_smiles = luigi.Parameter(default=None)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
 
     def requires(self):
         # Ensure that this task only runs IF the sdb file has been updated otherwise no need right?
@@ -99,7 +263,8 @@ class CreateSymbolicLinks(luigi.Task):
         if file_obj.bound_conf:
             try:
                 if os.path.exists(outpath):
-                    old = get_mod_date(get_filepath_of_potential_symlink(outpath))
+                    old = get_mod_date(
+                        get_filepath_of_potential_symlink(outpath))
                     new = get_mod_date(file_obj.bound_conf)
                     os.unlink(outpath)
                     if int(new) > int(old):
@@ -122,7 +287,8 @@ class CreateSymbolicLinks(luigi.Task):
                     # Get the files
                     fofc = glob.glob(bcdir + '/fofc.map')
                     fofc2 = glob.glob(bcdir + '/2fofc.map')
-                    event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
+                    # nice doesn't capture all of it though...
+                    event_maps = glob.glob(bcdir + '/*event*native*.ccp4')
                     fofc_pth = outpath.replace('.pdb', '_fofc.map')
                     fofc2_pth = outpath.replace('.pdb', '_2fofc.map')
 
@@ -134,7 +300,7 @@ class CreateSymbolicLinks(luigi.Task):
                         eof
                         ''' % (fofc[0], fofc_pth, outpath, str(6))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                            executable='/bin/bash')
+                                              executable='/bin/bash')
                     if len(fofc2) > 0:
                         mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
                             border %s
@@ -142,20 +308,21 @@ class CreateSymbolicLinks(luigi.Task):
                         eof
                         ''' % (fofc2[0], fofc2_pth, outpath, str(6))
                         proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                            executable='/bin/bash')
+                                              executable='/bin/bash')
 
                     # probably should use enumerate
                     if len(event_maps) > 0:
                         event_num = 0
                         for i in event_maps:
-                            fn = outpath.replace('.pdb', f'_event_{event_num}.ccp4')
+                            fn = outpath.replace(
+                                '.pdb', f'_event_{event_num}.ccp4')
                             mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
                                 border %s
                                 end
                             eof
                             ''' % (i, fn, outpath, str(6))
                             proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                                executable='/bin/bash')
+                                                  executable='/bin/bash')
                             event_num += 1
 
                 if self.prod_smiles:
@@ -180,18 +347,21 @@ class CreateSymbolicLinks(luigi.Task):
 
 class BatchAlignTargets(luigi.Task):
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
     date = luigi.Parameter(default=datetime.datetime.now())
 
     def requires(self):
         # Check list of targets that have staging dirs
-        #targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1] 
+        #targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1]
         #targets = [target[0] for target in os.walk(self.input_directory) if all(target[0].find(blocked)==-1 for blocked in ['BKVP126', 'NSP15_B'])]
-        targets = [target[0] for target in os.walk(self.input_directory) if any(target[0].find(sele)>=0 for sele in ['Mpro', 'PlPro'])]
+        targets = [target[0] for target in os.walk(self.input_directory) if any(
+            target[0].find(sele) >= 0 for sele in ['Mpro', 'PlPro'])]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
-        #return [DecideAlignTarget(target=target) for target in ['Mpro', 'PlPro']]
+        # return [DecideAlignTarget(target=target) for target in ['Mpro', 'PlPro']]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -205,8 +375,10 @@ class BatchAlignTargets(luigi.Task):
 class DecideAlignTarget(luigi.Task):
     # Target is /inputdir/targetname
     target = luigi.Parameter()
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
@@ -222,23 +394,29 @@ class DecideAlignTarget(luigi.Task):
             # If the file exists, check the date of the file to whats in the db!
             aligned_dir = os.path.join(staging_dir, 'aligned')
             infile = glob.glob(os.path.join(self.target, '*.pdb'))
-            infile_bases = [os.path.basename(x).replace('.pdb', '') for x in infile]
+            infile_bases = [os.path.basename(
+                x).replace('.pdb', '') for x in infile]
             staging_files = glob.glob(os.path.join(aligned_dir, '*', '*.mol'))
-            staging_bases = [os.path.basename(x).rsplit('_', 1)[0] for x in staging_files]
+            staging_bases = [os.path.basename(x).rsplit(
+                '_', 1)[0] for x in staging_files]
             not_aligned = list(set(infile_bases) - set(staging_bases))
             check_for_updates = list(set(infile_bases) - set(not_aligned))
             updated = []
             for i in check_for_updates:
-                infile_date = [get_mod_date(x) for x in infile if f'{i}.pdb' in x]
+                infile_date = [get_mod_date(x)
+                               for x in infile if f'{i}.pdb' in x]
                 if len(infile_date) == 1:
                     infile_date = infile_date[0]
                 else:
-                    raise Exception('Multiple input pdbs with the same name? Somehow?')
-                staging_dates = [get_mod_date(get_filepath_of_potential_symlink(x)) for x in staging_files if f'{i}' in x]
-                staging_dates = [y if not y == 'None' else 0 for y in staging_dates]
+                    raise Exception(
+                        'Multiple input pdbs with the same name? Somehow?')
+                staging_dates = [get_mod_date(get_filepath_of_potential_symlink(
+                    x)) for x in staging_files if f'{i}' in x]
+                staging_dates = [y if not y ==
+                                 'None' else 0 for y in staging_dates]
                 if infile_date is 'None':
                     diffs = [True]
-                else:                
+                else:
                     diffs = [int(infile_date) > int(y) for y in staging_dates]
                 if any(diffs):
                     updated.append(i)
@@ -259,7 +437,8 @@ class DecideAlignTarget(luigi.Task):
 class AlignTarget(luigi.Task):
     # Target is /inputdir/targetname
     target = luigi.Parameter()
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
@@ -274,16 +453,19 @@ class AlignTarget(luigi.Task):
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        os.system(f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c')
+        os.system(
+            f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c')
         with self.output().open('w') as f:
             f.write('')
+
 
 class AlignTargetToReference(luigi.Task):
     worker_timeout = 900
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
@@ -310,7 +492,7 @@ class AlignTargetToReference(luigi.Task):
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                        executable='/bin/bash')
         # Adding unaligned bit??
-        #unaligned = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory.replace('staging', 'unaligned')} --target {target_name} -m -c -sr'
+        # unaligned = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory.replace('staging', 'unaligned')} --target {target_name} -m -c -sr'
         #subprocess.run(unaligned, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
         with self.output().open('w') as f:
             f.write('')
@@ -318,8 +500,10 @@ class AlignTargetToReference(luigi.Task):
 
 class BatchCutMaps(luigi.Task):
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
-    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
+    input_directory = luigi.Parameter(
+        default=DirectoriesConfig().input_directory)
     date = luigi.Parameter(default=datetime.datetime.now())
 
     def requires(self):
@@ -339,7 +523,8 @@ class BatchCutMaps(luigi.Task):
 
 class CutMaps(luigi.Task):
     target = luigi.Parameter()
-    staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
+    staging_directory = luigi.Parameter(
+        default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
@@ -353,12 +538,14 @@ class CutMaps(luigi.Task):
 
     def run(self):
         target_name = os.path.basename(self.target)
-        targs = glob.glob(os.path.join(self.staging_directory, target_name, 'aligned', '*'))
+        targs = glob.glob(os.path.join(
+            self.staging_directory, target_name, 'aligned', '*'))
         targs = [x for x in targs if 'pdb_file_failures' not in x]
 
         for i in targs:
             crys = os.path.basename(i)
-            maps = glob.glob(os.path.join(i, '*.map')) + glob.glob(os.path.join(i, '*.ccp4'))
+            maps = glob.glob(os.path.join(i, '*.map')) + \
+                glob.glob(os.path.join(i, '*.ccp4'))
             for j in maps:
                 fn = j
                 mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
