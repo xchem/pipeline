@@ -57,9 +57,9 @@ class StartPipeline(luigi.WrapperTask):
         yield StartTransfers()
         # yield BatchCreateSymbolicLinks()
         yield BatchCreateBiomoledPDB()
-        # yield BatchAlignTargets()
+        yield BatchAlignTargets()
         # yield BatchCutMaps()
-        # yield BatchTranslateFragalysisAPIOutput()
+        yield BatchTranslateFragalysisAPIOutput()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)

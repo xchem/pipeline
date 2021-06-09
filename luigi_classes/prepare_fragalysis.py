@@ -454,7 +454,11 @@ class AlignTarget(luigi.Task):
         target_name = self.target.rsplit('/', 1)[1]
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
         os.system(
-            f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c')
+            f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/xcimporter.py --in_dir={self.target} --out_dir={self.staging_directory} --target {target_name} -rrf -c')
+        # Run ./cutmaps_target.sh
+        command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_target.sh {target_name}'
+        proc = subprocess.run(command, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
         with self.output().open('w') as f:
             f.write('')
 
@@ -488,9 +492,18 @@ class AlignTargetToReference(luigi.Task):
         if os.path.exists(monofolder) and os.path.isdir(monofolder):
             shutil.rmtree(monofolder)
         # This is NOT the way to do this Tyler. But I am a noob at python so it'll work...
-        command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -m -c'
+        command = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory} --target {target_name} -rrf -c'
         subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                        executable='/bin/bash')
+        # Run ./cutmaps_xtal.sh
+        bn = os.path.basename(self.target).replace('.pdb', '*')
+        outpath = os.path.join(self.staging_directory,
+                               target_name, 'aligned', bn)
+        for fp in glob.glob(outpath):
+            pdb = os.path.join(fp, str(os.path.basename(fp))+'.pdb')
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_folder.sh {fp} {pdb}'
+            proc = subprocess.run(command, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
         # Adding unaligned bit??
         # unaligned = f'/dls/science/groups/i04-1/software/miniconda_3/envs/fragalysis_env2/bin/python /dls/science/groups/i04-1/software/tyler/fragalysis-api/fragalysis_api/xcimporter/single_import.py --in_file={self.target} --out_dir={self.staging_directory.replace('staging', 'unaligned')} --target {target_name} -m -c -sr'
         #subprocess.run(unaligned, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
