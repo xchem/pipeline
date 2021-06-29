@@ -161,24 +161,24 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_ligand.save()
 
     # Bonza, now link frag_ligand to ligand table for internal stuff.
-    symlink = os.path.join(input_directory, f'{crystal_name}.pdb')
-    try:
-        path = os.readlink(symlink)
-    except OSError:
-        # Exit out
-        print('Ligand is directly deposited into input directory, no known reference crystal')
-        return None
-    visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', path)[0]
-    crys = models.Crystal.objects.filter(crystal_name=crystal_name).filter(visit__visit=visit)  # This should only return one thing...
+    path = os.path.join(input_directory, f'{crystal_name}.pdb')
+    # Current Fix, need to figure out a way to derive visit number from sample for stuff.
+    #try:
+    #    path = os.readlink(symlink)
+    #except OSError:
+    #    # Exit out
+    #    print('Ligand is directly deposited into input directory, no known reference crystal')
+    #    return None
+    #visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', path)[0]
+    crys = models.Crystal.objects.filter(crystal_name=crystal_name)#.filter(visit__visit=visit)  # This should only return one thing...
     if len(crys) > 1:
         try:
-            raise Exception(ligand_name, symlink, crystal_name, visit, crys)
+            raise Exception(ligand_name, symlink, crystal_name, crys)
         except Exception as e:
-            bad_ligname, bad_symlink, bad_crystal_name, bad_visit, bad_crys = e.args
+            bad_ligname, bad_symlink, bad_crystal_name, bad_crys = e.args
             print(bad_ligname)
             print(bad_symlink)
             print(bad_crystal_name)
-            print(bad_visit)
             print(bad_crys)
             print(bad_crys.values())
 
