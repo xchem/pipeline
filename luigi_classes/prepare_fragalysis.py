@@ -358,7 +358,7 @@ class BatchAlignTargets(luigi.Task):
         #targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1]
         #targets = [target[0] for target in os.walk(self.input_directory) if all(target[0].find(blocked)==-1 for blocked in ['BKVP126', 'NSP15_B'])]
         targets = [target[0] for target in os.walk(self.input_directory) if any(
-            target[0].find(sele) >= 0 for sele in ['Mpro', 'PlPro'])]
+            target[0].find(sele) >= 0 for sele in ['Mpro', 'PlPro', 'NSP16'])]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
         # return [DecideAlignTarget(target=target) for target in ['Mpro', 'PlPro']]
