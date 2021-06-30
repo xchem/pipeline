@@ -205,27 +205,27 @@ def transfer_changed_datafile(data_file, hit_directory, log_directory = Director
         search_path = split_path[0]
 
         # remove pandda data transfer done file
-        if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
-            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
-
-        log_files = find_log_files(search_path).rsplit()
-        print(log_files)
-        for log in log_files:
-            print(f"{log}.run.done")
-            if os.path.isfile(f"{log}.run.done"):
-                os.remove(f"{log}.run.done")
-            if os.path.isfile(f"{log}.sites.done"):
-                os.remove(f"{log}.sites.done")
-            if os.path.isfile(f"{log}.events.done"):
-                os.remove(f"{log}.events.done")
-
+        #if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
+        #    os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
+        ## Ignore the removal of log files I guess this is a challenge...
+        #log_files = find_log_files(search_path).rsplit()
+        #print(log_files)
+        #for log in log_files:
+        #    print(f"{log}.run.done")
+        #    if os.path.isfile(f"{log}.run.done"):
+        #        os.remove(f"{log}.run.done")
+        #    if os.path.isfile(f"{log}.sites.done"):
+        #        os.remove(f"{log}.sites.done")
+        #    if os.path.isfile(f"{log}.events.done"):
+        #        os.remove(f"{log}.events.done")
+        #
         # find_logs_out_files = glob.glob(str(search_path + '*.txt'))
-        find_logs_out_files = glob.glob(f"{search_path}*.txt")
-
-        for f in find_logs_out_files:
-            if is_date(f.replace(search_path, '').replace('.txt', '')):
-                os.remove(f)
-
+        #find_logs_out_files = glob.glob(f"{search_path}*.txt")
+        #
+        #for f in find_logs_out_files:
+        #    if is_date(f.replace(search_path, '').replace('.txt', '')):
+        #        os.remove(f)
+        #
         out, err, proposal = db_functions.pop_soakdb(data_file)
         db_functions.pop_proposals(proposal)
 
