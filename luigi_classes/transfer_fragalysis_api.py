@@ -173,9 +173,9 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     crys = models.Crystal.objects.filter(crystal_name=crystal_name)#.filter(visit__visit=visit)  # This should only return one thing...
     if len(crys) > 1:
         try:
-            raise Exception(ligand_name, symlink, crystal_name, crys)
+            raise Exception(ligand_name, path, crystal_name, crys)
         except Exception as e:
-            bad_ligname, bad_symlink, bad_crystal_name, bad_crys = e.args
+            bad_ligname, path, bad_crystal_name, bad_crys = e.args
             print(bad_ligname)
             print(bad_symlink)
             print(bad_crystal_name)
