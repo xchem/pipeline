@@ -177,7 +177,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         except Exception as e:
             bad_ligname, path, bad_crystal_name, bad_crys = e.args
             print(bad_ligname)
-            print(bad_symlink)
+            print(path)
             print(bad_crystal_name)
             print(bad_crys)
             print(bad_crys.values())
