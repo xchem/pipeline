@@ -110,7 +110,10 @@ class CreateBiomoledPDB(luigi.Task):
 
                 if dostuff:
                     # biomol copy the bound_conf to outpath
-                    command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {file_obj.bound_conf} {outpath}'
+                    if 'PlPro' in file_obj.bound_conf: # Temporary Hack until things sort themselves out...
+                        command = f'cp {file_obj.bound_conf} {outpath}'
+                    else:
+                        command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {file_obj.bound_conf} {outpath}'
                     proc = subprocess.run(
                         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
                     # Cut maps
@@ -357,8 +360,9 @@ class BatchAlignTargets(luigi.Task):
         # Check list of targets that have staging dirs
         #targets = [target[0] for target in os.walk(self.input_directory) if target[0].find('NSP15_B') == -1]
         #targets = [target[0] for target in os.walk(self.input_directory) if all(target[0].find(blocked)==-1 for blocked in ['BKVP126', 'NSP15_B'])]
-        targets = [target[0] for target in os.walk(self.input_directory) if any(
-            target[0].find(sele) >= 0 for sele in ['Mpro', 'PlPro', 'NSP16'])]
+        #targets = [target[0] for target in os.walk(self.input_directory) if any(
+        #    target[0].find(sele) >= 0 for sele in ['Mpro', 'PlPro'])]#, 'NSP16'])]
+        targets = [target[0] for target in os.walk(self.input_directory)]
         # Decide which mode to run.
         return [DecideAlignTarget(target=target) for target in targets]
         # return [DecideAlignTarget(target=target) for target in ['Mpro', 'PlPro']]

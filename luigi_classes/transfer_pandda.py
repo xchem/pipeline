@@ -53,7 +53,7 @@ class AddPanddaSites(luigi.Task):
 
     def run(self):
         run = PanddaRun.objects.get(pandda_log=str(self.log_file).rstrip())
-        sites_frame = pd.DataFrame.from_csv(self.sites_file, index_col=None)
+        sites_frame = pd.read_csv(self.sites_file, index_col=None)
 
         for i in range(0, len(sites_frame['site_idx'])):
             site = sites_frame['site_idx'][i]
@@ -114,7 +114,7 @@ class AddPanddaEvents(luigi.Task):
 
     def run(self):
 
-        events_frame = pd.DataFrame.from_csv(self.events_file, index_col=None)
+        events_frame = pd.read_csv(self.events_file, index_col=None)
 
         error_file = str(self.log_file + '.transfer.err')
 
@@ -314,7 +314,7 @@ class AddPanddaData(luigi.Task):
             return FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
                                   sdbfile=self.sdbfile)
         else:
-            frame = pd.DataFrame.from_csv(
+            frame = pd.read_csv(
                 FindPanddaInfo(search_path=self.search_path, soak_db_filepath=self.soak_db_filepath,
                                sdbfile=self.sdbfile).output().path)
 
@@ -405,7 +405,7 @@ class TransferPandda(luigi.Task):
         if not os.path.isfile(in_file):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
         else:
-            frame = pd.DataFrame.from_csv(in_file)
+            frame = pd.read_csv(in_file)
             return [AddPanddaData(search_path=search_path, soak_db_filepath=filepath, sdbfile=sdbfile) for
                     search_path, filepath, sdbfile in list(
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
@@ -473,7 +473,7 @@ class AnnotateAllEvents(luigi.Task):
         if not os.path.isfile(in_file):
             return FindSearchPaths(soak_db_filepath=self.soak_db_filepath, date_time=self.date_time)
         else:
-            frame = pd.DataFrame.from_csv(in_file)
+            frame = pd.read_csv(in_file)
             return [AnnotateEvents(soakdb_filename=sdbfile) for
                     search_path, filepath, sdbfile in list(
                     zip(frame['search_path'], frame['soak_db_filepath'], frame['sdbfile']))]
