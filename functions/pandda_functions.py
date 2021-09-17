@@ -210,7 +210,7 @@ def translate_event_stats(event_csv, csv_row):
         'scl_map_rms': 'scl_map_rms'
     }
 
-    event_frame = pd.DataFrame.from_csv(event_csv)
+    event_frame = pd.read_csv(event_csv)
 
     out_dict = {}
 
