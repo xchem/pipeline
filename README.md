@@ -2,7 +2,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/xchem/pipeline.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xchem/pipeline/context:python)
 
 ## For developers...
-
+TODO
 ### Changing models
 
 There are some basic tests that run tasks from the pipeline and populate data into my existing tables, although these won't test your own models. 
