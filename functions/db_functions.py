@@ -330,7 +330,10 @@ def transfer_table(translate_dict, filename, model):
 
         if crys_obj_created:
             for smile in compound_smiles.split(';'):
+                print(smile)
                 compound_obj = models.Compounds.objects.get_or_create(smiles=smile)[0]
+                compound_obj.save()
+                print(compound_obj)
                 crys_obj.compound.add(compound_obj.id)
             crys_obj.save()
 
@@ -431,7 +434,10 @@ def transfer_table(translate_dict, filename, model):
                 # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
                 #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
                 for smile in compound_smiles.split(';'):
+                    print(smile)
                     compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=smile)
+                    print(compound_obj)
+                    compound_obj.save()
                     filter_set = models.Crystal.objects.filter(
                         crystal_name=d[key],
                         visit=models.SoakdbFiles.objects.get(filename=filename),
