@@ -421,7 +421,7 @@ def transfer_table(translate_dict, filename, model):
         for key in d.keys():
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
-                if key != 'compound':
+                if key not in ['compound' 'product']:
                     raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
