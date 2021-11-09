@@ -418,30 +418,34 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
 
         for key in d.keys():
-
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
-                raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
+                if key == 'compound':
+                    pass
+                else:
+                    raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
 
             if key == 'crystal_name' and model != models.Crystal:
                 # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
                 #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
-                compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=compound_smiles)
-                filter_set = models.Crystal.objects.filter(crystal_name=d[key],
-                                                           visit=models.SoakdbFiles.objects.get(filename=filename),
-                                                           compound=compound_obj)
-                if len(filter_set) == 0:
-                    d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
-                    d[key].compound = compound_obj
-                    d[key].save()
-                elif len(filter_set) == 1:
-                    d[key] = filter_set[0]
-                else:
-                    print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
-                    raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
-
+                for smile in compound_smiles.split(';'):
+                    compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=smile)
+                    filter_set = models.Crystal.objects.filter(
+                        crystal_name=d[key],
+                        visit=models.SoakdbFiles.objects.get(filename=filename),
+                        compound=compound_obj
+                    )
+                    if len(filter_set) == 0:
+                        d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
+                        d[key].compound.add(compound_obj)
+                        d[key].save()
+                    elif len(filter_set) == 1:
+                        d[key] = filter_set[0]
+                    else:
+                        print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
+                        raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
@@ -494,7 +498,7 @@ def transfer_table(translate_dict, filename, model):
             print('WARNING: ' + str(e.__cause__))
             print(model_fields)
             crys_from_db = models.Crystal.objects.get(crystal_name=crystal_name, visit=models.SoakdbFiles.objects.get(
-                filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
+                filename=filename))
             if crys_from_db.target == target:
                 print('Crystal duplicated!')
                 continue
