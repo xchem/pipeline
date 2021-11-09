@@ -7,7 +7,7 @@ from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
 from luigi_classes.config_classes import DirectoriesConfig
-from xchem_db.models import *
+from xchem_db.xchem_db.models import *
 
 
 def is_date(string):
