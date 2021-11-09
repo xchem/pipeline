@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.db import transaction
 
 from functions import misc_functions
-from xchem_db import models
+from xchem_db.xchem_db import models
 
 
 # To get all sql queries sent by Django from py shell
@@ -231,6 +231,7 @@ def test_duplicate_method(filename):
 
 
 def check_db_duplicates(filename):
+    # is this even used?????
     pop_soakdb(filename)
     duplicates_file = 'duplicates.csv'
     if os.path.isfile(os.path.join(os.getcwd(), duplicates_file)):
@@ -298,14 +299,15 @@ def transfer_table(translate_dict, filename, model):
         # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
         # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
         target_obj, target_obj_created = models.Target.objects.get_or_create(target_name=target.upper())
-        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
+        #compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
         # this one should deffo exist
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
 
         # Logic? Get the crystal name...
         crys_objs = models.Crystal.objects.filter(
             crystal_name=crystal_name,
-            visit=visit_obj
+            visit=visit_obj,
+            target=target_obj
         )
 
         if len(crys_objs) == 1:
@@ -317,17 +319,20 @@ def transfer_table(translate_dict, filename, model):
             crys_obj = models.Crystal.objects.create(
                     target=target_obj,
                     crystal_name=crystal_name,
-                    visit=visit_obj,
-                    product=product_smiles,
-                    compound=compound_obj
+                    visit=visit_obj
             )
+            # product=product_smiles,
+            # compound=compound_obj
             crys_obj_created = True
+            crys_obj.save()
         else:
-            # Honestly go next...
-            # There should only be 1 crystal name per visit...
-            # That's all that matters...
-            # This will never end will it?
             next
+
+        if crys_obj_created:
+            for smile in compound_smiles.split(';'):
+                compound_obj = models.Compounds.objects.get_or_create(smiles=smile)[0]
+                crys_obj.compound.add(compound_obj)
+            crys_obj.save()
 
         # put everything together and get the crystal object
         #crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
