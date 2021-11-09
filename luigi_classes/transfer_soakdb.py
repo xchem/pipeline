@@ -7,7 +7,7 @@ import datetime
 import luigi
 
 from functions.luigi_transfer_soakdb_functions import *
-from xchem_db.models import *
+from xchem_db.xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
 

@@ -492,7 +492,6 @@ def transfer_table(translate_dict, filename, model):
                 if(len(qset) == 1):
                     compoundless = d.pop('compound', None)
                     productless = d.pop('product', None)
-                    print(d)
                     qset.update(**d)
                 else:
                     print(f'More than one entry for {crystal_name}')
