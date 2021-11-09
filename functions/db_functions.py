@@ -437,10 +437,10 @@ def transfer_table(translate_dict, filename, model):
                         visit=models.SoakdbFiles.objects.get(filename=filename),
                         compound=compound_obj
                     )
-                    if len(filter_set) == 0: #???
+                    if len(filter_set) == 0: # ???
                         d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
-                        #d[key].compound.add(compound_obj)
-                        #d[key].save()
+                        d[key].compound.add(compound_obj)
+                        d[key].save()
                     elif len(filter_set) == 1:
                         d[key] = filter_set[0]
                     else:
@@ -490,7 +490,7 @@ def transfer_table(translate_dict, filename, model):
                     qset = model.objects.filter(crystal_name=crys_obj)
 
                 if(len(qset) == 1):
-                    print(qset)
+                    compoundless = d.pop('compound', None)
                     print(d)
                     qset.update(**d)
                 else:
