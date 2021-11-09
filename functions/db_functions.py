@@ -330,10 +330,8 @@ def transfer_table(translate_dict, filename, model):
 
         if crys_obj_created:
             for smile in compound_smiles.split(';'):
-                print(smile)
                 compound_obj = models.Compounds.objects.get_or_create(smiles=smile)[0]
                 compound_obj.save()
-                print(compound_obj)
                 crys_obj.compound.add(compound_obj)
             crys_obj.save()
 
@@ -423,9 +421,7 @@ def transfer_table(translate_dict, filename, model):
         for key in d.keys():
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
-                if key == 'compound':
-                    pass
-                else:
+                if key != 'compound':
                     raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
@@ -434,9 +430,7 @@ def transfer_table(translate_dict, filename, model):
                 # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
                 #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
                 for smile in compound_smiles.split(';'):
-                    print(smile)
                     compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=smile)
-                    print(compound_obj)
                     compound_obj.save()
                     filter_set = models.Crystal.objects.filter(
                         crystal_name=d[key],
@@ -458,6 +452,7 @@ def transfer_table(translate_dict, filename, model):
 
             if key == 'compound':
                 d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+                d[key].save()
 
             if key == 'reference':
                 if d[key]:
