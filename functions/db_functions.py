@@ -450,9 +450,9 @@ def transfer_table(translate_dict, filename, model):
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
 
-            if key == 'compound':
-                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
-                d[key].save()
+            #if key == 'compound':
+            #    d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+            #    d[key].save()
 
             if key == 'reference':
                 if d[key]:
