@@ -490,6 +490,8 @@ def transfer_table(translate_dict, filename, model):
                     qset = model.objects.filter(crystal_name=crys_obj)
 
                 if(len(qset) == 1):
+                    print(qset)
+                    print(d)
                     qset.update(**d)
                 else:
                     print(f'More than one entry for {crystal_name}')
