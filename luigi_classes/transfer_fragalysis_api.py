@@ -117,7 +117,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
         frag_target = models.FragalysisTarget.objects.create(
-            open=True,
+            public=True,
             target=target_name,
             staging_root=staging_directory,
             input_root=input_directory
