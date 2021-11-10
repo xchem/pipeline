@@ -171,6 +171,7 @@ class CreateSymbolicLinks(luigi.Task):
             except:
                 raise Exception(file_obj.bound_conf)
         else:
+            pass
             #self.crystal.outcome = 3
             #self.crystal.save()
 
