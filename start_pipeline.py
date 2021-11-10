@@ -15,7 +15,7 @@ from luigi_classes.transfer_soakdb import StartTransfers
 #from luigi_classes.prepare_fragalysis import BatchCreateSymbolicLinks, BatchAlignTargets, BatchCutMaps
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
-#from luigi_classes.transfer_fragalysis_api import BatchTranslateFragalysisAPIOutput
+from luigi_classes.transfer_fragalysis_api import BatchTranslateFragalysisAPIOutput
 import os
 import datetime
 import glob
@@ -52,10 +52,10 @@ class StartPipeline(luigi.WrapperTask):
         # if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
         #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
+        yield BatchTranslateFragalysisAPIOutput()
         #yield BatchCreateSymbolicLinks()
         #yield BatchAlignTargets()
         #yield BatchCutMaps()
-        #yield BatchTranslateFragalysisAPIOutput()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)

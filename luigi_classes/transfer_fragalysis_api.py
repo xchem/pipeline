@@ -10,7 +10,7 @@ import luigi
 import re
 import os
 
-from xchem_db import models
+from xchem_db.xchem_db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
@@ -31,7 +31,6 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
         folders_containing_mols = [x for x in staging_folders if len(glob.glob(os.path.join(x, '*.mol'))) > 0]
         # Check Modification date to fire off!!
         return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
-        #return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols]  # if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,

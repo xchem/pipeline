@@ -12,7 +12,7 @@ import glob
 import os
 import shutil
 
-from xchem_db.models import *
+from xchem_db.xchem_db.models import *
 from .config_classes import SoakDBConfig, DirectoriesConfig
 from luigi_classes.transfer_soakdb import StartTransfers, misc_functions
 from utils.custom_output_targets import DjangoTaskTarget
@@ -171,8 +171,8 @@ class CreateSymbolicLinks(luigi.Task):
             except:
                 raise Exception(file_obj.bound_conf)
         else:
-            self.crystal.outcome = 3
-            self.crystal.save()
+            #self.crystal.outcome = 3
+            #self.crystal.save()
 
         with self.output().open('w') as f:
             f.write('')
