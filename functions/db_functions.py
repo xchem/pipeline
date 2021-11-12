@@ -352,9 +352,15 @@ def transfer_table(translate_dict, filename, model):
                 compound_obj.save()
                 crys_obj.compound.add(compound_obj)
                 crys_obj.save()
-                ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
-                ccp.product_smiles = product
-                ccp.save()
+                try:
+                    ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
+                    ccp.product_smiles = product
+                    ccp.save()
+                except:
+                    print(d[key])
+                    print(compound_obj)
+                    print(product)
+                    pass
 
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
@@ -437,12 +443,19 @@ def transfer_table(translate_dict, filename, model):
                         d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
                         d[key].compound.add(compound_obj)
                         d[key].save()
-                        ccp = models.CrystalCompoundPairs.objects.get(crystal=d[key], compound=compound_obj)
-                        ccp.product_smiles = product
-                        ccp.save()
+                        try:
+                            ccp = models.CrystalCompoundPairs.objects.get(crystal=d[key], compound=compound_obj)
+                            ccp.product_smiles = product
+                            ccp.save()
+                        except:
+                            print(d[key])
+                            print(compound_obj)
+                            print(product)
+                            pass
+
                     elif len(filter_set) == 1:  # this is old
                         d[key] = filter_set[0]
-                    else: # this is wrong !
+                    else:  # this is wrong !
                         print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
                         raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
 
