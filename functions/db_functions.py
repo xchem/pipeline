@@ -357,7 +357,7 @@ def transfer_table(translate_dict, filename, model):
                     ccp.product_smiles = product
                     ccp.save()
                 except:
-                    print(d[key])
+                    print('Init Crystal Step')
                     print(compound_obj)
                     print(product)
                     pass
@@ -440,15 +440,17 @@ def transfer_table(translate_dict, filename, model):
                         compound=compound_obj
                     )
                     if len(filter_set) == 0:  # this is new!
-                        d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
-                        d[key].compound.add(compound_obj)
-                        d[key].save()
+                        crys_obj = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
+                        crys_obj.compound.add(compound_obj)
+                        crys_obj.save()
+                        d[key] = crys_obj
                         try:
-                            ccp = models.CrystalCompoundPairs.objects.get(crystal=d[key], compound=compound_obj)
+                            ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
                             ccp.product_smiles = product
                             ccp.save()
                         except:
-                            print(d[key])
+                            print('Update Crystal Step?')
+                            print(crys_obj)
                             print(compound_obj)
                             print(product)
                             pass
