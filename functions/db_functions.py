@@ -290,8 +290,10 @@ def transfer_table(translate_dict, filename, model):
         # add a check here to see if the key exists - most sdb files won't have this column
         if 'CompoundSMILESproduct' in row.keys():
             product_smiles = row['CompoundSMILESproduct']
-            if product_smiles is None:
-                product_smiles = ''
+        if product_smiles is None:
+            product_smiles = ''
+        if compound_codes is None:
+            compound_codes = ''
         crystal_name = row['CrystalName']
         target = row['ProteinName']
         if not target or target == 'None':
@@ -335,10 +337,13 @@ def transfer_table(translate_dict, filename, model):
         css = compound_smiles.split(';')
         ccs = compound_codes.split(';')
         pss = product_smiles.split(';')
-        if crys_obj_created: # would this work... need to come up with clever trick...
+        if crys_obj_created:  # would this work... need to come up with clever trick...
             for comp_index in range(len(css)):
                 smile = css[comp_index]
-                code = ccs[comp_index]
+                try:
+                    code = ccs[comp_index]
+                except IndexError:
+                    code = ''
                 try:
                     product = pss[comp_index]
                 except IndexError:
