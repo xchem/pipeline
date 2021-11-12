@@ -352,15 +352,20 @@ def transfer_table(translate_dict, filename, model):
                 compound_obj.save()
                 crys_obj.compound.add(compound_obj)
                 crys_obj.save()
-                try:
-                    ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
-                    ccp.product_smiles = product
-                    ccp.save()
-                except:
-                    print('Init Crystal Step')
-                    print(compound_obj)
+                if product is not '':
                     print(product)
-                    pass
+                    try:
+                        ccp = 'cannotfind'
+                        ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
+                        setattr(ccp, 'product_smiles', product)
+                        ccp.save()
+                    except:
+                        print('Init Crystal Step')
+                        print(crys_obj)
+                        print(compound_obj)
+                        print(product)
+                        print(ccp)
+                        pass
 
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
@@ -444,17 +449,20 @@ def transfer_table(translate_dict, filename, model):
                         crys_obj.compound.add(compound_obj)
                         crys_obj.save()
                         d[key] = crys_obj
-                        try:
-                            ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
-                            ccp.product_smiles = product
-                            ccp.save()
-                        except:
-                            print('Update Crystal Step?')
-                            print(crys_obj)
-                            print(compound_obj)
+                        if product is not '':
                             print(product)
-                            pass
-
+                            try:
+                                ccp = 'cannotfind'
+                                ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
+                                setattr(ccp, 'product_smiles', product)
+                                ccp.save()
+                            except:
+                                print('Update Crystal Step')
+                                print(crys_obj)
+                                print(compound_obj)
+                                print(product)
+                                print(ccp)
+                                pass
                     elif len(filter_set) == 1:  # this is old
                         d[key] = filter_set[0]
                     else:  # this is wrong !
