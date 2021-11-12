@@ -343,7 +343,7 @@ def transfer_table(translate_dict, filename, model):
                     product = pss[comp_index]
                 except IndexError:
                     product = ''
-                compound_obj = models.Compounds.objects.get_or_create(smiles=smile, compound_string=code)
+                compound_obj = models.Compounds.objects.get_or_create(smiles=smile, compound_string=code)[0]
                 compound_obj.save()
                 crys_obj.compound.add(compound_obj)
                 crys_obj.save()
