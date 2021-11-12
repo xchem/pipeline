@@ -290,6 +290,8 @@ def transfer_table(translate_dict, filename, model):
         # add a check here to see if the key exists - most sdb files won't have this column
         if 'CompoundSMILESproduct' in row.keys():
             product_smiles = row['CompoundSMILESproduct']
+            if product_smiles is None:
+                product_smiles = ''
         crystal_name = row['CrystalName']
         target = row['ProteinName']
         if not target or target == 'None':
