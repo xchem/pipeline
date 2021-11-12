@@ -186,8 +186,7 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         ligand_entry, created = models.Ligand.objects.get_or_create(
             fragalysis_ligand=frag_ligand,
             crystal=crystal,
-            target=crystal.target,
-            compound=crystal.compound
+            target=crystal.target
         )
         if created:
             print('Created New Ligand Entry!')
