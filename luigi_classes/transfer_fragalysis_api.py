@@ -28,7 +28,7 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
     def requires(self):
         # Honestly do not know how slow this is haha...
         staging_folders = [x[0] for x in os.walk(self.staging_directory) if 'aligned' in x[0]]
-        folders_containing_mols = [x for x in staging_folders if len(glob.glob(os.path.join(x, '*.mol'))) > 0][0:2]
+        folders_containing_mols = [x for x in staging_folders if len(glob.glob(os.path.join(x, '*.mol'))) > 0]
         # Check Modification date to fire off!!
         return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
 
