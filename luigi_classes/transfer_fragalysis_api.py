@@ -81,17 +81,19 @@ def compare_mod_date(molfile):
         return False
 
     ligand_name = os.path.basename(molfile).replace('.mol', '')
-    target = ligand_name.rsplit('_', 1)[0]
+    # This is wrong...
+    split = molfile.split('/')
+    target_name = split[split.index('aligned') - 1]
     try:
-        frag_target = models.FragalysisTarget.objects.get(target=target)
+        frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
-        print(f'{target} is a new Fragalysis Target')
+        print(f'{target_name} is a new Fragalysis Target')
         return True
 
     try:
         frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name, fragalysis_target=frag_target)
     except models.FragalysisLigand.DoesNotExist:
-        print(f'{ligand_name} is a new Ligand for {target}')
+        print(f'{ligand_name} is a new Ligand for {target_name}')
         return True
 
     old_date = frag_ligand.modification_date
@@ -117,7 +119,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
         frag_target = models.FragalysisTarget.objects.create(
-            public=True,
             target=target_name,
             staging_root=staging_directory,
             input_root=input_directory
