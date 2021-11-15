@@ -181,7 +181,7 @@ class TransferChangedDataFile(luigi.Task):
             luigi.localTarget
         """
         modification_date = misc_functions.get_mod_date(self.data_file)
-        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
+        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.newtransferred'))
 
     def run(self):
         """ Performs `transfer_changed_datafile` function and writes '' to the expected log file"""
@@ -223,7 +223,7 @@ class TransferNewDataFile(luigi.Task):
             luigi.localTarget
         """
         modification_date = misc_functions.get_mod_date(self.data_file)
-        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.transferred'))
+        return luigi.LocalTarget(str(self.data_file + '_' + str(modification_date) + '.newtransferred'))
 
     def run(self):
         """ Performs `transfer_file` function and writes '' to the expected log file"""
