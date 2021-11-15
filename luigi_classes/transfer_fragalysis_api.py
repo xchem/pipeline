@@ -94,7 +94,7 @@ def compare_mod_date(molfile):
         return True
 
     try:
-        frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name, fragalysis_target=frag_target)
+        frag_ligand = models.FragalysisLigand.objects.get(ligand_name=ligand_name, fragalysis_target=frag_target)
     except models.FragalysisLigand.DoesNotExist:
         print(f'{ligand_name} is a new Ligand for {target_name}')
         return True
