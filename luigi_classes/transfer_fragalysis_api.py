@@ -32,8 +32,6 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
         targs = [x for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
         if len(targs) > 0:
             return [TranslateFragalysisAPIOutput(target=x) for x in targs]
-        else:
-            return 2  # idk...
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
