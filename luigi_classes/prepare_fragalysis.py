@@ -49,10 +49,10 @@ class BatchRunCreateInputFiles(luigi.Task):
                 hit_directory=self.hit_directory,
                 soak_db_filepath=crystal.crystal_name.visit.filename,
                 monomer=crystal.crystal_name.target.pl_monomeric,
-                outpath=os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name, str(self.crystal.crystal_name.crystal_name + '.pdb'))
+                outpath=os.path.join(self.input_directory, crystal.crystal_name.target.target_name, str(crystal.crystal_name.crystal_name + '.pdb'))
             ) for crystal in self.filter_by if misc_functions.compare_dates_to_action(
                 sdb_mod=crystal.crystal_name.visit.modification_date,  # Is this the right thing to do???
-                pdb_out=misc_functions.get_mod_date(os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name, str(self.crystal.crystal_name.crystal_name + '.pdb')))
+                pdb_out=misc_functions.get_mod_date(os.path.join(self.input_directory, crystal.crystal_name.target.target_name, str(crystal.crystal_name.crystal_name + '.pdb')))
             )
         ]
 
