@@ -21,11 +21,11 @@ from utils.refinement import RefinementObjectFiles
 
 # from fragalysis_api.pipelines.prep_multi_fragalysis import outlist_from_align, AlignTarget, ProcessAlignedPDB, BatchProcessAlignedPDB, BatchConvertAligned
 
-class BatchCreateSymbolicLinks(luigi.Task):
+class BatchRunCreateInputFiles(luigi.Task):
     '''
-    Create Symbolic Links for all Crystals in refinements that have outcomes >=4 and <=6
+    Create Input Files for all Crystals in refinement that have outcomes >=4 and <=6 and also use the correct params.
 
-    This class requires/schedules CreateSymbolicLinks to be run for each crystal in the refinement table that satisfies the condition
+    This class requires/schedules CreateInputFiles to be fun on each crystal in the refinement table that satisfies the condition.
     '''
     resources = {'django': 1}
     date = luigi.DateParameter(default=datetime.datetime.now())
@@ -38,16 +38,22 @@ class BatchCreateSymbolicLinks(luigi.Task):
 
     filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
 
+    # Should only be run if updated...
     def requires(self):
-        return [
-            CreateSymbolicLinks(
+        # Holy crap.
+        return[
+            CreateInputFiles(
                 crystal=crystal,
-                smiles=crystal.crystal_name.compound.smiles,
-                prod_smiles=crystal.crystal_name.product,
+                smiles=[Compounds.objects.get(id=x['compound_id']).smiles for x in crystal.crystal_name.crystalcompoundpairs_set.values()],
+                prod_smiles=[x['product_smiles'] for x in crystal.crystal_name.crystalcompoundpairs_set.values()],
                 hit_directory=self.hit_directory,
-                soak_db_filepath=self.soak_db_filepath
+                soak_db_filepath=crystal.crystal_name.visit.filename,
+                monomer=crystal.crystal_name.target.pl_monomeric,
+                outpath=os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name, str(self.crystal.crystal_name.crystal_name + '.pdb'))
+            ) for crystal in self.filter_by if misc_functions.compare_dates_to_action(
+                sdb_mod=crystal.crystal_name.visit.modification_date,  # Is this the right thing to do???
+                pdb_out=misc_functions.get_mod_date(os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name, str(self.crystal.crystal_name.crystal_name + '.pdb')))
             )
-            for crystal in self.filter_by
         ]
 
     def output(self):
@@ -59,14 +65,16 @@ class BatchCreateSymbolicLinks(luigi.Task):
             f.write('')
 
 
-class CreateSymbolicLinks(luigi.Task):
+class CreateInputFiles(luigi.Task):
     ssh_command = 'ssh mly94721@ssh.diamond.ac.uk'
     crystal = luigi.Parameter()
     hit_directory = luigi.Parameter(default=DirectoriesConfig().hit_directory)
     soak_db_filepath = luigi.Parameter(default=SoakDBConfig().default_path)
     date = luigi.Parameter(default=datetime.datetime.now())
-    smiles = luigi.Parameter(default=None)
-    prod_smiles = luigi.Parameter(default=None)
+    smiles = luigi.Parameter(default='')
+    prod_smiles = luigi.Parameter(default='')
+    monomer = luigi.Parameter(default=False)
+    outpath = luigi.Parameter()
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
@@ -80,13 +88,13 @@ class CreateSymbolicLinks(luigi.Task):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory, str('symboliclinks/transfers_' + str(self.crystal.crystal_name.crystal_name) + str(self.date) + '.done')))
 
     def run(self):
-
-        outpath = os.path.join(self.input_directory, self.crystal.crystal_name.target.target_name,
-                               str(self.crystal.crystal_name.crystal_name + '.pdb'))
+        # This shouldn't be scheduled unless soakdbfile has been updated...
+        outpath = self.outpath
 
         try:
-            if not os.path.exists(os.readlink(outpath)):
-                os.unlink(outpath)
+            #if not os.path.exists(os.readlink(outpath)):
+            #    os.unlink(outpath)
+            os.unlink(outpath)
         except FileNotFoundError:
             pass
 
@@ -96,84 +104,67 @@ class CreateSymbolicLinks(luigi.Task):
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
         cutmaps = True
+        input_pdb = ''
+
         if file_obj.bound_conf:
-            try:
-                if os.path.exists(outpath):
-                    old = get_mod_date(get_filepath_of_potential_symlink(outpath))
-                    new = get_mod_date(file_obj.bound_conf)
-                    os.unlink(outpath)
-                    if int(new) > int(old):
-                        base = outpath.replace('.pdb', '')
-                        files = glob.glob(f'{base}*')
-                        [os.unlink(x) for x in files]
-                    else:
-                        cutmaps = False
-
-                os.symlink(file_obj.bound_conf, outpath)
-                if cutmaps:
-                    # Try to create symlinks for the eventmap, 2fofc and fofc
-                    # Get root of file_obj.bound_conf
-                    bcdir = os.path.dirname(file_obj.bound_conf)
-                    # Check if this is the correct directory (most likely not)
-                    fofc = glob.glob(bcdir+'/fofc.map')
-                    if len(fofc) < 1:
-                        # go one deeper!
-                        bcdir = os.path.dirname(bcdir)
-                    # Get the files
-                    fofc = glob.glob(bcdir + '/fofc.map')
-                    fofc2 = glob.glob(bcdir + '/2fofc.map')
-                    event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # nice doesn't capture all of it though...
-                    fofc_pth = outpath.replace('.pdb', '_fofc.map')
-                    fofc2_pth = outpath.replace('.pdb', '_2fofc.map')
-
-                    # Assumption only one file to use....
-                    if len(fofc) > 0:
-                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                            border %s
-                            end
-                        eof
-                        ''' % (fofc[0], fofc_pth, outpath, str(0))
-                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                            executable='/bin/bash')
-                    if len(fofc2) > 0:
-                        mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                            border %s
-                            end
-                        eof
-                        ''' % (fofc2[0], fofc2_pth, outpath, str(0))
-                        proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                            executable='/bin/bash')
-
-                    # probably should use enumerate
-                    if len(event_maps) > 0:
-                        event_num = 0
-                        for i in event_maps:
-                            fn = outpath.replace('.pdb', f'_event_{event_num}.ccp4')
-                            mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
-                                border %s
-                                end
-                            eof
-                            ''' % (i, fn, outpath, str(0))
-                            proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                                executable='/bin/bash')
-                            event_num += 1
-
-                if self.prod_smiles:
-                    smi = self.prod_smiles
-                elif self.smiles:
-                    smi = self.smiles
-                #                 if self.smiles:
+            input_pdb = file_obj.bound_conf
+        else:
+            if file_obj.pdb_latest:
+                input_pdb = file_obj.pdb_latest
+            else:
+                pass
+        if input_pdb is '':
+            cutmaps = False  # Do Not cut maps.
+        else:
+            if self.monomer:
+                os.symlink(input_pdb, outpath)
+            else:
+                command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {input_pdb} {outpath}'
+                proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+            # This needs to be zipped up.
+            if self.smiles is not '': # should be a [''] maybe who knows..
+                smi = '\n'.join([p if p is not None else s for p, s in zip(self.prod_smiles, self.smiles)])
                 smi_pth = outpath.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
-                #  f.close() should delete.
+        if cutmaps:
+            bcdir = os.path.dirname(input_pdb)
+            fofc = glob.glob(bcdir + '/fofc.map')
+            if len(fofc) < 1:
+                bcdir = os.path.dirname(bcdir)
+            fofc = glob.glob(bcdir + '/fofc.map')
+            fofc2 = glob.glob(bcdir + '/2fofc.map')
+            event_maps = glob.glob(bcdir + '/*event*native*.ccp4')  # Does not capture all maps...
+            fofc_pth = outpath.replace('.pdb', '_fofc.map')
+            fofc2_pth = outpath.replace('.pdb', '_2fofc.map')
 
-            except:
-                raise Exception(file_obj.bound_conf)
-        else:
-            pass
-            #self.crystal.outcome = 3
-            #self.crystal.save()
+            if len(fofc) > 0:
+                mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                    border %s
+                    end
+                eof
+                ''' % (fofc[0], fofc_pth, outpath, str(0))
+                proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+
+            if len(fofc2) > 0:
+                mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                    border %s
+                    end
+                eof
+                ''' % (fofc2[0], fofc2_pth, outpath, str(0))
+                proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+
+            if len(event_maps) > 0:
+                event_num = 0
+                for i in event_maps:
+                    fn = outpath.replace('.pdb', f'_event_{event_num}.ccp4')
+                    mapmask = '''module load ccp4 && mapmask mapin %s mapout %s xyzin %s << eof
+                        border %s
+                        end
+                    eof
+                    ''' % (i, fn, outpath, str(0))
+                    proc = subprocess.run(mapmask, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+                    event_num += 1
 
         with self.output().open('w') as f:
             f.write('')
