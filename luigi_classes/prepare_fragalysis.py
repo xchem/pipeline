@@ -123,7 +123,7 @@ class CreateInputFiles(luigi.Task):
                 proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
             # This needs to be zipped up.
             if self.smiles is not '': # should be a [''] maybe who knows..
-                smi = '\n'.join([p if p is not None else s for p, s in zip(self.prod_smiles, self.smiles)])
+                smi = '\n'.join([s if p in ['None', None, ''] else p for p, s in zip(self.prod_smiles, self.smiles)])
                 smi_pth = outpath.replace('.pdb', '_smiles.txt')
                 with open(smi_pth, 'w') as f:
                     f.write(str(smi))
