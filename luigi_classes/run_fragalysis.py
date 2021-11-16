@@ -223,7 +223,7 @@ class UnalignTargetToReference(luigi.Task):
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
-    unaligned_directory = '/dls/science/groups/i04-1/fragprep/pipeline_unaligned'#luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
+    unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
 
