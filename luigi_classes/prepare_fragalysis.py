@@ -109,10 +109,13 @@ class CreateInputFiles(luigi.Task):
         if file_obj.bound_conf:
             input_pdb = file_obj.bound_conf
         else:
-            if file_obj.pdb_latest:
-                input_pdb = self.crystal.pdb_latest
-            else:
-                pass
+            try:
+                if file_obj.pdb_latest:
+                    input_pdb = file_obj.pdb_latest
+                else:
+                    input_pdb = self.crystal.pdb_latest
+            except:
+                input_pdb = ''
         if input_pdb is '':
             cutmaps = False  # Do Not cut maps.
         else:
