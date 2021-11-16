@@ -93,7 +93,7 @@ class AlignTarget(luigi.Task):
         xcimporter.xcimporter(in_dir=self.target, out_dir=self.staging_directory, target=target_name,
                               reduce_reference_frame=True, biomol=None, covalent=True,
                               pdb_ref="", max_lig_len=0)
-        sites_obj = Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=True)
+        sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=True)
         sites_obj.to_json()
         sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
 
@@ -151,7 +151,7 @@ class AlignTargetOBO(luigi.Task):
 
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
-        sites_obj = Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=False)
+        sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=False)
         sites_obj.to_json()
         sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
         with self.output().open('w') as f:
