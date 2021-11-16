@@ -84,7 +84,7 @@ class PostPipeClean(luigi.Task):
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
-
+    unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     def requires(self):
         return StartPipeline()
 
