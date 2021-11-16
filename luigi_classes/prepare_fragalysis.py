@@ -122,7 +122,7 @@ class CreateInputFiles(luigi.Task):
             process = int(new) > int(old)
         else:
             process = True
-        if process:
+        if os.path.exists(outpath) and process:
             os.unlink(outpath)
         if not process:
             cutmaps = False  # Do Not cut maps.
