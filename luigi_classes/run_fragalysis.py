@@ -238,8 +238,8 @@ class UnalignTargetToReference(luigi.Task):
     def run(self):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
         # Clean-up tmp and mono folders if previous tasks fail?
-        tmpfolder = os.path.join(self.staging_directory, f'tmp{target_name}')
-        monofolder = os.path.join(self.staging_directory, f'mono{target_name}')
+        tmpfolder = os.path.join(self.unaligned_directory, f'tmp{target_name}')
+        monofolder = os.path.join(self.unaligned_directory, f'mono{target_name}')
         if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
             shutil.rmtree(tmpfolder)
         if os.path.exists(monofolder) and os.path.isdir(monofolder):
