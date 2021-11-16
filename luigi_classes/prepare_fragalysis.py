@@ -128,7 +128,7 @@ class CreateInputFiles(luigi.Task):
             cutmaps = False  # Do Not cut maps.
         else:
             if self.monomer:
-                os.symlink(input_pdb, outpath)
+                os.symlink(input_pdb, outpath) # Don't do anything just link to it?
             else:
                 command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {input_pdb} {outpath}'
                 proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,

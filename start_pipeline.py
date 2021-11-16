@@ -13,6 +13,7 @@ from sentry_sdk import configure_scope
 # from luigi_classes.pull_proasis import GetOutFiles
 from luigi_classes.transfer_soakdb import StartTransfers
 from luigi_classes.prepare_fragalysis import BatchRunCreateInputFiles#, BatchAlignTargets, BatchCutMaps
+from luigi_classes.run_fragalysis import BatchAlignTargets, DecideAlignTarget, AlignTarget, AlignTargetToReference, AlignTargetOBO, UnalignTargetToReference
 # from luigi_classes.transfer_verne import UpdateVerne
 from luigi_classes.config_classes import SentryConfig, SoakDBConfig, DirectoriesConfig
 from luigi_classes.transfer_fragalysis_api import BatchTranslateFragalysisAPIOutput
@@ -54,8 +55,8 @@ class StartPipeline(luigi.WrapperTask):
         yield StartTransfers()
         #yield BatchTranslateFragalysisAPIOutput()
         yield BatchRunCreateInputFiles()
-        #yield BatchAlignTargets()
-        #yield BatchCutMaps()
+        yield BatchAlignTargets()
+        # yield BatchCutMaps()
         # yield fragalysis Stuff?
         # yield AddProjects()
         # yield TransferPandda(date_time=self.date_time, soak_db_filepath=self.soak_db_filepath)
