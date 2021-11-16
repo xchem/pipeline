@@ -116,7 +116,7 @@ class CreateInputFiles(luigi.Task):
                 return ''  # Exit out of the function...
 
         # ...
-        if os.path(exists):
+        if os.path.exists(outpath):
             old = get_mod_date(get_filepath_of_potential_symlink(outpath))
             new = get_mod_date(input_pdb)
             process = int(new) > int(old)
