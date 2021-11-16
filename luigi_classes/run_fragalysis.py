@@ -74,6 +74,7 @@ class DecideAlignTarget(luigi.Task):
 class AlignTarget(luigi.Task):
     # Target is /inputdir/targetname
     target = luigi.Parameter()
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
@@ -112,6 +113,7 @@ class AlignTarget(luigi.Task):
 
 class AlignTargetOBO(luigi.Task):
     target = luigi.Parameter()
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
@@ -161,6 +163,7 @@ class AlignTargetToReference(luigi.Task):
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
@@ -223,6 +226,7 @@ class UnalignTargetToReference(luigi.Task):
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
+    input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
     date = luigi.DateParameter(default=datetime.datetime.now())
