@@ -110,10 +110,10 @@ class CreateInputFiles(luigi.Task):
             input_pdb = file_obj.bound_conf
         else:
             try:
-                if file_obj.pdb_latest:
-                    input_pdb = file_obj.pdb_latest
-                else:
+                if self.crystal.pdb_latest:
                     input_pdb = self.crystal.pdb_latest
+                else:
+                    input_pdb = ''
             except:
                 input_pdb = ''
         if input_pdb is '':
