@@ -101,7 +101,7 @@ class CreateInputFiles(luigi.Task):
 
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
-        cutmaps = True
+        cutmaps = False # Disable this for a moment for testing purpose...
         input_pdb = ''
 
         if file_obj.bound_conf:
