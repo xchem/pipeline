@@ -111,8 +111,12 @@ class CreateInputFiles(luigi.Task):
                 if self.crystal.pdb_latest:
                     input_pdb = self.crystal.pdb_latest
                 else:
+                    with self.output().open('w') as f:
+                        f.write('')
                     return ''  # Exit out of the runtime...
             except:
+                with self.output().open('w') as f:
+                    f.write('')
                 return ''  # Exit out of the function...
 
         # ...
