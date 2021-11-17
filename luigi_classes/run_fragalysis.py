@@ -90,9 +90,11 @@ class AlignTarget(luigi.Task):
 
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
-        xcimporter.xcimporter(in_dir=self.target, out_dir=self.staging_directory, target=target_name,
-                              reduce_reference_frame=True, biomol=None, covalent=True,
-                              pdb_ref="", max_lig_len=0)
+        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi.sh {self.target} {self.staging_directory} {target_name}'
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+        #xcimporter.xcimporter(in_dir=self.target, out_dir=self.staging_directory, target=target_name,
+        #                      reduce_reference_frame=True, biomol=None, covalent=True,
+        #                      pdb_ref="", max_lig_len=0)
         sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=True)
         sites_obj.to_json()
         sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
@@ -181,23 +183,11 @@ class AlignTargetToReference(luigi.Task):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
         # Clean-up tmp and mono folders if previous tasks fail?
         tmpfolder = os.path.join(self.staging_directory, f'tmp{target_name}')
-        monofolder = os.path.join(self.staging_directory, f'mono{target_name}')
         if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
             shutil.rmtree(tmpfolder)
-        if os.path.exists(monofolder) and os.path.isdir(monofolder):
-            shutil.rmtree(monofolder)
+        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_single.sh {self.target} {self.staging_directory} {target_name}'
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
 
-        single_import.import_single_file(
-            in_file=self.target,
-            out_dir=self.staging_directory,
-            target=target_name,
-            reduce_reference_frame=True,
-            reference_pdb=os.path.join(self.staging_directory, target_name, 'reference.pdb'),
-            biomol=None,
-            covalent=True,
-            self_ref=False,
-            max_lig_len=0
-        )
         # Run ./cutmaps_xtal.sh
         bn = os.path.basename(self.target).replace('.pdb', '*')
         outpath = os.path.join(self.staging_directory,
@@ -243,23 +233,11 @@ class UnalignTargetToReference(luigi.Task):
         target_name = os.path.dirname(self.target).rsplit('/', 1)[1]
         # Clean-up tmp and mono folders if previous tasks fail?
         tmpfolder = os.path.join(self.unaligned_directory, f'tmp{target_name}')
-        monofolder = os.path.join(self.unaligned_directory, f'mono{target_name}')
         if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
             shutil.rmtree(tmpfolder)
-        if os.path.exists(monofolder) and os.path.isdir(monofolder):
-            shutil.rmtree(monofolder)
 
-        single_import.import_single_file(
-            in_file=self.target,
-            out_dir=self.unaligned_directory,
-            target=target_name,
-            reduce_reference_frame=True,
-            reference_pdb=self.target,
-            biomol=None,
-            covalent=True,
-            self_ref=True,
-            max_lig_len=0
-        )
+        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_unalign.sh {self.target} {self.unaligned_directory} {target_name} '
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
         # Run ./cutmaps_xtal.sh
         bn = os.path.basename(self.target).replace('.pdb', '*')
         outpath = os.path.join(self.unaligned_directory, target_name, 'aligned', bn)
