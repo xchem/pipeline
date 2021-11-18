@@ -101,25 +101,15 @@ class CreateInputFiles(luigi.Task):
 
         file_obj = RefinementObjectFiles(refinement_object=self.crystal)
         file_obj.find_bound_file()
-        cutmaps = False # Disable this for a moment for testing purpose...
-        input_pdb = ''
+        cutmaps = False  # Disable this for a moment for testing purpose...
 
         if file_obj.bound_conf:
             input_pdb = file_obj.bound_conf
         else:
-            try:
-                if self.crystal.pdb_latest:
-                    input_pdb = self.crystal.pdb_latest
-                else:
-                    with self.output().open('w') as f:
-                        f.write('')
-                    return ''  # Exit out of the runtime...
-            except:
-                with self.output().open('w') as f:
-                    f.write('')
-                return ''  # Exit out of the function...
+            with self.output().open('w') as f:
+                f.write('')
+            return ''  # Just leave...
 
-        # ...
         if os.path.exists(outpath):
             old = get_mod_date(get_filepath_of_potential_symlink(outpath))
             new = get_mod_date(input_pdb)
@@ -132,7 +122,7 @@ class CreateInputFiles(luigi.Task):
             cutmaps = False  # Do Not cut maps.
         else:
             if self.monomer:
-                command = f'cp {input_pdb} {outpath}' #) # Don't do anything just link to it?
+                command = f'cp {input_pdb} {outpath}'
             else:
                 command = f'/dls/science/groups/i04-1/fragprep/scripts/biomol.sh {input_pdb} {outpath}'
 
