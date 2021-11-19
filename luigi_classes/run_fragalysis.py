@@ -54,11 +54,19 @@ class DecideAlignTarget(luigi.Task):
     def requires(self):
         base = os.path.basename(self.target)
         staging_dir = os.path.join(self.staging_directory, base)
+        t = Target.objects.filter(target_name=base)
+        if len(t) == 1:
+            rrf = t.pl_reduce_reference_frame
+            active = t.pl_active
+            if not active:
+                return None
+        else:
+            rrf = False  # Assume that we aren't wanting to reduce reference frame just yet...
         if not os.path.exists(staging_dir):
             # If staging direct with name does not exist do a big alignment woo.
-            return AlignTarget(target=self.target)
+            return AlignTarget(target=self.target, rrf=rrf)
         else:
-            return AlignTargetOBO(target=self.target)
+            return AlignTargetOBO(target=self.target, rrf=rrf)
 
     def output(self):
         target_name = self.target.rsplit('/', 1)[1]
@@ -74,6 +82,7 @@ class DecideAlignTarget(luigi.Task):
 class AlignTarget(luigi.Task):
     # Target is /inputdir/targetname
     target = luigi.Parameter()
+    rrf = luigi.Parameter(default=True)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
@@ -81,7 +90,7 @@ class AlignTarget(luigi.Task):
 
     def requires(self):
         infile = glob.glob(os.path.join(self.target, '*.pdb'))
-        return [UnalignTargetToReference(target=i) for i in infile]
+        return [UnalignTargetToReference(target=i, rrf=self.rrf) for i in infile]
 
     def output(self):
         target_name = self.target.rsplit('/', 1)[1]
@@ -90,24 +99,36 @@ class AlignTarget(luigi.Task):
 
     def run(self):
         target_name = self.target.rsplit('/', 1)[1]
-        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi.sh {self.target} {self.staging_directory} {target_name}'
-        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
-        #xcimporter.xcimporter(in_dir=self.target, out_dir=self.staging_directory, target=target_name,
-        #                      reduce_reference_frame=True, biomol=None, covalent=True,
-        #                      pdb_ref="", max_lig_len=0)
-        sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=True)
-        sites_obj.to_json()
-        sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
+        if self.rrf:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi.sh {self.target} {self.staging_directory} {target_name}'
+        else:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_norrf.sh {self.target} {self.staging_directory} {target_name}'
+
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                              executable='/bin/bash')
+        try:
+            sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name),
+                                                recalculate=True)
+            sites_obj.to_json()
+            sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
+        except:
+            pass
 
         # Cut maps
-        command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_target.sh {target_name} {self.staging_directory}'
-        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                              executable='/bin/bash')
+        try:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_target.sh {target_name} {self.staging_directory}'
+            proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                  executable='/bin/bash')
+        except:
+            pass
 
         # Call PLIP
-        command = f'/dls/science/groups/i04-1/fragprep/scripts/makePLIP4Target.sh {target_name} {self.staging_directory}'
-        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                              executable='/bin/bash')
+        try:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/makePLIP4Target.sh {target_name} {self.staging_directory}'
+            proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                  executable='/bin/bash')
+        except:
+            pass
 
         with self.output().open('w') as f:
             f.write('')
@@ -115,6 +136,7 @@ class AlignTarget(luigi.Task):
 
 class AlignTargetOBO(luigi.Task):
     target = luigi.Parameter()
+    rrf = luigi.Parameter(default=True)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
@@ -165,6 +187,7 @@ class AlignTargetToReference(luigi.Task):
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
+    rrf = luigi.Parameter(default=True)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
@@ -185,18 +208,24 @@ class AlignTargetToReference(luigi.Task):
         tmpfolder = os.path.join(self.staging_directory, f'tmp{target_name}')
         if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
             shutil.rmtree(tmpfolder)
-        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_single.sh {self.target} {self.staging_directory} {target_name}'
-        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+        if self.rrf:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_single.sh {self.target} {self.staging_directory} {target_name}'
+        else:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_single_norrf.sh {self.target} {self.staging_directory} {target_name}'
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                              executable='/bin/bash')
 
         # Run ./cutmaps_xtal.sh
-        bn = os.path.basename(self.target).replace('.pdb', '*')
-        outpath = os.path.join(self.staging_directory,
-                               target_name, 'aligned', bn)
-        for fp in glob.glob(outpath):
-            pdb = os.path.join(fp, str(os.path.basename(fp)) + '.pdb')
-            command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_folder.sh {fp} {pdb}'
-            proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                  executable='/bin/bash')
+        try:
+            bn = os.path.basename(self.target).replace('.pdb', '*')
+            outpath = os.path.join(self.staging_directory, target_name, 'aligned', bn)
+            for fp in glob.glob(outpath):
+                pdb = os.path.join(fp, str(os.path.basename(fp)) + '.pdb')
+                command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_folder.sh {fp} {pdb}'
+                proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                      executable='/bin/bash')
+        except:
+            pass
 
         # Run the PLIP.sh on output...
         try:
@@ -216,6 +245,7 @@ class UnalignTargetToReference(luigi.Task):
     retry_count = 1
     # Target is /inputdir/targetname.pdb
     target = luigi.Parameter()
+    rrf = luigi.Parameter(default=True)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
     unaligned_directory = luigi.Parameter(default=DirectoriesConfig().unaligned_directory)
     log_directory = luigi.Parameter(default=DirectoriesConfig().log_directory)
@@ -236,15 +266,23 @@ class UnalignTargetToReference(luigi.Task):
         if os.path.exists(tmpfolder) and os.path.isdir(tmpfolder):
             shutil.rmtree(tmpfolder)
 
-        command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_unalign.sh {self.target} {self.unaligned_directory} {target_name} '
-        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+        if self.rrf:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_unalign.sh {self.target} {self.unaligned_directory} {target_name}'
+        else:
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/run_fragapi_unalign_norrf.sh {self.target} {self.unaligned_directory} {target_name}'
+
+        proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                              executable='/bin/bash')
         # Run ./cutmaps_xtal.sh
-        bn = os.path.basename(self.target).replace('.pdb', '*')
-        outpath = os.path.join(self.unaligned_directory, target_name, 'aligned', bn)
-        for fp in glob.glob(outpath):
-            pdb = os.path.join(fp, str(os.path.basename(fp)) + '.pdb')
-            command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_folder.sh {fp} {pdb}'
-            proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, executable='/bin/bash')
+        try:
+            bn = os.path.basename(self.target).replace('.pdb', '*')
+            outpath = os.path.join(self.unaligned_directory, target_name, 'aligned', bn)
+            for fp in glob.glob(outpath):
+                pdb = os.path.join(fp, str(os.path.basename(fp)) + '.pdb')
+                command = f'/dls/science/groups/i04-1/fragprep/scripts/cutmaps_folder.sh {fp} {pdb}'
+                proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,executable='/bin/bash')
+        except:
+            pass
 
         with self.output().open('w') as f:
             f.write('')
