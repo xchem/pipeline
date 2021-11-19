@@ -174,10 +174,13 @@ class AlignTargetOBO(luigi.Task):
                                               f'Alignment/alignedOBO_{target_name}' + str(self.date) + '.done'))
 
     def run(self):
-        target_name = self.target.rsplit('/', 1)[1]
-        sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=False)
-        sites_obj.to_json()
-        sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
+        try:
+            target_name = self.target.rsplit('/', 1)[1]
+            sites_obj = sites.Sites.from_folder(folder=os.path.join(self.staging_directory, target_name), recalculate=False)
+            sites_obj.to_json()
+            sites.contextualize_crystal_ligands(folder=os.path.join(self.staging_directory, target_name))
+        except:
+            pass
         with self.output().open('w') as f:
             f.write('')
 
