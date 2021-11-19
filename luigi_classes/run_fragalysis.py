@@ -56,8 +56,8 @@ class DecideAlignTarget(luigi.Task):
         staging_dir = os.path.join(self.staging_directory, base)
         t = Target.objects.filter(target_name=base)
         if len(t) == 1:
-            rrf = t.pl_reduce_reference_frame
-            active = t.pl_active
+            rrf = t[0].pl_reduce_reference_frame
+            active = t[0].pl_active
             if not active:
                 return None
         else:
