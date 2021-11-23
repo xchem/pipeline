@@ -124,7 +124,7 @@ class AlignTarget(luigi.Task):
 
         # Call PLIP
         try:
-            command = f'/dls/science/groups/i04-1/fragprep/scripts/makePLIP4Target.sh {target_name} {self.staging_directory}'
+            command = f'/dls/science/groups/i04-1/fragprep/scripts/makePLIP4Target.sh {os.path.join(self.staging_directory, target)}'
             proc = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
                                   executable='/bin/bash')
         except:
