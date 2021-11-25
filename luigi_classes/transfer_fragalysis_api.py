@@ -108,10 +108,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     '''
     # Should be target_name_[0-9]{1}[A-Z]{1}
     ligand_name = os.path.basename(fragment_abs_dirname)
-
-    # Should be /staging_directory/target_name/aligned/
-    # target = os.path.dirname(fragment_abs_dirname)
-
     # Should be prefix of ligand_name e.g. 70x-x0001_0A would be 70x-x0001
     crystal_name = ligand_name.rsplit('_', 1)[0]
 
