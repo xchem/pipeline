@@ -53,7 +53,7 @@ class StartPipeline(luigi.WrapperTask):
         # if os.path.exists(os.path.join(self.log_directory + 'pipe.done')):
         #     os.remove(os.path.join(self.log_directory + 'pipe.done'))
         yield StartTransfers()
-        yield BatchTranslateFragalysisAPIOutput()
+        #yield BatchTranslateFragalysisAPIOutput()
         yield BatchRunCreateInputFiles()
         #yield BatchAlignTargets()
         # yield BatchCutMaps()
