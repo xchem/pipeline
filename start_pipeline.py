@@ -55,7 +55,7 @@ class StartPipeline(luigi.WrapperTask):
         yield StartTransfers()
         yield BatchTranslateFragalysisAPIOutput()
         yield BatchRunCreateInputFiles()
-        #yield BatchAlignTargets()
+        yield BatchAlignTargets()
         # yield BatchCutMaps()
         # yield fragalysis Stuff?
         # yield AddProjects()
