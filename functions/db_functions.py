@@ -443,9 +443,13 @@ def transfer_table(translate_dict, filename, model):
                         compound=compound_obj
                     )
                     if len(filter_set) == 0:  # this is new!
-                        print(d[key].crystal_name)
-                        print(filename)
-                        crys_obj = models.Crystal.objects.get(crystal_name=d[key].crystal_name, visit=models.SoakdbFiles.objects.get(filename=filename))
+                        try:
+                            print(d[key].crystal_name)
+                            print(filename)
+                            crys_obj = models.Crystal.objects.get(crystal_name=d[key].crystal_name, visit=models.SoakdbFiles.objects.get(filename=filename))
+                        except AttributeError:
+                            # Assume d[key] is a string and not a crys_obj...?
+                            crys_obj = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
                         crys_obj.compound.add(compound_obj)
                         crys_obj.save()
                         d[key] = crys_obj
