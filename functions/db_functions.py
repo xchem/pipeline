@@ -295,6 +295,7 @@ def transfer_table(translate_dict, filename, model):
         if compound_codes is None:
             compound_codes = ''
         crystal_name = row['CrystalName']
+        # This is problematic for the future...
         target = row['ProteinName']
         if not target or target == 'None':
             try:
