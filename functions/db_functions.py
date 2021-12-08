@@ -319,15 +319,13 @@ def transfer_table(translate_dict, filename, model):
             crys_obj_created = False
             # Great carry on?
         elif len(crys_objs) == 0:
-            # Create a new Crys_obj
-            crys_obj = models.Crystal.objects.create(
+            # Create a new Crys_obj????
+            # This seems ridiculous??
+            crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
                     target=target_obj,
                     crystal_name=crystal_name,
                     visit=visit_obj
             )
-            # product=product_smiles,
-            # compound=compound_obj
-            crys_obj_created = True
             crys_obj.save()
         else:
             next
