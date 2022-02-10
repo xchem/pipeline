@@ -29,6 +29,7 @@ class DirectoriesConfig(luigi.Config):
     log_directory = luigi.Parameter()
     staging_directory = luigi.Parameter()
     input_directory = luigi.Parameter()
+    unaligned_directory = luigi.Parameter()
 
 
 class ProasisConfig(luigi.Config):

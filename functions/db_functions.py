@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.db import transaction
 
 from functions import misc_functions
-from xchem_db import models
+from xchem_db.xchem_db import models
 
 
 # To get all sql queries sent by Django from py shell
@@ -56,8 +56,9 @@ def crystal_translations():
         'crystal_name': 'CrystalName',
         'target': 'ProteinName',
         'compound': 'CompoundSMILES',
-        'product' : 'CompoundSMILESproduct',
+        'product': 'CompoundSMILESproduct',
         'visit': '',
+        'compound_code': 'CompoundCode',
     }
 
     return crystal
@@ -231,6 +232,7 @@ def test_duplicate_method(filename):
 
 
 def check_db_duplicates(filename):
+    # is this even used?????
     pop_soakdb(filename)
     duplicates_file = 'duplicates.csv'
     if os.path.isfile(os.path.join(os.getcwd(), duplicates_file)):
@@ -283,11 +285,17 @@ def transfer_table(translate_dict, filename, model):
     # for each row found in soakdb
     for row in results:
         compound_smiles = row['CompoundSMILES']
-        product_smiles=None
+        compound_codes = row['CompoundCode']
+        product_smiles = ''
         # add a check here to see if the key exists - most sdb files won't have this column
         if 'CompoundSMILESproduct' in row.keys():
             product_smiles = row['CompoundSMILESproduct']
+        if product_smiles is None:
+            product_smiles = ''
+        if compound_codes is None:
+            compound_codes = ''
         crystal_name = row['CrystalName']
+        # This is problematic for the future...
         target = row['ProteinName']
         if not target or target == 'None':
             try:
@@ -296,16 +304,15 @@ def transfer_table(translate_dict, filename, model):
                 continue
                 
         # now we have the smiles, crystal_name and target, we can try to get the crystal, or create it if it exists (via. target)
-        # get_or_create returns a tuple. The first element is a bool saying whether the object was created or not, the second ([1]) is the object itself
-        target_obj, target_obj_created = models.Target.objects.get_or_create(target_name=target.upper())
-        compound_obj = models.Compounds.objects.get_or_create(smiles=compound_smiles)[0]
+        target_obj, target_obj_created = models.Target.objects.get_or_create(target_name=target)
         # this one should deffo exist
         visit_obj = models.SoakdbFiles.objects.get(filename=filename)
 
         # Logic? Get the crystal name...
         crys_objs = models.Crystal.objects.filter(
             crystal_name=crystal_name,
-            visit=visit_obj
+            visit=visit_obj,
+            target=target_obj
         )
 
         if len(crys_objs) == 1:
@@ -313,54 +320,49 @@ def transfer_table(translate_dict, filename, model):
             crys_obj_created = False
             # Great carry on?
         elif len(crys_objs) == 0:
-            # Create a new Crys_obj
-            crys_obj = models.Crystal.objects.create(
+            # Create a new Crys_obj????
+            # This seems ridiculous??
+            crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
                     target=target_obj,
                     crystal_name=crystal_name,
-                    visit=visit_obj,
-                    product=product_smiles,
-                    compound=compound_obj
+                    visit=visit_obj
             )
-            crys_obj_created = True
+            crys_obj.save()
         else:
-            # Honestly go next...
-            # There should only be 1 crystal name per visit...
-            # That's all that matters...
-            # This will never end will it?
             next
 
-        # put everything together and get the crystal object
-        #crys_obj, crys_obj_created = models.Crystal.objects.get_or_create(
-        #    target=target_obj,
-        #    crystal_name=crystal_name,
-        #    visit=visit_obj,
-        #    product=product_smiles,
-        #    compound=compound_obj
-        #)
-        #print(crys_obj)
-        #crys_obj.product = product_smiles
-        #crys_obj.compound = compound_obj
-        #crys_obj.save()
-
-        #crys_objs = models.Crystal.objects.filter(
-        #    target=target_obj,
-        #    crystal_name=crystal_name,
-        #    visit=visit_obj)
-
-        #if len(crys_objs) == 1:
-        #    crys_obj = crys_objs[0]
-        #    crys_obj_created = False
-        #elif len(crys_objs) == 0:
-        #    crys_obj = models.Crystal.objects.create(
-        #        target=target_obj,
-        #        crystal_name=crystal_name,
-        #        visit=visit_obj,
-        #        product=product_smiles,
-        #        compound=compound_obj
-        #    )
-        #    crys_obj_created = True
-        #elif len(crys_objs) > 1:
-        #    raise ValueError()
+        css = compound_smiles.split(';')
+        ccs = compound_codes.split(';')
+        pss = product_smiles.split(';')
+        if crys_obj_created:  # would this work... need to come up with clever trick...
+            for comp_index in range(len(css)):
+                smile = css[comp_index]
+                try:
+                    code = ccs[comp_index]
+                except IndexError:
+                    code = ''
+                try:
+                    product = pss[comp_index]
+                except IndexError:
+                    product = ''
+                compound_obj = models.Compounds.objects.get_or_create(smiles=smile, compound_string=code)[0]
+                compound_obj.save()
+                crys_obj.compound.add(compound_obj)
+                crys_obj.save()
+                if product is not '':
+                    print(product)
+                    try:
+                        ccp = 'cannotfind'
+                        ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
+                        setattr(ccp, 'product_smiles', product)
+                        ccp.save()
+                    except:
+                        print('Init Crystal Step')
+                        print(crys_obj)
+                        print(compound_obj)
+                        print(product)
+                        print(ccp)
+                        pass
 
         # now see if there's already a row for this crystal in the model we're currently using
         if model != models.Crystal:
@@ -369,7 +371,6 @@ def transfer_table(translate_dict, filename, model):
             model_row = crys_obj
             model_row_created = crys_obj_created
 
-               
         ## TEMPORARY HACK FOR PRODUCT SMILES - FIX AFTER COVID STUFF ##
 #         compound=models.Compounds.objects.get_or_create(smiles=compound_smiles, product_smiles=product_smiles)
                 
@@ -413,36 +414,70 @@ def transfer_table(translate_dict, filename, model):
                     d[key] = models.SoakdbFiles.objects.get(filename=filename)
 
         for key in d.keys():
-
             # raise an exception if a rogue key is found - means translate_dict or model is wrong
             if key not in model_fields:
-                raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
+                if key not in ['compound', 'product', 'compound_code']:
+                    raise Exception(str('KEY: ' + key + ' FROM MODELS not in ' + str(model_fields)))
 
             # find relevant entries for foreign keys and set as value - crystal names and proteins
 
             if key == 'crystal_name' and model != models.Crystal:
                 # d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(
                 #    filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
-                compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=compound_smiles)
-                filter_set = models.Crystal.objects.filter(crystal_name=d[key],
-                                                           visit=models.SoakdbFiles.objects.get(filename=filename),
-                                                           compound=compound_obj)
-                if len(filter_set) == 0:
-                    d[key] = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
-                    d[key].compound = compound_obj
-                    d[key].save()
-                elif len(filter_set) == 1:
-                    d[key] = filter_set[0]
-                else:
-                    print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
-                    raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
-
+                css = compound_smiles.split(';')
+                ccs = compound_codes.split(';')
+                pss = product_smiles.split(';')
+                for comp_index in range(len(css)):
+                    smile = css[comp_index]
+                    code = ccs[comp_index]
+                    try:
+                        product = pss[comp_index]
+                    except IndexError:
+                        product = ''
+                    compound_obj, is_new = models.Compounds.objects.get_or_create(smiles=smile, compound_string=code)
+                    compound_obj.save()
+                    filter_set = models.Crystal.objects.filter(
+                        crystal_name=d[key],
+                        visit=models.SoakdbFiles.objects.get(filename=filename),
+                        compound=compound_obj
+                    )
+                    if len(filter_set) == 0:  # this is new!
+                        try:
+                            print(d[key].crystal_name)
+                            print(filename)
+                            crys_obj = models.Crystal.objects.get(crystal_name=d[key].crystal_name, visit=models.SoakdbFiles.objects.get(filename=filename))
+                        except AttributeError:
+                            # Assume d[key] is a string and not a crys_obj...?
+                            crys_obj = models.Crystal.objects.get(crystal_name=d[key], visit=models.SoakdbFiles.objects.get(filename=filename))
+                        crys_obj.compound.add(compound_obj)
+                        crys_obj.save()
+                        d[key] = crys_obj
+                        if product is not '':
+                            print(product)
+                            try:
+                                ccp = 'cannotfind'
+                                ccp = models.CrystalCompoundPairs.objects.get(crystal=crys_obj, compound=compound_obj)
+                                setattr(ccp, 'product_smiles', product)
+                                ccp.save()
+                            except:
+                                print('Update Crystal Step')
+                                print(crys_obj)
+                                print(compound_obj)
+                                print(product)
+                                print(ccp)
+                                pass
+                    elif len(filter_set) == 1:  # this is old
+                        d[key] = filter_set[0]
+                    else:  # this is wrong !
+                        print('Not sure how we got here, but more than two crystals with the same name for the same crystal')
+                        raise Exception(f'More than 1 crystal in same visit! {d[key]} - {filename}')
 
             if key == 'target':
                 d[key] = models.Target.objects.get_or_create(target_name=d[key])[0]
 
-            if key == 'compound':
-                d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+            #if key == 'compound':
+            #    d[key] = models.Compounds.objects.get_or_create(smiles=d[key])[0]
+            #    d[key].save()
 
             if key == 'reference':
                 if d[key]:
@@ -480,6 +515,9 @@ def transfer_table(translate_dict, filename, model):
                     qset = model.objects.filter(crystal_name=crys_obj)
 
                 if(len(qset) == 1):
+                    compoundless = d.pop('compound', None)
+                    productless = d.pop('product', None)
+                    ccless = d.pop('compound_code', None)
                     qset.update(**d)
                 else:
                     print(f'More than one entry for {crystal_name}')
@@ -489,7 +527,7 @@ def transfer_table(translate_dict, filename, model):
             print('WARNING: ' + str(e.__cause__))
             print(model_fields)
             crys_from_db = models.Crystal.objects.get(crystal_name=crystal_name, visit=models.SoakdbFiles.objects.get(
-                filename=filename), compound=models.Compounds.objects.get_or_create(smiles=compound_smiles)[0])
+                filename=filename))
             if crys_from_db.target == target:
                 print('Crystal duplicated!')
                 continue

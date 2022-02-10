@@ -33,6 +33,12 @@ def get_mod_date(filename):
     return modification_date
 
 
+def compare_dates_to_action(sdb_mod, pdb_out):
+    if pdb_out == 'None':  # If there isn't a mod file...
+        return True
+    return int(sdb_mod) > int(pdb_out)  # if sdb_mod is > then pdb_out then do stuff
+
+
 def create_sd_file(name, smiles, save_directory):
     """
     Create a 2D sdf file in the proasis project directory for successfully detected ligands

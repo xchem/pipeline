@@ -10,7 +10,7 @@ import luigi
 import re
 import os
 
-from xchem_db import models
+from xchem_db.xchem_db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .config_classes import SoakDBConfig, DirectoriesConfig
 
@@ -29,9 +29,9 @@ class BatchTranslateFragalysisAPIOutput(luigi.Task):
         # Honestly do not know how slow this is haha...
         staging_folders = [x[0] for x in os.walk(self.staging_directory) if 'aligned' in x[0]]
         folders_containing_mols = [x for x in staging_folders if len(glob.glob(os.path.join(x, '*.mol'))) > 0]
-        # Check Modification date to fire off!!
-        return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
-        #return [TranslateFragalysisAPIOutput(target=x) for x in folders_containing_mols]  # if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
+        targs = [x for x in folders_containing_mols if compare_mod_date(glob.glob(os.path.join(x, '*.mol'))[0])]
+        if len(targs) > 0:
+            return [TranslateFragalysisAPIOutput(target=x) for x in targs]
 
     def output(self):
         return luigi.LocalTarget(os.path.join(DirectoriesConfig().log_directory,
@@ -82,17 +82,19 @@ def compare_mod_date(molfile):
         return False
 
     ligand_name = os.path.basename(molfile).replace('.mol', '')
-    target = ligand_name.rsplit('_', 1)[0]
+    # This is wrong...
+    split = molfile.split('/')
+    target_name = split[split.index('aligned') - 1]
     try:
-        frag_target = models.FragalysisTarget.objects.get(target=target)
+        frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
-        print(f'{target} is a new Fragalysis Target')
+        print(f'{target_name} is a new Fragalysis Target')
         return True
 
     try:
-        frag_ligand = models.FragalysisLigand.objects.get(ligand=ligand_name, fragalysis_target=frag_target)
+        frag_ligand = models.FragalysisLigand.objects.get(ligand_name=ligand_name, fragalysis_target=frag_target)
     except models.FragalysisLigand.DoesNotExist:
-        print(f'{ligand_name} is a new Ligand for {target}')
+        print(f'{ligand_name} is a new Ligand for {target_name}')
         return True
 
     old_date = frag_ligand.modification_date
@@ -106,10 +108,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
     '''
     # Should be target_name_[0-9]{1}[A-Z]{1}
     ligand_name = os.path.basename(fragment_abs_dirname)
-
-    # Should be /staging_directory/target_name/aligned/
-    # target = os.path.dirname(fragment_abs_dirname)
-
     # Should be prefix of ligand_name e.g. 70x-x0001_0A would be 70x-x0001
     crystal_name = ligand_name.rsplit('_', 1)[0]
 
@@ -118,7 +116,6 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_target = models.FragalysisTarget.objects.get(target=target_name)
     except models.FragalysisTarget.DoesNotExist:
         frag_target = models.FragalysisTarget.objects.create(
-            open=True,
             target=target_name,
             staging_root=staging_directory,
             input_root=input_directory
@@ -160,35 +157,26 @@ def Translate_Files(fragment_abs_dirname, target_name, staging_directory, input_
         frag_ligand = models.FragalysisLigand.objects.create(**ligand_props)  # Does this EVEN work?
         frag_ligand.save()
 
-    # Bonza, now link frag_ligand to ligand table for internal stuff.
-    symlink = os.path.join(input_directory, f'{crystal_name}.pdb')
-    try:
-        path = os.readlink(symlink)
-    except OSError:
-        # Exit out
-        print('Ligand is directly deposited into input directory, no known reference crystal')
-        return None
-    visit = re.findall('[a-z]{2}[0-9]{5}-[0-9]*', path)[0]
-    crys = models.Crystal.objects.filter(crystal_name=crystal_name).filter(visit__visit=visit)  # This should only return one thing...
+    # Link crystal name to FragalysisLigand...
+    # Perhaps use smiles to further things...
+    # Currently this relies on using refinement objects but will fail when duplicates exist... yikes...
+    crys = models.Refinement.objects.filter(crystal_name__crystal_name=crystal_name).filter(outcome__gte=4).filter(outcome__lte=6)
     if len(crys) > 1:
         try:
-            raise Exception(ligand_name, symlink, crystal_name, visit, crys)
+            raise Exception(ligand_name, symlink, crystal_name, crys)
         except Exception as e:
-            bad_ligname, bad_symlink, bad_crystal_name, bad_visit, bad_crys = e.args
+            bad_ligname, bad_symlink, bad_crystal_name, bad_crys = e.args
             print(bad_ligname)
             print(bad_symlink)
             print(bad_crystal_name)
-            print(bad_visit)
             print(bad_crys)
-            print(bad_crys.values())
 
     elif len(crys) == 1:
-        crystal = crys[0]
+        crystal = crys[0].crystal_name
         ligand_entry, created = models.Ligand.objects.get_or_create(
             fragalysis_ligand=frag_ligand,
             crystal=crystal,
-            target=crystal.target,
-            compound=crystal.compound
+            target=crystal.target
         )
         if created:
             print('Created New Ligand Entry!')

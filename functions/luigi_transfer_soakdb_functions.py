@@ -7,7 +7,7 @@ from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
 from luigi_classes.config_classes import DirectoriesConfig
-from xchem_db.models import *
+from xchem_db.xchem_db.models import *
 
 
 def is_date(string):
@@ -170,9 +170,9 @@ def transfer_all_fed_ids_and_datafiles(soak_db_filelist):
     :rtype: None
     """
     print(soak_db_filelist)
-    with open(soak_db_filelist, 'rb') as database_list:
+    with open(soak_db_filelist, 'r') as database_list:
         for database_file in database_list.readlines():
-            database_file = database_file.replace('\n', '')
+            database_file = str(database_file).replace('\n', '')
 
             out, err, proposal = db_functions.pop_soakdb(database_file)
             print(out)
