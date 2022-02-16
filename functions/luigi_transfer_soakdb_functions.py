@@ -206,7 +206,10 @@ def transfer_changed_datafile(data_file, hit_directory, log_directory = Director
 
         # remove pandda data transfer done file
         if os.path.isfile(os.path.join(search_path, 'transfer_pandda_data.done')):
-            os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
+            try:
+                os.remove(os.path.join(search_path, 'transfer_pandda_data.done'))
+            except:
+                pass # This is bad...
 
         log_files = find_log_files(search_path).rsplit()
         print(log_files)
