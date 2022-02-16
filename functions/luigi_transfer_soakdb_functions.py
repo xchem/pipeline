@@ -215,12 +215,15 @@ def transfer_changed_datafile(data_file, hit_directory, log_directory = Director
         print(log_files)
         for log in log_files:
             print(f"{log}.run.done")
-            if os.path.isfile(f"{log}.run.done"):
-                os.remove(f"{log}.run.done")
-            if os.path.isfile(f"{log}.sites.done"):
-                os.remove(f"{log}.sites.done")
-            if os.path.isfile(f"{log}.events.done"):
-                os.remove(f"{log}.events.done")
+            try:
+                if os.path.isfile(f"{log}.run.done"):
+                    os.remove(f"{log}.run.done")
+                if os.path.isfile(f"{log}.sites.done"):
+                    os.remove(f"{log}.sites.done")
+                if os.path.isfile(f"{log}.events.done"):
+                    os.remove(f"{log}.events.done")
+            except:
+                pass
 
         # find_logs_out_files = glob.glob(str(search_path + '*.txt'))
         find_logs_out_files = glob.glob(f"{search_path}*.txt")
