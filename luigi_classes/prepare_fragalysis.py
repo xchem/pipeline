@@ -36,7 +36,7 @@ class BatchRunCreateInputFiles(luigi.Task):
     staging_directory = luigi.Parameter(default=DirectoriesConfig().staging_directory)
     input_directory = luigi.Parameter(default=DirectoriesConfig().input_directory)
 
-    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6)
+    filter_by = Refinement.objects.filter(outcome__gte=4).filter(outcome__lte=6).filter(crystal_name__target__pl_active=1) # Only look at data that is active
 
     # Should only be run if updated...
     def requires(self):
