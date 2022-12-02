@@ -7,7 +7,7 @@ setup_django()
 from functions import db_functions
 from functions import misc_functions
 from functions.pandda_functions import *
-from xchem_db.models import *
+from xchem_db.xchem_db.models import *
 from utils.refinement import RefinementObjectFiles
 
 from dateutil.parser import parse
@@ -211,30 +211,30 @@ if __name__ == "__main__":
         required=True,
     )
 
-    parser.add_argument(
-        "-o",
-        "--output_directory",
-        default='',
-        help="Output directory where bound-state pdb files will be",
-        required=True,
-    )
+    #parser.add_argument(
+    #    "-o",
+    #    "--output_directory",
+    #    default='',
+    #    help="Output directory where bound-state pdb files will be",
+    #    required=True,
+    #)
 
     args = vars(parser.parse_args())
 
     filename = args["soakdb_file"]
-    link_dir = args["output_directory"]
+    link_dir = ''
 
     print('Will process: ' + filename)
     print('symlinks to the bound-state pdbs will be found in: ' + link_dir)
 
     print('Checking wether ' + filename + ' is a new or existing entry in XCDB...')
-    status = check_file(filename)
+    status = 0 #check_file(filename)
     print(status)
     if status==0 or status==1:
         print('Transferring the data from the soakDB file into XCDB (this may take a while!)...')
         run_transfer(filename)
     print('Creating the symbolic links to the bound-state pdb files...')
-    create_links(filename, link_dir)
+    #create_links(filename, link_dir)
     print('Telling the database this file is now up-to-date...')
     sdb = SoakdbFiles.objects.get(filename=filename)
     sdb.status = 2
