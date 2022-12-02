@@ -11,3 +11,9 @@ transfer_logs/*
 logs/*
 test_xchem/test_xchem/settings.py
 db/migrations/*
+# Warren added - to get instance on Diamond in sync with Git repo
+luigi.log
+*.cif
+mArh.json 
+bkup/*
+#.nfs00000000a33355f40000008a
